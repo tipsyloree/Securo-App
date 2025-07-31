@@ -209,6 +209,17 @@ st.markdown("""
         margin-top: 3px;
         font-family: 'JetBrains Mono', monospace;
     }
+
+    .contact-number a {
+        color: #ff4444 !important;
+        text-decoration: none !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    .contact-number a:hover {
+        color: #ff6666 !important;
+        text-decoration: underline !important;
+    }
    
     /* Sidebar toggle button */
     .sidebar-toggle {
@@ -459,6 +470,14 @@ st.markdown("""
     .file-missing {
         color: #ff4444;
     }
+
+    /* Selectbox styling */
+    .stSelectbox select {
+        background: rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid rgba(255, 68, 68, 0.3) !important;
+        color: #e0e0e0 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -656,20 +675,49 @@ if st.session_state.sidebar_state == "expanded":
             {"name": "Emergency Hotline", "number": "911", "type": "police"},
             {"name": "Police Department", "number": "465-2241", "type": "police"},
             {"name": "Hospital", "number": "465-2551", "type": "hospital"},
-            {"name": "Fire Department", "number": "465-2515 / 465-7167", "type": "fire"},
-            {"name": "Coast Guard", "number": "465-8384 / 466-9280", "type": "legal"},
+            {"name": "Fire Department", "number": "465-2515", "type": "fire"},
+            {"name": "Coast Guard", "number": "465-8384", "type": "legal"},
             {"name": "Red Cross", "number": "465-2584", "type": "forensic"},
             {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
         ]
-       
-        for contact in emergency_contacts:
-            if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation. Emergency services are standing by for immediate response.",
-                    "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-                })
-                st.rerun()
+        
+        # Create dropdown for emergency contacts
+        contact_options = ["Select Emergency Contact..."] + [f"{contact['name']}" for contact in emergency_contacts]
+        selected_contact = st.selectbox(
+            "Choose Emergency Service:",
+            contact_options,
+            key="emergency_dropdown"
+        )
+        
+        # Display selected contact with clickable phone number
+        if selected_contact != "Select Emergency Contact...":
+            # Find the selected contact details
+            selected_contact_data = next(
+                (contact for contact in emergency_contacts if contact['name'] == selected_contact), 
+                None
+            )
+            
+            if selected_contact_data:
+                # Display contact info with clickable phone number
+                st.markdown(f"""
+                <div class="contact-item">
+                    <div class="contact-name">{selected_contact_data['name']}</div>
+                    <div class="contact-number">
+                        <a href="tel:{selected_contact_data['number']}" style="color: #ff4444; text-decoration: none; font-family: 'JetBrains Mono', monospace;">
+                            {selected_contact_data['number']}
+                        </a>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Add call button for logging purposes
+                if st.button(f"Call {selected_contact_data['name']}", key=f"call_{selected_contact_data['name']}"):
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": f"🚨 **Emergency Contact Accessed:**\n\n**{selected_contact_data['name']}:** {selected_contact_data['number']}\n\n📝 Contact logged for case documentation. Emergency services are standing by for immediate response.",
+                        "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+                    })
+                    st.rerun()
        
         st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
        
