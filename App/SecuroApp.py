@@ -40,7 +40,7 @@ Your responses should reflect an understanding of criminology, public safety, an
 try:
     GOOGLE_API_KEY = "AIzaSyAK-4Xklul9WNoiWnSrpzPkn5C-Dbny8B4"
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-pro')
+    model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
     st.session_state.ai_status = "✅ AI Ready (Direct API Key)"
 except Exception as e:
