@@ -499,9 +499,9 @@
                         Emergency Contacts
                     </h3>
                     
-                    <div class="contact-item contact-police" onclick="callEmergency('911', 'Police')">
+                    <div class="contact-item contact-police" onclick="callEmergency('911', 'Emergency')">
                         <div class="contact-info">
-                            <div class="contact-name">Police Emergency</div>
+                            <div class="contact-name">Emergency Hotline</div>
                             <div class="contact-number">911</div>
                         </div>
                         <svg class="contact-icon" viewBox="0 0 24 24" fill="#ff4444">
@@ -509,43 +509,63 @@
                         </svg>
                     </div>
                     
-                    <div class="contact-item contact-hospital" onclick="callEmergency('911', 'Medical Emergency')">
+                    <div class="contact-item contact-police" onclick="callEmergency('465-2241', 'Police Department')">
                         <div class="contact-info">
-                            <div class="contact-name">Medical Emergency</div>
-                            <div class="contact-number">911</div>
+                            <div class="contact-name">Police Department</div>
+                            <div class="contact-number">465-2241</div>
+                        </div>
+                        <svg class="contact-icon" viewBox="0 0 24 24" fill="#ff4444">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="contact-item contact-hospital" onclick="callEmergency('465-2551', 'Hospital')">
+                        <div class="contact-info">
+                            <div class="contact-name">Hospital</div>
+                            <div class="contact-number">465-2551</div>
                         </div>
                         <svg class="contact-icon" viewBox="0 0 24 24" fill="#ff6b6b">
                             <path d="M19 8l-4 4h3c0 3.31-2.69 6-6 6-1.01 0-1.97-.25-2.8-.7l-1.46 1.46C8.97 19.54 10.43 20 12 20c4.42 0 8-3.58 8-8h3l-4-4zM6 12c0-3.31 2.69-6 6-6 1.01 0 1.97.25 2.8.7l1.46-1.46C15.03 4.46 13.57 4 12 4c-4.42 0-8 3.58-8 8H1l4 4 4-4H6z"/>
                         </svg>
                     </div>
                     
-                    <div class="contact-item contact-fire" onclick="callEmergency('911', 'Fire Department')">
+                    <div class="contact-item contact-fire" onclick="callEmergency('465-2515', 'Fire Department')">
                         <div class="contact-info">
                             <div class="contact-name">Fire Department</div>
-                            <div class="contact-number">911</div>
+                            <div class="contact-number">465-2515 / 465-7167</div>
                         </div>
                         <svg class="contact-icon" viewBox="0 0 24 24" fill="#ff8c00">
                             <path d="M12.71 2.96c-2.75 2.12-4.71 6.79-4.71 11.04 0 4.42 3.58 8 8 8s8-3.58 8-8c0-4.25-1.96-8.92-4.71-11.04-.44-.33-1.04-.33-1.48 0-.63.48-1.51 1.28-2.37 2.23-.86-.95-1.74-1.75-2.37-2.23-.44-.33-1.04-.33-1.48 0z"/>
                         </svg>
                     </div>
                     
-                    <div class="contact-item contact-legal" onclick="callEmergency('(869) 465-2521', 'Legal Affairs')">
+                    <div class="contact-item contact-legal" onclick="callEmergency('465-8384', 'Coast Guard')">
                         <div class="contact-info">
-                            <div class="contact-name">Legal Affairs Dept</div>
-                            <div class="contact-number">(869) 465-2521</div>
+                            <div class="contact-name">Coast Guard</div>
+                            <div class="contact-number">465-8384 / 466-9280</div>
                         </div>
                         <svg class="contact-icon" viewBox="0 0 24 24" fill="#4169e1">
-                            <path d="M12 3l8 5-8 5-8-5 8-5zm6.5 7.5L12 14l-6.5-3.5L12 7l6.5 3.5z"/>
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/>
                         </svg>
                     </div>
                     
-                    <div class="contact-item contact-forensic" onclick="callEmergency('(869) 465-2241', 'Forensics Lab')">
+                    <div class="contact-item contact-forensic" onclick="callEmergency('465-2584', 'Red Cross')">
                         <div class="contact-info">
-                            <div class="contact-name">Forensics Lab</div>
-                            <div class="contact-number">(869) 465-2241</div>
+                            <div class="contact-name">Red Cross</div>
+                            <div class="contact-number">465-2584</div>
+                        </div>
+                        <svg class="contact-icon" viewBox="0 0 24 24" fill="#ff6b6b">
+                            <path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14H9v-2h2v-2h2v2h2v2h-2v2h-2v-2z"/>
+                        </svg>
+                    </div>
+                    
+                    <div class="contact-item contact-legal" onclick="callEmergency('466-5100', 'NEMA')">
+                        <div class="contact-info">
+                            <div class="contact-name">NEMA (Emergency Mgmt)</div>
+                            <div class="contact-number">466-5100</div>
                         </div>
                         <svg class="contact-icon" viewBox="0 0 24 24" fill="#9370db">
-                            <path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/>
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                         </svg>
                     </div>
                 </div>
