@@ -416,54 +416,87 @@ crime_database = [
     {"category": "Police", "question": "What does 'beyond reasonable doubt' mean?", "answer": "The standard of evidence required to convict in a criminal trial."}
 ]
 
-def search_crime_database(query):
-    """Search the crime database for relevant answers"""
-    search_term = query.lower()
+def generate_ai_response(query):
+    """Generate intelligent AI responses for the crime investigation assistant"""
+    search_term = query.lower().strip()
     
-    # Direct question match
+    # Greetings and casual conversation
+    greetings = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'greetings']
+    if any(greeting in search_term for greeting in greetings):
+        greeting_responses = [
+            "Hello! I'm SECURO, your AI crime investigation assistant for St. Kitts & Nevis. How can I help with your case today?",
+            "Good day, Officer! SECURO reporting for duty. What investigation can I assist you with?",
+            "Greetings! I'm here to help with crime analysis, forensic questions, and case investigations. What do you need?",
+            "Hello there! Ready to assist with your criminal investigation needs. What's the situation?"
+        ]
+        return random.choice(greeting_responses)
+    
+    # Thank you responses
+    if 'thank' in search_term:
+        return "You're welcome! I'm always here to assist law enforcement with investigations. Stay safe out there!"
+    
+    # How are you / status check
+    if any(phrase in search_term for phrase in ['how are you', 'how do you do', 'status', 'online']):
+        return "I'm operating at full capacity! All systems online and ready to assist with crime investigations across St. Kitts & Nevis. How can I help?"
+    
+    # Help requests
+    if any(word in search_term for word in ['help', 'assist', 'support']):
+        return "I can help you with:\n• Crime scene analysis\n• Forensic procedures\n• Legal questions\n• Case investigations\n• Evidence correlation\n• Emergency contacts\n• Criminal law procedures\n\nWhat specific area do you need assistance with?"
+    
+    # Direct question match from database
     for item in crime_database:
         if search_term in item["question"].lower() or item["question"].lower()[:20] in search_term:
-            return item["answer"]
+            return f"📋 **{item['question']}**\n\n{item['answer']}\n\n*Source: St. Kitts & Nevis Crime Database*"
     
-    # Keyword-based search
+    # Keyword-based search with enhanced responses
     keywords = {
-        'victim': ['What services are available for crime victims?', 'What is victim impact statement?'],
-        'witness': ['What is a subpoena?', 'Can I refuse to testify?'],
-        'police': ['What is community policing?', 'What is an arrest warrant?', "What does 'beyond reasonable doubt' mean?"],
-        'forensic': ['How are fingerprints lifted?', 'How is blood spatter analyzed?', 'What is forensic entomology?'],
-        'cyber': ['What is phishing?', 'What is ransomware?'],
-        'legal': ['What is double jeopardy?', 'What is plea bargaining?'],
-        'restraining': ['How do I get a restraining order?'],
-        'cold case': ['What is a cold case?', 'How are cold cases reopened?'],
-        'criminal record': ['How do I check if someone has a criminal record?'],
-        'profiling': ['What is criminal profiling?'],
-        'insanity': ['What is criminal insanity?'],
-        'shield': ['What are shield laws?'],
-        'journalism': ['How do journalists cover crime ethically?'],
-        'white collar': ['What is white collar crime?'],
-        'broken windows': ['What is the broken windows theory?'],
-        'antisocial': ['What is antisocial personality disorder?']
+        'victim': "Victim services in St. Kitts & Nevis include counseling support, financial assistance programs, and victim advocacy groups. The Victim Support Unit can be reached through the main police line at 465-2241. Would you like specific contact information?",
+        'witness': "Witness protection and testimony procedures are crucial for case success. A subpoena is a legal document ordering testimony in court. Witnesses have certain rights and protections under Caribbean law. Need specific witness protocol information?",
+        'police': "Police procedures in St. Kitts & Nevis follow Caribbean Association of Police Chiefs standards. Community policing focuses on building community ties. An arrest warrant requires judicial authorization. What specific police procedure interests you?",
+        'forensic': "Forensic analysis is critical for case resolution. Techniques include fingerprint lifting using powders and chemicals, blood spatter pattern analysis, and forensic entomology for time-of-death estimation. What forensic procedure do you need information on?",
+        'cyber': "Cybercrime is increasing in the Caribbean region. Phishing attacks trick victims into revealing sensitive information, while ransomware blocks data access until payment. Our cybercrime unit works with international partners. Need specific cyber investigation help?",
+        'legal': "Legal procedures include double jeopardy protection (preventing retrial on same charges) and plea bargaining (guilty plea for reduced sentence). St. Kitts & Nevis follows English common law principles. What legal concept can I clarify?",
+        'restraining': "Restraining orders in St. Kitts & Nevis require filing a petition with the court explaining the need for protection. The Family Court handles domestic violence cases. Contact the court registry at the main courthouse in Basseterre for forms and procedures.",
+        'cold case': "Cold cases are unsolved investigations after extended periods. They're reopened through new evidence, DNA technology advances, or fresh witness testimony. Our Cold Case Unit reviews cases systematically. Do you have a specific cold case inquiry?",
+        'criminal record': "Criminal record checks in St. Kitts & Nevis require contacting the Royal Police Force at 465-2241 or using authorized background check services. Different levels of clearance are available for employment, immigration, or legal purposes.",
+        'evidence': "Evidence collection and preservation follows strict protocols. Chain of custody must be maintained, and all evidence must be properly documented, photographed, and stored. Contaminated evidence can compromise entire cases. Need specific evidence handling guidance?",
+        'investigation': "Criminal investigations require systematic approaches: scene security, evidence collection, witness interviews, suspect identification, and case building. Each step must follow proper procedures to ensure court admissibility.",
+        'dna': "DNA analysis is processed through our forensic lab partnerships. Results typically take 2-4 weeks depending on case priority. DNA evidence has helped solve numerous cold cases in the Caribbean region.",
+        'autopsy': "Post-mortem examinations are conducted by qualified pathologists. Autopsy reports determine cause and manner of death, time estimates, and physical evidence. These are crucial for homicide investigations.",
+        'ballistics': "Ballistics analysis examines firearms, ammunition, and gunshot residue. Our lab can match bullets to weapons and determine firing distances. This evidence is vital for shooting investigations.",
+        'surveillance': "Surveillance operations require proper authorization and documentation. CCTV analysis, digital forensics, and monitoring protocols must follow legal guidelines to ensure evidence admissibility."
     }
     
-    for keyword, questions in keywords.items():
+    for keyword, response in keywords.items():
         if keyword in search_term:
-            question = questions[0]
-            for item in crime_database:
-                if item["question"] == question:
-                    return item["answer"]
+            return response
     
-    # Default responses for St. Kitts & Nevis specific queries
-    skn_responses = [
-        "Based on St. Kitts & Nevis criminal patterns, I recommend cross-referencing with the Royal St. Christopher and Nevis Police Force database.",
-        "Crime analysis for the Caribbean region suggests this pattern. Coordinate with the Director of Public Prosecutions office.",
-        "This case shows similarities to recent incidents in Basseterre. Consider interviewing witnesses near Independence Square.",
-        "Forensic protocols for St. Kitts & Nevis require documentation per Caribbean Association of Police Chiefs standards.",
-        "Evidence suggests connection to maritime activities between St. Kitts and Nevis. Contact Coast Guard unit 465-8384.",
-        "Pattern matches recent cases in tourist areas. Recommend liaison with Ministry of National Security.",
-        "This investigation may benefit from coordination with the Nevis Island Administration police division."
+    # Location-specific responses
+    locations = ['basseterre', 'charlestown', 'nevis', 'sandy point', 'frigate bay']
+    if any(location in search_term for location in locations):
+        location_responses = [
+            f"Crime patterns in this area show specific trends. I recommend coordinating with local patrol units and reviewing recent incident reports. The community liaison officer for this district should be contacted for local intelligence.",
+            f"This location has particular security considerations. Tourist areas require special attention to protect visitors and maintain the island's reputation. Coordinate with tourism police and hotel security.",
+            f"Maritime activities in this region require Coast Guard coordination. Drug trafficking and illegal entry are concerns. Contact the Coast Guard at 465-8384 for joint operations."
+        ]
+        return random.choice(location_responses)
+    
+    # Emergency situation detection
+    if any(word in search_term for word in ['emergency', 'urgent', '911', 'help now', 'immediate']):
+        return "🚨 **EMERGENCY PROTOCOL ACTIVATED** 🚨\n\nFor immediate emergencies, call 911 or Police: 465-2241\n\nIf this is an active crime scene:\n1. Secure the area\n2. Preserve evidence\n3. Call for backup\n4. Document everything\n\nI'm here for investigative support, but please ensure immediate safety first!"
+    
+    # General crime investigation responses
+    investigation_responses = [
+        "That's an interesting investigative angle. Based on Caribbean crime patterns, I'd recommend cross-referencing with similar cases in the RCNPF database. What specific evidence are you working with?",
+        "This situation requires careful analysis. Consider interviewing witnesses systematically and preserving all physical evidence. Have you coordinated with the forensic team?",
+        "Crime investigations in St. Kitts & Nevis benefit from community cooperation. Local intelligence and witness testimony are often crucial. What's your current lead?",
+        "That case element suggests multiple investigative paths. Document everything thoroughly and consider both local and regional crime patterns. Need specific procedural guidance?",
+        "Interesting case details. Caribbean criminal networks often span multiple islands. Have you checked with regional law enforcement partners?",
+        "This investigation could benefit from specialized expertise. Consider consulting with our forensic team or requesting assistance from regional crime units. What's your priority focus?",
+        "Based on similar cases in the region, I'd recommend expanding the investigation scope. Cross-border criminal activity is common in the Caribbean. Need coordination assistance?"
     ]
     
-    return random.choice(skn_responses)
+    return random.choice(investigation_responses)
 
 # Initialize session state
 if 'messages' not in st.session_state:
@@ -623,7 +656,7 @@ with col2:
             })
             
             # Generate AI response
-            response = search_crime_database(user_input)
+            response = generate_ai_response(user_input)
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": response,
