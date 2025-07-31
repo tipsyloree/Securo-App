@@ -415,41 +415,44 @@ st.markdown("""
 # CSV data handling
 @st.cache_data
 def load_csv_data():
-    """Load and cache CSV data with better error handling"""
-    csv_filename = "criminal_justice_qa.csv"  # Your correct CSV filename
+    """Load and cache CSV data using a path relative to the script's location."""
+    csv_filename = "criminal_justice_qa.csv"
     
-    # Check multiple possible locations
-    possible_paths = [
-        csv_filename,  # Current directory
-        f"./{csv_filename}",  # Explicit current directory
-        f"App/{csv_filename}",  # In App folder
-        f"../{csv_filename}",  # Parent directory
-        os.path.join(os.getcwd(), csv_filename),  # Full path
-    ]
+    # Get the directory of the currently executing script
+    script_dir = os.path.dirname(__file__)
     
-    for path in possible_paths:
-        try:
-            if os.path.exists(path):
-                df = pd.read_csv(path)
-                st.success(f"✅ Successfully loaded CSV from: {path}")
-                st.info(f"📊 Loaded {len(df)} records with {len(df.columns)} columns")
-                return df, path
-        except Exception as e:
-            continue
+    # Construct the full path to the CSV file
+    csv_path = os.path.join(script_dir, csv_filename)
     
-    # If no file found, show detailed error
-    current_dir = os.getcwd()
-    files_in_dir = os.listdir(current_dir)
-    
-    return None, f"""
-    ❌ Could not find '{csv_filename}' in any of these locations:
-    {chr(10).join(['• ' + path for path in possible_paths])}
-    
-    📂 Current directory: {current_dir}
-    📁 Files found: {', '.join([f for f in files_in_dir if f.endswith('.csv')])}
-    
-    💡 Make sure your CSV file is named exactly 'criminal_justice_qa.csv' and is in the same folder as your app.
-    """
+    try:
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            st.success(f"✅ Successfully loaded CSV from: {csv_path}")
+            st.info(f"📊 Loaded {len(df)} records with {len(df.columns)} columns")
+            return df, csv_path
+        else:
+            # File does not exist at the expected path
+            current_dir = os.getcwd()
+            files_in_script_dir = os.listdir(script_dir)
+            files_in_current_dir = os.listdir(current_dir)
+
+            return None, f"""
+            ❌ Could not find '{csv_filename}'.
+            
+            📂 Expected path: {csv_path}
+            
+            📂 Script directory: {script_dir}
+            📁 Files in script directory: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
+            
+            📂 Current working directory: {current_dir}
+            📁 Files in current directory: {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
+
+            💡 Make sure 'criminal_justice_qa.csv' is in the same folder as your Python script on GitHub and is correctly committed.
+            """
+    except Exception as e:
+        # Handle other potential errors (e.g., read_csv failure)
+        return None, f"❌ An error occurred while loading the CSV: {e}"
+
 
 def search_csv_data(df, query):
     """Search through CSV data for relevant information"""
