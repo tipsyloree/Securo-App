@@ -1,12 +1,7 @@
 streamlit
 pandas
-numpy
 google-generativeai
-matplotlib
-Pillow
 requests
-openpyxl
-xlsxwriter
 plotly
 datetime
 os
@@ -14,4 +9,4 @@ time
 random
 re
 io
-base64
+
