@@ -7,6 +7,4 @@ datetime
 os
 time
 random
-re
-io
 
