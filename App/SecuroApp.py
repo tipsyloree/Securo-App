@@ -673,37 +673,39 @@ for message in st.session_state.messages:
         """, unsafe_allow_html=True)
 
 # Chat input
-col1, col2 = st.columns([5, 1])
-
-with col1:
-    user_input = st.text_input(
-        "Message",
-        placeholder="Ask questions about crime data, investigations, or emergency procedures...",
-        label_visibility="collapsed",
-        key="user_input"
-    )
-
-with col2:
-    if st.button("Send", type="primary"):
-        if user_input:
-            # Add user message
-            st.session_state.messages.append({
-                "role": "user",
-                "content": user_input,
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-            })
+with st.form("chat_form", clear_on_submit=True):
+    col1, col2 = st.columns([5, 1])
+    
+    with col1:
+        user_input = st.text_input(
+            "Message",
+            placeholder="Ask questions about crime data, investigations, or emergency procedures...",
+            label_visibility="collapsed",
+            key="user_input"
+        )
+    
+    with col2:
+        send_button = st.form_submit_button("Send", type="primary")
+    
+    if send_button and user_input:
+        # Add user message
+        st.session_state.messages.append({
+            "role": "user",
+            "content": user_input,
+            "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+        })
+       
+        # Generate response based on CSV data
+        with st.spinner("🔍 Analyzing crime database..."):
+            response = search_csv_data(st.session_state.csv_data, user_input)
            
-            # Generate response based on CSV data
-            with st.spinner("🔍 Analyzing crime database..."):
-                response = search_csv_data(st.session_state.csv_data, user_input)
-               
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response,
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-            })
-           
-            st.rerun()
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": response,
+            "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+        })
+       
+        st.rerun()
 
 # Status bar
 status_message = "CSV Data Ready" if st.session_state.csv_data is not None else "CSV Data Missing"
