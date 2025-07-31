@@ -449,7 +449,7 @@ def generate_ai_response(query):
             return f"📋 **{item['question']}**\n\n{item['answer']}\n\n*Source: St. Kitts & Nevis Crime Database*"
     
     # Keyword-based search with enhanced responses
-    keywords = {
+    crime_keywords = {
         'victim': "Victim services in St. Kitts & Nevis include counseling support, financial assistance programs, and victim advocacy groups. The Victim Support Unit can be reached through the main police line at 465-2241. Would you like specific contact information?",
         'witness': "Witness protection and testimony procedures are crucial for case success. A subpoena is a legal document ordering testimony in court. Witnesses have certain rights and protections under Caribbean law. Need specific witness protocol information?",
         'police': "Police procedures in St. Kitts & Nevis follow Caribbean Association of Police Chiefs standards. Community policing focuses on building community ties. An arrest warrant requires judicial authorization. What specific police procedure interests you?",
@@ -464,10 +464,28 @@ def generate_ai_response(query):
         'dna': "DNA analysis is processed through our forensic lab partnerships. Results typically take 2-4 weeks depending on case priority. DNA evidence has helped solve numerous cold cases in the Caribbean region.",
         'autopsy': "Post-mortem examinations are conducted by qualified pathologists. Autopsy reports determine cause and manner of death, time estimates, and physical evidence. These are crucial for homicide investigations.",
         'ballistics': "Ballistics analysis examines firearms, ammunition, and gunshot residue. Our lab can match bullets to weapons and determine firing distances. This evidence is vital for shooting investigations.",
-        'surveillance': "Surveillance operations require proper authorization and documentation. CCTV analysis, digital forensics, and monitoring protocols must follow legal guidelines to ensure evidence admissibility."
+        'surveillance': "Surveillance operations require proper authorization and documentation. CCTV analysis, digital forensics, and monitoring protocols must follow legal guidelines to ensure evidence admissibility.",
+        'shield law': "Shield laws protect journalists from revealing confidential sources. Laws protecting journalists from revealing confidential sources.",
+        'subpoena': "A subpoena is a legal document ordering someone to testify in court.",
+        'double jeopardy': "Double jeopardy is a procedural defense that prevents an accused person from being tried again on the same charges.",
+        'plea bargain': "Plea bargaining is an agreement where the defendant pleads guilty for a reduced sentence.",
+        'phishing': "Phishing is a cyber attack that tricks people into giving sensitive information.",
+        'ransomware': "Ransomware is malicious software that blocks access to data until a ransom is paid.",
+        'fingerprint': "Fingerprints are lifted using powders, chemicals, or alternate light sources to make them visible.",
+        'blood spatter': "Blood spatter is analyzed by examining patterns to reconstruct a crime scene.",
+        'profiling': "Criminal profiling involves inferring characteristics of an offender based on crime scene evidence.",
+        'insanity': "Criminal insanity is a legal term meaning the defendant was unable to understand their actions.",
+        'entomology': "Forensic entomology is the study of insects to estimate time of death.",
+        'community policing': "Community policing is a strategy that focuses on building ties and working closely with communities.",
+        'arrest warrant': "An arrest warrant is a document issued by a judge authorizing the arrest of a person.",
+        'reasonable doubt': "Beyond reasonable doubt is the standard of evidence required to convict in a criminal trial.",
+        'white collar': "White collar crime is financially motivated, nonviolent crime committed by businesses and government professionals.",
+        'broken windows': "The broken windows theory suggests that visible signs of disorder lead to more crime.",
+        'antisocial': "Antisocial personality disorder is a mental condition linked to disregard for others' rights, often found in criminals.",
+        'victim impact': "A victim impact statement is a written or oral statement given at sentencing describing the crime's impact."
     }
     
-    for keyword, response in keywords.items():
+    for keyword, response in crime_keywords.items():
         if keyword in search_term:
             return response
     
@@ -569,14 +587,21 @@ if st.session_state.sidebar_state == "expanded":
             {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
         ]
         
-        for contact in emergency_contacts:
-            if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": f"🚨 Emergency contact information accessed: {contact['name']} - {contact['number']}. Contact has been logged for case documentation.",
-                    "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-                })
-                st.rerun()
+        # Emergency contacts dropdown
+        selected_contact = st.selectbox(
+            "Select Emergency Contact:",
+            options=["Select a contact..."] + [f"{contact['name']} - {contact['number']}" for contact in emergency_contacts],
+            key="emergency_contact_dropdown"
+        )
+        
+        if selected_contact != "Select a contact...":
+            contact_info = selected_contact
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": f"🚨 Emergency contact information accessed: {contact_info}. Contact has been logged for case documentation.",
+                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+            })
+            st.rerun()
         
         st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
         
