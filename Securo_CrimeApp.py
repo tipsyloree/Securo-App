@@ -113,11 +113,23 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace;
     }
     
-    /* Sidebar styling */
-    .css-1d391kg, .css-1cypcdb {
-        background: rgba(40, 20, 20, 0.8);
-        border-right: 1px solid rgba(255, 68, 68, 0.2);
-        backdrop-filter: blur(10px);
+    /* Sidebar styling - Multiple selectors for different Streamlit versions */
+    .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr, 
+    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div,
+    .css-1aumxhk, .css-hxt7ib, .css-17lntkn {
+        background: rgba(40, 20, 20, 0.9) !important;
+        border-right: 1px solid rgba(255, 68, 68, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    /* Sidebar header styling */
+    section[data-testid="stSidebar"] .css-10trblm {
+        color: #ff4444 !important;
+    }
+    
+    /* Sidebar content background */
+    .css-1cypcdb .css-17lntkn {
+        background: transparent !important;
     }
     
     /* Emergency contacts styling */
@@ -152,15 +164,48 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace;
     }
     
-    /* Crime map styling */
+    /* Sidebar toggle button */
+    .sidebar-toggle {
+        position: fixed;
+        top: 70px;
+        left: 20px;
+        z-index: 999;
+        background: linear-gradient(135deg, #ff4444, #cc3333);
+        border: none;
+        border-radius: 8px;
+        color: white;
+        padding: 10px 15px;
+        cursor: pointer;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.8rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
+    }
+    
+    .sidebar-toggle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(255, 68, 68, 0.5);
+    }
+    
+    /* Map container with better styling */
     .map-container {
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.8);
         border-radius: 10px;
-        padding: 15px;
-        border: 1px solid rgba(255, 68, 68, 0.2);
+        padding: 0;
+        border: 1px solid rgba(255, 68, 68, 0.3);
         position: relative;
-        height: 200px;
+        height: 300px;
         overflow: hidden;
+        margin-bottom: 15px;
+    }
+    
+    /* Map iframe styling */
+    .crime-map iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+        border-radius: 10px;
+        filter: invert(0.9) hue-rotate(180deg) saturate(1.2);
     }
 
     .map-placeholder {
@@ -430,15 +475,29 @@ if 'messages' not in st.session_state:
         "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
     })
 
-# Header
-st.markdown("""
-<div class="main-header">
-    <div class="particles" id="particles"></div>
-    <h1>SECURO</h1>
-    <div class="tagline">AI Crime Investigation Assistant</div>
-    <div class="location">🇰🇳 St. Kitts & Nevis Law Enforcement</div>
-</div>
-""", unsafe_allow_html=True)
+if 'sidebar_state' not in st.session_state:
+    st.session_state.sidebar_state = "expanded"
+
+# Header with sidebar toggle
+col1, col2 = st.columns([1, 10])
+
+with col1:
+    if st.button("🔧", help="Toggle Sidebar", key="sidebar_toggle"):
+        if st.session_state.sidebar_state == "expanded":
+            st.session_state.sidebar_state = "collapsed"
+        else:
+            st.session_state.sidebar_state = "expanded"
+        st.rerun()
+
+with col2:
+    st.markdown("""
+    <div class="main-header">
+        <div class="particles" id="particles"></div>
+        <h1>SECURO</h1>
+        <div class="tagline">AI Crime Investigation Assistant</div>
+        <div class="location">🇰🇳 St. Kitts & Nevis Law Enforcement</div>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Particles animation script
 st.markdown("""
@@ -462,58 +521,65 @@ createParticles();
 </script>
 """, unsafe_allow_html=True)
 
-# Sidebar
-with st.sidebar:
-    st.markdown('<div class="section-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
-    
-    emergency_contacts = [
-        {"name": "Emergency Hotline", "number": "911", "type": "police"},
-        {"name": "Police Department", "number": "465-2241", "type": "police"},
-        {"name": "Hospital", "number": "465-2551", "type": "hospital"},
-        {"name": "Fire Department", "number": "465-2515 / 465-7167", "type": "fire"},
-        {"name": "Coast Guard", "number": "465-8384 / 466-9280", "type": "legal"},
-        {"name": "Red Cross", "number": "465-2584", "type": "forensic"},
-        {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
-    ]
-    
-    for contact in emergency_contacts:
-        if st.button(f"{contact['name']}\n{contact['number']}", key=contact['name']):
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": f"Emergency contact information accessed: {contact['name']} - {contact['number']}. Contact has been logged for case documentation.",
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-            })
-            st.rerun()
-    
-    st.markdown('<div class="section-header">📍 Crime Hotspots</div>', unsafe_allow_html=True)
-    
-    st.markdown("""
-    <div class="map-container">
-        <div class="map-placeholder">
-            St. Kitts & Nevis Crime Map
-            <div class="hotspot hotspot-1" title="Basseterre Downtown - High Crime Area"></div>
-            <div class="hotspot hotspot-2" title="Sandy Point - Medium Risk"></div>
-            <div class="hotspot hotspot-3" title="Charlestown (Nevis) - Active Cases"></div>
-            <div class="hotspot hotspot-4" title="Frigate Bay - Tourist Area Incidents"></div>
+# Sidebar (only show if expanded)
+if st.session_state.sidebar_state == "expanded":
+    with st.sidebar:
+        st.markdown('<div class="section-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
+        
+        emergency_contacts = [
+            {"name": "Emergency Hotline", "number": "911", "type": "police"},
+            {"name": "Police Department", "number": "465-2241", "type": "police"},
+            {"name": "Hospital", "number": "465-2551", "type": "hospital"},
+            {"name": "Fire Department", "number": "465-2515 / 465-7167", "type": "fire"},
+            {"name": "Coast Guard", "number": "465-8384 / 466-9280", "type": "legal"},
+            {"name": "Red Cross", "number": "465-2584", "type": "forensic"},
+            {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
+        ]
+        
+        for contact in emergency_contacts:
+            if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": f"🚨 Emergency contact information accessed: {contact['name']} - {contact['number']}. Contact has been logged for case documentation.",
+                    "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+                })
+                st.rerun()
+        
+        st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
+        
+        # Real Google Maps embed for St. Kitts & Nevis
+        st.markdown("""
+        <div class="map-container crime-map">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d243.44896!2d-62.7261!3d17.3026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c1a602b153c94b5%3A0x8e3f7a7c7b1b9f5e!2sBasseterre%2C%20St%20Kitts%20%26%20Nevis!5e1!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus&maptype=satellite"
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    hotspots = [
-        "Basseterre Downtown - High Crime Area",
-        "Sandy Point - Medium Risk", 
-        "Charlestown (Nevis) - Active Cases",
-        "Frigate Bay - Tourist Area Incidents"
-    ]
-    
-    for hotspot in hotspots:
-        if st.button(hotspot, key=f"hotspot_{hotspot}"):
-            st.session_state.messages.append({
-                "role": "assistant", 
-                "content": f"Crime hotspot analysis: {hotspot}. Recommend increased patrol presence and witness canvassing in this area.",
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-            })
-            st.rerun()
+        """, unsafe_allow_html=True)
+        
+        # Interactive hotspot buttons
+        st.markdown('<div class="section-header">🎯 Active Crime Zones</div>', unsafe_allow_html=True)
+        
+        hotspots = [
+            {"name": "Basseterre Downtown", "level": "🔴 High Risk", "coords": "17.3026, -62.7261"},
+            {"name": "Sandy Point", "level": "🟡 Medium Risk", "coords": "17.3580, -62.8419"}, 
+            {"name": "Charlestown (Nevis)", "level": "🟠 Active Cases", "coords": "17.1373, -62.6131"},
+            {"name": "Frigate Bay", "level": "🟡 Tourist Area", "coords": "17.2742, -62.6897"}
+        ]
+        
+        for hotspot in hotspots:
+            if st.button(f"{hotspot['level']} {hotspot['name']}", key=f"hotspot_{hotspot['name']}"):
+                st.session_state.messages.append({
+                    "role": "assistant", 
+                    "content": f"📍 Crime hotspot analysis: {hotspot['name']} ({hotspot['coords']})\n\n{hotspot['level']} - Recommend increased patrol presence and witness canvassing in this area. Coordinating with local units for enhanced surveillance.",
+                    "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+                })
+                st.rerun()
+else:
+    # Show collapsed sidebar info in main area if needed
+    pass
 
 # Main chat area
 st.markdown('<div class="section-header">💬 Crime Investigation Chat</div>', unsafe_allow_html=True)
