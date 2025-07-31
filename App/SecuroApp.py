@@ -415,43 +415,30 @@ st.markdown("""
 # CSV data handling
 @st.cache_data
 def load_csv_data():
-    """Load and cache CSV data using a path relative to the script's location."""
     csv_filename = "criminal_justice_qa.csv"
-    
-    # Get the directory of the currently executing script
     script_dir = os.path.dirname(__file__)
-    
-    # Construct the full path to the CSV file
     csv_path = os.path.join(script_dir, csv_filename)
-    
     try:
         if os.path.exists(csv_path):
             df = pd.read_csv(csv_path)
-            st.success(f"✅ Successfully loaded CSV from: {csv_path}")
-            st.info(f"📊 Loaded {len(df)} records with {len(df.columns)} columns")
+            st.success(f"successfully load {csv_path}")
+            st.info(f"loaded {len(df)} records with {len(df.columns)} columns")
             return df, csv_path
         else:
-            # File does not exist at the expected path
             current_dir = os.getcwd()
             files_in_script_dir = os.listdir(script_dir)
             files_in_current_dir = os.listdir(current_dir)
-
             return None, f"""
-            ❌ Could not find '{csv_filename}'.
-            
-            📂 Expected path: {csv_path}
-            
-            📂 Script directory: {script_dir}
-            📁 Files in script directory: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
-            
-            📂 Current working directory: {current_dir}
-            📁 Files in current directory: {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
-
-            💡 Make sure 'criminal_justice_qa.csv' is in the same folder as your Python script on GitHub and is correctly committed.
+            could not find '{csv_filename}'.
+            expected {csv_path}
+            dir {script_dir}
+            files: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
+            current dir {current_dir}
+            files in current directory {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
+            its not in the same folder chill
             """
     except Exception as e:
-        # Handle other potential errors (e.g., read_csv failure)
-        return None, f"❌ An error occurred while loading the CSV: {e}"
+        return None, f" im not telling u what happened: {e}"
 
 
 def search_csv_data(df, query):
