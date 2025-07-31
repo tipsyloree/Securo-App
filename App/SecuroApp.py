@@ -525,7 +525,7 @@ def search_csv_data(df, query):
                 continue
    
     if results:
-        return f"🔍 **Search Results for '{query}':**\n\n" + "\n\n---\n\n".join(results[:3])
+        return f"🔍 Search Results for '{query}':\n\n" + "\n\n---\n\n".join(results[:3])
     else:
         return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
 
@@ -535,7 +535,7 @@ if 'messages' not in st.session_state:
     # Add initial bot message
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "🚔 **Welcome to SECURO** - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n\n📊 Loading crime database... Please wait while I check for your data file.",
         "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
     })
 
