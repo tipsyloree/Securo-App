@@ -49,7 +49,7 @@ try:
         st.session_state.ai_status = "✅ AI Ready (Secrets)"
     else:
         st.session_state.ai_enabled = False
-        st.session_state.ai_status = f"⚠️ AI Offline - No API key found (Secrets: {has_secrets}, Env: {has_env})"
+        st.session_state.ai_status = f"⚠️ AI Offline - No API key found (Secrets: {has_secrets})"
         model = None
 except Exception as e:
     st.session_state.ai_enabled = False
