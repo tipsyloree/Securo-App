@@ -6,6 +6,12 @@ import pandas as pd
 import os
 import google.generativeai as genai
 import re
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import seaborn as sns
+import numpy as np
+from io import BytesIO
+import base64
 
 # System Prompt for SECURO Crime Mitigation Chatbot
 system_prompt = """
@@ -507,7 +513,273 @@ def load_csv_data():
         return None, f"Error loading CSV: {e}"
 
 
-def get_ai_response(user_input, csv_results):
+def generate_sample_crime_data():
+    """Generate realistic sample crime data for St. Kitts & Nevis for demonstration"""
+    np.random.seed(42)  # For consistent results
+    
+    years = list(range(2019, 2025))
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    
+    crime_types = [
+        'Theft', 'Burglary', 'Drug Offenses', 'Assault', 
+        'Domestic Violence', 'Fraud', 'Vandalism', 'Robbery'
+    ]
+    
+    locations = [
+        'Basseterre', 'Sandy Point', 'Dieppe Bay', 'Old Road', 
+        'Charlestown (Nevis)', 'Gingerland', 'Frigate Bay', 'Cayon'
+    ]
+    
+    data = []
+    for year in years:
+        base_crimes = 120 if year < 2020 else (100 if year < 2022 else 110)  # COVID impact
+        for month in months:
+            for crime_type in crime_types:
+                for location in locations:
+                    # Add some seasonality and randomness
+                    seasonal_factor = 1.2 if month in ['Dec', 'Jan', 'Jul', 'Aug'] else 1.0  # Tourist season
+                    crime_count = max(0, int(np.random.poisson(base_crimes * seasonal_factor * 0.1)))
+                    
+                    if crime_count > 0:
+                        data.append({
+                            'Year': year,
+                            'Month': month,
+                            'Crime_Type': crime_type,
+                            'Location': location,
+                            'Count': crime_count,
+                            'Date': f"{year}-{months.index(month)+1:02d}-01"
+                        })
+    
+    return pd.DataFrame(data)
+
+def create_crime_charts(df, chart_type="overview", specific_year=None, crime_type=None):
+    """Create various crime statistics charts for St. Kitts & Nevis"""
+    
+    # Set matplotlib style for dark theme
+    plt.style.use('dark_background')
+    sns.set_palette("husl")
+    
+    if chart_type == "yearly_trend":
+        # Yearly crime trends
+        fig, ax = plt.subplots(figsize=(12, 6))
+        yearly_data = df.groupby('Year')['Count'].sum().reset_index()
+        
+        ax.plot(yearly_data['Year'], yearly_data['Count'], 
+                marker='o', linewidth=3, markersize=8, color='#ff4444')
+        ax.fill_between(yearly_data['Year'], yearly_data['Count'], 
+                       alpha=0.3, color='#ff4444')
+        
+        ax.set_title('St. Kitts & Nevis - Crime Trends by Year', 
+                    fontsize=16, color='white', pad=20)
+        ax.set_xlabel('Year', fontsize=12, color='white')
+        ax.set_ylabel('Total Crime Count', fontsize=12, color='white')
+        ax.grid(True, alpha=0.3)
+        
+        # Add annotations
+        for i, (year, count) in enumerate(zip(yearly_data['Year'], yearly_data['Count'])):
+            ax.annotate(f'{count}', (year, count), 
+                       textcoords="offset points", xytext=(0,10), 
+                       ha='center', color='white', fontweight='bold')
+        
+        plt.tight_layout()
+        return fig
+    
+    elif chart_type == "crime_types":
+        # Crime types distribution
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
+        
+        # Bar chart
+        crime_counts = df.groupby('Crime_Type')['Count'].sum().sort_values(ascending=False)
+        bars = ax1.bar(range(len(crime_counts)), crime_counts.values, 
+                      color=['#ff4444', '#ff6666', '#ff8888', '#ffaaaa', 
+                             '#cc3333', '#aa2222', '#881111', '#660000'])
+        
+        ax1.set_title('Crime Types Distribution', fontsize=14, color='white')
+        ax1.set_xlabel('Crime Type', fontsize=12, color='white')
+        ax1.set_ylabel('Total Count', fontsize=12, color='white')
+        ax1.set_xticks(range(len(crime_counts)))
+        ax1.set_xticklabels(crime_counts.index, rotation=45, ha='right')
+        ax1.grid(True, alpha=0.3)
+        
+        # Add value labels on bars
+        for bar, value in zip(bars, crime_counts.values):
+            ax1.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 5,
+                    f'{value}', ha='center', va='bottom', color='white', fontweight='bold')
+        
+        # Pie chart
+        ax2.pie(crime_counts.values, labels=crime_counts.index, autopct='%1.1f%%',
+               colors=['#ff4444', '#ff6666', '#ff8888', '#ffaaaa', 
+                      '#cc3333', '#aa2222', '#881111', '#660000'])
+        ax2.set_title('Crime Types Percentage', fontsize=14, color='white')
+        
+        plt.tight_layout()
+        return fig
+    
+    elif chart_type == "locations":
+        # Crime by location
+        fig, ax = plt.subplots(figsize=(12, 8))
+        location_counts = df.groupby('Location')['Count'].sum().sort_values(ascending=True)
+        
+        bars = ax.barh(range(len(location_counts)), location_counts.values, 
+                      color='#ff4444', alpha=0.8)
+        
+        ax.set_title('Crime Distribution by Location in St. Kitts & Nevis', 
+                    fontsize=16, color='white', pad=20)
+        ax.set_xlabel('Total Crime Count', fontsize=12, color='white')
+        ax.set_ylabel('Location', fontsize=12, color='white')
+        ax.set_yticks(range(len(location_counts)))
+        ax.set_yticklabels(location_counts.index)
+        ax.grid(True, alpha=0.3, axis='x')
+        
+        # Add value labels
+        for i, (bar, value) in enumerate(zip(bars, location_counts.values)):
+            ax.text(value + 5, i, f'{value}', 
+                   va='center', ha='left', color='white', fontweight='bold')
+        
+        plt.tight_layout()
+        return fig
+    
+    elif chart_type == "monthly_pattern":
+        # Monthly crime patterns
+        fig, ax = plt.subplots(figsize=(12, 6))
+        
+        # Define month order
+        month_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        
+        monthly_data = df.groupby('Month')['Count'].sum().reindex(month_order, fill_value=0)
+        
+        bars = ax.bar(monthly_data.index, monthly_data.values, 
+                     color='#ff4444', alpha=0.8, edgecolor='white', linewidth=1)
+        
+        ax.set_title('Seasonal Crime Patterns in St. Kitts & Nevis', 
+                    fontsize=16, color='white', pad=20)
+        ax.set_xlabel('Month', fontsize=12, color='white')
+        ax.set_ylabel('Average Crime Count', fontsize=12, color='white')
+        ax.grid(True, alpha=0.3, axis='y')
+        
+        # Highlight tourist season
+        tourist_months = ['Dec', 'Jan', 'Jul', 'Aug']
+        for i, month in enumerate(monthly_data.index):
+            if month in tourist_months:
+                bars[i].set_color('#ffaa44')
+                bars[i].set_alpha(0.9)
+        
+        # Add value labels
+        for bar, value in zip(bars, monthly_data.values):
+            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2,
+                   f'{value}', ha='center', va='bottom', color='white', fontweight='bold')
+        
+        # Add legend
+        from matplotlib.patches import Patch
+        legend_elements = [Patch(facecolor='#ff4444', label='Regular Season'),
+                          Patch(facecolor='#ffaa44', label='Tourist Season')]
+        ax.legend(handles=legend_elements, loc='upper right')
+        
+        plt.tight_layout()
+        return fig
+    
+    elif chart_type == "heatmap":
+        # Crime heatmap by year and month
+        fig, ax = plt.subplots(figsize=(12, 8))
+        
+        # Create pivot table
+        pivot_data = df.pivot_table(values='Count', index='Month', columns='Year', 
+                                   aggfunc='sum', fill_value=0)
+        
+        # Reorder months
+        month_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        pivot_data = pivot_data.reindex(month_order)
+        
+        sns.heatmap(pivot_data, annot=True, fmt='d', cmap='Reds', 
+                   cbar_kws={'label': 'Crime Count'}, ax=ax)
+        
+        ax.set_title('Crime Intensity Heatmap - St. Kitts & Nevis', 
+                    fontsize=16, color='white', pad=20)
+        ax.set_xlabel('Year', fontsize=12, color='white')
+        ax.set_ylabel('Month', fontsize=12, color='white')
+        
+        plt.tight_layout()
+        return fig
+    
+    else:  # overview
+        # Overview dashboard
+        fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 12))
+        
+        # 1. Yearly trends
+        yearly_data = df.groupby('Year')['Count'].sum()
+        ax1.plot(yearly_data.index, yearly_data.values, 
+                marker='o', linewidth=3, markersize=6, color='#ff4444')
+        ax1.set_title('Yearly Crime Trends', fontsize=12, color='white')
+        ax1.grid(True, alpha=0.3)
+        
+        # 2. Top crime types
+        top_crimes = df.groupby('Crime_Type')['Count'].sum().nlargest(5)
+        ax2.bar(range(len(top_crimes)), top_crimes.values, color='#ff4444', alpha=0.8)
+        ax2.set_title('Top 5 Crime Types', fontsize=12, color='white')
+        ax2.set_xticks(range(len(top_crimes)))
+        ax2.set_xticklabels(top_crimes.index, rotation=45, ha='right')
+        
+        # 3. Location distribution
+        top_locations = df.groupby('Location')['Count'].sum().nlargest(5)
+        ax3.barh(range(len(top_locations)), top_locations.values, color='#ff4444', alpha=0.8)
+        ax3.set_title('Top 5 Crime Locations', fontsize=12, color='white')
+        ax3.set_yticks(range(len(top_locations)))
+        ax3.set_yticklabels(top_locations.index)
+        
+        # 4. Monthly pattern
+        month_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
+                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        monthly_avg = df.groupby('Month')['Count'].mean().reindex(month_order, fill_value=0)
+        ax4.bar(monthly_avg.index, monthly_avg.values, color='#ff4444', alpha=0.8)
+        ax4.set_title('Average Monthly Crime Pattern', fontsize=12, color='white')
+        ax4.tick_params(axis='x', rotation=45)
+        
+        plt.suptitle('St. Kitts & Nevis Crime Statistics Overview', 
+                    fontsize=16, color='white', y=0.98)
+        plt.tight_layout()
+        return fig
+
+def chart_to_base64(fig):
+    """Convert matplotlib figure to base64 string for embedding"""
+    buffer = BytesIO()
+    fig.savefig(buffer, format='png', facecolor='#0a0a0a', 
+                edgecolor='none', bbox_inches='tight', dpi=150)
+    buffer.seek(0)
+    img_str = base64.b64encode(buffer.getvalue()).decode()
+    plt.close(fig)
+    return img_str
+
+def detect_chart_request(user_input):
+    """Detect if user is asking for charts/statistics and what type"""
+    input_lower = user_input.lower()
+    
+    chart_keywords = ['chart', 'graph', 'plot', 'statistics', 'stats', 'trend', 
+                     'data', 'visual', 'show me', 'display', 'analysis']
+    
+    year_keywords = ['year', 'yearly', 'annual', 'over time', 'trend']
+    crime_type_keywords = ['crime type', 'types of crime', 'categories']
+    location_keywords = ['location', 'area', 'place', 'where', 'geography']
+    monthly_keywords = ['month', 'monthly', 'seasonal', 'season']
+    heatmap_keywords = ['heatmap', 'heat map', 'intensity']
+    
+    if any(keyword in input_lower for keyword in chart_keywords):
+        if any(keyword in input_lower for keyword in year_keywords):
+            return "yearly_trend"
+        elif any(keyword in input_lower for keyword in crime_type_keywords):
+            return "crime_types"
+        elif any(keyword in input_lower for keyword in location_keywords):
+            return "locations"
+        elif any(keyword in input_lower for keyword in monthly_keywords):
+            return "monthly_pattern"
+        elif any(keyword in input_lower for keyword in heatmap_keywords):
+            return "heatmap"
+        else:
+            return "overview"
+    
+    return None
     """Generate AI response using the system prompt and context"""
     if not st.session_state.get('ai_enabled', False) or model is None:
         return csv_results  # Fallback to CSV search results
