@@ -40,7 +40,6 @@ Your responses should reflect an understanding of criminology, public safety, an
 try:
     # Debug: Check what's available
     has_secrets = "GOOGLE_API_KEY" in st.secrets
-    has_env = "GOOGLE_API_KEY" in os.environ
     
     # Try to get API key from Streamlit secrets first
     if has_secrets:
@@ -48,12 +47,6 @@ try:
         model = genai.GenerativeModel('gemini-1.5-pro')
         st.session_state.ai_enabled = True
         st.session_state.ai_status = "✅ AI Ready (Secrets)"
-    # Fallback to environment variable
-    elif has_env:
-        genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-        model = genai.GenerativeModel('gemini-1.5-pro')
-        st.session_state.ai_enabled = True
-        st.session_state.ai_status = "✅ AI Ready (Environment)"
     else:
         st.session_state.ai_enabled = False
         st.session_state.ai_status = f"⚠️ AI Offline - No API key found (Secrets: {has_secrets}, Env: {has_env})"
