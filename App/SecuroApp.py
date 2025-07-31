@@ -3,7 +3,9 @@ import time
 import datetime
 import random
 import pandas as pd
-import google.generativeai as genai
+import os
+# Commented out AI model imports since you don't have API key configured
+# import google.generativeai as genai
 
 # Initialize the AI model (API key should be set via environment variable or Streamlit secrets)
 # genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])  # Uncomment when you have API key configured
@@ -390,28 +392,69 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace;
         font-weight: 500;
     }
+
+    .file-status {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 68, 68, 0.3);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .file-found {
+        color: #4ade80;
+    }
+
+    .file-missing {
+        color: #ff4444;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 # CSV data handling
 @st.cache_data
 def load_csv_data():
-    """Load and cache CSV data"""
-    csv_filename = "SecuroCrimeApp.csv"  # Your CSV filename
-    try:
-        df = pd.read_csv(csv_filename)
-        return df
-    except FileNotFoundError:
-        st.error(f"❌ CSV file '{csv_filename}' not found. Please make sure it's in the same folder as this app.")
-        return None
-    except Exception as e:
-        st.error(f"❌ Error loading CSV: {str(e)}")
-        return None
+    """Load and cache CSV data with better error handling"""
+    csv_filename = "criminal_justice_qa.csv"  # Your correct CSV filename
+    
+    # Check multiple possible locations
+    possible_paths = [
+        csv_filename,  # Current directory
+        f"./{csv_filename}",  # Explicit current directory
+        f"App/{csv_filename}",  # In App folder
+        f"../{csv_filename}",  # Parent directory
+        os.path.join(os.getcwd(), csv_filename),  # Full path
+    ]
+    
+    for path in possible_paths:
+        try:
+            if os.path.exists(path):
+                df = pd.read_csv(path)
+                st.success(f"✅ Successfully loaded CSV from: {path}")
+                st.info(f"📊 Loaded {len(df)} records with {len(df.columns)} columns")
+                return df, path
+        except Exception as e:
+            continue
+    
+    # If no file found, show detailed error
+    current_dir = os.getcwd()
+    files_in_dir = os.listdir(current_dir)
+    
+    return None, f"""
+    ❌ Could not find '{csv_filename}' in any of these locations:
+    {chr(10).join(['• ' + path for path in possible_paths])}
+    
+    📂 Current directory: {current_dir}
+    📁 Files found: {', '.join([f for f in files_in_dir if f.endswith('.csv')])}
+    
+    💡 Make sure your CSV file is named exactly 'criminal_justice_qa.csv' and is in the same folder as your app.
+    """
 
 def search_csv_data(df, query):
     """Search through CSV data for relevant information"""
-    if df is None or df.empty:
-        return "No CSV data loaded. Please upload a CSV file to search through crime data."
+    if df is None:
+        return "❌ No CSV data loaded. Please make sure 'criminal_justice_qa.csv' is in the correct location."
    
     search_term = query.lower()
     results = []
@@ -419,17 +462,21 @@ def search_csv_data(df, query):
     # Search through all text columns
     for column in df.columns:
         if df[column].dtype == 'object':  # Text columns
-            mask = df[column].astype(str).str.lower().str.contains(search_term, na=False)
-            matching_rows = df[mask]
-           
-            if not matching_rows.empty:
-                for _, row in matching_rows.iterrows():
-                    results.append(f"Found in {column}: {row.to_dict()}")
+            try:
+                mask = df[column].astype(str).str.lower().str.contains(search_term, na=False)
+                matching_rows = df[mask]
+               
+                if not matching_rows.empty:
+                    for _, row in matching_rows.head(2).iterrows():  # Limit to 2 results per column
+                        result_dict = {k: v for k, v in row.to_dict().items() if pd.notna(v)}
+                        results.append(f"**Found in {column}:**\n{result_dict}")
+            except Exception as e:
+                continue
    
     if results:
-        return "\n\n".join(results[:3])  # Return top 3 results
+        return f"🔍 **Search Results for '{query}':**\n\n" + "\n\n---\n\n".join(results[:3])
     else:
-        return f"No matches found for '{query}' in the uploaded crime data. Try different search terms."
+        return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
 
 # Initialize session state
 if 'messages' not in st.session_state:
@@ -437,7 +484,7 @@ if 'messages' not in st.session_state:
     # Add initial bot message
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "Welcome to SECURO, your AI crime investigation assistant for St. Kitts & Nevis law enforcement.\n\nI'm here to assist criminologists, police officers, forensic experts, and autopsy professionals with case analysis, evidence correlation, and investigative insights.\n\nPlease upload a CSV file with crime data to get started, then ask me questions about the data.\n\nHow can I assist with your investigation today?",
+        "content": "🚔 **Welcome to SECURO** - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n\n📊 Loading crime database... Please wait while I check for your data file.",
         "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
     })
 
@@ -446,6 +493,9 @@ if 'sidebar_state' not in st.session_state:
 
 if 'csv_data' not in st.session_state:
     st.session_state.csv_data = None
+
+if 'csv_loaded' not in st.session_state:
+    st.session_state.csv_loaded = False
 
 # Header with sidebar toggle
 col1, col2 = st.columns([1, 10])
@@ -490,20 +540,40 @@ createParticles();
 </script>
 """, unsafe_allow_html=True)
 
-# Load CSV data automatically
-st.markdown('<div class="section-header">📊 Crime Data Status</div>', unsafe_allow_html=True)
+# Load CSV data with better error handling
+st.markdown('<div class="section-header">📊 Crime Database Status</div>', unsafe_allow_html=True)
 
-# Auto-load CSV data
-csv_filename = "criminal_justice_qa.csv"  # ← PUT YOUR CSV FILENAME HERE!
+# Load CSV only once
+if not st.session_state.csv_loaded:
+    with st.spinner("🔍 Searching for crime database..."):
+        csv_data, status_message = load_csv_data()
+        st.session_state.csv_data = csv_data
+        st.session_state.csv_loaded = True
+        
+        if csv_data is not None:
+            st.markdown(f'<div class="file-status file-found">{status_message}</div>', unsafe_allow_html=True)
+            
+            # Add success message to chat
+            st.session_state.messages.append({
+                "role": "assistant", 
+                "content": f"✅ **Crime database loaded successfully!**\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.",
+                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+            })
+        else:
+            st.markdown(f'<div class="file-status file-missing">{status_message}</div>', unsafe_allow_html=True)
+            
+            # Add error message to chat
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance and emergency contacts.",
+                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+            })
 
-# STEP 1: Load your CSV with PANDAS 🐼
-print("\n STEP 1: Loading your knowledge base...")
-df = pd.read_csv(csv_filename)
-print(f"✅ Loaded {len(df)} knowledge entries!")
-
-# Show what we loaded
-print(f"\n📊 Your data:")
-display(df.head())
+# Show current status
+if st.session_state.csv_data is not None:
+    st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded")
+else:
+    st.error("❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory")
 
 # Sidebar (only show if expanded)
 if st.session_state.sidebar_state == "expanded":
@@ -524,7 +594,7 @@ if st.session_state.sidebar_state == "expanded":
             if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
                 st.session_state.messages.append({
                     "role": "assistant",
-                    "content": f"🚨 Emergency contact information accessed: {contact['name']} - {contact['number']}. Contact has been logged for case documentation.",
+                    "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation. Emergency services are standing by for immediate response.",
                     "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
                 })
                 st.rerun()
@@ -557,7 +627,7 @@ if st.session_state.sidebar_state == "expanded":
             if st.button(f"{hotspot['level']} {hotspot['name']}", key=f"hotspot_{hotspot['name']}"):
                 st.session_state.messages.append({
                     "role": "assistant",
-                    "content": f"📍 Crime hotspot analysis: {hotspot['name']} ({hotspot['coords']})\n\n{hotspot['level']} - Recommend increased patrol presence and witness canvassing in this area. Coordinating with local units for enhanced surveillance.",
+                    "content": f"📍 **Crime Hotspot Analysis:**\n\n🎯 **Location:** {hotspot['name']}\n📊 **Coordinates:** {hotspot['coords']}\n⚠️ **Status:** {hotspot['level']}\n\n🚔 **Recommendation:** Increased patrol presence and witness canvassing recommended. Coordinating with local units for enhanced surveillance in this area.",
                     "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
                 })
                 st.rerun()
@@ -588,7 +658,7 @@ col1, col2 = st.columns([5, 1])
 with col1:
     user_input = st.text_input(
         "Message",
-        placeholder="Ask questions about the uploaded crime data...",
+        placeholder="Ask questions about crime data, investigations, or emergency procedures...",
         label_visibility="collapsed",
         key="user_input"
     )
@@ -604,7 +674,9 @@ with col2:
             })
            
             # Generate response based on CSV data
-            response = search_csv_data(st.session_state.csv_data, user_input)
+            with st.spinner("🔍 Analyzing crime database..."):
+                response = search_csv_data(st.session_state.csv_data, user_input)
+                
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": response,
@@ -614,15 +686,18 @@ with col2:
             st.rerun()
 
 # Status bar
-st.markdown("""
+status_message = "CSV Data Ready" if st.session_state.csv_data is not None else "CSV Data Missing"
+status_class = "status-processing" if st.session_state.csv_data is not None else "status-evidence"
+
+st.markdown(f"""
 <div class="status-bar">
     <div class="status-item">
         <div class="status-dot status-online"></div>
         <span>SECURO AI Online</span>
     </div>
     <div class="status-item">
-        <div class="status-dot status-processing"></div>
-        <span>CSV Data Ready</span>
+        <div class="status-dot {status_class}"></div>
+        <span>{status_message}</span>
     </div>
     <div class="status-item">
         <div class="status-dot status-evidence"></div>
