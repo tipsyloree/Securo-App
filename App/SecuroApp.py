@@ -415,31 +415,41 @@ st.markdown("""
 # CSV data handling
 @st.cache_data
 def load_csv_data():
-    csv_filename = "criminal_justice_qa.csv"
-    script_dir = os.path.dirname(__file__)
-    csv_path = os.path.join(script_dir, csv_filename)
-    try:
-        if os.path.exists(csv_path):
-            df = pd.read_csv(csv_path)
-            st.success(f"successfully load {csv_path}")
-            st.info(f"loaded {len(df)} records with {len(df.columns)} columns")
-            return df, csv_path
-        else:
-            current_dir = os.getcwd()
-            files_in_script_dir = os.listdir(script_dir)
-            files_in_current_dir = os.listdir(current_dir)
-            return None, f"""
-            could not find '{csv_filename}'.
-            expected {csv_path}
-            dir {script_dir}
-            files: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
-            current dir {current_dir}
-            files in current directory {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
-            its not in the same folder chill
-            """
-    except Exception as e:
-        return None, f" im not telling u what happened: {e}"
-
+    """Load and cache CSV data with better error handling"""
+    csv_filename = "criminal_justice_qa.csv"  # Your correct CSV filename
+    
+    # Check multiple possible locations
+    possible_paths = [
+        csv_filename,  # Current directory
+        f"./{csv_filename}",  # Explicit current directory
+        f"App/{csv_filename}",  # In App folder
+        f"../{csv_filename}",  # Parent directory
+        os.path.join(os.getcwd(), csv_filename),  # Full path
+    ]
+    
+    for path in possible_paths:
+        try:
+            if os.path.exists(path):
+                df = pd.read_csv(path)
+                st.success(f"✅ Successfully loaded CSV from: {path}")
+                st.info(f"📊 Loaded {len(df)} records with {len(df.columns)} columns")
+                return df, path
+        except Exception as e:
+            continue
+    
+    # If no file found, show detailed error
+    current_dir = os.getcwd()
+    files_in_dir = os.listdir(current_dir)
+    
+    return None, f"""
+    ❌ Could not find '{csv_filename}' in any of these locations:
+    {chr(10).join(['• ' + path for path in possible_paths])}
+    
+    📂 Current directory: {current_dir}
+    📁 Files found: {', '.join([f for f in files_in_dir if f.endswith('.csv')])}
+    
+    💡 Make sure your CSV file is named exactly 'criminal_justice_qa.csv' and is in the same folder as your app.
+    """
 
 def search_csv_data(df, query):
     """Search through CSV data for relevant information"""
@@ -457,14 +467,25 @@ def search_csv_data(df, query):
                 matching_rows = df[mask]
                
                 if not matching_rows.empty:
-                    for _, row in matching_rows.head(2).iterrows():  # Limit to 2 results per column
-                        result_dict = {k: v for k, v in row.to_dict().items() if pd.notna(v)}
-                        results.append(f"**Found in {column}:**\n{result_dict}")
+                    for _, row in matching_rows.head(3).iterrows():  # Get top 3 matches
+                        # Look for answer column specifically
+                        if 'answer' in row and pd.notna(row['answer']):
+                            results.append(str(row['answer']))
+                        elif 'response' in row and pd.notna(row['response']):
+                            results.append(str(row['response']))
+                        else:
+                            # If no specific answer column, look for the most relevant text
+                            for col_name, value in row.items():
+                                if pd.notna(value) and len(str(value)) > 50:  # Longer text likely contains answers
+                                    results.append(str(value))
+                                    break
             except Exception as e:
                 continue
    
     if results:
-        return (results)
+        # Remove duplicates and return clean answers
+        unique_results = list(dict.fromkeys(results))  # Preserves order while removing duplicates
+        return "\n\n".join(unique_results[:2])  # Return top 2 unique answers
     else:
         return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
 
