@@ -38,19 +38,11 @@ Your responses should reflect an understanding of criminology, public safety, an
 
 # Initialize the AI model
 try:
-    # Debug: Check what's available
-    has_secrets = "GOOGLE_API_KEY" in st.secrets
-    
-    # Try to get API key from Streamlit secrets first
-    if has_secrets:
-        genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-        model = genai.GenerativeModel('gemini-1.5-pro')
-        st.session_state.ai_enabled = True
-        st.session_state.ai_status = "✅ AI Ready (Secrets)"
-    else:
-        st.session_state.ai_enabled = False
-        st.session_state.ai_status = f"⚠️ AI Offline - No API key found (Secrets: {has_secrets})"
-        model = None
+    GOOGLE_API_KEY = "AIzaSyAK-4Xklul9WNoiWnSrpzPkn5C-Dbny8B4"
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-pro')
+    st.session_state.ai_enabled = True
+    st.session_state.ai_status = "✅ AI Ready (Direct API Key)"
 except Exception as e:
     st.session_state.ai_enabled = False
     st.session_state.ai_status = f"❌ AI Error: {str(e)}"
