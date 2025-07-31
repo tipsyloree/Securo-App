@@ -15,8 +15,11 @@
         
         body {
             font-family: 'JetBrains Mono', monospace;
+            st.markdown("""
+            <style>
             background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-            color: #e0e0e0;
+            </style>
+            """, unsafe_allow_html=True)
             overflow-x: hidden;
             min-height: 100vh;
             position: relative;
