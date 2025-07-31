@@ -1,9 +1,37 @@
-streamlit
-openai
-streamlit-folium
-folium
-matplotlib
-pandas
-requests
-google-generativeai
-plotly
+
+# SECURO Crime Investigation Assistant - Requirements File
+# St. Kitts & Nevis Law Enforcement AI System
+
+# Core Streamlit Framework
+streamlit>=1.28.0
+
+# Data Processing & Analysis
+pandas>=2.0.0
+numpy>=1.24.0
+
+# AI/ML Libraries
+google-generativeai>=0.3.0
+
+# Data Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Utility Libraries
+Pillow>=10.0.0
+requests>=2.31.0
+
+# Optional: For enhanced data processing
+openpyxl>=3.1.0
+xlsxwriter>=3.1.0
+
+# Optional: For additional chart types
+plotly>=5.15.0
+
+# System utilities (usually included with Python but good to specify)
+datetime
+os
+time
+random
+re
+io
+base64
