@@ -547,11 +547,11 @@ if st.session_state.sidebar_state == "expanded":
         
         st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
         
-        # Real Google Maps embed for St. Kitts & Nevis
+        # Real Google Maps embed for St. Kitts & Nevis with API key
         st.markdown("""
         <div class="map-container crime-map">
             <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d243.44896!2d-62.7261!3d17.3026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c1a602b153c94b5%3A0x8e3f7a7c7b1b9f5e!2sBasseterre%2C%20St%20Kitts%20%26%20Nevis!5e1!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus&maptype=satellite"
+                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCkSjJBcI_wqA37bdF-08ROrMFaGYObyjA&q=Basseterre,St+Kitts+and+Nevis&maptype=satellite&zoom=12"
                 allowfullscreen="" 
                 loading="lazy" 
                 referrerpolicy="no-referrer-when-downgrade">
