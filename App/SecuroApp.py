@@ -8,7 +8,6 @@ import google.generativeai as genai
 import re
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import seaborn as sns
 import numpy as np
 from io import BytesIO
 import base64
@@ -512,7 +511,6 @@ def load_csv_data():
     except Exception as e:
         return None, f"Error loading CSV: {e}"
 
-
 def generate_sample_crime_data():
     """Generate realistic sample crime data for St. Kitts & Nevis for demonstration"""
     np.random.seed(42)  # For consistent results
@@ -554,11 +552,14 @@ def generate_sample_crime_data():
     return pd.DataFrame(data)
 
 def create_crime_charts(df, chart_type="overview", specific_year=None, crime_type=None):
-    """Create various crime statistics charts for St. Kitts & Nevis"""
+    """Create various crime statistics charts for St. Kitts & Nevis (No Seaborn Required)"""
     
     # Set matplotlib style for dark theme
     plt.style.use('dark_background')
-    sns.set_palette("husl")
+    
+    # Set color palette manually
+    colors = ['#ff4444', '#ff6666', '#ff8888', '#ffaaaa', '#cc3333', '#aa2222', '#881111', '#660000']
+    plt.rcParams['axes.prop_cycle'] = plt.cycler(color=colors)
     
     if chart_type == "yearly_trend":
         # Yearly crime trends
@@ -592,8 +593,7 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
         # Bar chart
         crime_counts = df.groupby('Crime_Type')['Count'].sum().sort_values(ascending=False)
         bars = ax1.bar(range(len(crime_counts)), crime_counts.values, 
-                      color=['#ff4444', '#ff6666', '#ff8888', '#ffaaaa', 
-                             '#cc3333', '#aa2222', '#881111', '#660000'])
+                      color=colors[:len(crime_counts)])
         
         ax1.set_title('Crime Types Distribution', fontsize=14, color='white')
         ax1.set_xlabel('Crime Type', fontsize=12, color='white')
@@ -609,8 +609,7 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
         
         # Pie chart
         ax2.pie(crime_counts.values, labels=crime_counts.index, autopct='%1.1f%%',
-               colors=['#ff4444', '#ff6666', '#ff8888', '#ffaaaa', 
-                      '#cc3333', '#aa2222', '#881111', '#660000'])
+               colors=colors[:len(crime_counts)])
         ax2.set_title('Crime Types Percentage', fontsize=14, color='white')
         
         plt.tight_layout()
@@ -681,7 +680,7 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
         return fig
     
     elif chart_type == "heatmap":
-        # Crime heatmap by year and month
+        # Crime heatmap by year and month (using matplotlib instead of seaborn)
         fig, ax = plt.subplots(figsize=(12, 8))
         
         # Create pivot table
@@ -693,8 +692,26 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
                       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
         pivot_data = pivot_data.reindex(month_order)
         
-        sns.heatmap(pivot_data, annot=True, fmt='d', cmap='Reds', 
-                   cbar_kws={'label': 'Crime Count'}, ax=ax)
+        # Create heatmap using matplotlib
+        im = ax.imshow(pivot_data.values, cmap='Reds', aspect='auto')
+        
+        # Set ticks and labels
+        ax.set_xticks(range(len(pivot_data.columns)))
+        ax.set_yticks(range(len(pivot_data.index)))
+        ax.set_xticklabels(pivot_data.columns)
+        ax.set_yticklabels(pivot_data.index)
+        
+        # Add text annotations
+        for i in range(len(pivot_data.index)):
+            for j in range(len(pivot_data.columns)):
+                text = ax.text(j, i, int(pivot_data.iloc[i, j]),
+                             ha="center", va="center", color="white", fontweight='bold')
+        
+        # Add colorbar
+        cbar = plt.colorbar(im, ax=ax)
+        cbar.set_label('Crime Count', rotation=270, labelpad=20, color='white')
+        cbar.ax.yaxis.set_tick_params(color='white')
+        plt.setp(plt.getp(cbar.ax.axes, 'yticklabels'), color='white')
         
         ax.set_title('Crime Intensity Heatmap - St. Kitts & Nevis', 
                     fontsize=16, color='white', pad=20)
@@ -714,6 +731,7 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
                 marker='o', linewidth=3, markersize=6, color='#ff4444')
         ax1.set_title('Yearly Crime Trends', fontsize=12, color='white')
         ax1.grid(True, alpha=0.3)
+        ax1.tick_params(colors='white')
         
         # 2. Top crime types
         top_crimes = df.groupby('Crime_Type')['Count'].sum().nlargest(5)
@@ -721,6 +739,7 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
         ax2.set_title('Top 5 Crime Types', fontsize=12, color='white')
         ax2.set_xticks(range(len(top_crimes)))
         ax2.set_xticklabels(top_crimes.index, rotation=45, ha='right')
+        ax2.tick_params(colors='white')
         
         # 3. Location distribution
         top_locations = df.groupby('Location')['Count'].sum().nlargest(5)
@@ -728,6 +747,7 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
         ax3.set_title('Top 5 Crime Locations', fontsize=12, color='white')
         ax3.set_yticks(range(len(top_locations)))
         ax3.set_yticklabels(top_locations.index)
+        ax3.tick_params(colors='white')
         
         # 4. Monthly pattern
         month_order = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 
@@ -735,7 +755,8 @@ def create_crime_charts(df, chart_type="overview", specific_year=None, crime_typ
         monthly_avg = df.groupby('Month')['Count'].mean().reindex(month_order, fill_value=0)
         ax4.bar(monthly_avg.index, monthly_avg.values, color='#ff4444', alpha=0.8)
         ax4.set_title('Average Monthly Crime Pattern', fontsize=12, color='white')
-        ax4.tick_params(axis='x', rotation=45)
+        ax4.tick_params(axis='x', rotation=45, colors='white')
+        ax4.tick_params(colors='white')
         
         plt.suptitle('St. Kitts & Nevis Crime Statistics Overview', 
                     fontsize=16, color='white', y=0.98)
@@ -780,12 +801,39 @@ def detect_chart_request(user_input):
             return "overview"
     
     return None
+
+def get_ai_response(user_input, csv_results):
     """Generate AI response using the system prompt and context"""
     if not st.session_state.get('ai_enabled', False) or model is None:
         return csv_results  # Fallback to CSV search results
     
     try:
-        # Combine system prompt with user context
+        # Check if user is requesting charts
+        chart_type = detect_chart_request(user_input)
+        
+        if chart_type:
+            # Generate sample data and create chart
+            sample_data = generate_sample_crime_data()
+            fig = create_crime_charts(sample_data, chart_type)
+            chart_b64 = chart_to_base64(fig)
+            
+            chart_response = f"""
+📊 **Crime Statistics Visualization for St. Kitts & Nevis**
+
+<img src="data:image/png;base64,{chart_b64}" style="width:100%; border-radius:10px; border:1px solid rgba(255,68,68,0.3);">
+
+**Analysis Summary:**
+- Data shows crime trends from 2019-2024
+- Tourist season months (Dec, Jan, Jul, Aug) typically show higher activity
+- COVID-19 impact visible in 2020-2021 data
+- Basseterre and tourist areas show higher incident rates
+
+*Note: This visualization uses representative data for St. Kitts & Nevis crime patterns. For official statistics, contact the Royal St. Christopher and Nevis Police Force.*
+            """
+            
+            return chart_response
+        
+        # Regular AI response
         full_prompt = f"""
         {system_prompt}
         
@@ -811,7 +859,6 @@ def detect_chart_request(user_input):
         
     except Exception as e:
         return f"{csv_results}\n\n⚠️ AI analysis temporarily unavailable. Showing database search results."
-
 
 def search_csv_data(df, query):
     """Search through CSV data for relevant information"""
@@ -846,7 +893,7 @@ if 'messages' not in st.session_state:
     # Add initial bot message
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n• Interactive crime statistics and charts\n\n📊 Loading crime database... Please wait while I check for your data file.",
         "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
     })
 
@@ -918,7 +965,7 @@ if not st.session_state.csv_loaded:
             # Add success message to chat
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.",
+                "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data or request charts and visualizations. Try asking:\n• 'Show me yearly crime trends'\n• 'Display crime statistics by location'\n• 'Create a monthly crime pattern chart'",
                 "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
             })
         else:
@@ -927,7 +974,7 @@ if not st.session_state.csv_loaded:
             # Add error message to chat
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance and emergency contacts.",
+                "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance, emergency contacts, and generate sample crime statistics charts for St. Kitts & Nevis.",
                 "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
             })
 
@@ -1041,24 +1088,35 @@ for message in st.session_state.messages:
     else:
         # Clean bot message and ensure proper formatting
         clean_content = str(message["content"]).strip()
-        # Remove any unwanted HTML or formatting
-        clean_content = re.sub(r'<[^>]+>', '', clean_content)
-        clean_content = clean_content.replace('```', '')
         
-        # Format with SECURO prefix if it doesn't already have it
-        if not clean_content.startswith("SECURO:") and not clean_content.startswith("🚔"):
-            if "SECURO" in clean_content.upper():
-                # If SECURO is mentioned but not at start, leave as is
-                pass
-            else:
-                clean_content = f"SECURO: {clean_content}"
-        
-        st.markdown(f"""
-        <div class="chat-message bot-message">
-            <div class="message-content">{clean_content}</div>
-            <div class="message-time">{message["timestamp"]}</div>
-        </div>
-        """, unsafe_allow_html=True)
+        # Check if content contains HTML (like charts)
+        if '<img src="data:image/png;base64,' in clean_content:
+            # This is a chart response, display as-is with HTML
+            st.markdown(f"""
+            <div class="chat-message bot-message">
+                <div class="message-content">{clean_content}</div>
+                <div class="message-time">{message["timestamp"]}</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            # Regular text message, clean HTML tags
+            clean_content = re.sub(r'<[^>]+>', '', clean_content)
+            clean_content = clean_content.replace('```', '')
+            
+            # Format with SECURO prefix if it doesn't already have it
+            if not clean_content.startswith("SECURO:") and not clean_content.startswith("🚔"):
+                if "SECURO" in clean_content.upper():
+                    # If SECURO is mentioned but not at start, leave as is
+                    pass
+                else:
+                    clean_content = f"SECURO: {clean_content}"
+            
+            st.markdown(f"""
+            <div class="chat-message bot-message">
+                <div class="message-content">{clean_content}</div>
+                <div class="message-time">{message["timestamp"]}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
 # Chat input
 with st.form("chat_form", clear_on_submit=True):
@@ -1067,7 +1125,7 @@ with st.form("chat_form", clear_on_submit=True):
     with col1:
         user_input = st.text_input(
             "Message",
-            placeholder="Ask questions about crime data, investigations, or emergency procedures...",
+            placeholder="Ask questions about crime data, request charts, or emergency procedures...",
             label_visibility="collapsed",
             key="user_input"
         )
