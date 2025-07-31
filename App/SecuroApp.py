@@ -464,7 +464,7 @@ def search_csv_data(df, query):
                 continue
    
     if results:
-        return f"🔍 (results)
+        return (results)
     else:
         return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
 
