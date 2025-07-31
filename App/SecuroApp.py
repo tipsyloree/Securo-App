@@ -466,7 +466,7 @@ st.markdown("""
 @st.cache_data
 def load_csv_data():
     csv_filename = "criminal_justice_qa.csv"
-    script_dir = os.path.dirname(_file_)
+    script_dir = os.path.dirname(__file__)  # ✅ Correct - double underscores
     csv_path = os.path.join(script_dir, csv_filename)
     try:
         if os.path.exists(csv_path):
