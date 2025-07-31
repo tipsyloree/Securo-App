@@ -4,8 +4,7 @@ import datetime
 import random
 import pandas as pd
 import os
-# Commented out AI model imports since you don't have API key configured
-# import google.generativeai as genai
+import google.generativeai as genai
 
 # System Prompt for SECURO Crime Mitigation Chatbot
 system_prompt = """
@@ -37,9 +36,24 @@ Tone & Behavior:
 Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
 """
 
-# Initialize the AI model (API key should be set via environment variable or Streamlit secrets)
-# genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])  # Uncomment when you have API key configured
-# model = genai.GenerativeModel('gemini-1.5-flash')
+# Initialize the AI model
+try:
+    # Try to get API key from Streamlit secrets first
+    if "GOOGLE_API_KEY" in st.secrets:
+        genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        st.session_state.ai_enabled = True
+    # Fallback to environment variable
+    elif "GOOGLE_API_KEY" in os.environ:
+        genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        st.session_state.ai_enabled = True
+    else:
+        st.session_state.ai_enabled = False
+        model = None
+except Exception as e:
+    st.session_state.ai_enabled = False
+    model = None
 
 # Page configuration
 st.set_page_config(
@@ -471,6 +485,30 @@ def load_csv_data():
         return None, f" im not telling u what happened: {e}"
 
 
+def get_ai_response(user_input, csv_results):
+    """Generate AI response using the system prompt and context"""
+    if not st.session_state.get('ai_enabled', False) or model is None:
+        return csv_results  # Fallback to CSV search results
+    
+    try:
+        # Combine system prompt with user context
+        full_prompt = f"""
+        {system_prompt}
+        
+        Context from crime database search:
+        {csv_results}
+        
+        User query: {user_input}
+        
+        Please provide a comprehensive response as SECURO based on the available data and your crime analysis capabilities.
+        """
+        
+        response = model.generate_content(full_prompt)
+        return response.text
+    except Exception as e:
+        return f"{csv_results}\n\n⚠️ AI analysis temporarily unavailable. Showing database search results."
+
+
 def search_csv_data(df, query):
     """Search through CSV data for relevant information"""
     if df is None:
@@ -590,10 +628,11 @@ if not st.session_state.csv_loaded:
             })
 
 # Show current status
+ai_status = "✅ AI Ready" if st.session_state.get('ai_enabled', False) else "⚠️ AI Offline (CSV Only)"
 if st.session_state.csv_data is not None:
-    st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded")
+    st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded | {ai_status}")
 else:
-    st.error("❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory")
+    st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
 
 # Sidebar (only show if expanded)
 if st.session_state.sidebar_state == "expanded":
@@ -695,9 +734,10 @@ with st.form("chat_form", clear_on_submit=True):
             "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
         })
        
-        # Generate response based on CSV data
+        # Generate response using AI if available, otherwise use CSV search
         with st.spinner("🔍 Analyzing crime database..."):
-            response = search_csv_data(st.session_state.csv_data, user_input)
+            csv_results = search_csv_data(st.session_state.csv_data, user_input)
+            response = get_ai_response(user_input, csv_results)
            
         st.session_state.messages.append({
             "role": "assistant",
