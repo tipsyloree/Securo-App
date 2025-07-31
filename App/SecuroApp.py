@@ -5,6 +5,7 @@ import random
 import pandas as pd
 import os
 import google.generativeai as genai
+import re
 
 # System Prompt for SECURO Crime Mitigation Chatbot
 system_prompt = """
@@ -31,7 +32,7 @@ Tone & Behavior:
 - Be concise, accurate, and helpful
 - Explain visuals when necessary
 - Avoid panic-inducing language—focus on empowerment and awareness
-- Use Times New Roman formatting and bubble-style chat layout (as supported by the frontend)
+- Respond directly without using code blocks, backticks, or HTML formatting
 
 Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
 """
@@ -40,7 +41,7 @@ Your responses should reflect an understanding of criminology, public safety, an
 try:
     GOOGLE_API_KEY = "AIzaSyAK-4Xklul9WNoiWnSrpzPkn5C-Dbny8B4"
     genai.configure(api_key=GOOGLE_API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    model = genai.GenerativeModel('gemini-1.5-pro')
     st.session_state.ai_enabled = True
     st.session_state.ai_status = "✅ AI Ready (Direct API Key)"
 except Exception as e:
@@ -56,7 +57,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS styling - keeping the exact same design
+# Custom CSS styling - FIXED VERSION
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
@@ -304,10 +305,11 @@ st.markdown("""
     .hotspot-3 { top: 70%; left: 40%; }
     .hotspot-4 { top: 25%; left: 75%; }
    
-    /* Chat styling */
+    /* Chat styling - FIXED VERSION */
     .chat-message {
         margin-bottom: 20px;
         animation: fadeInUp 0.5s ease;
+        clear: both;
     }
 
     @keyframes fadeInUp {
@@ -330,26 +332,37 @@ st.markdown("""
         max-width: 80%;
         position: relative;
         font-family: 'JetBrains Mono', monospace;
+        word-wrap: break-word;
+        white-space: pre-wrap;
     }
 
     .user-message .message-content {
         background: linear-gradient(135deg, #ff4444, #cc3333);
-        color: #fff;
+        color: #ffffff !important;
         border-bottom-right-radius: 5px;
     }
 
     .bot-message .message-content {
-        background: rgba(0, 0, 0, 0.6);
-        color: #e0e0e0;
+        background: rgba(0, 0, 0, 0.8) !important;
+        color: #e0e0e0 !important;
         border: 1px solid rgba(255, 68, 68, 0.3);
         border-bottom-left-radius: 5px;
     }
 
     .message-time {
         font-size: 0.7rem;
-        color: #888;
+        color: #888 !important;
         margin-top: 5px;
         font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Override any conflicting Streamlit styles */
+    .bot-message .message-content * {
+        color: #e0e0e0 !important;
+    }
+
+    .user-message .message-content * {
+        color: #ffffff !important;
     }
    
     /* Status bar */
@@ -458,24 +471,21 @@ def load_csv_data():
     try:
         if os.path.exists(csv_path):
             df = pd.read_csv(csv_path)
-            st.success(f"successfully load {csv_path}")
-            st.info(f"loaded {len(df)} records with {len(df.columns)} columns")
-            return df, csv_path
+            return df, f"Successfully loaded {csv_path}"
         else:
             current_dir = os.getcwd()
             files_in_script_dir = os.listdir(script_dir)
             files_in_current_dir = os.listdir(current_dir)
             return None, f"""
-            could not find '{csv_filename}'.
-            expected {csv_path}
-            dir {script_dir}
-            files: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
-            current dir {current_dir}
-            files in current directory {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
-            its not in the same folder chill
+            Could not find '{csv_filename}'.
+            Expected: {csv_path}
+            Script directory: {script_dir}
+            CSV files in script dir: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
+            Current directory: {current_dir}
+            CSV files in current dir: {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
             """
     except Exception as e:
-        return None, f" im not telling u what happened: {e}"
+        return None, f"Error loading CSV: {e}"
 
 
 def get_ai_response(user_input, csv_results):
@@ -494,10 +504,20 @@ def get_ai_response(user_input, csv_results):
         User query: {user_input}
         
         Please provide a comprehensive response as SECURO based on the available data and your crime analysis capabilities.
+        Respond directly without using code blocks, backticks, or HTML formatting.
         """
         
         response = model.generate_content(full_prompt)
-        return response.text
+        
+        # Clean the response - remove any unwanted formatting
+        clean_response = response.text.strip()
+        # Remove backticks if they exist
+        clean_response = clean_response.replace('```', '')
+        # Remove any HTML tags that might appear
+        clean_response = re.sub(r'<[^>]+>', '', clean_response)
+        
+        return clean_response
+        
     except Exception as e:
         return f"{csv_results}\n\n⚠️ AI analysis temporarily unavailable. Showing database search results."
 
@@ -525,7 +545,7 @@ def search_csv_data(df, query):
                 continue
    
     if results:
-        return f"🔍 Search Results for '{query}':\n\n" + "\n\n---\n\n".join(results[:3])
+        return f"🔍 **Search Results for '{query}':**\n\n" + "\n\n---\n\n".join(results[:3])
     else:
         return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
 
@@ -535,7 +555,7 @@ if 'messages' not in st.session_state:
     # Add initial bot message
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "content": "🚔 **Welcome to SECURO** - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n\n📊 Loading crime database... Please wait while I check for your data file.",
         "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
     })
 
@@ -687,19 +707,35 @@ if st.session_state.sidebar_state == "expanded":
 # Main chat area
 st.markdown('<div class="section-header">💬 Crime Investigation Chat</div>', unsafe_allow_html=True)
 
-# Display chat messages
+# Display chat messages - FIXED VERSION
 for message in st.session_state.messages:
     if message["role"] == "user":
+        # Clean user message
+        clean_content = str(message["content"]).strip()
         st.markdown(f"""
         <div class="chat-message user-message">
-            <div class="message-content">{message["content"]}</div>
+            <div class="message-content">{clean_content}</div>
             <div class="message-time">{message["timestamp"]}</div>
         </div>
         """, unsafe_allow_html=True)
     else:
+        # Clean bot message and ensure proper formatting
+        clean_content = str(message["content"]).strip()
+        # Remove any unwanted HTML or formatting
+        clean_content = re.sub(r'<[^>]+>', '', clean_content)
+        clean_content = clean_content.replace('```', '')
+        
+        # Format with SECURO prefix if it doesn't already have it
+        if not clean_content.startswith("SECURO:") and not clean_content.startswith("🚔"):
+            if "SECURO" in clean_content.upper():
+                # If SECURO is mentioned but not at start, leave as is
+                pass
+            else:
+                clean_content = f"SECURO: {clean_content}"
+        
         st.markdown(f"""
         <div class="chat-message bot-message">
-            <div class="message-content">{message["content"]}</div>
+            <div class="message-content">{clean_content}</div>
             <div class="message-time">{message["timestamp"]}</div>
         </div>
         """, unsafe_allow_html=True)
