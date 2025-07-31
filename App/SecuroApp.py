@@ -38,21 +38,29 @@ Your responses should reflect an understanding of criminology, public safety, an
 
 # Initialize the AI model
 try:
+    # Debug: Check what's available
+    has_secrets = "GOOGLE_API_KEY" in st.secrets
+    has_env = "GOOGLE_API_KEY" in os.environ
+    
     # Try to get API key from Streamlit secrets first
-    if "GOOGLE_API_KEY" in st.secrets:
+    if has_secrets:
         genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-pro')
         st.session_state.ai_enabled = True
+        st.session_state.ai_status = "✅ AI Ready (Secrets)"
     # Fallback to environment variable
-    elif "GOOGLE_API_KEY" in os.environ:
+    elif has_env:
         genai.configure(api_key=os.environ["GOOGLE_API_KEY"])
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-1.5-pro')
         st.session_state.ai_enabled = True
+        st.session_state.ai_status = "✅ AI Ready (Environment)"
     else:
         st.session_state.ai_enabled = False
+        st.session_state.ai_status = f"⚠️ AI Offline - No API key found (Secrets: {has_secrets}, Env: {has_env})"
         model = None
 except Exception as e:
     st.session_state.ai_enabled = False
+    st.session_state.ai_status = f"❌ AI Error: {str(e)}"
     model = None
 
 # Page configuration
@@ -628,7 +636,7 @@ if not st.session_state.csv_loaded:
             })
 
 # Show current status
-ai_status = "✅ AI Ready" if st.session_state.get('ai_enabled', False) else "⚠️ AI Offline (CSV Only)"
+ai_status = st.session_state.get('ai_status', 'AI Status Unknown')
 if st.session_state.csv_data is not None:
     st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded | {ai_status}")
 else:
