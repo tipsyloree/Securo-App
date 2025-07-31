@@ -1,10 +1,10 @@
 streamlit
+openai
+streamlit-folium
+folium
+matplotlib
 pandas
-google-generativeai
 requests
+google-generativeai
 plotly
-datetime
-os
-time
-random
 
