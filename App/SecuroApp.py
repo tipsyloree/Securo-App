@@ -495,7 +495,7 @@ except Exception as e:
 # Page configuration
 st.set_page_config(
     page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
-    page_icon="🚔",
+    page_icon="https://i.postimg.cc/FRTT6ytB/LOGO-3.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
