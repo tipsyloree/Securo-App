@@ -136,6 +136,27 @@ function forceSidebarVisible() {
         });
     });
     
+    // Also ensure content is visible and styled
+    const sidebarContent = document.querySelectorAll('section[data-testid="stSidebar"] *');
+    sidebarContent.forEach(el => {
+        if (el) {
+            el.style.color = '#e0e0e0';
+            el.style.visibility = 'visible';
+            el.style.display = 'block';
+        }
+    });
+    
+    // Force sidebar headers and text to be visible
+    const sidebarText = document.querySelectorAll('section[data-testid="stSidebar"] div, section[data-testid="stSidebar"] p, section[data-testid="stSidebar"] span, section[data-testid="stSidebar"] label');
+    sidebarText.forEach(el => {
+        if (el && el.textContent.trim() !== '') {
+            el.style.color = '#e0e0e0';
+            el.style.fontFamily = 'JetBrains Mono, monospace';
+            el.style.visibility = 'visible';
+            el.style.display = 'block';
+        }
+    });
+    
     // Hide collapse buttons
     const collapseButtons = document.querySelectorAll('button[kind="header"], [data-testid="collapsedControl"], .css-vk3wp9');
     collapseButtons.forEach(btn => {
@@ -373,9 +394,25 @@ st.markdown("""
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div,
     .css-1aumxhk, .css-hxt7ib, .css-17lntkn {
-        background: rgba(40, 20, 20, 0.9) !important;
-        border-right: 1px solid rgba(255, 68, 68, 0.3) !important;
-        backdrop-filter: blur(10px) !important;
+        background: #2a1414 !important;
+        border-right: 2px solid #ff4444 !important;
+        color: #e0e0e0 !important;
+    }
+    
+    /* Force sidebar content to be visible with proper styling */
+    section[data-testid="stSidebar"] * {
+        color: #e0e0e0 !important;
+        background: transparent !important;
+    }
+    
+    /* Sidebar text and elements */
+    .stSelectbox label, .stButton label, .stMarkdown, 
+    section[data-testid="stSidebar"] label,
+    section[data-testid="stSidebar"] p,
+    section[data-testid="stSidebar"] div,
+    section[data-testid="stSidebar"] span {
+        color: #e0e0e0 !important;
+        font-family: 'JetBrains Mono', monospace !important;
     }
    
     /* Language selector styling */
