@@ -633,21 +633,29 @@ def generate_bot_response(user_input, language='en'):
             Generate a comprehensive response:
             """
             
-            # Generate AI response
-            response = model.generate_content(ai_prompt)
-            
-            if response and response.text:
-                clean_response = response.text.strip()
-                clean_response = clean_response.replace('```', '')
-                clean_response = re.sub(r'<[^>]+>', '', clean_response)
+            # Generate AI response with better error handling
+            try:
+                response = model.generate_content(ai_prompt)
                 
-                # Ensure SECURO branding
-                if not clean_response.startswith("SECURO:"):
-                    clean_response = f"SECURO: {clean_response}"
-                
-                return clean_response
-            else:
-                raise Exception("Empty response from AI")
+                if response and hasattr(response, 'text') and response.text:
+                    clean_response = response.text.strip()
+                    clean_response = clean_response.replace('```', '')
+                    clean_response = re.sub(r'<[^>]+>', '', clean_response)
+                    
+                    # Ensure SECURO branding
+                    if not clean_response.startswith("SECURO:"):
+                        clean_response = f"SECURO: {clean_response}"
+                    
+                    return clean_response
+                else:
+                    raise Exception("Empty or invalid response from AI")
+                    
+            except Exception as ai_error:
+                # Log the specific AI error
+                st.session_state.ai_error = f"AI Generation Error: {str(ai_error)}"
+                st.session_state.ai_enabled = False
+                st.session_state.ai_status = "❌ AI Failed - Using Fallback"
+                raise ai_error
                 
         except Exception as e:
             # Log the AI error for debugging
@@ -900,15 +908,17 @@ def initialize_ai():
         )
         
         # Test the connection with a simple query
-        test_response = model.generate_content("Test connection - respond with 'OK'")
-        
-        if test_response and test_response.text:
-            st.session_state.ai_enabled = True
-            st.session_state.ai_status = "✅ Google AI Connected"
-            st.session_state.ai_error = None
-            return model
-        else:
-            raise Exception("No response from API")
+        try:
+            test_response = model.generate_content("Hello")
+            if test_response and test_response.text:
+                st.session_state.ai_enabled = True
+                st.session_state.ai_status = "✅ Google AI Connected"
+                st.session_state.ai_error = None
+                return model
+            else:
+                raise Exception("Empty response from API")
+        except Exception as test_error:
+            raise Exception(f"API test failed: {str(test_error)}")
         
     except Exception as e:
         st.session_state.ai_enabled = False
@@ -939,8 +949,18 @@ def reset_to_default_api():
     model = initialize_ai()
     return model
 
-# Initialize AI on startup
-model = initialize_ai()
+# Initialize AI on startup with error handling
+try:
+    model = initialize_ai()
+except Exception as e:
+    model = None
+    st.session_state.ai_enabled = False
+    st.session_state.ai_status = f"❌ Startup Error: {str(e)}"
+
+# Fallback function for any remaining references
+def get_enhanced_ai_response(user_input, language='en'):
+    """Legacy function name - redirects to new function"""
+    return generate_bot_response(user_input, language)
 
 # Page configuration
 st.set_page_config(
