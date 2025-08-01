@@ -725,31 +725,10 @@ if st.session_state.csv_data is not None:
 else:
     st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
 
-# Sidebar with enhanced functionality
+# Sidebar with new code (always expanded)
 with st.sidebar:
-    # Language Selection
-    st.markdown('<div class="section-header">🌍 Language / Idioma / Langue</div>', unsafe_allow_html=True)
-    
-    selected_language = st.selectbox(
-        "Select Language:",
-        options=list(SUPPORTED_LANGUAGES.keys()),
-        format_func=lambda x: SUPPORTED_LANGUAGES[x],
-        index=list(SUPPORTED_LANGUAGES.keys()).index(st.session_state.selected_language),
-        key="language_selector"
-    )
-    
-    if selected_language != st.session_state.selected_language:
-        st.session_state.selected_language = selected_language
-        # Add language change message
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": f"🌍 Language changed to {SUPPORTED_LANGUAGES[selected_language]}. I will now respond primarily in this language while maintaining professional crime investigation capabilities.",
-            "timestamp": get_stkitts_time()
-        })
-        st.rerun()
-    
     st.markdown('<div class="section-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
-   
+           
     emergency_contacts = [
         {"name": "Emergency Hotline", "number": "911", "type": "police"},
         {"name": "Police Department", "number": "465-2241", "type": "police"},
@@ -759,18 +738,18 @@ with st.sidebar:
         {"name": "Red Cross", "number": "465-2584", "type": "forensic"},
         {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
     ]
-   
+           
     for contact in emergency_contacts:
         if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation. Emergency services are standing by for immediate response.",
-                "timestamp": get_stkitts_time()
+                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
             })
             st.rerun()
-   
+           
     st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
-   
+           
     # Real Google Maps embed for St. Kitts & Nevis
     st.markdown("""
     <div class="map-container crime-map">
@@ -782,23 +761,23 @@ with st.sidebar:
         </iframe>
     </div>
     """, unsafe_allow_html=True)
-   
+           
     # Interactive hotspot buttons
     st.markdown('<div class="section-header">🎯 Active Crime Zones</div>', unsafe_allow_html=True)
-   
+           
     hotspots = [
         {"name": "Basseterre Downtown", "level": "🔴 High Risk", "coords": "17.3026, -62.7261"},
         {"name": "Sandy Point", "level": "🟡 Medium Risk", "coords": "17.3580, -62.8419"},
         {"name": "Charlestown (Nevis)", "level": "🟠 Active Cases", "coords": "17.1373, -62.6131"},
         {"name": "Frigate Bay", "level": "🟡 Tourist Area", "coords": "17.2742, -62.6897"}
     ]
-   
+           
     for hotspot in hotspots:
         if st.button(f"{hotspot['level']} {hotspot['name']}", key=f"hotspot_{hotspot['name']}"):
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": f"📍 **Crime Hotspot Analysis:**\n\n🎯 **Location:** {hotspot['name']}\n📊 **Coordinates:** {hotspot['coords']}\n⚠ **Status:** {hotspot['level']}\n\n🚔 **Recommendation:** Increased patrol presence and witness canvassing recommended. Coordinating with local units for enhanced surveillance in this area.",
-                "timestamp": get_stkitts_time()
+                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
             })
             st.rerun()
 
