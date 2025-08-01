@@ -738,7 +738,7 @@ if 'messages' not in st.session_state:
     # Add initial bot message without excessive time mentions
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n• Multilingual communication support\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\n📊 Loading crime database... Please wait while I check for your data file.",
         "timestamp": get_stkitts_time()
     })
 
