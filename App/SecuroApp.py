@@ -24,6 +24,18 @@ SUPPORTED_LANGUAGES = {
     'ru': 'Русский (Russian)'
 }
 
+# Emergency Contacts for St. Kitts & Nevis
+EMERGENCY_CONTACTS = {
+    "Emergency": "911",
+    "Police": "465-2241",
+    "Hospital": "465-2551",
+    "Fire Department": "465-2515 / 465-7167",
+    "Coast Guard": "465-8384 / 466-9280",
+    "Met Office": "465-2749",
+    "Red Cross": "465-2584",
+    "NEMA": "466-5100"
+}
+
 # St. Kitts timezone (Atlantic Standard Time)
 SKN_TIMEZONE = pytz.timezone('America/St_Kitts')
 
@@ -95,38 +107,119 @@ except Exception as e:
     st.session_state.ai_status = f"❌ AI Error: {str(e)}"
     model = None
 
-# Page configuration - No sidebar
+# Page configuration - With sidebar enabled
 st.set_page_config(
     page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
     page_icon="https://i.postimg.cc/V69LH7F4/Logo.jpg",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
-# Enhanced CSS styling without sidebar
+# Enhanced CSS styling WITH sidebar
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
    
-    /* Hide default Streamlit elements and sidebar completely */
+    /* Hide default Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Completely hide sidebar */
+    /* Custom sidebar styling */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
-    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div,
-    button[kind="header"], .css-vk3wp9, .css-1kyxreq, [data-testid="collapsedControl"] {
-        display: none !important;
-        visibility: hidden !important;
+    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
+        background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
+        border-right: 2px solid rgba(255, 68, 68, 0.3) !important;
     }
     
-    /* Full width main content */
-    .main .block-container {
-        margin-left: 0 !important;
-        max-width: none !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+    /* Sidebar content styling */
+    .css-1d391kg .css-1v0mbdj, .stSidebar .element-container {
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+    
+    /* Sidebar headers */
+    .sidebar-header {
+        color: #ff4444 !important;
+        font-size: 1.1rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 15px !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 700 !important;
+        text-shadow: 0 0 10px rgba(255, 68, 68, 0.5) !important;
+        border-bottom: 1px solid rgba(255, 68, 68, 0.3) !important;
+        padding-bottom: 5px !important;
+    }
+    
+    /* Sidebar selectbox styling */
+    .stSelectbox > div > div {
+        background: rgba(0, 0, 0, 0.7) !important;
+        border: 1px solid rgba(255, 68, 68, 0.4) !important;
+        border-radius: 10px !important;
+        color: #e0e0e0 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+    
+    .stSelectbox > div > div:hover {
+        border-color: #ff4444 !important;
+        box-shadow: 0 0 15px rgba(255, 68, 68, 0.3) !important;
+    }
+    
+    /* Emergency contact styling */
+    .emergency-contact {
+        background: rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid rgba(255, 68, 68, 0.3) !important;
+        border-radius: 8px !important;
+        padding: 12px !important;
+        margin-bottom: 8px !important;
+        transition: all 0.3s ease !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+    
+    .emergency-contact:hover {
+        background: rgba(255, 68, 68, 0.1) !important;
+        border-color: #ff4444 !important;
+        transform: translateX(5px) !important;
+        box-shadow: 0 0 15px rgba(255, 68, 68, 0.2) !important;
+    }
+    
+    .emergency-title {
+        color: #ff4444 !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 4px !important;
+    }
+    
+    .emergency-number {
+        color: #e0e0e0 !important;
+        font-size: 0.8rem !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+    
+    .emergency-link {
+        color: #ff6666 !important;
+        text-decoration: none !important;
+        font-weight: 500 !important;
+    }
+    
+    .emergency-link:hover {
+        color: #ff4444 !important;
+        text-shadow: 0 0 5px rgba(255, 68, 68, 0.5) !important;
+    }
+    
+    /* Map container styling */
+    .map-container {
+        background: rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid rgba(255, 68, 68, 0.3) !important;
+        border-radius: 10px !important;
+        padding: 10px !important;
+        margin-top: 10px !important;
+    }
+    
+    /* Sidebar text styling */
+    .stSidebar .stMarkdown p, .stSidebar .stMarkdown div {
+        color: #e0e0e0 !important;
+        font-family: 'JetBrains Mono', monospace !important;
     }
    
     /* Main app background */
@@ -386,6 +479,93 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
+
+# SIDEBAR IMPLEMENTATION
+with st.sidebar:
+    # SECURO Logo/Header
+    st.markdown("""
+    <div style='text-align: center; padding: 20px 0; border-bottom: 2px solid rgba(255, 68, 68, 0.3); margin-bottom: 20px;'>
+        <h2 style='color: #ff4444; font-family: JetBrains Mono, monospace; text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);'>🚔 SECURO</h2>
+        <p style='color: #888; font-size: 0.8rem; font-family: JetBrains Mono, monospace; text-transform: uppercase; letter-spacing: 1px;'>Control Panel</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Language Selection
+    st.markdown('<div class="sidebar-header">🌍 Language / Idioma</div>', unsafe_allow_html=True)
+    selected_language = st.selectbox(
+        "Choose Language",
+        options=list(SUPPORTED_LANGUAGES.keys()),
+        format_func=lambda x: SUPPORTED_LANGUAGES[x],
+        index=list(SUPPORTED_LANGUAGES.keys()).index(st.session_state.get('selected_language', 'en')),
+        key="language_selector"
+    )
+    st.session_state.selected_language = selected_language
+    
+    st.markdown("---")
+    
+    # Emergency Contacts Section
+    st.markdown('<div class="sidebar-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
+    
+    for service, number in EMERGENCY_CONTACTS.items():
+        # Clean the number for tel: link (remove extra numbers and formatting)
+        clean_number = number.split(' / ')[0].replace('-', '').replace(' ', '')
+        tel_link = f"tel:+1869{clean_number}" if service != "Emergency" else "tel:911"
+        
+        st.markdown(f"""
+        <div class="emergency-contact">
+            <div class="emergency-title">{service}</div>
+            <div class="emergency-number">
+                <a href="{tel_link}" class="emergency-link">📞 {number}</a>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # Crime Hotspots Map Section
+    st.markdown('<div class="sidebar-header">🗺️ Crime Hotspots Map</div>', unsafe_allow_html=True)
+    
+    # Google Maps embed with crime hotspots for St. Kitts & Nevis
+    st.markdown("""
+    <div class="map-container">
+        <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61440.47289881779!2d-62.759765!3d17.302606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c0498a6c7d7ac0d%3A0x40b9ba03c4b0b0!2sSt%20Kitts%20and%20Nevis!5e0!3m2!1sen!2sus!4v1640995200000!5m2!1sen!2sus&markers=color:red%7Clabel:H%7C17.3026,-62.7177&markers=color:orange%7Clabel:M%7C17.2955,-62.7378&markers=color:yellow%7Clabel:L%7C17.3156,-62.7045" 
+            width="100%" 
+            height="200" 
+            style="border:1px solid rgba(255, 68, 68, 0.3); border-radius: 8px;" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+        <div style="margin-top: 8px; font-size: 0.7rem; color: #888; font-family: 'JetBrains Mono', monospace;">
+            🔴 High Risk Areas<br>
+            🟠 Medium Risk Areas<br>
+            🟡 Low Risk Areas
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    # System Status
+    st.markdown('<div class="sidebar-header">⚡ System Status</div>', unsafe_allow_html=True)
+    
+    current_time = get_stkitts_time()
+    ai_status = "🟢 Online" if st.session_state.get('ai_enabled', False) else "🔴 Offline"
+    db_status = "🟢 Loaded" if st.session_state.get('csv_data') is not None else "🔴 Missing"
+    
+    st.markdown(f"""
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #e0e0e0;">
+        <div style="margin-bottom: 5px;">🤖 AI: {ai_status}</div>
+        <div style="margin-bottom: 5px;">💾 Database: {db_status}</div>
+        <div style="margin-bottom: 5px;">🕒 Time: {current_time} AST</div>
+        <div style="margin-bottom: 5px;">🌐 Language: {SUPPORTED_LANGUAGES[selected_language][:8]}</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Refresh button
+    if st.button("🔄 Refresh Status", key="sidebar_refresh"):
+        st.rerun()
 
 # CSV data handling
 @st.cache_data
