@@ -178,9 +178,9 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* AGGRESSIVE sidebar forcing - multiple approaches */
+    /* AGGRESSIVE sidebar forcing - multiple approaches - NO BLUR VERSION */
     
-    /* Method 1: Force all possible sidebar selectors */
+    /* Method 1: Force all possible sidebar selectors - SOLID BACKGROUND */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     .css-1aumxhk, .css-hxt7ib, .css-17lntkn, .css-10trblm,
     section[data-testid="stSidebar"], .stSidebar, 
@@ -196,22 +196,29 @@ st.markdown("""
         min-width: 320px !important;
         max-width: 500px !important;
         z-index: 999999 !important;
-        background: rgba(40, 20, 20, 0.98) !important;
-        border-right: 2px solid rgba(255, 68, 68, 0.5) !important;
+        background: #2a1414 !important;  /* Solid color instead of rgba */
+        border-right: 2px solid #ff4444 !important;
         backdrop-filter: none !important;
         filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        -webkit-filter: none !important;
         overflow-y: auto !important;
         resize: horizontal !important;
         transform: none !important;
         transition: none !important;
+        box-shadow: none !important;
     }
     
-    /* Method 2: Override any transform or translate properties */
-    section[data-testid="stSidebar"] {
+    /* Method 2: Override any transform, blur, or filter properties */
+    section[data-testid="stSidebar"], section[data-testid="stSidebar"] * {
         transform: translateX(0px) !important;
         margin-left: 0px !important;
         backdrop-filter: none !important;
         filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        -webkit-filter: none !important;
+        background: #2a1414 !important;
+        box-shadow: none !important;
     }
     
     /* Method 3: Hide ALL possible collapse buttons */
@@ -235,19 +242,28 @@ st.markdown("""
         width: calc(100vw - 360px) !important;
     }
     
-    /* Method 5: Prevent sidebar from being hidden by any parent container */
-    .css-1d391kg *, .css-1cypcdb *, section[data-testid="stSidebar"] * {
-        display: block !important;
-        visibility: visible !important;
+    /* Method 5: Force ALL sidebar children to have solid backgrounds */
+    .css-1d391kg *, .css-1cypcdb *, section[data-testid="stSidebar"] *, 
+    [data-testid="stSidebar"] *, .stSidebar * {
         backdrop-filter: none !important;
         filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        -webkit-filter: none !important;
+        box-shadow: none !important;
     }
     
-    /* Method 6: Force sidebar content to be visible and clear */
-    .sidebar .sidebar-content, .css-17lntkn {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
+    /* Method 6: Specific overrides for common Streamlit elements */
+    .sidebar .sidebar-content, .css-17lntkn, .css-1lcbmhc, .css-k1vhr6 {
+        background: #2a1414 !important;
+        backdrop-filter: none !important;
+        filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        -webkit-filter: none !important;
+    }
+    
+    /* Method 7: Override any glassmorphism effects */
+    section[data-testid="stSidebar"] > div {
+        background: #2a1414 !important;
         backdrop-filter: none !important;
         filter: none !important;
     }
