@@ -12,9 +12,6 @@ import requests
 import io
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
-from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import PolynomialFeatures
-from scipy import stats
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
@@ -148,6 +145,24 @@ def load_crime_statistics():
         'last_updated': get_stkitts_date()
     }
 
+def simple_linear_regression(x, y):
+    """Simple linear regression using numpy"""
+    n = len(x)
+    x_mean = np.mean(x)
+    y_mean = np.mean(y)
+    
+    # Calculate slope and intercept
+    numerator = np.sum((x - x_mean) * (y - y_mean))
+    denominator = np.sum((x - x_mean) ** 2)
+    slope = numerator / denominator
+    intercept = y_mean - slope * x_mean
+    
+    return slope, intercept
+
+def predict_values(x_new, slope, intercept):
+    """Predict values using linear regression parameters"""
+    return slope * x_new + intercept
+
 def generate_crime_predictions(crime_data):
     """Generate crime predictions using statistical analysis"""
     
@@ -155,19 +170,19 @@ def generate_crime_predictions(crime_data):
     homicide_counts = list(crime_data['homicides']['yearly_totals'].values())
     
     # Convert to numpy arrays
-    X = np.array(homicide_years).reshape(-1, 1)
+    x = np.array(homicide_years)
     y = np.array(homicide_counts)
     
-    # Linear regression for trend
-    model = LinearRegression()
-    model.fit(X, y)
+    # Simple linear regression
+    slope, intercept = simple_linear_regression(x, y)
     
     # Predict 2025-2027
-    future_years = np.array([2025, 2026, 2027]).reshape(-1, 1)
-    predictions = model.predict(future_years)
+    future_years = np.array([2025, 2026, 2027])
+    predictions = predict_values(future_years, slope, intercept)
     
-    # Calculate confidence intervals
-    residuals = y - model.predict(X)
+    # Calculate confidence intervals using residuals
+    predicted_historical = predict_values(x, slope, intercept)
+    residuals = y - predicted_historical
     std_error = np.std(residuals)
     
     predictions_dict = {}
