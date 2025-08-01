@@ -7,3 +7,4 @@ google-generativeai
 pytz
 requests
 folium
+streamlit_folium
