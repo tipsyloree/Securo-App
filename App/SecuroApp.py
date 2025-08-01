@@ -552,7 +552,140 @@ but include English translations for technical terms when helpful.
     
     return base_prompt
 
-def get_enhanced_ai_response(user_input, language='en'):
+def generate_bot_response(user_input, language='en'):
+    """
+    Generate bot response with proper priority:
+    1. Google AI API (primary)
+    2. CSV search (fallback)
+    3. Hardcoded responses (emergency fallback)
+    """
+    current_time = get_stkitts_time()
+    current_date = get_stkitts_date()
+    
+    # Try Google AI API first (PRIMARY METHOD)
+    if st.session_state.get('ai_enabled', False) and model is not None:
+        try:
+            # Create comprehensive context for AI
+            crime_context = f"""
+            CURRENT ST. KITTS & NEVIS CRIME DATA (Q2 2025):
+            
+            OVERALL STATISTICS:
+            - Total Federation Crimes: 292
+            - Overall Detection Rate: 38.7%
+            - St. Kitts: 207 crimes (32.9% detection rate)
+            - Nevis: 85 crimes (52.9% detection rate)
+            
+            CRIME BREAKDOWN Q2 2025:
+            - Murder/Manslaughter: 4 cases (2 detected, 50% rate)
+            - Drug Crimes: 31 cases (31 detected, 100% rate) - PERFECT PERFORMANCE
+            - Larcenies: 92 cases (21 detected, 22.8% rate)
+            - Bodily Harm: 33 cases (19 detected, 57.6% rate)
+            - Break-ins: 26 cases (7 detected, 26.9% rate)
+            - Malicious Damage: 59 cases (17 detected, 28.8% rate)
+            
+            CRIME HOTSPOTS (13 MAPPED LOCATIONS):
+            HIGH RISK: Basseterre Central (45 crimes), Molineux (33), Tabernacle (31)
+            MEDIUM RISK: Cayon (28), Newton Ground (26), Old Road (22), Ramsbury (21), Charlestown (18), Cotton Ground (16)
+            LOW RISK: Sandy Point (19), Dieppe Bay (15), Newcastle (14), Gingerland (12)
+            
+            HISTORICAL TRENDS:
+            - 2023: 31 homicides
+            - 2024: 28 homicides  
+            - 2025 H1: 4 homicides (75% reduction)
+            
+            EMERGENCY CONTACTS:
+            Police: 911, HQ: 465-2241, Medical: 465-2551, Fire: 465-2515
+            """
+            
+            # Search CSV data if available to include in context
+            csv_context = ""
+            if st.session_state.get('csv_data') is not None:
+                csv_search = search_csv_data(st.session_state.csv_data, user_input)
+                csv_context = f"\n\nADDITIONAL DATABASE SEARCH:\n{csv_search}"
+            
+            time_context = f"""
+            Current St. Kitts & Nevis Time: {current_time} AST
+            Current Date: {current_date}
+            """
+            
+            # Enhanced system prompt for AI
+            ai_prompt = f"""
+            {get_system_prompt(language)}
+            
+            CRIME DATABASE CONTEXT:
+            {crime_context}
+            {csv_context}
+            
+            TIME CONTEXT:
+            {time_context}
+            
+            USER QUERY: {user_input}
+            
+            INSTRUCTIONS:
+            1. Respond as SECURO, the professional crime analysis AI
+            2. Use specific statistics and data from the context above
+            3. Provide actionable insights for law enforcement
+            4. Be professional but conversational
+            5. Include relevant crime data and recommendations
+            6. Format clearly with appropriate sections if complex
+            7. Always start with "SECURO:" 
+            
+            Generate a comprehensive response:
+            """
+            
+            # Generate AI response
+            response = model.generate_content(ai_prompt)
+            
+            if response and response.text:
+                clean_response = response.text.strip()
+                clean_response = clean_response.replace('```', '')
+                clean_response = re.sub(r'<[^>]+>', '', clean_response)
+                
+                # Ensure SECURO branding
+                if not clean_response.startswith("SECURO:"):
+                    clean_response = f"SECURO: {clean_response}"
+                
+                return clean_response
+            else:
+                raise Exception("Empty response from AI")
+                
+        except Exception as e:
+            # Log the AI error for debugging
+            st.session_state.ai_error = f"API Error: {str(e)}"
+            st.session_state.ai_enabled = False
+            st.session_state.ai_status = "❌ API Failed - Using Fallback"
+    
+    # FALLBACK 1: CSV Search + Smart Responses
+    if st.session_state.get('csv_data') is not None:
+        csv_results = search_csv_data(st.session_state.csv_data, user_input)
+        return get_smart_fallback_response(user_input, csv_results)
+    
+    # FALLBACK 2: Hardcoded Smart Responses (Emergency Fallback)
+    return get_smart_fallback_response(user_input, "⚠️ Operating in offline mode - CSV database not available.")
+
+def get_smart_fallback_response(user_input, csv_results):
+    """Provide intelligent responses when AI is not available"""
+    lower_input = user_input.lower()
+    
+    # Handle greetings
+    if any(greeting in lower_input for greeting in ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening']):
+        return f"SECURO: Hello! I'm SECURO, your AI crime analysis assistant for St. Kitts & Nevis. I'm here to help with:\n\n🔍 Crime data analysis and statistics\n🗺️ Hotspot identification and mapping\n📈 Trend analysis and predictions\n🚨 Emergency contact information\n💼 Forensic investigation support\n\nCurrent Status: Q2 2025 shows 292 total crimes with 38.7% detection rate.\n\nHow can I assist you today?\n\n{csv_results}"
+    
+    # Handle thanks
+    elif any(thanks in lower_input for thanks in ['thank', 'thanks', 'appreciate']):
+        return "SECURO: You're welcome! I'm here to support law enforcement and public safety in St. Kitts & Nevis. Feel free to ask me anything about crime analysis, statistics, or investigative support."
+    
+    # Handle how are you
+    elif any(phrase in lower_input for phrase in ['how are you', 'how do you do', 'what\'s up']):
+        return f"SECURO: I'm operating at full capacity and ready to assist with crime analysis! My systems are monitoring {len(CRIME_HOTSPOTS)} hotspot locations and I have access to comprehensive crime statistics including Q2 2025 data showing 292 total crimes with a 38.7% detection rate. How can I help you today?"
+    
+    # Handle capabilities questions
+    elif any(word in lower_input for word in ['what can you do', 'capabilities', 'help me', 'assist']):
+        return f"SECURO: I'm your comprehensive crime analysis assistant with these capabilities:\n\n📊 **Crime Statistics**: Q2 2025 data (292 crimes, 38.7% detection rate)\n🗺️ **Hotspot Analysis**: 13 mapped locations across St. Kitts & Nevis\n📈 **Trend Analysis**: Historical data from 2015-2024\n🔮 **Predictions**: AI-powered crime forecasting\n🚨 **Emergency Support**: Complete contact database\n🔬 **Forensic Assistance**: Investigation support and evidence analysis\n\nTry asking: 'Show crime hotspots', 'What are the trends?', or 'Emergency contacts'\n\n{csv_results}"
+    
+    # Use the existing enhanced fallback for specific queries
+    else:
+        return get_fallback_response(user_input) + f"\n\n{csv_results}"
     """Generate enhanced AI response with comprehensive crime analysis"""
     if not st.session_state.get('ai_enabled', False) or model is None:
         return get_fallback_response(user_input)
@@ -718,16 +851,17 @@ but include English translations for technical terms when helpful.
     
     return base_prompt
 
-# Initialize the AI model with better configuration
+# Initialize the AI model with proper API key handling
 def initialize_ai():
     """Initialize AI model with proper configuration and error handling"""
     try:
-        # Try to get API key from environment first, then fallback to hardcoded
-        api_key = os.getenv('GOOGLE_API_KEY', "AIzaSyA_9sB8o6y7dKK6yBRKWH_c5uSVDSoRYv0")
+        # Get API key from environment variable or use provided fallback
+        api_key = os.getenv('GOOGLE_API_KEY', 'AIzaSyA3ViHvNYuunum-qGA0Yo4MrOJFDvQok6g')
         
-        if not api_key or api_key == "AIzaSyA3ViHvNYuunum-qGA0Yo4MrOJFDvQok6g":
+        if not api_key:
             st.session_state.ai_enabled = False
             st.session_state.ai_status = "❌ API Key Required"
+            st.session_state.ai_error = "No GOOGLE_API_KEY found."
             return None
             
         genai.configure(api_key=api_key)
@@ -765,19 +899,31 @@ def initialize_ai():
             safety_settings=safety_settings
         )
         
-        # Test the connection
-        test_response = model.generate_content("Test connection")
+        # Test the connection with a simple query
+        test_response = model.generate_content("Test connection - respond with 'OK'")
         
-        st.session_state.ai_enabled = True
-        st.session_state.ai_status = "✅ AI Ready (Enhanced)"
-        return model
+        if test_response and test_response.text:
+            st.session_state.ai_enabled = True
+            st.session_state.ai_status = "✅ Google AI Connected"
+            st.session_state.ai_error = None
+            return model
+        else:
+            raise Exception("No response from API")
         
     except Exception as e:
         st.session_state.ai_enabled = False
-        st.session_state.ai_status = f"❌ AI Error: {str(e)[:50]}..."
+        st.session_state.ai_status = f"❌ API Error"
+        st.session_state.ai_error = str(e)
         return None
 
-# Initialize AI
+def set_api_key(api_key):
+    """Set the API key and reinitialize AI"""
+    if api_key:
+        os.environ['GOOGLE_API_KEY'] = api_key
+        return initialize_ai()
+    return None
+
+# Initialize AI on startup
 model = initialize_ai()
 
 # Page configuration
@@ -1190,23 +1336,23 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Language Selector in sidebar
+# Language Selector and AI Configuration in sidebar
 with st.sidebar:
-    st.markdown("### 🌍 Language Selection")
-    selected_language = st.selectbox(
-        "Choose Language",
-        options=list(SUPPORTED_LANGUAGES.keys()),
-        format_func=lambda x: SUPPORTED_LANGUAGES[x],
-        index=list(SUPPORTED_LANGUAGES.keys()).index(st.session_state.selected_language),
-        key="language_selector"
-    )
-    st.session_state.selected_language = selected_language
-    
-    st.markdown("---")
-    
-    # AI Configuration Section
     st.markdown("### 🤖 AI Configuration")
+    
+    # Show current API key status
+    current_api_key = os.getenv('GOOGLE_API_KEY', 'AIzaSyA3ViHvNYuunum-qGA0Yo4MrOJFDvQok6g')
+    if current_api_key:
+        masked_key = current_api_key[:8] + "..." + current_api_key[-4:] if len(current_api_key) > 12 else "***"
+        st.success(f"🔑 API Key: {masked_key}")
+    else:
+        st.warning("🔑 No API Key Set")
+    
     st.write(f"**Status:** {st.session_state.get('ai_status', 'Unknown')}")
+    
+    # Show detailed error if any
+    if st.session_state.get('ai_error'):
+        st.error(f"**Error:** {st.session_state.ai_error}")
     
     # CSV Database Status
     if st.session_state.get('csv_data') is not None:
@@ -1214,34 +1360,54 @@ with st.sidebar:
     else:
         st.warning("📊 Database: Not loaded")
     
-    # API Key input for users who want to use their own
-    api_key_input = st.text_input(
-        "Google AI API Key (Optional)",
-        type="password",
-        help="Enter your own Google AI API key for enhanced performance",
-        placeholder="Leave blank to use default"
-    )
+    st.markdown("---")
     
-    if st.button("🔄 Update AI Configuration"):
-        if api_key_input:
-            os.environ['GOOGLE_API_KEY'] = api_key_input
-            st.success("✅ API Key updated! Reinitializing AI...")
-            # Reinitialize AI with new key
-            model = initialize_ai()
-            st.rerun()
-        else:
-            st.info("Using default API configuration")
+    # Optional API Key override
+    with st.expander("🔧 Advanced API Settings"):
+        st.markdown("**Override API Key (Optional):**")
+        api_key_input = st.text_input(
+            "Custom GOOGLE_API_KEY",
+            type="password",
+            help="Override the built-in API key",
+            placeholder="Enter custom API key..."
+        )
+        
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("🔄 Set Custom Key"):
+                if api_key_input:
+                    global model
+                    model = set_api_key(api_key_input)
+                    if st.session_state.get('ai_enabled', False):
+                        st.success("✅ Custom key set!")
+                    else:
+                        st.error("❌ Invalid key")
+                    st.rerun()
+                else:
+                    st.error("Please enter an API key")
+        
+        with col2:
+            if st.button("🔄 Reset to Default"):
+                if 'GOOGLE_API_KEY' in os.environ:
+                    del os.environ['GOOGLE_API_KEY']
+                model = initialize_ai()  # This will use the hardcoded key
+                st.success("Reset to built-in key")
+                st.rerun()
     
+    st.markdown("---")
+    
+    # Status indicators
     if st.session_state.get('ai_enabled', False):
-        st.success("🤖 Enhanced AI Active")
+        st.success("🤖 Google AI Active")
         st.write("• Advanced crime analysis")
         st.write("• Contextual responses")
         st.write("• Multi-language support")
         st.write("• Forensic assistance")
     else:
-        st.warning("⚠️ AI Limited Mode")
-        st.write("• Basic responses only")
-        st.write("• Add API key for full features")
+        st.warning("⚠️ AI Fallback Mode")
+        st.write("• CSV database responses")
+        st.write("• Basic crime analysis")
+        st.write("• Check API key settings")
     
     if st.session_state.get('csv_data') is not None:
         st.success("📊 CSV Database Active")
@@ -1852,7 +2018,8 @@ elif st.session_state.current_page == 'chat':
                 "content": bot_response,
                 "timestamp": current_time
             })
-            st.rerun()
+            
+                            st.rerun()
     
     # Quick Action Buttons
     st.markdown('<h4 style="color: #44ff44; text-align: center; margin-bottom: 15px;">🚀 Quick Analysis Options</h4>', unsafe_allow_html=True)
@@ -1880,16 +2047,9 @@ elif st.session_state.current_page == 'chat':
                     "timestamp": current_time
                 })
                 
-                # Generate enhanced response using CSV + AI
+                # Generate enhanced response using new system
                 with st.spinner("🧠 SECURO AI analyzing..."):
-                    # Search CSV first
-                    csv_results = search_csv_data(st.session_state.csv_data, query_text)
-                    
-                    # Enhance with AI or use smart fallback
-                    if st.session_state.get('ai_enabled', False):
-                        response = get_ai_response(query_text, csv_results, st.session_state.selected_language)
-                    else:
-                        response = get_smart_fallback_response(query_text, csv_results)
+                    response = generate_bot_response(query_text, st.session_state.selected_language)
                 
                 st.session_state.messages.append({
                     "role": "assistant",
@@ -1901,13 +2061,14 @@ elif st.session_state.current_page == 'chat':
 
 # Status Bar
 csv_status = f"{len(st.session_state.csv_data)} CSV Records" if st.session_state.get('csv_data') is not None else "CSV Missing"
+ai_status = "AI Active" if st.session_state.get('ai_enabled', False) else "AI Fallback"
 current_time = get_stkitts_time()
 
 st.markdown(f"""
 <div class="status-bar">
     <div class="status-item">
         <div class="status-dot"></div>
-        <span>SECURO AI Online</span>
+        <span>SECURO {ai_status}</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
