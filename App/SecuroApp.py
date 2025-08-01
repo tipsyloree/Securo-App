@@ -196,9 +196,10 @@ st.markdown("""
         min-width: 320px !important;
         max-width: 500px !important;
         z-index: 999999 !important;
-        background: rgba(40, 20, 20, 0.95) !important;
+        background: rgba(40, 20, 20, 0.98) !important;
         border-right: 2px solid rgba(255, 68, 68, 0.5) !important;
-        backdrop-filter: blur(10px) !important;
+        backdrop-filter: none !important;
+        filter: none !important;
         overflow-y: auto !important;
         resize: horizontal !important;
         transform: none !important;
@@ -209,6 +210,8 @@ st.markdown("""
     section[data-testid="stSidebar"] {
         transform: translateX(0px) !important;
         margin-left: 0px !important;
+        backdrop-filter: none !important;
+        filter: none !important;
     }
     
     /* Method 3: Hide ALL possible collapse buttons */
@@ -236,13 +239,17 @@ st.markdown("""
     .css-1d391kg *, .css-1cypcdb *, section[data-testid="stSidebar"] * {
         display: block !important;
         visibility: visible !important;
+        backdrop-filter: none !important;
+        filter: none !important;
     }
     
-    /* Method 6: Force sidebar content to be visible */
+    /* Method 6: Force sidebar content to be visible and clear */
     .sidebar .sidebar-content, .css-17lntkn {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
+        backdrop-filter: none !important;
+        filter: none !important;
     }
    
     /* Main app background */
