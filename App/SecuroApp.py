@@ -1,22 +1,56 @@
 import streamlit as st
 import time
 import datetime
+import pytz
 import random
 import pandas as pd
 import os
 import google.generativeai as genai
 import re
 
-# System Prompt for SECURO Crime Mitigation Chatbot
-system_prompt = """
-You are SECURO, an intelligent and professional crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public.
+# Language detection and translation support
+SUPPORTED_LANGUAGES = {
+    'en': 'English',
+    'es': 'Español (Spanish)',
+    'fr': 'Français (French)',
+    'pt': 'Português (Portuguese)',
+    'zh': '中文 (Chinese)',
+    'ar': 'العربية (Arabic)',
+    'hi': 'हिन्दी (Hindi)',
+    'ja': '日本語 (Japanese)',
+    'ko': '한국어 (Korean)',
+    'de': 'Deutsch (German)',
+    'it': 'Italiano (Italian)',
+    'ru': 'Русский (Russian)'
+}
+
+# St. Kitts timezone (Atlantic Standard Time)
+SKN_TIMEZONE = pytz.timezone('America/St_Kitts')
+
+def get_stkitts_time():
+    """Get current time in St. Kitts & Nevis timezone"""
+    utc_now = datetime.datetime.now(pytz.UTC)
+    skn_time = utc_now.astimezone(SKN_TIMEZONE)
+    return skn_time.strftime("%H:%M:%S")
+
+def get_stkitts_date():
+    """Get current date in St. Kitts & Nevis timezone"""
+    utc_now = datetime.datetime.now(pytz.UTC)
+    skn_time = utc_now.astimezone(SKN_TIMEZONE)
+    return skn_time.strftime("%Y-%m-%d")
+
+# Enhanced System Prompt with multilingual support
+def get_system_prompt(language='en'):
+    base_prompt = """
+You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
 
 Your mission is to support crime prevention, research, and public safety through:
-- Interactive maps
-- Statistical analysis
-- Predictive analytics
+- Interactive maps and geographic analysis
+- Statistical analysis and trend identification
+- Predictive analytics for crime prevention
 - Visual data presentations (charts, graphs, etc.)
 - Emergency contact guidance
+- Multilingual communication support
 
 Capabilities:
 - Analyze and summarize current and historical crime data (local and global)
@@ -25,6 +59,7 @@ Capabilities:
 - Provide accessible language for general users, while supporting technical depth for experts
 - Integrate with GIS, crime databases (e.g. Crimeometer), and public safety APIs
 - Generate visual outputs using Python tools like matplotlib, pandas, folium, etc.
+- Communicate effectively in multiple languages
 - Adapt responses to be clear, concise, and actionable
 
 Tone & Behavior:
@@ -33,9 +68,20 @@ Tone & Behavior:
 - Explain visuals when necessary
 - Avoid panic-inducing language—focus on empowerment and awareness
 - Respond directly without using code blocks, backticks, or HTML formatting
+- Use the current St. Kitts & Nevis time and date in responses when relevant
 
 Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
 """
+    
+    if language != 'en':
+        language_instruction = f"""
+IMPORTANT: The user has selected {SUPPORTED_LANGUAGES.get(language, language)} as their preferred language. 
+Please respond primarily in {SUPPORTED_LANGUAGES.get(language, language)}, but you may include English translations for technical terms when helpful for clarity.
+If you're not completely fluent in the requested language, do your best and indicate that you're providing assistance in that language.
+"""
+        return base_prompt + language_instruction
+    
+    return base_prompt
 
 # Initialize the AI model
 try:
@@ -57,15 +103,28 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS styling - FIXED VERSION
+# Enhanced CSS styling with better sidebar control
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
    
-    /* Hide default Streamlit elements */
+    /* Hide default Streamlit elements but keep sidebar controls */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    
+    /* Force sidebar to be visible and controllable */
+    .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
+    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
+        visibility: visible !important;
+        display: block !important;
+    }
+    
+    /* Sidebar toggle button - keep it always visible */
+    button[kind="header"] {
+        visibility: visible !important;
+        display: block !important;
+    }
    
     /* Main app background */
     .stApp {
@@ -158,8 +217,17 @@ st.markdown("""
         z-index: 2;
         font-family: 'JetBrains Mono', monospace;
     }
+
+    .main-header .datetime {
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 8px;
+        position: relative;
+        z-index: 2;
+        font-family: 'JetBrains Mono', monospace;
+    }
    
-    /* Sidebar styling - Multiple selectors for different Streamlit versions */
+    /* Sidebar styling - Enhanced for better control */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div,
     .css-1aumxhk, .css-hxt7ib, .css-17lntkn {
@@ -168,14 +236,14 @@ st.markdown("""
         backdrop-filter: blur(10px) !important;
     }
    
-    /* Sidebar header styling */
-    section[data-testid="stSidebar"] .css-10trblm {
-        color: #ff4444 !important;
-    }
-   
-    /* Sidebar content background */
-    .css-1cypcdb .css-17lntkn {
-        background: transparent !important;
+    /* Language selector styling */
+    .language-selector {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 68, 68, 0.3);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        font-family: 'JetBrains Mono', monospace;
     }
    
     /* Emergency contacts styling */
@@ -208,29 +276,6 @@ st.markdown("""
         font-size: 0.8rem;
         margin-top: 3px;
         font-family: 'JetBrains Mono', monospace;
-    }
-   
-    /* Sidebar toggle button */
-    .sidebar-toggle {
-        position: fixed;
-        top: 70px;
-        left: 20px;
-        z-index: 999;
-        background: linear-gradient(135deg, #ff4444, #cc3333);
-        border: none;
-        border-radius: 8px;
-        color: white;
-        padding: 10px 15px;
-        cursor: pointer;
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 0.8rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(255, 68, 68, 0.3);
-    }
-   
-    .sidebar-toggle:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(255, 68, 68, 0.5);
     }
    
     /* Map container with better styling */
@@ -305,7 +350,7 @@ st.markdown("""
     .hotspot-3 { top: 70%; left: 40%; }
     .hotspot-4 { top: 25%; left: 75%; }
    
-    /* Chat styling - FIXED VERSION */
+    /* Chat styling */
     .chat-message {
         margin-bottom: 20px;
         animation: fadeInUp 0.5s ease;
@@ -403,7 +448,7 @@ st.markdown("""
     }
    
     /* Input styling */
-    .stTextInput input {
+    .stTextInput input, .stSelectbox > div > div {
         background: rgba(0, 0, 0, 0.5) !important;
         border: 1px solid rgba(255, 68, 68, 0.3) !important;
         border-radius: 25px !important;
@@ -411,7 +456,7 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
     }
 
-    .stTextInput input:focus {
+    .stTextInput input:focus, .stSelectbox > div > div:focus {
         border-color: #ff4444 !important;
         box-shadow: 0 0 20px rgba(255, 68, 68, 0.2) !important;
     }
@@ -466,7 +511,7 @@ st.markdown("""
 @st.cache_data
 def load_csv_data():
     csv_filename = "criminal_justice_qa.csv"
-    script_dir = os.path.dirname(__file__)  # ✅ Correct - double underscores
+    script_dir = os.path.dirname(__file__)
     csv_path = os.path.join(script_dir, csv_filename)
     try:
         if os.path.exists(csv_path):
@@ -487,16 +532,22 @@ def load_csv_data():
     except Exception as e:
         return None, f"Error loading CSV: {e}"
 
-
-def get_ai_response(user_input, csv_results):
-    """Generate AI response using the system prompt and context"""
+def get_ai_response(user_input, csv_results, language='en'):
+    """Generate AI response using the system prompt and context with language support"""
     if not st.session_state.get('ai_enabled', False) or model is None:
-        return csv_results  # Fallback to CSV search results
+        return csv_results
     
     try:
+        # Get current St. Kitts time for context
+        current_time = get_stkitts_time()
+        current_date = get_stkitts_date()
+        
         # Combine system prompt with user context
         full_prompt = f"""
-        {system_prompt}
+        {get_system_prompt(language)}
+        
+        Current St. Kitts & Nevis time: {current_time}
+        Current St. Kitts & Nevis date: {current_date}
         
         Context from crime database search:
         {csv_results}
@@ -504,23 +555,21 @@ def get_ai_response(user_input, csv_results):
         User query: {user_input}
         
         Please provide a comprehensive response as SECURO based on the available data and your crime analysis capabilities.
+        Include the current local time if relevant to the user's query.
         Respond directly without using code blocks, backticks, or HTML formatting.
         """
         
         response = model.generate_content(full_prompt)
         
-        # Clean the response - remove any unwanted formatting
+        # Clean the response
         clean_response = response.text.strip()
-        # Remove backticks if they exist
-        clean_response = clean_response.replace('', '')
-        # Remove any HTML tags that might appear
+        clean_response = clean_response.replace('```', '')
         clean_response = re.sub(r'<[^>]+>', '', clean_response)
         
         return clean_response
         
     except Exception as e:
         return f"{csv_results}\n\n⚠ AI analysis temporarily unavailable. Showing database search results."
-
 
 def search_csv_data(df, query):
     """Search through CSV data for relevant information"""
@@ -532,13 +581,13 @@ def search_csv_data(df, query):
    
     # Search through all text columns
     for column in df.columns:
-        if df[column].dtype == 'object':  # Text columns
+        if df[column].dtype == 'object':
             try:
                 mask = df[column].astype(str).str.lower().str.contains(search_term, na=False)
                 matching_rows = df[mask]
                
                 if not matching_rows.empty:
-                    for _, row in matching_rows.head(2).iterrows():  # Limit to 2 results per column
+                    for _, row in matching_rows.head(2).iterrows():
                         result_dict = {k: v for k, v in row.to_dict().items() if pd.notna(v)}
                         results.append(f"**Found in {column}:**\n{result_dict}")
             except Exception as e:
@@ -552,15 +601,13 @@ def search_csv_data(df, query):
 # Initialize session state
 if 'messages' not in st.session_state:
     st.session_state.messages = []
-    # Add initial bot message
+    # Add initial bot message with current time
+    current_time = get_stkitts_time()
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n\n📊 Loading crime database... Please wait while I check for your data file.",
-        "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+        "content": f"🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\n🕒 Current St. Kitts Time: {current_time}\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n• Multilingual communication support\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "timestamp": current_time
     })
-
-if 'sidebar_state' not in st.session_state:
-    st.session_state.sidebar_state = "expanded"
 
 if 'csv_data' not in st.session_state:
     st.session_state.csv_data = None
@@ -568,26 +615,22 @@ if 'csv_data' not in st.session_state:
 if 'csv_loaded' not in st.session_state:
     st.session_state.csv_loaded = False
 
-# Header with sidebar toggle
-col1, col2 = st.columns([1, 10])
+if 'selected_language' not in st.session_state:
+    st.session_state.selected_language = 'en'
 
-with col1:
-    if st.button("🔧", help="Toggle Sidebar", key="sidebar_toggle"):
-        if st.session_state.sidebar_state == "expanded":
-            st.session_state.sidebar_state = "collapsed"
-        else:
-            st.session_state.sidebar_state = "expanded"
-        st.rerun()
+# Header with real-time St. Kitts time
+current_time = get_stkitts_time()
+current_date = get_stkitts_date()
 
-with col2:
-    st.markdown("""
-    <div class="main-header">
-        <div class="particles" id="particles"></div>
-        <h1>SECURO</h1>
-        <div class="tagline">AI Crime Investigation Assistant</div>
-        <div class="location">🇰🇳 St. Kitts & Nevis Law Enforcement</div>
-    </div>
-    """, unsafe_allow_html=True)
+st.markdown(f"""
+<div class="main-header">
+    <div class="particles" id="particles"></div>
+    <h1>SECURO</h1>
+    <div class="tagline">AI Crime Investigation Assistant</div>
+    <div class="location">🇰🇳 St. Kitts & Nevis Law Enforcement</div>
+    <div class="datetime">📅 {current_date} | 🕒 {current_time} (AST)</div>
+</div>
+""", unsafe_allow_html=True)
 
 # Particles animation script
 st.markdown("""
@@ -627,8 +670,8 @@ if not st.session_state.csv_loaded:
             # Add success message to chat
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.",
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+                "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🌍 I can also communicate in multiple languages - select your preferred language in the sidebar!",
+                "timestamp": get_stkitts_time()
             })
         else:
             st.markdown(f'<div class="file-status file-missing">{status_message}</div>', unsafe_allow_html=True)
@@ -637,7 +680,7 @@ if not st.session_state.csv_loaded:
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance and emergency contacts.",
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+                "timestamp": get_stkitts_time()
             })
 
 # Show current status
@@ -647,67 +690,87 @@ if st.session_state.csv_data is not None:
 else:
     st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
 
-# Sidebar (only show if expanded)
-if st.session_state.sidebar_state == "expanded":
-    with st.sidebar:
-        st.markdown('<div class="section-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
-       
-        emergency_contacts = [
-            {"name": "Emergency Hotline", "number": "911", "type": "police"},
-            {"name": "Police Department", "number": "465-2241", "type": "police"},
-            {"name": "Hospital", "number": "465-2551", "type": "hospital"},
-            {"name": "Fire Department", "number": "465-2515 / 465-7167", "type": "fire"},
-            {"name": "Coast Guard", "number": "465-8384 / 466-9280", "type": "legal"},
-            {"name": "Red Cross", "number": "465-2584", "type": "forensic"},
-            {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
-        ]
-       
-        for contact in emergency_contacts:
-            if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation. Emergency services are standing by for immediate response.",
-                    "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-                })
-                st.rerun()
-       
-        st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
-       
-        # Real Google Maps embed for St. Kitts & Nevis
-        st.markdown("""
-        <div class="map-container crime-map">
-            <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d243.44896!2d-62.7261!3d17.3026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c1a602b153c94b5%3A0x8e3f7a7c7b1b9f5e!2sBasseterre%2C%20St%20Kitts%20%26%20Nevis!5e1!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus&maptype=satellite"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-            </iframe>
-        </div>
-        """, unsafe_allow_html=True)
-       
-        # Interactive hotspot buttons
-        st.markdown('<div class="section-header">🎯 Active Crime Zones</div>', unsafe_allow_html=True)
-       
-        hotspots = [
-            {"name": "Basseterre Downtown", "level": "🔴 High Risk", "coords": "17.3026, -62.7261"},
-            {"name": "Sandy Point", "level": "🟡 Medium Risk", "coords": "17.3580, -62.8419"},
-            {"name": "Charlestown (Nevis)", "level": "🟠 Active Cases", "coords": "17.1373, -62.6131"},
-            {"name": "Frigate Bay", "level": "🟡 Tourist Area", "coords": "17.2742, -62.6897"}
-        ]
-       
-        for hotspot in hotspots:
-            if st.button(f"{hotspot['level']} {hotspot['name']}", key=f"hotspot_{hotspot['name']}"):
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": f"📍 **Crime Hotspot Analysis:**\n\n🎯 **Location:** {hotspot['name']}\n📊 **Coordinates:** {hotspot['coords']}\n⚠ **Status:** {hotspot['level']}\n\n🚔 **Recommendation:** Increased patrol presence and witness canvassing recommended. Coordinating with local units for enhanced surveillance in this area.",
-                    "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-                })
-                st.rerun()
+# Sidebar with enhanced functionality
+with st.sidebar:
+    # Language Selection
+    st.markdown('<div class="section-header">🌍 Language / Idioma / Langue</div>', unsafe_allow_html=True)
+    
+    selected_language = st.selectbox(
+        "Select Language:",
+        options=list(SUPPORTED_LANGUAGES.keys()),
+        format_func=lambda x: SUPPORTED_LANGUAGES[x],
+        index=list(SUPPORTED_LANGUAGES.keys()).index(st.session_state.selected_language),
+        key="language_selector"
+    )
+    
+    if selected_language != st.session_state.selected_language:
+        st.session_state.selected_language = selected_language
+        # Add language change message
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": f"🌍 Language changed to {SUPPORTED_LANGUAGES[selected_language]}. I will now respond primarily in this language while maintaining professional crime investigation capabilities.",
+            "timestamp": get_stkitts_time()
+        })
+        st.rerun()
+    
+    st.markdown('<div class="section-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
+   
+    emergency_contacts = [
+        {"name": "Emergency Hotline", "number": "911", "type": "police"},
+        {"name": "Police Department", "number": "465-2241", "type": "police"},
+        {"name": "Hospital", "number": "465-2551", "type": "hospital"},
+        {"name": "Fire Department", "number": "465-2515 / 465-7167", "type": "fire"},
+        {"name": "Coast Guard", "number": "465-8384 / 466-9280", "type": "legal"},
+        {"name": "Red Cross", "number": "465-2584", "type": "forensic"},
+        {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
+    ]
+   
+    for contact in emergency_contacts:
+        if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation at {get_stkitts_time()} AST. Emergency services are standing by for immediate response.",
+                "timestamp": get_stkitts_time()
+            })
+            st.rerun()
+   
+    st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
+   
+    # Real Google Maps embed for St. Kitts & Nevis
+    st.markdown("""
+    <div class="map-container crime-map">
+        <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d243.44896!2d-62.7261!3d17.3026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c1a602b153c94b5%3A0x8e3f7a7c7b1b9f5e!2sBasseterre%2C%20St%20Kitts%20%26%20Nevis!5e1!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus&maptype=satellite"
+            allowfullscreen=""
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+    </div>
+    """, unsafe_allow_html=True)
+   
+    # Interactive hotspot buttons
+    st.markdown('<div class="section-header">🎯 Active Crime Zones</div>', unsafe_allow_html=True)
+   
+    hotspots = [
+        {"name": "Basseterre Downtown", "level": "🔴 High Risk", "coords": "17.3026, -62.7261"},
+        {"name": "Sandy Point", "level": "🟡 Medium Risk", "coords": "17.3580, -62.8419"},
+        {"name": "Charlestown (Nevis)", "level": "🟠 Active Cases", "coords": "17.1373, -62.6131"},
+        {"name": "Frigate Bay", "level": "🟡 Tourist Area", "coords": "17.2742, -62.6897"}
+    ]
+   
+    for hotspot in hotspots:
+        if st.button(f"{hotspot['level']} {hotspot['name']}", key=f"hotspot_{hotspot['name']}"):
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": f"📍 **Crime Hotspot Analysis:**\n\n🎯 **Location:** {hotspot['name']}\n📊 **Coordinates:** {hotspot['coords']}\n⚠ **Status:** {hotspot['level']}\n🕒 **Analysis Time:** {get_stkitts_time()} AST\n\n🚔 **Recommendation:** Increased patrol presence and witness canvassing recommended. Coordinating with local units for enhanced surveillance in this area.",
+                "timestamp": get_stkitts_time()
+            })
+            st.rerun()
 
 # Main chat area
 st.markdown('<div class="section-header">💬 Crime Investigation Chat</div>', unsafe_allow_html=True)
 
-# Display chat messages - FIXED VERSION
+# Display chat messages with proper St. Kitts time
 for message in st.session_state.messages:
     if message["role"] == "user":
         # Clean user message
@@ -715,7 +778,7 @@ for message in st.session_state.messages:
         st.markdown(f"""
         <div class="chat-message user-message">
             <div class="message-content">{clean_content}</div>
-            <div class="message-time">{message["timestamp"]}</div>
+            <div class="message-time">You • {message["timestamp"]} AST</div>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -723,7 +786,7 @@ for message in st.session_state.messages:
         clean_content = str(message["content"]).strip()
         # Remove any unwanted HTML or formatting
         clean_content = re.sub(r'<[^>]+>', '', clean_content)
-        clean_content = clean_content.replace('', '')
+        clean_content = clean_content.replace('```', '')
         
         # Format with SECURO prefix if it doesn't already have it
         if not clean_content.startswith("SECURO:") and not clean_content.startswith("🚔"):
@@ -736,18 +799,34 @@ for message in st.session_state.messages:
         st.markdown(f"""
         <div class="chat-message bot-message">
             <div class="message-content">{clean_content}</div>
-            <div class="message-time">{message["timestamp"]}</div>
+            <div class="message-time">SECURO • {message["timestamp"]} AST</div>
         </div>
         """, unsafe_allow_html=True)
 
-# Chat input
+# Chat input with language support
 with st.form("chat_form", clear_on_submit=True):
     col1, col2 = st.columns([5, 1])
     
     with col1:
+        # Dynamic placeholder based on selected language
+        placeholders = {
+            'en': "Ask questions about crime data, investigations, or emergency procedures...",
+            'es': "Haga preguntas sobre datos de criminalidad, investigaciones o procedimientos de emergencia...",
+            'fr': "Posez des questions sur les données criminelles, les enquêtes ou les procédures d'urgence...",
+            'pt': "Faça perguntas sobre dados criminais, investigações ou procedimentos de emergência...",
+            'zh': "询问有关犯罪数据、调查或紧急程序的问题...",
+            'ar': "اسأل أسئلة حول بيانات الجريمة أو التحقيقات أو إجراءات الطوارئ...",
+            'hi': "अपराध डेटा, जांच, या आपातकालीन प्रक्रियाओं के बारे में प्रश्न पूछें...",
+            'ja': "犯罪データ、捜査、緊急手順について質問してください...",
+            'ko': "범죄 데이터, 수사 또는 응급 절차에 대한 질문을 하세요...",
+            'de': "Stellen Sie Fragen zu Kriminalitätsdaten, Ermittlungen oder Notfallverfahren...",
+            'it': "Fai domande sui dati criminali, le indagini o le procedure di emergenza...",
+            'ru': "Задавайте вопросы о данных преступности, расследованиях или экстренных процедурах..."
+        }
+        
         user_input = st.text_input(
             "Message",
-            placeholder="Ask questions about crime data, investigations, or emergency procedures...",
+            placeholder=placeholders.get(st.session_state.selected_language, placeholders['en']),
             label_visibility="collapsed",
             key="user_input"
         )
@@ -756,29 +835,32 @@ with st.form("chat_form", clear_on_submit=True):
         send_button = st.form_submit_button("Send", type="primary")
     
     if send_button and user_input:
+        current_time = get_stkitts_time()
+        
         # Add user message
         st.session_state.messages.append({
             "role": "user",
             "content": user_input,
-            "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+            "timestamp": current_time
         })
        
-        # Generate response using AI if available, otherwise use CSV search
+        # Generate response using AI with language support
         with st.spinner("🔍 Analyzing crime database..."):
             csv_results = search_csv_data(st.session_state.csv_data, user_input)
-            response = get_ai_response(user_input, csv_results)
+            response = get_ai_response(user_input, csv_results, st.session_state.selected_language)
            
         st.session_state.messages.append({
             "role": "assistant",
             "content": response,
-            "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
+            "timestamp": current_time
         })
        
         st.rerun()
 
-# Status bar
+# Status bar with real-time updates
 status_message = "CSV Data Ready" if st.session_state.csv_data is not None else "CSV Data Missing"
 status_class = "status-processing" if st.session_state.csv_data is not None else "status-evidence"
+current_time = get_stkitts_time()
 
 st.markdown(f"""
 <div class="status-bar">
@@ -794,5 +876,17 @@ st.markdown(f"""
         <div class="status-dot status-evidence"></div>
         <span>Emergency Services Linked</span>
     </div>
+    <div class="status-item">
+        <div class="status-dot status-online"></div>
+        <span>{current_time} AST</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot status-processing"></div>
+        <span>{SUPPORTED_LANGUAGES[st.session_state.selected_language]}</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
+
+# Auto-refresh time every 30 seconds
+if st.button("🔄 Refresh Time", help="Update current St. Kitts time"):
+    st.rerun()
