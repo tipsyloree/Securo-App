@@ -95,99 +95,13 @@ except Exception as e:
     st.session_state.ai_status = f"❌ AI Error: {str(e)}"
     model = None
 
-# Page configuration - Force sidebar with JavaScript injection
+# Page configuration - Force sidebar to always be visible
 st.set_page_config(
     page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
     page_icon="https://i.postimg.cc/V69LH7F4/Logo.jpg",
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-# JavaScript to force sidebar visibility
-st.markdown("""
-<script>
-// Force sidebar to be visible and prevent collapse
-function forceSidebarVisible() {
-    // Find all possible sidebar elements
-    const sidebarSelectors = [
-        '[data-testid="stSidebar"]',
-        '.css-1d391kg', 
-        '.css-1cypcdb', 
-        '.css-k1vhr6',
-        'section[data-testid="stSidebar"]',
-        '.stSidebar'
-    ];
-    
-    sidebarSelectors.forEach(selector => {
-        const elements = document.querySelectorAll(selector);
-        elements.forEach(el => {
-            if (el) {
-                el.style.display = 'block';
-                el.style.visibility = 'visible';
-                el.style.position = 'fixed';
-                el.style.left = '0';
-                el.style.top = '0';
-                el.style.height = '100vh';
-                el.style.width = '320px';
-                el.style.zIndex = '999999';
-                el.style.background = 'rgba(40, 20, 20, 0.95)';
-                el.style.borderRight = '2px solid rgba(255, 68, 68, 0.5)';
-            }
-        });
-    });
-    
-    // Also ensure content is visible and styled
-    const sidebarContent = document.querySelectorAll('section[data-testid="stSidebar"] *');
-    sidebarContent.forEach(el => {
-        if (el) {
-            el.style.color = '#e0e0e0';
-            el.style.visibility = 'visible';
-            el.style.display = 'block';
-        }
-    });
-    
-    // Force sidebar headers and text to be visible
-    const sidebarText = document.querySelectorAll('section[data-testid="stSidebar"] div, section[data-testid="stSidebar"] p, section[data-testid="stSidebar"] span, section[data-testid="stSidebar"] label');
-    sidebarText.forEach(el => {
-        if (el && el.textContent.trim() !== '') {
-            el.style.color = '#e0e0e0';
-            el.style.fontFamily = 'JetBrains Mono, monospace';
-            el.style.visibility = 'visible';
-            el.style.display = 'block';
-        }
-    });
-    
-    // Hide collapse buttons
-    const collapseButtons = document.querySelectorAll('button[kind="header"], [data-testid="collapsedControl"], .css-vk3wp9');
-    collapseButtons.forEach(btn => {
-        if (btn) {
-            btn.style.display = 'none';
-            btn.style.visibility = 'hidden';
-        }
-    });
-    
-    // Adjust main content
-    const mainContent = document.querySelector('.main .block-container');
-    if (mainContent) {
-        mainContent.style.marginLeft = '340px';
-        mainContent.style.maxWidth = 'none';
-    }
-}
-
-// Run the function multiple times to ensure it works
-forceSidebarVisible();
-setTimeout(forceSidebarVisible, 100);
-setTimeout(forceSidebarVisible, 500);
-setTimeout(forceSidebarVisible, 1000);
-
-// Keep running it periodically
-setInterval(forceSidebarVisible, 2000);
-
-// Listen for DOM changes and reapply
-const observer = new MutationObserver(forceSidebarVisible);
-observer.observe(document.body, { childList: true, subtree: true });
-</script>
-""", unsafe_allow_html=True)
 
 # Enhanced CSS styling with better sidebar control
 st.markdown("""
@@ -199,94 +113,46 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* AGGRESSIVE sidebar forcing - multiple approaches - NO BLUR VERSION */
-    
-    /* Method 1: Force all possible sidebar selectors - SOLID BACKGROUND */
+    /* FORCE sidebar to be permanently visible and prevent collapse */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
-    .css-1aumxhk, .css-hxt7ib, .css-17lntkn, .css-10trblm,
-    section[data-testid="stSidebar"], .stSidebar, 
-    [data-testid="stSidebar"] > div, [data-testid="stSidebar"],
-    .sidebar .sidebar-content {
-        display: block !important;
+    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
         visibility: visible !important;
+        display: block !important;
         position: fixed !important;
         left: 0 !important;
         top: 0 !important;
         height: 100vh !important;
-        width: 320px !important;
-        min-width: 320px !important;
-        max-width: 500px !important;
         z-index: 999999 !important;
-        background: #2a1414 !important;  /* Solid color instead of rgba */
-        border-right: 2px solid #ff4444 !important;
-        backdrop-filter: none !important;
-        filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        -webkit-filter: none !important;
-        overflow-y: auto !important;
-        resize: horizontal !important;
-        transform: none !important;
-        transition: none !important;
-        box-shadow: none !important;
+        min-width: 300px !important;
+        max-width: 400px !important;
+        width: 320px !important;
     }
     
-    /* Method 2: Override any transform, blur, or filter properties */
-    section[data-testid="stSidebar"], section[data-testid="stSidebar"] * {
-        transform: translateX(0px) !important;
-        margin-left: 0px !important;
-        backdrop-filter: none !important;
-        filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        -webkit-filter: none !important;
-        background: #2a1414 !important;
-        box-shadow: none !important;
-    }
-    
-    /* Method 3: Hide ALL possible collapse buttons */
+    /* Hide the sidebar collapse button completely */
     button[kind="header"], 
-    .css-vk3wp9, .css-1kyxreq, .css-18ni7ap,
-    [data-testid="collapsedControl"],
-    [data-testid="baseButton-header"],
-    .sidebar-close, .sidebar-toggle,
-    button[aria-label*="sidebar"], button[aria-label*="collapse"] {
+    .css-vk3wp9,
+    .css-1kyxreq,
+    [data-testid="collapsedControl"] {
         display: none !important;
         visibility: hidden !important;
-        opacity: 0 !important;
-        pointer-events: none !important;
     }
     
-    /* Method 4: Force main content adjustment */
-    .main, .main .block-container, .css-1y4p8pa, .css-12oz5g7 {
+    /* Adjust main content to account for fixed sidebar */
+    .main .block-container {
         margin-left: 340px !important;
         max-width: none !important;
         padding-left: 2rem !important;
-        width: calc(100vw - 360px) !important;
     }
     
-    /* Method 5: Force ALL sidebar children to have solid backgrounds */
-    .css-1d391kg *, .css-1cypcdb *, section[data-testid="stSidebar"] *, 
-    [data-testid="stSidebar"] *, .stSidebar * {
-        backdrop-filter: none !important;
-        filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        -webkit-filter: none !important;
-        box-shadow: none !important;
+    /* Make sidebar resizable */
+    section[data-testid="stSidebar"] {
+        resize: horizontal !important;
+        overflow: auto !important;
+        border-right: 3px solid rgba(255, 68, 68, 0.5) !important;
     }
     
-    /* Method 6: Specific overrides for common Streamlit elements */
-    .sidebar .sidebar-content, .css-17lntkn, .css-1lcbmhc, .css-k1vhr6 {
-        background: #2a1414 !important;
-        backdrop-filter: none !important;
-        filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        -webkit-filter: none !important;
-    }
-    
-    /* Method 7: Override any glassmorphism effects */
-    section[data-testid="stSidebar"] > div {
-        background: #2a1414 !important;
-        backdrop-filter: none !important;
-        filter: none !important;
+    section[data-testid="stSidebar"]:hover {
+        border-right: 3px solid rgba(255, 68, 68, 0.8) !important;
     }
    
     /* Main app background */
@@ -394,25 +260,9 @@ st.markdown("""
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div,
     .css-1aumxhk, .css-hxt7ib, .css-17lntkn {
-        background: #2a1414 !important;
-        border-right: 2px solid #ff4444 !important;
-        color: #e0e0e0 !important;
-    }
-    
-    /* Force sidebar content to be visible with proper styling */
-    section[data-testid="stSidebar"] * {
-        color: #e0e0e0 !important;
-        background: transparent !important;
-    }
-    
-    /* Sidebar text and elements */
-    .stSelectbox label, .stButton label, .stMarkdown, 
-    section[data-testid="stSidebar"] label,
-    section[data-testid="stSidebar"] p,
-    section[data-testid="stSidebar"] div,
-    section[data-testid="stSidebar"] span {
-        color: #e0e0e0 !important;
-        font-family: 'JetBrains Mono', monospace !important;
+        background: rgba(40, 20, 20, 0.9) !important;
+        border-right: 1px solid rgba(255, 68, 68, 0.3) !important;
+        backdrop-filter: blur(10px) !important;
     }
    
     /* Language selector styling */
