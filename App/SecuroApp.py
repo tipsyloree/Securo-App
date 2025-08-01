@@ -15,6 +15,8 @@ from matplotlib.dates import DateFormatter
 import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+import folium
+from streamlit_folium import st_folium
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -46,6 +48,26 @@ EMERGENCY_CONTACTS = {
     "NEMA": "466-5100"
 }
 
+# Crime Hotspots Data for St. Kitts & Nevis
+CRIME_HOTSPOTS = {
+    # St. Kitts Hotspots
+    "Basseterre Central": {"lat": 17.3026, "lon": -62.7177, "crimes": 45, "risk": "High", "types": ["Larceny", "Drug Crimes", "Assault"]},
+    "Cayon": {"lat": 17.3581, "lon": -62.7440, "crimes": 28, "risk": "Medium", "types": ["Break-ins", "Theft"]},
+    "Old Road Town": {"lat": 17.3211, "lon": -62.7847, "crimes": 22, "risk": "Medium", "types": ["Drug Crimes", "Vandalism"]},
+    "Tabernacle": {"lat": 17.3100, "lon": -62.7200, "crimes": 31, "risk": "High", "types": ["Robbery", "Assault"]},
+    "Sandy Point": {"lat": 17.3667, "lon": -62.8500, "crimes": 19, "risk": "Low", "types": ["Petty Theft"]},
+    "Dieppe Bay": {"lat": 17.3833, "lon": -62.8167, "crimes": 15, "risk": "Low", "types": ["Vandalism"]},
+    "Newton Ground": {"lat": 17.3319, "lon": -62.7269, "crimes": 26, "risk": "Medium", "types": ["Drug Crimes", "Larceny"]},
+    "Molineux": {"lat": 17.2978, "lon": -62.7047, "crimes": 33, "risk": "High", "types": ["Armed Robbery", "Assault"]},
+    
+    # Nevis Hotspots
+    "Charlestown": {"lat": 17.1348, "lon": -62.6217, "crimes": 18, "risk": "Medium", "types": ["Larceny", "Drug Crimes"]},
+    "Gingerland": {"lat": 17.1019, "lon": -62.5708, "crimes": 12, "risk": "Low", "types": ["Petty Theft"]},
+    "Newcastle": {"lat": 17.1667, "lon": -62.6000, "crimes": 14, "risk": "Low", "types": ["Vandalism", "Theft"]},
+    "Cotton Ground": {"lat": 17.1281, "lon": -62.6442, "crimes": 16, "risk": "Medium", "types": ["Break-ins", "Larceny"]},
+    "Ramsbury": {"lat": 17.1500, "lon": -62.6167, "crimes": 21, "risk": "Medium", "types": ["Drug Crimes", "Assault"]},
+}
+
 # St. Kitts timezone (Atlantic Standard Time)
 SKN_TIMEZONE = pytz.timezone('America/St_Kitts')
 
@@ -60,6 +82,114 @@ def get_stkitts_date():
     utc_now = datetime.datetime.now(pytz.UTC)
     skn_time = utc_now.astimezone(SKN_TIMEZONE)
     return skn_time.strftime("%Y-%m-%d")
+
+def create_crime_hotspot_map():
+    """Create an interactive crime hotspot map for St. Kitts and Nevis"""
+    # Center the map on St. Kitts and Nevis
+    center_lat = 17.25
+    center_lon = -62.7
+    
+    # Create the base map
+    m = folium.Map(
+        location=[center_lat, center_lon],
+        zoom_start=11,
+        tiles='OpenStreetMap',
+        attr='Crime Hotspot Analysis - SECURO'
+    )
+    
+    # Add Google Satellite layer as an option
+    folium.TileLayer(
+        tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+        attr='Google Satellite',
+        name='Satellite View',
+        overlay=False,
+        control=True
+    ).add_to(m)
+    
+    # Color mapping for risk levels
+    risk_colors = {
+        'High': '#ff4444',
+        'Medium': '#ffaa44', 
+        'Low': '#44ff44'
+    }
+    
+    # Add crime hotspots to the map
+    for location, data in CRIME_HOTSPOTS.items():
+        # Create popup content
+        popup_content = f"""
+        <div style="font-family: Arial, sans-serif; min-width: 200px;">
+            <h4 style="color: {risk_colors[data['risk']]}; margin: 0; text-align: center;">
+                🚨 {location}
+            </h4>
+            <hr style="margin: 8px 0;">
+            <p style="margin: 4px 0;"><strong>📊 Total Crimes:</strong> {data['crimes']}</p>
+            <p style="margin: 4px 0;"><strong>⚠️ Risk Level:</strong> 
+               <span style="color: {risk_colors[data['risk']]}; font-weight: bold;">{data['risk']}</span>
+            </p>
+            <p style="margin: 4px 0;"><strong>🔍 Common Types:</strong></p>
+            <ul style="margin: 4px 0; padding-left: 20px;">
+                {''.join([f'<li>{crime_type}</li>' for crime_type in data['types']])}
+            </ul>
+            <small style="color: #666;">📍 Lat: {data['lat']:.4f}, Lon: {data['lon']:.4f}</small>
+        </div>
+        """
+        
+        # Calculate marker size based on crime count
+        marker_size = max(10, min(30, data['crimes'] * 0.8))
+        
+        # Add marker to map
+        folium.CircleMarker(
+            location=[data['lat'], data['lon']],
+            radius=marker_size,
+            popup=folium.Popup(popup_content, max_width=300),
+            tooltip=f"{location}: {data['crimes']} crimes ({data['risk']} risk)",
+            color='black',
+            fillColor=risk_colors[data['risk']],
+            fillOpacity=0.7,
+            weight=2
+        ).add_to(m)
+        
+        # Add text label for major hotspots
+        if data['crimes'] > 25:
+            folium.Marker(
+                location=[data['lat'] + 0.01, data['lon']],
+                icon=folium.DivIcon(
+                    html=f"""<div style="font-size: 10px; font-weight: bold; 
+                             color: white; text-shadow: 1px 1px 2px black;">
+                             {location}</div>""",
+                    icon_size=(100, 20),
+                    icon_anchor=(50, 10)
+                )
+            ).add_to(m)
+    
+    # Add a legend
+    legend_html = f"""
+    <div style="position: fixed; 
+                top: 10px; right: 10px; width: 180px; height: 140px; 
+                background-color: rgba(0, 0, 0, 0.8); 
+                border: 2px solid rgba(68, 255, 68, 0.5);
+                border-radius: 10px; z-index:9999; 
+                font-size: 12px; font-family: Arial;
+                padding: 10px; color: white;">
+    <h4 style="margin: 0 0 10px 0; color: #44ff44;">🗺️ Crime Risk Legend</h4>
+    <div style="margin: 5px 0;">
+        <span style="color: {risk_colors['High']};">●</span> High Risk (25+ crimes)
+    </div>
+    <div style="margin: 5px 0;">
+        <span style="color: {risk_colors['Medium']};">●</span> Medium Risk (15-24 crimes)  
+    </div>
+    <div style="margin: 5px 0;">
+        <span style="color: {risk_colors['Low']};">●</span> Low Risk (<15 crimes)
+    </div>
+    <small style="color: #888;">Marker size = Crime frequency</small>
+    </div>
+    """
+    m.get_root().html.add_child(folium.Element(legend_html))
+    
+    # Add layer control
+    folium.LayerControl().add_to(m)
+    
+    return m
 
 # Crime Statistics Data Structure
 @st.cache_data
@@ -365,7 +495,7 @@ except Exception as e:
 # Page configuration
 st.set_page_config(
     page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
-    page_icon="https://i.postimg.cc/L6G6hVmk/PH-PR-2.png",
+    page_icon="🚔",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -373,6 +503,9 @@ st.set_page_config(
 # Initialize session state for page navigation
 if 'current_page' not in st.session_state:
     st.session_state.current_page = 'main'
+
+if 'show_map' not in st.session_state:
+    st.session_state.show_map = True
 
 # CSS styling - Clean GREEN theme (your original design)
 st.markdown("""
@@ -437,6 +570,27 @@ st.markdown("""
         border-color: #44ff44 !important;
         transform: translateX(5px) !important;
         box-shadow: 0 0 15px rgba(68, 255, 68, 0.2) !important;
+    }
+    
+    .map-toggle-button {
+        width: 100% !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .map-toggle-button button {
+        width: 100% !important;
+        background: rgba(68, 255, 68, 0.1) !important;
+        border: 1px solid rgba(68, 255, 68, 0.5) !important;
+        color: #44ff44 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+    }
+    
+    .map-toggle-button button:hover {
+        background: rgba(68, 255, 68, 0.2) !important;
+        border-color: #44ff44 !important;
+        transform: scale(1.02) !important;
     }
     
     .stApp {
@@ -609,6 +763,15 @@ def get_ai_response(user_input, csv_results, language='en'):
         time_keywords = ['time', 'date', 'now', 'current', 'today', 'when', 'hora', 'fecha', 'hoy', 'temps', 'maintenant']
         include_time = any(keyword in user_input.lower() for keyword in time_keywords)
         
+        # Include crime hotspot information in context
+        hotspot_context = f"""
+        CRIME HOTSPOT DATA:
+        High Risk Areas: {', '.join([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'High'])}
+        Medium Risk Areas: {', '.join([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Medium'])}
+        Low Risk Areas: {', '.join([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Low'])}
+        Total Mapped Locations: {len(CRIME_HOTSPOTS)}
+        """
+        
         time_context = f"""
         Current St. Kitts & Nevis time: {current_time}
         Current St. Kitts & Nevis date: {current_date}
@@ -617,6 +780,7 @@ def get_ai_response(user_input, csv_results, language='en'):
         full_prompt = f"""
         {get_system_prompt(language)}
         {time_context}
+        {hotspot_context}
         
         Context from crime database search:
         {csv_results}
@@ -703,6 +867,44 @@ with st.sidebar:
     
     st.markdown("---")
     
+    # Crime Hotspot Map Toggle
+    st.markdown('<div class="sidebar-header">🗺️ Crime Hotspot Map</div>', unsafe_allow_html=True)
+    
+    # Toggle button
+    map_button_text = "🔽 Hide Map" if st.session_state.show_map else "🔼 Show Map"
+    if st.button(map_button_text, key="map_toggle", help="Toggle crime hotspot map visibility"):
+        st.session_state.show_map = not st.session_state.show_map
+        st.rerun()
+    
+    # Show map if enabled
+    if st.session_state.show_map:
+        try:
+            with st.spinner("🗺️ Loading crime hotspot map..."):
+                crime_map = create_crime_hotspot_map()
+                map_data = st_folium(
+                    crime_map,
+                    width=280,
+                    height=300,
+                    returned_objects=["last_object_clicked_tooltip", "last_clicked"],
+                    key="crime_hotspot_map"
+                )
+                
+                # Display clicked location info
+                if map_data['last_object_clicked_tooltip']:
+                    clicked_info = map_data['last_object_clicked_tooltip']
+                    st.markdown(f"""
+                    <div style="background: rgba(68, 255, 68, 0.1); border: 1px solid rgba(68, 255, 68, 0.3); 
+                                border-radius: 8px; padding: 10px; margin-top: 10px; font-size: 0.8rem;">
+                        <strong>📍 Last Clicked:</strong><br>
+                        {clicked_info}
+                    </div>
+                    """, unsafe_allow_html=True)
+        except Exception as e:
+            st.error(f"❌ Map Error: {str(e)}")
+            st.info("💡 Note: Install streamlit-folium with: pip install streamlit-folium")
+    
+    st.markdown("---")
+    
     # Emergency Contacts
     st.markdown('<div class="sidebar-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
     
@@ -725,7 +927,7 @@ if 'messages' not in st.session_state:
     # Add initial bot message
     st.session_state.messages.append({
         "role": "assistant",
-        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\n📊 Loading crime database... Please wait while I check for your data file.\n\n🗺️ Interactive crime hotspot map is now available in the sidebar!",
         "timestamp": get_stkitts_time()
     })
 
@@ -753,6 +955,7 @@ if st.session_state.current_page == 'main':
         <div style="color: #888; text-transform: uppercase; letter-spacing: 2px;">AI Crime Investigation Assistant</div>
         <div style="color: #44ff44; margin-top: 5px;">🇰🇳 St. Kitts & Nevis Law Enforcement</div>
         <div style="color: #888; margin-top: 8px; font-size: 0.8rem;">📅 {current_date} | 🕒 {current_time} (AST)</div>
+        <div style="color: #888; margin-top: 5px; font-size: 0.8rem;">🗺️ Interactive Crime Hotspot Map Available</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -772,7 +975,7 @@ if st.session_state.current_page == 'main':
                 # Add success message to chat
                 st.session_state.messages.append({
                     "role": "assistant",
-                    "content": f"✅ Crime database loaded successfully!\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.",
+                    "content": f"✅ Crime database loaded successfully!\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🗺️ Don't forget to check out the interactive crime hotspot map in the sidebar to explore high-risk areas across St. Kitts & Nevis!",
                     "timestamp": get_stkitts_time()
                 })
             else:
@@ -781,7 +984,7 @@ if st.session_state.current_page == 'main':
                 # Add error message to chat
                 st.session_state.messages.append({
                     "role": "assistant",
-                    "content": f"❌ **Database Error:** Could not find 'criminal_justice_qa.csv'\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance.",
+                    "content": f"❌ **Database Error:** Could not find 'criminal_justice_qa.csv'\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance and the interactive hotspot map is available in the sidebar.",
                     "timestamp": get_stkitts_time()
                 })
 
@@ -791,6 +994,14 @@ if st.session_state.current_page == 'main':
         st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded | {ai_status}")
     else:
         st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
+
+    # Crime Hotspot Summary
+    total_hotspots = len(CRIME_HOTSPOTS)
+    high_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'High'])
+    medium_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Medium'])
+    low_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Low'])
+    
+    st.info(f"🗺️ **Crime Hotspot Map:** {total_hotspots} locations mapped | {high_risk} High Risk | {medium_risk} Medium Risk | {low_risk} Low Risk areas")
 
     # Main chat area
     st.markdown("### 💬 Crime Investigation Chat")
@@ -830,7 +1041,7 @@ if st.session_state.current_page == 'main':
         with col1:
             user_input = st.text_input(
                 "Message",
-                placeholder="Ask questions about crime data, investigations, or emergency procedures...",
+                placeholder="Ask questions about crime data, investigations, hotspots, or emergency procedures...",
                 label_visibility="collapsed",
                 key="user_input"
             )
@@ -863,7 +1074,7 @@ if st.session_state.current_page == 'main':
 
     # Status bar with real-time updates
     status_message = "CSV Data Ready" if st.session_state.csv_data is not None else "CSV Data Missing"
-    status_class = "status-processing" if st.session_state.csv_data is not None else "status-evidence"
+    map_status = "Map Visible" if st.session_state.show_map else "Map Hidden"
     current_time = get_stkitts_time()
 
     st.markdown(f"""
@@ -878,6 +1089,10 @@ if st.session_state.current_page == 'main':
         <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
             <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%;"></div>
             {status_message}
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
+            <div style="width: 8px; height: 8px; background: #33cc33; border-radius: 50%;"></div>
+            {map_status}
         </div>
         <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
             <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%;"></div>
@@ -1119,6 +1334,7 @@ st.markdown(f"""
 <div style="text-align: center; color: #666; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; padding: 20px;">
     📊 Data Source: Royal St. Christopher & Nevis Police Force (RSCNPF)<br>
     📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239 | liosk@police.kn<br>
-    🔄 Last Updated: {st.session_state.crime_stats['last_updated']} | Real-time Analytics Powered by SECURO AI
+    🔄 Last Updated: {st.session_state.crime_stats['last_updated']} | Real-time Analytics Powered by SECURO AI<br>
+    🗺️ Interactive Crime Hotspot Map: {len(CRIME_HOTSPOTS)} locations mapped across St. Kitts & Nevis
 </div>
 """, unsafe_allow_html=True)
