@@ -549,6 +549,7 @@ st.markdown("""
         border: 1px solid rgba(68, 255, 68, 0.3);
         margin-bottom: 30px;
         overflow: hidden;
+        padding: 10px;
     }
 
     .nav-bar {
@@ -849,11 +850,6 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 # Navigation Bar
-st.markdown("""
-<div class="nav-container">
-    <div class="nav-bar">
-""", unsafe_allow_html=True)
-
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
@@ -879,11 +875,6 @@ with col5:
 with col6:
     if st.button("💬 AI Assistant", key="nav_chat", help="Chat with SECURO AI"):
         st.session_state.current_page = 'chat'
-
-st.markdown("</div></div>", unsafe_allow_html=True)
-
-# Content Area
-st.markdown('<div class="content-area">', unsafe_allow_html=True)
 
 # HOME PAGE
 if st.session_state.current_page == 'welcome':
@@ -1441,8 +1432,6 @@ elif st.session_state.current_page == 'chat':
                 })
                 
                 st.experimental_rerun()
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 # Status Bar
 status_message = "AI & Database Ready"
