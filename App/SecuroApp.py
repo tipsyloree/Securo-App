@@ -491,7 +491,7 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     
     # Language Selection
-    st.markdown('<div class="sidebar-header">🌍 Language / Idioma</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sidebar-header">🌍 Languages </div>', unsafe_allow_html=True)
     selected_language = st.selectbox(
         "Choose Language",
         options=list(SUPPORTED_LANGUAGES.keys()),
