@@ -95,13 +95,78 @@ except Exception as e:
     st.session_state.ai_status = f"❌ AI Error: {str(e)}"
     model = None
 
-# Page configuration - Force sidebar to always be visible
+# Page configuration - Force sidebar with JavaScript injection
 st.set_page_config(
     page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
     page_icon="https://i.postimg.cc/V69LH7F4/Logo.jpg",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+# JavaScript to force sidebar visibility
+st.markdown("""
+<script>
+// Force sidebar to be visible and prevent collapse
+function forceSidebarVisible() {
+    // Find all possible sidebar elements
+    const sidebarSelectors = [
+        '[data-testid="stSidebar"]',
+        '.css-1d391kg', 
+        '.css-1cypcdb', 
+        '.css-k1vhr6',
+        'section[data-testid="stSidebar"]',
+        '.stSidebar'
+    ];
+    
+    sidebarSelectors.forEach(selector => {
+        const elements = document.querySelectorAll(selector);
+        elements.forEach(el => {
+            if (el) {
+                el.style.display = 'block';
+                el.style.visibility = 'visible';
+                el.style.position = 'fixed';
+                el.style.left = '0';
+                el.style.top = '0';
+                el.style.height = '100vh';
+                el.style.width = '320px';
+                el.style.zIndex = '999999';
+                el.style.background = 'rgba(40, 20, 20, 0.95)';
+                el.style.borderRight = '2px solid rgba(255, 68, 68, 0.5)';
+            }
+        });
+    });
+    
+    // Hide collapse buttons
+    const collapseButtons = document.querySelectorAll('button[kind="header"], [data-testid="collapsedControl"], .css-vk3wp9');
+    collapseButtons.forEach(btn => {
+        if (btn) {
+            btn.style.display = 'none';
+            btn.style.visibility = 'hidden';
+        }
+    });
+    
+    // Adjust main content
+    const mainContent = document.querySelector('.main .block-container');
+    if (mainContent) {
+        mainContent.style.marginLeft = '340px';
+        mainContent.style.maxWidth = 'none';
+    }
+}
+
+// Run the function multiple times to ensure it works
+forceSidebarVisible();
+setTimeout(forceSidebarVisible, 100);
+setTimeout(forceSidebarVisible, 500);
+setTimeout(forceSidebarVisible, 1000);
+
+// Keep running it periodically
+setInterval(forceSidebarVisible, 2000);
+
+// Listen for DOM changes and reapply
+const observer = new MutationObserver(forceSidebarVisible);
+observer.observe(document.body, { childList: true, subtree: true });
+</script>
+""", unsafe_allow_html=True)
 
 # Enhanced CSS styling with better sidebar control
 st.markdown("""
@@ -113,46 +178,71 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* FORCE sidebar to be permanently visible and prevent collapse */
+    /* AGGRESSIVE sidebar forcing - multiple approaches */
+    
+    /* Method 1: Force all possible sidebar selectors */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
-    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
-        visibility: visible !important;
+    .css-1aumxhk, .css-hxt7ib, .css-17lntkn, .css-10trblm,
+    section[data-testid="stSidebar"], .stSidebar, 
+    [data-testid="stSidebar"] > div, [data-testid="stSidebar"],
+    .sidebar .sidebar-content {
         display: block !important;
+        visibility: visible !important;
         position: fixed !important;
         left: 0 !important;
         top: 0 !important;
         height: 100vh !important;
-        z-index: 999999 !important;
-        min-width: 300px !important;
-        max-width: 400px !important;
         width: 320px !important;
+        min-width: 320px !important;
+        max-width: 500px !important;
+        z-index: 999999 !important;
+        background: rgba(40, 20, 20, 0.95) !important;
+        border-right: 2px solid rgba(255, 68, 68, 0.5) !important;
+        backdrop-filter: blur(10px) !important;
+        overflow-y: auto !important;
+        resize: horizontal !important;
+        transform: none !important;
+        transition: none !important;
     }
     
-    /* Hide the sidebar collapse button completely */
+    /* Method 2: Override any transform or translate properties */
+    section[data-testid="stSidebar"] {
+        transform: translateX(0px) !important;
+        margin-left: 0px !important;
+    }
+    
+    /* Method 3: Hide ALL possible collapse buttons */
     button[kind="header"], 
-    .css-vk3wp9,
-    .css-1kyxreq,
-    [data-testid="collapsedControl"] {
+    .css-vk3wp9, .css-1kyxreq, .css-18ni7ap,
+    [data-testid="collapsedControl"],
+    [data-testid="baseButton-header"],
+    .sidebar-close, .sidebar-toggle,
+    button[aria-label*="sidebar"], button[aria-label*="collapse"] {
         display: none !important;
         visibility: hidden !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
     }
     
-    /* Adjust main content to account for fixed sidebar */
-    .main .block-container {
+    /* Method 4: Force main content adjustment */
+    .main, .main .block-container, .css-1y4p8pa, .css-12oz5g7 {
         margin-left: 340px !important;
         max-width: none !important;
         padding-left: 2rem !important;
+        width: calc(100vw - 360px) !important;
     }
     
-    /* Make sidebar resizable */
-    section[data-testid="stSidebar"] {
-        resize: horizontal !important;
-        overflow: auto !important;
-        border-right: 3px solid rgba(255, 68, 68, 0.5) !important;
+    /* Method 5: Prevent sidebar from being hidden by any parent container */
+    .css-1d391kg *, .css-1cypcdb *, section[data-testid="stSidebar"] * {
+        display: block !important;
+        visibility: visible !important;
     }
     
-    section[data-testid="stSidebar"]:hover {
-        border-right: 3px solid rgba(255, 68, 68, 0.8) !important;
+    /* Method 6: Force sidebar content to be visible */
+    .sidebar .sidebar-content, .css-17lntkn {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
     }
    
     /* Main app background */
