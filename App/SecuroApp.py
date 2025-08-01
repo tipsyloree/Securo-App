@@ -125,11 +125,75 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Custom sidebar styling */
+    /* Custom sidebar styling - RED theme to match chat */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
-        background: linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%) !important;
-        border-right: 2px solid rgba(255, 68, 68, 0.3) !important;
+        background: linear-gradient(180deg, #0a0a0a 0%, #2e1a1a 50%, #3e1616 100%) !important;
+        border-right: 2px solid rgba(255, 68, 68, 0.5) !important;
+    }
+    
+    /* Sidebar toggle button styling */
+    .sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 999;
+        background: linear-gradient(135deg, #ff4444, #cc3333) !important;
+        border: none !important;
+        border-radius: 50% !important;
+        width: 50px !important;
+        height: 50px !important;
+        color: white !important;
+        font-size: 1.2rem !important;
+        cursor: pointer !important;
+        box-shadow: 0 0 20px rgba(255, 68, 68, 0.4) !important;
+        transition: all 0.3s ease !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+    
+    /* Control panel header with red theme */
+    .control-panel-header {
+        text-align: center; 
+        padding: 20px 0; 
+        border-bottom: 2px solid rgba(255, 68, 68, 0.5); 
+        margin-bottom: 20px;
+        background: rgba(255, 68, 68, 0.1);
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .control-panel-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 68, 68, 0.1), transparent);
+        animation: scan 4s infinite;
+    }
+    
+    .control-panel-header h2 {
+        color: #ff4444; 
+        font-family: JetBrains Mono, monospace; 
+        text-shadow: 0 0 15px rgba(255, 68, 68, 0.7);
+        position: relative;
+        z-index: 2;
+        margin: 0;
+    }
+    
+    .control-panel-header p {
+        color: #ff6666; 
+        font-size: 0.8rem; 
+        font-family: JetBrains Mono, monospace; 
+        text-transform: uppercase; 
+        letter-spacing: 1px;
+        position: relative;
+        z-index: 2;
+        margin: 5px 0 0 0;
     }
     
     /* Sidebar content styling */
@@ -482,11 +546,11 @@ st.markdown("""
 
 # SIDEBAR IMPLEMENTATION
 with st.sidebar:
-    # SECURO Logo/Header
+    # SECURO Logo/Header with RED theme
     st.markdown("""
-    <div style='text-align: center; padding: 20px 0; border-bottom: 2px solid rgba(255, 68, 68, 0.3); margin-bottom: 20px;'>
-        <h2 style='color: #ff4444; font-family: JetBrains Mono, monospace; text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);'>🚔 SECURO</h2>
-        <p style='color: #888; font-size: 0.8rem; font-family: JetBrains Mono, monospace; text-transform: uppercase; letter-spacing: 1px;'>Control Panel</p>
+    <div class="control-panel-header">
+        <h2>🚔 SECURO</h2>
+        <p>Control Panel</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -522,25 +586,28 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Crime Hotspots Map Section
+    # Crime Hotspots Map Section - INTERACTIVE
     st.markdown('<div class="sidebar-header">🗺️ Crime Hotspots Map</div>', unsafe_allow_html=True)
     
-    # Google Maps embed with crime hotspots for St. Kitts & Nevis
+    # Interactive Google Maps with crime hotspots for St. Kitts & Nevis
     st.markdown("""
     <div class="map-container">
         <iframe 
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61440.47289881779!2d-62.759765!3d17.302606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c0498a6c7d7ac0d%3A0x40b9ba03c4b0b0!2sSt%20Kitts%20and%20Nevis!5e0!3m2!1sen!2sus!4v1640995200000!5m2!1sen!2sus&markers=color:red%7Clabel:H%7C17.3026,-62.7177&markers=color:orange%7Clabel:M%7C17.2955,-62.7378&markers=color:yellow%7Clabel:L%7C17.3156,-62.7045" 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61440.47289881779!2d-62.759765!3d17.302606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c0498a6c7d7ac0d%3A0x40b9ba03c4b0b0!2sSt%20Kitts%20and%20Nevis!5e0!3m2!1sen!2sus!4v1640995200000!5m2!1sen!2sus&output=embed" 
             width="100%" 
-            height="200" 
+            height="250" 
             style="border:1px solid rgba(255, 68, 68, 0.3); border-radius: 8px;" 
             allowfullscreen="" 
             loading="lazy" 
-            referrerpolicy="no-referrer-when-downgrade">
+            referrerpolicy="no-referrer-when-downgrade"
+            title="St. Kitts & Nevis Crime Hotspots Map">
         </iframe>
-        <div style="margin-top: 8px; font-size: 0.7rem; color: #888; font-family: 'JetBrains Mono', monospace;">
-            🔴 High Risk Areas<br>
-            🟠 Medium Risk Areas<br>
-            🟡 Low Risk Areas
+        <div style="margin-top: 8px; font-size: 0.7rem; color: #ff6666; font-family: 'JetBrains Mono', monospace;">
+            🔴 Basseterre Downtown - High Risk<br>
+            🟠 Industrial Areas - Medium Risk<br>
+            🟡 Residential Areas - Low Risk<br>
+            <br>
+            <a href="https://www.google.com/maps/@17.302606,-62.759765,12z" target="_blank" style="color: #ff4444; text-decoration: none; font-weight: bold;">📍 Open Full Map</a>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -556,10 +623,10 @@ with st.sidebar:
     
     st.markdown(f"""
     <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #e0e0e0;">
-        <div style="margin-bottom: 5px;">🤖 AI: {ai_status}</div>
-        <div style="margin-bottom: 5px;">💾 Database: {db_status}</div>
-        <div style="margin-bottom: 5px;">🕒 Time: {current_time} AST</div>
-        <div style="margin-bottom: 5px;">🌐 Language: {SUPPORTED_LANGUAGES[selected_language][:8]}</div>
+        <div style="margin-bottom: 5px; color: #ff6666;">🤖 AI: {ai_status}</div>
+        <div style="margin-bottom: 5px; color: #ff6666;">💾 Database: {db_status}</div>
+        <div style="margin-bottom: 5px; color: #ff6666;">🕒 Time: {current_time} AST</div>
+        <div style="margin-bottom: 5px; color: #ff6666;">🌐 Language: {SUPPORTED_LANGUAGES[selected_language][:8]}</div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -683,6 +750,30 @@ if 'csv_loaded' not in st.session_state:
 
 if 'selected_language' not in st.session_state:
     st.session_state.selected_language = 'en'
+
+if 'sidebar_state' not in st.session_state:
+    st.session_state.sidebar_state = True
+
+# Sidebar toggle functionality
+col1, col2 = st.columns([1, 10])
+with col1:
+    if st.button("☰", key="sidebar_toggle", help="Toggle Sidebar"):
+        st.session_state.sidebar_state = not st.session_state.sidebar_state
+        st.rerun()
+
+# Apply CSS to hide/show sidebar based on state
+if not st.session_state.sidebar_state:
+    st.markdown("""
+    <style>
+        section[data-testid="stSidebar"] {
+            transform: translateX(-100%) !important;
+            transition: transform 0.3s ease !important;
+        }
+        .main .block-container {
+            margin-left: 0 !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
 # Header with real-time St. Kitts time
 current_time = get_stkitts_time()
