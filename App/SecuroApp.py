@@ -115,7 +115,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Enhanced CSS styling WITH sidebar - GREEN THEME - LIGHTER VERSION
+# Enhanced CSS styling WITH sidebar - GREEN THEME
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
@@ -125,10 +125,10 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Custom sidebar styling - GREEN theme with lighter colors */
+    /* Custom sidebar styling - GREEN theme */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
-        background: linear-gradient(180deg, #2a2a2a 0%, #3a4a3a 50%, #4a5a4a 100%) !important;
+        background: linear-gradient(180deg, #0a0a0a 0%, #1a2e1a 50%, #163e16 100%) !important;
         border-right: 2px solid rgba(68, 255, 68, 0.5) !important;
     }
     
@@ -159,7 +159,7 @@ st.markdown("""
         padding: 20px 0; 
         border-bottom: 2px solid rgba(68, 255, 68, 0.5); 
         margin-bottom: 20px;
-        background: rgba(68, 255, 68, 0.15);
+        background: rgba(68, 255, 68, 0.1);
         border-radius: 10px;
         position: relative;
         overflow: hidden;
@@ -217,10 +217,10 @@ st.markdown("""
     
     /* Sidebar selectbox styling */
     .stSelectbox > div > div {
-        background: rgba(60, 60, 60, 0.8) !important;
+        background: rgba(0, 0, 0, 0.7) !important;
         border: 1px solid rgba(68, 255, 68, 0.4) !important;
         border-radius: 10px !important;
-        color: #f0f0f0 !important;
+        color: #e0e0e0 !important;
         font-family: 'JetBrains Mono', monospace !important;
     }
     
@@ -231,7 +231,7 @@ st.markdown("""
     
     /* Emergency contact styling */
     .emergency-contact {
-        background: rgba(50, 50, 50, 0.8) !important;
+        background: rgba(0, 0, 0, 0.6) !important;
         border: 1px solid rgba(68, 255, 68, 0.3) !important;
         border-radius: 8px !important;
         padding: 12px !important;
@@ -241,7 +241,7 @@ st.markdown("""
     }
     
     .emergency-contact:hover {
-        background: rgba(68, 255, 68, 0.15) !important;
+        background: rgba(68, 255, 68, 0.1) !important;
         border-color: #44ff44 !important;
         transform: translateX(5px) !important;
         box-shadow: 0 0 15px rgba(68, 255, 68, 0.2) !important;
@@ -255,7 +255,7 @@ st.markdown("""
     }
     
     .emergency-number {
-        color: #f0f0f0 !important;
+        color: #e0e0e0 !important;
         font-size: 0.8rem !important;
         font-family: 'JetBrains Mono', monospace !important;
     }
@@ -273,7 +273,7 @@ st.markdown("""
     
     /* Map container styling */
     .map-container {
-        background: rgba(50, 50, 50, 0.8) !important;
+        background: rgba(0, 0, 0, 0.6) !important;
         border: 1px solid rgba(68, 255, 68, 0.3) !important;
         border-radius: 10px !important;
         padding: 10px !important;
@@ -282,13 +282,13 @@ st.markdown("""
     
     /* Sidebar text styling */
     .stSidebar .stMarkdown p, .stSidebar .stMarkdown div {
-        color: #f0f0f0 !important;
+        color: #e0e0e0 !important;
         font-family: 'JetBrains Mono', monospace !important;
     }
    
-    /* Main app background - Lighter Green theme */
+    /* Main app background - Green theme */
     .stApp {
-        background: linear-gradient(135deg, #2a2a2a 0%, #3a4a3a 50%, #4a5a4a 100%);
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a2e1a 50%, #163e16 100%);
         font-family: 'JetBrains Mono', monospace;
     }
    
@@ -307,7 +307,7 @@ st.markdown("""
         position: absolute;
         width: 2px;
         height: 2px;
-        background: rgba(68, 255, 68, 0.4);
+        background: rgba(68, 255, 68, 0.3);
         border-radius: 50%;
         animation: float 10s infinite linear;
     }
@@ -319,12 +319,12 @@ st.markdown("""
         100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
     }
    
-    /* Header styling - Lighter Green theme */
+    /* Header styling - Green theme */
     .main-header {
         text-align: center;
         margin-bottom: 30px;
         padding: 20px;
-        background: rgba(40, 40, 40, 0.9);
+        background: rgba(0, 0, 0, 0.7);
         border-radius: 15px;
         border: 1px solid rgba(68, 255, 68, 0.3);
         backdrop-filter: blur(10px);
@@ -361,7 +361,7 @@ st.markdown("""
 
     .main-header .tagline {
         font-size: 1rem;
-        color: #ccc;
+        color: #888;
         text-transform: uppercase;
         letter-spacing: 2px;
         position: relative;
@@ -380,14 +380,14 @@ st.markdown("""
 
     .main-header .datetime {
         font-size: 0.8rem;
-        color: #ccc;
+        color: #888;
         margin-top: 8px;
         position: relative;
         z-index: 2;
         font-family: 'JetBrains Mono', monospace;
     }
    
-    /* Chat styling - Lighter theme */
+    /* Chat styling - Green theme */
     .chat-message {
         margin-bottom: 20px;
         animation: fadeInUp 0.5s ease;
@@ -425,31 +425,31 @@ st.markdown("""
     }
 
     .bot-message .message-content {
-        background: rgba(60, 60, 60, 0.9) !important;
-        color: #f0f0f0 !important;
+        background: rgba(0, 0, 0, 0.8) !important;
+        color: #e0e0e0 !important;
         border: 1px solid rgba(68, 255, 68, 0.3);
         border-bottom-left-radius: 5px;
     }
 
     .message-time {
         font-size: 0.7rem;
-        color: #bbb !important;
+        color: #888 !important;
         margin-top: 5px;
         font-family: 'JetBrains Mono', monospace;
     }
 
     /* Override any conflicting Streamlit styles */
     .bot-message .message-content * {
-        color: #f0f0f0 !important;
+        color: #e0e0e0 !important;
     }
 
     .user-message .message-content * {
         color: #ffffff !important;
     }
    
-    /* Status bar - Lighter theme */
+    /* Status bar - Green theme */
     .status-bar {
-        background: rgba(50, 50, 50, 0.9);
+        background: rgba(0, 0, 0, 0.8);
         padding: 10px 20px;
         border-radius: 25px;
         margin-top: 20px;
@@ -465,7 +465,7 @@ st.markdown("""
         align-items: center;
         gap: 8px;
         font-size: 0.8rem;
-        color: #f0f0f0;
+        color: #e0e0e0;
     }
 
     .status-dot {
@@ -484,12 +484,12 @@ st.markdown("""
         50% { opacity: 0.3; }
     }
    
-    /* Input styling - Lighter theme */
+    /* Input styling - Green theme */
     .stTextInput input, .stSelectbox > div > div {
-        background: rgba(60, 60, 60, 0.8) !important;
+        background: rgba(0, 0, 0, 0.5) !important;
         border: 1px solid rgba(68, 255, 68, 0.3) !important;
         border-radius: 25px !important;
-        color: #f0f0f0 !important;
+        color: #e0e0e0 !important;
         font-family: 'JetBrains Mono', monospace !important;
     }
 
@@ -526,7 +526,7 @@ st.markdown("""
     }
 
     .file-status {
-        background: rgba(50, 50, 50, 0.8);
+        background: rgba(0, 0, 0, 0.6);
         border: 1px solid rgba(68, 255, 68, 0.3);
         border-radius: 10px;
         padding: 15px;
@@ -622,7 +622,7 @@ with st.sidebar:
     db_status = "🟢 Loaded" if st.session_state.get('csv_data') is not None else "🔴 Missing"
     
     st.markdown(f"""
-    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #f0f0f0;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #e0e0e0;">
         <div style="margin-bottom: 5px; color: #66ff66;">🤖 AI: {ai_status}</div>
         <div style="margin-bottom: 5px; color: #66ff66;">💾 Database: {db_status}</div>
         <div style="margin-bottom: 5px; color: #66ff66;">🕒 Time: {current_time} AST</div>
