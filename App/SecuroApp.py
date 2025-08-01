@@ -604,7 +604,7 @@ def initialize_ai():
         # Try to get API key from environment first, then fallback to hardcoded
         api_key = os.getenv('GOOGLE_API_KEY', "AIzaSyA_9sB8o6y7dKK6yBRKWH_c5uSVDSoRYv0")
         
-        if not api_key or api_key == "AIzaSyA3ViHvNYuunum-qGA0Yo4MrOJFDvQok6g":
+        if not api_key or api_key == "your_api_key_here":
             st.session_state.ai_enabled = False
             st.session_state.ai_status = "❌ API Key Required"
             return None
@@ -1095,7 +1095,7 @@ with st.sidebar:
             st.success("✅ API Key updated! Reinitializing AI...")
             # Reinitialize AI with new key
             model = initialize_ai()
-            st.experimental_rerun()
+            st.rerun()
         else:
             st.info("Using default API configuration")
     
@@ -1664,7 +1664,7 @@ elif st.session_state.current_page == 'chat':
                 "timestamp": current_time
             })
             
-            st.experimental_rerun()
+                            st.rerun()
     
     # Quick Action Buttons
     st.markdown("### 🚀 Quick Analysis Options")
@@ -1702,7 +1702,7 @@ elif st.session_state.current_page == 'chat':
                     "timestamp": current_time
                 })
                 
-                st.experimental_rerun()
+                st.rerun()
 
 # Status Bar
 status_message = "AI & Database Ready"
