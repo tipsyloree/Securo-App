@@ -6,8 +6,6 @@ google-generativeai
 requests
 matplotlib
 plotly
-scikit-learn
-scipy
 warnings  
 datetime 
 time      
