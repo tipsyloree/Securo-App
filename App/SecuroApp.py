@@ -916,12 +916,28 @@ def initialize_ai():
         st.session_state.ai_error = str(e)
         return None
 
-def set_api_key(api_key):
-    """Set the API key and reinitialize AI"""
+def reinitialize_ai_model():
+    """Reinitialize the AI model and update session state"""
+    global model
+    model = initialize_ai()
+    return model
+
+def set_custom_api_key(api_key):
+    """Set custom API key and reinitialize AI"""
+    global model
     if api_key:
         os.environ['GOOGLE_API_KEY'] = api_key
-        return initialize_ai()
+        model = initialize_ai()
+        return model
     return None
+
+def reset_to_default_api():
+    """Reset to default API key"""
+    global model
+    if 'GOOGLE_API_KEY' in os.environ:
+        del os.environ['GOOGLE_API_KEY']
+    model = initialize_ai()
+    return model
 
 # Initialize AI on startup
 model = initialize_ai()
@@ -1376,8 +1392,7 @@ with st.sidebar:
         with col1:
             if st.button("🔄 Set Custom Key"):
                 if api_key_input:
-                    global model
-                    model = set_api_key(api_key_input)
+                    set_custom_api_key(api_key_input)
                     if st.session_state.get('ai_enabled', False):
                         st.success("✅ Custom key set!")
                     else:
@@ -1388,10 +1403,7 @@ with st.sidebar:
         
         with col2:
             if st.button("🔄 Reset to Default"):
-                global model
-                if 'GOOGLE_API_KEY' in os.environ:
-                    del os.environ['GOOGLE_API_KEY']
-                model = initialize_ai()  # This will use the hardcoded key
+                reset_to_default_api()
                 st.success("Reset to built-in key")
                 st.rerun()
     
