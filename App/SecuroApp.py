@@ -1202,128 +1202,128 @@ elif st.session_state.current_page == 'about':
     st.markdown("""
     <h2 style="color: #44ff44; margin-bottom: 20px; text-align: center;">About SECURO</h2>
     
-    <p><strong>SECURO</strong> is an intelligent and professional multilingual crime mitigation system built to provide real-time, data-driven insights for law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.</p>
+    <p style="color: #e0e0e0;"><strong style="color: #44ff44;">SECURO</strong> is an intelligent and professional multilingual crime mitigation system built to provide real-time, data-driven insights for law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.</p>
 
     <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Mission</h3>
-    <p>Our mission is to support crime prevention, research, and public safety through:</p>
+    <p style="color: #e0e0e0;">Our mission is to support crime prevention, research, and public safety through:</p>
     <ul style="list-style: none; padding: 0; color: #e0e0e0;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Interactive maps and geographic analysis
+            <span style="color: #e0e0e0;">Interactive maps and geographic analysis</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Statistical analysis and trend identification
+            <span style="color: #e0e0e0;">Statistical analysis and trend identification</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Predictive analytics for crime prevention
+            <span style="color: #e0e0e0;">Predictive analytics for crime prevention</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Visual data presentations (charts, graphs, etc.)
+            <span style="color: #e0e0e0;">Visual data presentations (charts, graphs, etc.)</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Emergency contact guidance
+            <span style="color: #e0e0e0;">Emergency contact guidance</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Multilingual communication support
+            <span style="color: #e0e0e0;">Multilingual communication support</span>
         </li>
     </ul>
 
     <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Core Capabilities</h3>
     <ul style="list-style: none; padding: 0; color: #e0e0e0;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Analyze and summarize current and historical crime data (local and global)
+            <span style="color: #e0e0e0;">Analyze and summarize current and historical crime data (local and global)</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Detect trends and patterns across time, location, and type
+            <span style="color: #e0e0e0;">Detect trends and patterns across time, location, and type</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Recommend prevention strategies based on geographic and temporal factors
+            <span style="color: #e0e0e0;">Recommend prevention strategies based on geographic and temporal factors</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Provide accessible language for general users, while supporting technical depth for experts
+            <span style="color: #e0e0e0;">Provide accessible language for general users, while supporting technical depth for experts</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Integrate with GIS, crime databases, and public safety systems
+            <span style="color: #e0e0e0;">Integrate with GIS, crime databases, and public safety systems</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Generate visual outputs and interactive maps
+            <span style="color: #e0e0e0;">Generate visual outputs and interactive maps</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Communicate effectively in multiple languages
+            <span style="color: #e0e0e0;">Communicate effectively in multiple languages</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Adapt responses to be clear, concise, and actionable
+            <span style="color: #e0e0e0;">Adapt responses to be clear, concise, and actionable</span>
         </li>
     </ul>
 
     <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Current Data Integration</h3>
     <ul style="list-style: none; padding: 0; color: #e0e0e0;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Q2 2025 Crime Statistics (292 total crimes)
+            <span style="color: #e0e0e0;">Q2 2025 Crime Statistics (292 total crimes)</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Historical Homicide Data (2015-2024)
+            <span style="color: #e0e0e0;">Historical Homicide Data (2015-2024)</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            13+ Crime Hotspot Locations Mapped
+            <span style="color: #e0e0e0;">13+ Crime Hotspot Locations Mapped</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            District-wise Performance Analytics
+            <span style="color: #e0e0e0;">District-wise Performance Analytics</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Multi-language Support (12 languages)
+            <span style="color: #e0e0e0;">Multi-language Support (12 languages)</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Real-time Emergency Contact Database
+            <span style="color: #e0e0e0;">Real-time Emergency Contact Database</span>
         </li>
     </ul>
 
     <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Professional Standards</h3>
-    <p>SECURO maintains professional standards with:</p>
+    <p style="color: #e0e0e0;">SECURO maintains professional standards with:</p>
     <ul style="list-style: none; padding: 0; color: #e0e0e0;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Accurate, evidence-based analysis
+            <span style="color: #e0e0e0;">Accurate, evidence-based analysis</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Clear, non-panic-inducing communication
+            <span style="color: #e0e0e0;">Clear, non-panic-inducing communication</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Focus on empowerment and awareness
+            <span style="color: #e0e0e0;">Focus on empowerment and awareness</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Understanding of criminology and public safety best practices
+            <span style="color: #e0e0e0;">Understanding of criminology and public safety best practices</span>
         </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            Real-time St. Kitts & Nevis time and date integration
+            <span style="color: #e0e0e0;">Real-time St. Kitts & Nevis time and date integration</span>
         </li>
     </ul>
 
     <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Data Security & Accuracy</h3>
-    <p>All crime data is sourced directly from the Royal St. Christopher and Nevis Police Force and is updated regularly to ensure accuracy and relevance for operational decision-making. SECURO maintains the highest standards of data security and privacy.</p>
+    <p style="color: #e0e0e0;">All crime data is sourced directly from the Royal St. Christopher and Nevis Police Force and is updated regularly to ensure accuracy and relevance for operational decision-making. SECURO maintains the highest standards of data security and privacy.</p>
     """, unsafe_allow_html=True)
 
 # CRIME HOTSPOTS PAGE
@@ -1384,7 +1384,7 @@ elif st.session_state.current_page == 'statistics':
     st.markdown("## 📊 Crime Statistics & Analytics")
     
     # Q2 2025 Overview
-    st.markdown("### Q2 2025 Crime Statistics Overview")
+    st.markdown('<h3 style="color: #44ff44;">Q2 2025 Crime Statistics Overview</h3>', unsafe_allow_html=True)
     
     col1, col2, col3, col4, col5, col6 = st.columns(6)
     
@@ -1439,7 +1439,7 @@ elif st.session_state.current_page == 'statistics':
         """, unsafe_allow_html=True)
 
     # Chart Controls
-    st.markdown("### 📈 Interactive Analytics")
+    st.markdown('<h3 style="color: #44ff44;">📈 Interactive Analytics</h3>', unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4)
     
@@ -1663,7 +1663,8 @@ elif st.session_state.current_page == 'chat':
                 "content": bot_response,
                 "timestamp": current_time
             })
-            st.rerun()
+            
+                            st.rerun()
     
     # Quick Action Buttons
     st.markdown("### 🚀 Quick Analysis Options")
