@@ -115,7 +115,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Enhanced CSS styling WITH sidebar - GREEN THEME
+# Enhanced CSS styling WITH sidebar - LIGHTER GREEN THEME
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
@@ -125,11 +125,11 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Custom sidebar styling - GREEN theme */
+    /* Custom sidebar styling - LIGHTER GREEN theme */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
-        background: linear-gradient(180deg, #0a0a0a 0%, #1a2e1a 50%, #163e16 100%) !important;
-        border-right: 2px solid rgba(68, 255, 68, 0.5) !important;
+        background: linear-gradient(180deg, #1a1a1a 0%, #2a4a2a 50%, #3a5a3a 100%) !important;
+        border-right: 2px solid rgba(144, 238, 144, 0.6) !important;
     }
     
     /* Sidebar toggle button styling */
@@ -138,7 +138,7 @@ st.markdown("""
         top: 20px;
         left: 20px;
         z-index: 999;
-        background: linear-gradient(135deg, #44ff44, #33cc33) !important;
+        background: linear-gradient(135deg, #90ee90, #7dd87d) !important;
         border: none !important;
         border-radius: 50% !important;
         width: 50px !important;
@@ -146,20 +146,20 @@ st.markdown("""
         color: white !important;
         font-size: 1.2rem !important;
         cursor: pointer !important;
-        box-shadow: 0 0 20px rgba(68, 255, 68, 0.4) !important;
+        box-shadow: 0 0 20px rgba(144, 238, 144, 0.5) !important;
         transition: all 0.3s ease !important;
         display: flex !important;
         align-items: center !important;
         justify-content: center !important;
     }
     
-    /* Control panel header with green theme */
+    /* Control panel header with lighter green theme */
     .control-panel-header {
         text-align: center; 
         padding: 20px 0; 
-        border-bottom: 2px solid rgba(68, 255, 68, 0.5); 
+        border-bottom: 2px solid rgba(144, 238, 144, 0.6); 
         margin-bottom: 20px;
-        background: rgba(68, 255, 68, 0.1);
+        background: rgba(144, 238, 144, 0.15);
         border-radius: 10px;
         position: relative;
         overflow: hidden;
@@ -172,21 +172,21 @@ st.markdown("""
         left: -50%;
         width: 200%;
         height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(68, 255, 68, 0.1), transparent);
+        background: linear-gradient(45deg, transparent, rgba(144, 238, 144, 0.15), transparent);
         animation: scan 4s infinite;
     }
     
     .control-panel-header h2 {
-        color: #44ff44; 
+        color: #90ee90; 
         font-family: JetBrains Mono, monospace; 
-        text-shadow: 0 0 15px rgba(68, 255, 68, 0.7);
+        text-shadow: 0 0 15px rgba(144, 238, 144, 0.8);
         position: relative;
         z-index: 2;
         margin: 0;
     }
     
     .control-panel-header p {
-        color: #66ff66; 
+        color: #a8f0a8; 
         font-size: 0.8rem; 
         font-family: JetBrains Mono, monospace; 
         text-transform: uppercase; 
@@ -203,36 +203,36 @@ st.markdown("""
     
     /* Sidebar headers */
     .sidebar-header {
-        color: #44ff44 !important;
+        color: #90ee90 !important;
         font-size: 1.1rem !important;
         text-transform: uppercase !important;
         letter-spacing: 1px !important;
         margin-bottom: 15px !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-weight: 700 !important;
-        text-shadow: 0 0 10px rgba(68, 255, 68, 0.5) !important;
-        border-bottom: 1px solid rgba(68, 255, 68, 0.3) !important;
+        text-shadow: 0 0 10px rgba(144, 238, 144, 0.6) !important;
+        border-bottom: 1px solid rgba(144, 238, 144, 0.4) !important;
         padding-bottom: 5px !important;
     }
     
     /* Sidebar selectbox styling */
     .stSelectbox > div > div {
         background: rgba(0, 0, 0, 0.7) !important;
-        border: 1px solid rgba(68, 255, 68, 0.4) !important;
+        border: 1px solid rgba(144, 238, 144, 0.5) !important;
         border-radius: 10px !important;
         color: #e0e0e0 !important;
         font-family: 'JetBrains Mono', monospace !important;
     }
     
     .stSelectbox > div > div:hover {
-        border-color: #44ff44 !important;
-        box-shadow: 0 0 15px rgba(68, 255, 68, 0.3) !important;
+        border-color: #90ee90 !important;
+        box-shadow: 0 0 15px rgba(144, 238, 144, 0.4) !important;
     }
     
     /* Emergency contact styling */
     .emergency-contact {
         background: rgba(0, 0, 0, 0.6) !important;
-        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        border: 1px solid rgba(144, 238, 144, 0.4) !important;
         border-radius: 8px !important;
         padding: 12px !important;
         margin-bottom: 8px !important;
@@ -241,14 +241,14 @@ st.markdown("""
     }
     
     .emergency-contact:hover {
-        background: rgba(68, 255, 68, 0.1) !important;
-        border-color: #44ff44 !important;
+        background: rgba(144, 238, 144, 0.15) !important;
+        border-color: #90ee90 !important;
         transform: translateX(5px) !important;
-        box-shadow: 0 0 15px rgba(68, 255, 68, 0.2) !important;
+        box-shadow: 0 0 15px rgba(144, 238, 144, 0.3) !important;
     }
     
     .emergency-title {
-        color: #44ff44 !important;
+        color: #90ee90 !important;
         font-weight: 600 !important;
         font-size: 0.9rem !important;
         margin-bottom: 4px !important;
@@ -261,20 +261,20 @@ st.markdown("""
     }
     
     .emergency-link {
-        color: #66ff66 !important;
+        color: #a8f0a8 !important;
         text-decoration: none !important;
         font-weight: 500 !important;
     }
     
     .emergency-link:hover {
-        color: #44ff44 !important;
-        text-shadow: 0 0 5px rgba(68, 255, 68, 0.5) !important;
+        color: #90ee90 !important;
+        text-shadow: 0 0 5px rgba(144, 238, 144, 0.6) !important;
     }
     
     /* Map container styling */
     .map-container {
         background: rgba(0, 0, 0, 0.6) !important;
-        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        border: 1px solid rgba(144, 238, 144, 0.4) !important;
         border-radius: 10px !important;
         padding: 10px !important;
         margin-top: 10px !important;
@@ -286,13 +286,13 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace !important;
     }
    
-    /* Main app background - Green theme */
+    /* Main app background - Lighter Green theme */
     .stApp {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a2e1a 50%, #163e16 100%);
+        background: linear-gradient(135deg, #1a1a1a 0%, #2a4a2a 50%, #3a5a3a 100%);
         font-family: 'JetBrains Mono', monospace;
     }
    
-    /* Particles animation - Green particles */
+    /* Particles animation - Lighter Green particles */
     .particles {
         position: fixed;
         top: 0;
@@ -307,7 +307,7 @@ st.markdown("""
         position: absolute;
         width: 2px;
         height: 2px;
-        background: rgba(68, 255, 68, 0.3);
+        background: rgba(144, 238, 144, 0.4);
         border-radius: 50%;
         animation: float 10s infinite linear;
     }
@@ -319,14 +319,14 @@ st.markdown("""
         100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
     }
    
-    /* Header styling - Green theme */
+    /* Header styling - Lighter Green theme */
     .main-header {
         text-align: center;
         margin-bottom: 30px;
         padding: 20px;
         background: rgba(0, 0, 0, 0.7);
         border-radius: 15px;
-        border: 1px solid rgba(68, 255, 68, 0.3);
+        border: 1px solid rgba(144, 238, 144, 0.4);
         backdrop-filter: blur(10px);
         position: relative;
         overflow: hidden;
@@ -339,7 +339,7 @@ st.markdown("""
         left: -50%;
         width: 200%;
         height: 200%;
-        background: linear-gradient(45deg, transparent, rgba(68, 255, 68, 0.1), transparent);
+        background: linear-gradient(45deg, transparent, rgba(144, 238, 144, 0.15), transparent);
         animation: scan 3s infinite;
     }
 
@@ -350,8 +350,8 @@ st.markdown("""
 
     .main-header h1 {
         font-size: 3rem;
-        color: #44ff44;
-        text-shadow: 0 0 20px rgba(68, 255, 68, 0.5);
+        color: #90ee90;
+        text-shadow: 0 0 20px rgba(144, 238, 144, 0.6);
         margin-bottom: 10px;
         position: relative;
         z-index: 2;
@@ -361,7 +361,7 @@ st.markdown("""
 
     .main-header .tagline {
         font-size: 1rem;
-        color: #888;
+        color: #999;
         text-transform: uppercase;
         letter-spacing: 2px;
         position: relative;
@@ -371,7 +371,7 @@ st.markdown("""
 
     .main-header .location {
         font-size: 0.9rem;
-        color: #44ff44;
+        color: #90ee90;
         margin-top: 5px;
         position: relative;
         z-index: 2;
@@ -380,14 +380,14 @@ st.markdown("""
 
     .main-header .datetime {
         font-size: 0.8rem;
-        color: #888;
+        color: #999;
         margin-top: 8px;
         position: relative;
         z-index: 2;
         font-family: 'JetBrains Mono', monospace;
     }
    
-    /* Chat styling - Green theme */
+    /* Chat styling - Lighter Green theme */
     .chat-message {
         margin-bottom: 20px;
         animation: fadeInUp 0.5s ease;
@@ -419,7 +419,7 @@ st.markdown("""
     }
 
     .user-message .message-content {
-        background: linear-gradient(135deg, #44ff44, #33cc33);
+        background: linear-gradient(135deg, #90ee90, #7dd87d);
         color: #ffffff !important;
         border-bottom-right-radius: 5px;
     }
@@ -427,13 +427,13 @@ st.markdown("""
     .bot-message .message-content {
         background: rgba(0, 0, 0, 0.8) !important;
         color: #e0e0e0 !important;
-        border: 1px solid rgba(68, 255, 68, 0.3);
+        border: 1px solid rgba(144, 238, 144, 0.4);
         border-bottom-left-radius: 5px;
     }
 
     .message-time {
         font-size: 0.7rem;
-        color: #888 !important;
+        color: #999 !important;
         margin-top: 5px;
         font-family: 'JetBrains Mono', monospace;
     }
@@ -447,7 +447,7 @@ st.markdown("""
         color: #ffffff !important;
     }
    
-    /* Status bar - Green theme */
+    /* Status bar - Lighter Green theme */
     .status-bar {
         background: rgba(0, 0, 0, 0.8);
         padding: 10px 20px;
@@ -456,7 +456,7 @@ st.markdown("""
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border: 1px solid rgba(68, 255, 68, 0.2);
+        border: 1px solid rgba(144, 238, 144, 0.3);
         font-family: 'JetBrains Mono', monospace;
     }
 
@@ -475,32 +475,32 @@ st.markdown("""
         animation: pulse 2s infinite;
     }
 
-    .status-online { background: #44ff44; }
-    .status-processing { background: #33cc33; }
-    .status-evidence { background: #66ff66; }
+    .status-online { background: #90ee90; }
+    .status-processing { background: #7dd87d; }
+    .status-evidence { background: #a8f0a8; }
 
     @keyframes pulse {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.3; }
     }
    
-    /* Input styling - Green theme */
+    /* Input styling - Lighter Green theme */
     .stTextInput input, .stSelectbox > div > div {
         background: rgba(0, 0, 0, 0.5) !important;
-        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        border: 1px solid rgba(144, 238, 144, 0.4) !important;
         border-radius: 25px !important;
         color: #e0e0e0 !important;
         font-family: 'JetBrains Mono', monospace !important;
     }
 
     .stTextInput input:focus, .stSelectbox > div > div:focus {
-        border-color: #44ff44 !important;
-        box-shadow: 0 0 20px rgba(68, 255, 68, 0.2) !important;
+        border-color: #90ee90 !important;
+        box-shadow: 0 0 20px rgba(144, 238, 144, 0.3) !important;
     }
    
-    /* Button styling - Green theme */
+    /* Button styling - Lighter Green theme */
     .stButton button {
-        background: linear-gradient(135deg, #44ff44, #33cc33) !important;
+        background: linear-gradient(135deg, #90ee90, #7dd87d) !important;
         border: none !important;
         border-radius: 25px !important;
         color: #fff !important;
@@ -511,12 +511,12 @@ st.markdown("""
 
     .stButton button:hover {
         transform: scale(1.05) !important;
-        box-shadow: 0 0 20px rgba(68, 255, 68, 0.4) !important;
+        box-shadow: 0 0 20px rgba(144, 238, 144, 0.5) !important;
     }
    
-    /* Section headers - Green theme */
+    /* Section headers - Lighter Green theme */
     .section-header {
-        color: #44ff44;
+        color: #90ee90;
         font-size: 1.1rem;
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -527,7 +527,7 @@ st.markdown("""
 
     .file-status {
         background: rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(68, 255, 68, 0.3);
+        border: 1px solid rgba(144, 238, 144, 0.4);
         border-radius: 10px;
         padding: 15px;
         margin-bottom: 20px;
@@ -535,18 +535,18 @@ st.markdown("""
     }
 
     .file-found {
-        color: #4ade80;
+        color: #90ee90;
     }
 
     .file-missing {
-        color: #44ff44;
+        color: #90ee90;
     }
 </style>
 """, unsafe_allow_html=True)
 
 # SIDEBAR IMPLEMENTATION
 with st.sidebar:
-    # SECURO Logo/Header with GREEN theme
+    # SECURO Logo/Header with LIGHTER GREEN theme
     st.markdown("""
     <div class="control-panel-header">
         <h2>🚔 SECURO</h2>
@@ -596,18 +596,18 @@ with st.sidebar:
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d61440.47289881779!2d-62.759765!3d17.302606!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c0498a6c7d7ac0d%3A0x40b9ba03c4b0b0!2sSt%20Kitts%20and%20Nevis!5e0!3m2!1sen!2sus!4v1640995200000!5m2!1sen!2sus&output=embed" 
             width="100%" 
             height="250" 
-            style="border:1px solid rgba(68, 255, 68, 0.3); border-radius: 8px;" 
+            style="border:1px solid rgba(144, 238, 144, 0.4); border-radius: 8px;" 
             allowfullscreen="" 
             loading="lazy" 
             referrerpolicy="no-referrer-when-downgrade"
             title="St. Kitts & Nevis Crime Hotspots Map">
         </iframe>
-        <div style="margin-top: 8px; font-size: 0.7rem; color: #66ff66; font-family: 'JetBrains Mono', monospace;">
+        <div style="margin-top: 8px; font-size: 0.7rem; color: #a8f0a8; font-family: 'JetBrains Mono', monospace;">
             🔴 Basseterre Downtown - High Risk<br>
             🟠 Industrial Areas - Medium Risk<br>
             🟡 Residential Areas - Low Risk<br>
             <br>
-            <a href="https://www.google.com/maps/@17.302606,-62.759765,12z" target="_blank" style="color: #44ff44; text-decoration: none; font-weight: bold;">📍 Open Full Map</a>
+            <a href="https://www.google.com/maps/@17.302606,-62.759765,12z" target="_blank" style="color: #90ee90; text-decoration: none; font-weight: bold;">📍 Open Full Map</a>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -623,10 +623,10 @@ with st.sidebar:
     
     st.markdown(f"""
     <div style="font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #e0e0e0;">
-        <div style="margin-bottom: 5px; color: #66ff66;">🤖 AI: {ai_status}</div>
-        <div style="margin-bottom: 5px; color: #66ff66;">💾 Database: {db_status}</div>
-        <div style="margin-bottom: 5px; color: #66ff66;">🕒 Time: {current_time} AST</div>
-        <div style="margin-bottom: 5px; color: #66ff66;">🌐 Language: {SUPPORTED_LANGUAGES[selected_language][:8]}</div>
+        <div style="margin-bottom: 5px; color: #a8f0a8;">🤖 AI: {ai_status}</div>
+        <div style="margin-bottom: 5px; color: #a8f0a8;">💾 Database: {db_status}</div>
+        <div style="margin-bottom: 5px; color: #a8f0a8;">🕒 Time: {current_time} AST</div>
+        <div style="margin-bottom: 5px; color: #a8f0a8;">🌐 Language: {SUPPORTED_LANGUAGES[selected_language][:8]}</div>
     </div>
     """, unsafe_allow_html=True)
     
