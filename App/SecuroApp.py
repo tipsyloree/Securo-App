@@ -1388,6 +1388,7 @@ with st.sidebar:
         
         with col2:
             if st.button("🔄 Reset to Default"):
+                global model
                 if 'GOOGLE_API_KEY' in os.environ:
                     del os.environ['GOOGLE_API_KEY']
                 model = initialize_ai()  # This will use the hardcoded key
