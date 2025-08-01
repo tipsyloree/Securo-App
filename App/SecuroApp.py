@@ -95,64 +95,38 @@ except Exception as e:
     st.session_state.ai_status = f"❌ AI Error: {str(e)}"
     model = None
 
-# Page configuration - Force sidebar to always be visible
+# Page configuration - No sidebar
 st.set_page_config(
     page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
     page_icon="https://i.postimg.cc/V69LH7F4/Logo.jpg",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# Enhanced CSS styling with better sidebar control
+# Enhanced CSS styling without sidebar
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
    
-    /* Hide default Streamlit elements but FORCE sidebar to stay visible */
+    /* Hide default Streamlit elements and sidebar completely */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* FORCE sidebar to be permanently visible and prevent collapse */
+    /* Completely hide sidebar */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
-    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
-        visibility: visible !important;
-        display: block !important;
-        position: fixed !important;
-        left: 0 !important;
-        top: 0 !important;
-        height: 100vh !important;
-        z-index: 999999 !important;
-        min-width: 300px !important;
-        max-width: 400px !important;
-        width: 320px !important;
-    }
-    
-    /* Hide the sidebar collapse button completely */
-    button[kind="header"], 
-    .css-vk3wp9,
-    .css-1kyxreq,
-    [data-testid="collapsedControl"] {
+    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div,
+    button[kind="header"], .css-vk3wp9, .css-1kyxreq, [data-testid="collapsedControl"] {
         display: none !important;
         visibility: hidden !important;
     }
     
-    /* Adjust main content to account for fixed sidebar */
+    /* Full width main content */
     .main .block-container {
-        margin-left: 340px !important;
+        margin-left: 0 !important;
         max-width: none !important;
         padding-left: 2rem !important;
-    }
-    
-    /* Make sidebar resizable */
-    section[data-testid="stSidebar"] {
-        resize: horizontal !important;
-        overflow: auto !important;
-        border-right: 3px solid rgba(255, 68, 68, 0.5) !important;
-    }
-    
-    section[data-testid="stSidebar"]:hover {
-        border-right: 3px solid rgba(255, 68, 68, 0.8) !important;
+        padding-right: 2rem !important;
     }
    
     /* Main app background */
@@ -255,129 +229,6 @@ st.markdown("""
         z-index: 2;
         font-family: 'JetBrains Mono', monospace;
     }
-   
-    /* Sidebar styling - Enhanced for better control */
-    .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
-    section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div,
-    .css-1aumxhk, .css-hxt7ib, .css-17lntkn {
-        background: rgba(40, 20, 20, 0.9) !important;
-        border-right: 1px solid rgba(255, 68, 68, 0.3) !important;
-        backdrop-filter: blur(10px) !important;
-    }
-   
-    /* Language selector styling */
-    .language-selector {
-        background: rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 68, 68, 0.3);
-        border-radius: 10px;
-        padding: 15px;
-        margin-bottom: 20px;
-        font-family: 'JetBrains Mono', monospace;
-    }
-   
-    /* Emergency contacts styling */
-    .contact-item {
-        background: rgba(0, 0, 0, 0.5);
-        padding: 12px;
-        margin-bottom: 8px;
-        border-radius: 8px;
-        border-left: 3px solid #ff4444;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        color: #e0e0e0;
-        font-family: 'JetBrains Mono', monospace;
-    }
-
-    .contact-item:hover {
-        background: rgba(255, 68, 68, 0.1);
-        transform: translateX(5px);
-    }
-
-    .contact-name {
-        color: #e0e0e0;
-        font-size: 0.9rem;
-        font-weight: 500;
-        font-family: 'JetBrains Mono', monospace;
-    }
-
-    .contact-number {
-        color: #ff4444;
-        font-size: 0.8rem;
-        margin-top: 3px;
-        font-family: 'JetBrains Mono', monospace;
-    }
-   
-    /* Map container with better styling */
-    .map-container {
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 10px;
-        padding: 0;
-        border: 1px solid rgba(255, 68, 68, 0.3);
-        position: relative;
-        height: 300px;
-        overflow: hidden;
-        margin-bottom: 15px;
-    }
-   
-    /* Map iframe styling */
-    .crime-map iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-        border-radius: 10px;
-        filter: invert(0.9) hue-rotate(180deg) saturate(1.2);
-    }
-
-    .map-placeholder {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(45deg, #2e1a1a, #3e1616);
-        border-radius: 8px;
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #666;
-        font-size: 0.8rem;
-        font-family: 'JetBrains Mono', monospace;
-    }
-
-    .hotspot {
-        position: absolute;
-        width: 12px;
-        height: 12px;
-        background: #ff4444;
-        border-radius: 50%;
-        animation: pulse-hotspot 2s infinite;
-        cursor: pointer;
-    }
-
-    .hotspot::after {
-        content: '';
-        position: absolute;
-        top: -2px;
-        left: -2px;
-        right: -2px;
-        bottom: -2px;
-        border: 2px solid rgba(255, 68, 68, 0.5);
-        border-radius: 50%;
-        animation: ripple 2s infinite;
-    }
-
-    @keyframes pulse-hotspot {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.7; transform: scale(1.2); }
-    }
-
-    @keyframes ripple {
-        0% { transform: scale(1); opacity: 1; }
-        100% { transform: scale(2); opacity: 0; }
-    }
-
-    .hotspot-1 { top: 30%; left: 25%; }
-    .hotspot-2 { top: 45%; left: 60%; }
-    .hotspot-3 { top: 70%; left: 40%; }
-    .hotspot-4 { top: 25%; left: 75%; }
    
     /* Chat styling */
     .chat-message {
@@ -705,7 +556,7 @@ if not st.session_state.csv_loaded:
             # Add success message to chat without time spam
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🌍 I can also communicate in multiple languages - select your preferred language in the sidebar!",
+                "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🌍 I can also communicate in multiple languages!",
                 "timestamp": get_stkitts_time()
             })
         else:
@@ -714,7 +565,7 @@ if not st.session_state.csv_loaded:
             # Add error message to chat
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance and emergency contacts.",
+                "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance.",
                 "timestamp": get_stkitts_time()
             })
 
@@ -724,62 +575,6 @@ if st.session_state.csv_data is not None:
     st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded | {ai_status}")
 else:
     st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
-
-# Sidebar with new code (always expanded)
-with st.sidebar:
-    st.markdown('<div class="section-header">🚨 Emergency Contacts</div>', unsafe_allow_html=True)
-           
-    emergency_contacts = [
-        {"name": "Emergency Hotline", "number": "911", "type": "police"},
-        {"name": "Police Department", "number": "465-2241", "type": "police"},
-        {"name": "Hospital", "number": "465-2551", "type": "hospital"},
-        {"name": "Fire Department", "number": "465-2515 / 465-7167", "type": "fire"},
-        {"name": "Coast Guard", "number": "465-8384 / 466-9280", "type": "legal"},
-        {"name": "Red Cross", "number": "465-2584", "type": "forensic"},
-        {"name": "NEMA (Emergency Mgmt)", "number": "466-5100", "type": "legal"}
-    ]
-           
-    for contact in emergency_contacts:
-        if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation. Emergency services are standing by for immediate response.",
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-            })
-            st.rerun()
-           
-    st.markdown('<div class="section-header">📍 Crime Hotspots Map</div>', unsafe_allow_html=True)
-           
-    # Real Google Maps embed for St. Kitts & Nevis
-    st.markdown("""
-    <div class="map-container crime-map">
-        <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d243.44896!2d-62.7261!3d17.3026!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8c1a602b153c94b5%3A0x8e3f7a7c7b1b9f5e!2sBasseterre%2C%20St%20Kitts%20%26%20Nevis!5e1!3m2!1sen!2sus!4v1634567890123!5m2!1sen!2sus&maptype=satellite"
-            allowfullscreen=""
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade">
-        </iframe>
-    </div>
-    """, unsafe_allow_html=True)
-           
-    # Interactive hotspot buttons
-    st.markdown('<div class="section-header">🎯 Active Crime Zones</div>', unsafe_allow_html=True)
-           
-    hotspots = [
-        {"name": "Basseterre Downtown", "level": "🔴 High Risk", "coords": "17.3026, -62.7261"},
-        {"name": "Sandy Point", "level": "🟡 Medium Risk", "coords": "17.3580, -62.8419"},
-        {"name": "Charlestown (Nevis)", "level": "🟠 Active Cases", "coords": "17.1373, -62.6131"},
-        {"name": "Frigate Bay", "level": "🟡 Tourist Area", "coords": "17.2742, -62.6897"}
-    ]
-           
-    for hotspot in hotspots:
-        if st.button(f"{hotspot['level']} {hotspot['name']}", key=f"hotspot_{hotspot['name']}"):
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": f"📍 **Crime Hotspot Analysis:**\n\n🎯 **Location:** {hotspot['name']}\n📊 **Coordinates:** {hotspot['coords']}\n⚠ **Status:** {hotspot['level']}\n\n🚔 **Recommendation:** Increased patrol presence and witness canvassing recommended. Coordinating with local units for enhanced surveillance in this area.",
-                "timestamp": datetime.datetime.now().strftime("%H:%M:%S")
-            })
-            st.rerun()
 
 # Main chat area
 st.markdown('<div class="section-header">💬 Crime Investigation Chat</div>', unsafe_allow_html=True)
@@ -822,25 +617,9 @@ with st.form("chat_form", clear_on_submit=True):
     col1, col2 = st.columns([5, 1])
     
     with col1:
-        # Dynamic placeholder based on selected language
-        placeholders = {
-            'en': "Ask questions about crime data, investigations, or emergency procedures...",
-            'es': "Haga preguntas sobre datos de criminalidad, investigaciones o procedimientos de emergencia...",
-            'fr': "Posez des questions sur les données criminelles, les enquêtes ou les procédures d'urgence...",
-            'pt': "Faça perguntas sobre dados criminais, investigações ou procedimentos de emergência...",
-            'zh': "询问有关犯罪数据、调查或紧急程序的问题...",
-            'ar': "اسأل أسئلة حول بيانات الجريمة أو التحقيقات أو إجراءات الطوارئ...",
-            'hi': "अपराध डेटा, जांच, या आपातकालीन प्रक्रियाओं के बारे में प्रश्न पूछें...",
-            'ja': "犯罪データ、捜査、緊急手順について質問してください...",
-            'ko': "범죄 데이터, 수사 또는 응급 절차에 대한 질문을 하세요...",
-            'de': "Stellen Sie Fragen zu Kriminalitätsdaten, Ermittlungen oder Notfallverfahren...",
-            'it': "Fai domande sui dati criminali, le indagini o le procedure di emergenza...",
-            'ru': "Задавайте вопросы о данных преступности, расследованиях или экстренных процедурах..."
-        }
-        
         user_input = st.text_input(
             "Message",
-            placeholder=placeholders.get(st.session_state.selected_language, placeholders['en']),
+            placeholder="Ask questions about crime data, investigations, or emergency procedures...",
             label_visibility="collapsed",
             key="user_input"
         )
@@ -885,10 +664,6 @@ st.markdown(f"""
     <div class="status-item">
         <div class="status-dot {status_class}"></div>
         <span>{status_message}</span>
-    </div>
-    <div class="status-item">
-        <div class="status-dot status-evidence"></div>
-        <span>Emergency Services Linked</span>
     </div>
     <div class="status-item">
         <div class="status-dot status-online"></div>
