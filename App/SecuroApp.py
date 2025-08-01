@@ -388,7 +388,128 @@ def create_crime_charts(chart_type, crime_data):
         
         return fig
 
-# Enhanced System Prompt with statistics capabilities
+# CSV data handling
+@st.cache_data
+def load_csv_data():
+    csv_filename = "criminal_justice_qa.csv"
+    script_dir = os.path.dirname(__file__)
+    csv_path = os.path.join(script_dir, csv_filename)
+    try:
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            return df, f"Successfully loaded {csv_path}"
+        else:
+            current_dir = os.getcwd()
+            files_in_script_dir = os.listdir(script_dir) if os.path.exists(script_dir) else []
+            files_in_current_dir = os.listdir(current_dir)
+            return None, f"""
+            Could not find '{csv_filename}'.
+            Expected: {csv_path}
+            Script directory: {script_dir}
+            CSV files in script dir: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
+            Current directory: {current_dir}
+            CSV files in current dir: {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
+            """
+    except Exception as e:
+        return None, f"Error loading CSV: {e}"
+
+def search_csv_data(df, query):
+    """Search through CSV data for relevant information"""
+    if df is None:
+        return "❌ No CSV data loaded. Please make sure 'criminal_justice_qa.csv' is in the correct location."
+   
+    search_term = query.lower()
+    results = []
+   
+    for column in df.columns:
+        if df[column].dtype == 'object':
+            try:
+                mask = df[column].astype(str).str.lower().str.contains(search_term, na=False)
+                matching_rows = df[mask]
+               
+                if not matching_rows.empty:
+                    for _, row in matching_rows.head(2).iterrows():
+                        result_dict = {k: v for k, v in row.to_dict().items() if pd.notna(v)}
+                        results.append(f"**Found in {column}:**\n{result_dict}")
+            except Exception as e:
+                continue
+   
+    if results:
+        return f"🔍 **Search Results for '{query}':**\n\n" + "\n\n---\n\n".join(results[:3])
+    else:
+        return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
+
+def get_ai_response(user_input, csv_results, language='en'):
+    """Generate AI response using the system prompt and context with language support"""
+    if not st.session_state.get('ai_enabled', False) or model is None:
+        return csv_results
+    
+    try:
+        current_time = get_stkitts_time()
+        current_date = get_stkitts_date()
+        
+        time_keywords = ['time', 'date', 'now', 'current', 'today', 'when', 'hora', 'fecha', 'hoy', 'temps', 'maintenant']
+        include_time = any(keyword in user_input.lower() for keyword in time_keywords)
+        
+        # Include crime hotspot information in context
+        hotspot_context = f"""
+        CRIME HOTSPOT DATA:
+        High Risk Areas: {', '.join([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'High'])}
+        Medium Risk Areas: {', '.join([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Medium'])}
+        Low Risk Areas: {', '.join([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Low'])}
+        Total Mapped Locations: {len(CRIME_HOTSPOTS)}
+        """
+        
+        time_context = f"""
+        Current St. Kitts & Nevis time: {current_time}
+        Current St. Kitts & Nevis date: {current_date}
+        """ if include_time else ""
+        
+        # Enhanced crime context
+        crime_context = f"""
+        CURRENT ST. KITTS & NEVIS CRIME DATA (Q2 2025):
+        
+        OVERALL STATISTICS:
+        - Total Federation Crimes: 292
+        - Overall Detection Rate: 38.7%
+        - St. Kitts: 207 crimes (32.9% detection rate)
+        - Nevis: 85 crimes (52.9% detection rate)
+        
+        CRIME BREAKDOWN Q2 2025:
+        - Murder/Manslaughter: 4 cases (2 detected, 50% rate)
+        - Drug Crimes: 31 cases (31 detected, 100% rate) - PERFECT PERFORMANCE
+        - Larcenies: 92 cases (21 detected, 22.8% rate)
+        - Bodily Harm: 33 cases (19 detected, 57.6% rate)
+        - Break-ins: 26 cases (7 detected, 26.9% rate)
+        - Malicious Damage: 59 cases (17 detected, 28.8% rate)
+        """
+        
+        full_prompt = f"""
+        {get_system_prompt(language)}
+        {time_context}
+        {hotspot_context}
+        {crime_context}
+        
+        Context from crime database search:
+        {csv_results}
+        
+        User query: {user_input}
+        
+        Please provide a comprehensive response as SECURO based on the available data and your crime analysis capabilities.
+        Only mention the current time/date if directly relevant to the user's query.
+        Respond directly without using code blocks, backticks, or HTML formatting.
+        """
+        
+        response = model.generate_content(full_prompt)
+        
+        clean_response = response.text.strip()
+        clean_response = clean_response.replace('```', '')
+        clean_response = re.sub(r'<[^>]+>', '', clean_response)
+        
+        return clean_response
+        
+    except Exception as e:
+        return f"{csv_results}\n\n⚠ AI analysis temporarily unavailable. Showing database search results."
 def get_system_prompt(language='en'):
     base_prompt = """
 You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
@@ -679,6 +800,12 @@ if 'selected_language' not in st.session_state:
 
 if 'crime_stats' not in st.session_state:
     st.session_state.crime_stats = load_crime_statistics()
+
+if 'csv_data' not in st.session_state:
+    st.session_state.csv_data = None
+
+if 'csv_loaded' not in st.session_state:
+    st.session_state.csv_loaded = False
 
 # Enhanced CSS styling - keeping the exact same design from HTML
 st.markdown("""
@@ -1081,6 +1208,12 @@ with st.sidebar:
     st.markdown("### 🤖 AI Configuration")
     st.write(f"**Status:** {st.session_state.get('ai_status', 'Unknown')}")
     
+    # CSV Database Status
+    if st.session_state.get('csv_data') is not None:
+        st.success(f"📊 Database: {len(st.session_state.csv_data)} records")
+    else:
+        st.warning("📊 Database: Not loaded")
+    
     # API Key input for users who want to use their own
     api_key_input = st.text_input(
         "Google AI API Key (Optional)",
@@ -1109,6 +1242,16 @@ with st.sidebar:
         st.warning("⚠️ AI Limited Mode")
         st.write("• Basic responses only")
         st.write("• Add API key for full features")
+    
+    if st.session_state.get('csv_data') is not None:
+        st.success("📊 CSV Database Active")
+        st.write("• Crime data search enabled")
+        st.write("• Historical case lookup")
+        st.write("• Evidence correlation")
+    else:
+        st.warning("⚠️ CSV Database Missing")
+        st.write("• Add criminal_justice_qa.csv")
+        st.write("• Place in app directory")
 
 # Main Header
 current_time = get_stkitts_time()
@@ -1328,7 +1471,7 @@ elif st.session_state.current_page == 'about':
 
 # CRIME HOTSPOTS PAGE
 elif st.session_state.current_page == 'map':
-    st.markdown("## 🗺️ Crime Hotspot Map - St. Kitts & Nevis")
+    st.markdown('<h2 style="color: #44ff44;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h2>', unsafe_allow_html=True)
     
     try:
         with st.spinner("🗺️ Loading interactive crime hotspot map..."):
@@ -1351,7 +1494,7 @@ elif st.session_state.current_page == 'map':
         st.info("💡 Note: Make sure folium and streamlit-folium are installed")
     
     # Hotspot Analysis Summary
-    st.markdown("### 📍 Hotspot Analysis Summary")
+    st.markdown('<h3 style="color: #44ff44;">📍 Hotspot Analysis Summary</h3>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
@@ -1381,7 +1524,7 @@ elif st.session_state.current_page == 'map':
 
 # STATISTICS & ANALYTICS PAGE
 elif st.session_state.current_page == 'statistics':
-    st.markdown("## 📊 Crime Statistics & Analytics")
+    st.markdown('<h2 style="color: #44ff44;">📊 Crime Statistics & Analytics</h2>', unsafe_allow_html=True)
     
     # Q2 2025 Overview
     st.markdown('<h3 style="color: #44ff44;">Q2 2025 Crime Statistics Overview</h3>', unsafe_allow_html=True)
@@ -1464,7 +1607,7 @@ elif st.session_state.current_page == 'statistics':
             st.plotly_chart(fig, use_container_width=True)
     
     # Crime Breakdown Details
-    st.markdown("### 🔍 Q2 2025 Crime Breakdown by Category")
+    st.markdown('<h3 style="color: #44ff44;">🔍 Q2 2025 Crime Breakdown by Category</h3>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
@@ -1514,7 +1657,7 @@ elif st.session_state.current_page == 'statistics':
         """, unsafe_allow_html=True)
 
     # Historical Comparison
-    st.markdown("### 📈 Historical Comparison (Jan-June)")
+    st.markdown('<h3 style="color: #44ff44;">📈 Historical Comparison (Jan-June)</h3>', unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
@@ -1602,13 +1745,59 @@ elif st.session_state.current_page == 'emergency':
 
 # AI ASSISTANT CHAT PAGE
 elif st.session_state.current_page == 'chat':
-    st.markdown("## 💬 Chat with SECURO AI")
+    st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Chat with SECURO AI</h2>', unsafe_allow_html=True)
+    
+    # Load CSV data with better error handling
+    st.markdown('<h3 style="color: #44ff44;">📊 Crime Database Status</h3>', unsafe_allow_html=True)
+
+    # Load CSV only once
+    if not st.session_state.csv_loaded:
+        with st.spinner("🔍 Searching for crime database..."):
+            csv_data, status_message = load_csv_data()
+            st.session_state.csv_data = csv_data
+            st.session_state.csv_loaded = True
+           
+            if csv_data is not None:
+                st.success(f"✅ Database loaded successfully! {len(csv_data)} records found.")
+               
+                # Add success message to chat if messages are empty
+                if not st.session_state.messages:
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": f"✅ Crime database loaded successfully!\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🗺️ Don't forget to check out the interactive crime hotspot map in the sidebar to explore high-risk areas across St. Kitts & Nevis!",
+                        "timestamp": get_stkitts_time()
+                    })
+            else:
+                st.error(f"❌ Database not found: {status_message}")
+               
+                # Add error message to chat if messages are empty
+                if not st.session_state.messages:
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": f"❌ **Database Error:** Could not find 'criminal_justice_qa.csv'\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance and the interactive hotspot map is available in the Crime Hotspots section.",
+                        "timestamp": get_stkitts_time()
+                    })
+
+    # Show current status
+    ai_status = st.session_state.get('ai_status', 'AI Status Unknown')
+    if st.session_state.csv_data is not None:
+        st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded | {ai_status}")
+    else:
+        st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
+
+    # Crime Hotspot Summary
+    total_hotspots = len(CRIME_HOTSPOTS)
+    high_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'High'])
+    medium_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Medium'])
+    low_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Low'])
+    
+    st.info(f"🗺️ **Crime Hotspot Map:** {total_hotspots} locations mapped | {high_risk} High Risk | {medium_risk} Medium Risk | {low_risk} Low Risk areas")
     
     # Initialize chat messages
     if not st.session_state.messages:
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "🛡️ **Welcome to SECURO AI Crime Analysis System**\n\nI'm your intelligent crime analysis assistant for St. Kitts & Nevis. I have access to comprehensive crime data including:\n\n📊 **Current Data (Q2 2025):**\n• 292 total crimes across the Federation\n• 38.7% overall detection rate\n• 13+ mapped crime hotspots\n• Real-time analytics and predictions\n\n🔍 **I can help you with:**\n• Crime pattern analysis and trends\n• Statistical insights and comparisons\n• Hotspot identification and risk assessment\n• Predictive analytics for resource planning\n• Forensic case support and investigations\n• Emergency contact information\n\n💬 **Ask me anything about:** crime statistics, trends, hotspots, investigations, or law enforcement strategy for St. Kitts & Nevis.",
+            "content": "🛡️ **Welcome to SECURO AI Crime Analysis System**\n\nI'm your intelligent crime analysis assistant for St. Kitts & Nevis. I have access to comprehensive crime data including:\n\n📊 **Current Data (Q2 2025):**\n• 292 total crimes across the Federation\n• 38.7% overall detection rate\n• 13+ mapped crime hotspots\n• Real-time analytics and predictions\n\n🔍 **I can help you with:**\n• Crime pattern analysis and trends\n• Statistical insights and comparisons\n• Hotspot identification and risk assessment\n• Predictive analytics for resource planning\n• Forensic case support and investigations\n• Emergency contact information\n\n💬 **Try saying:** 'Hi', 'Show crime hotspots', 'What are the trends?', or ask anything about crime statistics, investigations, or law enforcement strategy for St. Kitts & Nevis.",
             "timestamp": get_stkitts_time()
         })
     
@@ -1663,10 +1852,11 @@ elif st.session_state.current_page == 'chat':
                 "content": bot_response,
                 "timestamp": current_time
             })
-            st.rerun()
+            
+                            st.rerun()
     
     # Quick Action Buttons
-    st.markdown("### 🚀 Quick Analysis Options")
+    st.markdown('<h4 style="color: #44ff44; text-align: center; margin-bottom: 15px;">🚀 Quick Analysis Options</h4>', unsafe_allow_html=True)
     
     quick_options = [
         ("🗺️ Analyze Hotspots", "Show me a detailed analysis of the current crime hotspots across St. Kitts & Nevis"),
@@ -1691,9 +1881,16 @@ elif st.session_state.current_page == 'chat':
                     "timestamp": current_time
                 })
                 
-                # Generate enhanced AI response
+                # Generate enhanced response using CSV + AI
                 with st.spinner("🧠 SECURO AI analyzing..."):
-                    response = get_enhanced_ai_response(query_text, st.session_state.selected_language)
+                    # Search CSV first
+                    csv_results = search_csv_data(st.session_state.csv_data, query_text)
+                    
+                    # Enhance with AI or use smart fallback
+                    if st.session_state.get('ai_enabled', False):
+                        response = get_ai_response(query_text, csv_results, st.session_state.selected_language)
+                    else:
+                        response = get_smart_fallback_response(query_text, csv_results)
                 
                 st.session_state.messages.append({
                     "role": "assistant",
@@ -1704,7 +1901,7 @@ elif st.session_state.current_page == 'chat':
                 st.rerun()
 
 # Status Bar
-status_message = "AI & Database Ready"
+csv_status = f"{len(st.session_state.csv_data)} CSV Records" if st.session_state.get('csv_data') is not None else "CSV Missing"
 current_time = get_stkitts_time()
 
 st.markdown(f"""
@@ -1715,7 +1912,7 @@ st.markdown(f"""
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
-        <span>Database: 292 Q2 2025 Records</span>
+        <span>Database: {csv_status}</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
