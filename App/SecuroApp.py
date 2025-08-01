@@ -2018,8 +2018,7 @@ elif st.session_state.current_page == 'chat':
                 "content": bot_response,
                 "timestamp": current_time
             })
-            
-                            st.rerun()
+            st.rerun()
     
     # Quick Action Buttons
     st.markdown('<h4 style="color: #44ff44; text-align: center; margin-bottom: 15px;">🚀 Quick Analysis Options</h4>', unsafe_allow_html=True)
