@@ -507,7 +507,7 @@ if 'current_page' not in st.session_state:
 if 'show_map' not in st.session_state:
     st.session_state.show_map = True
 
-# CSS styling - Clean GREEN theme (your original design)
+# CSS styling - Clean GREEN theme with fixed navigation and moving gradients
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
@@ -515,6 +515,25 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    
+    /* Moving gradient animation keyframes */
+    @keyframes moveGradient {
+        0% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+        100% {
+            background-position: 0% 50%;
+        }
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
     
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
@@ -527,10 +546,28 @@ st.markdown("""
         padding: 20px 0; 
         border-bottom: 2px solid rgba(68, 255, 68, 0.5); 
         margin-bottom: 20px;
-        background: rgba(68, 255, 68, 0.1);
+        background: linear-gradient(-45deg, rgba(68, 255, 68, 0.1), rgba(68, 255, 68, 0.2), rgba(34, 139, 34, 0.1), rgba(68, 255, 68, 0.15));
+        background-size: 400% 400%;
+        animation: moveGradient 3s ease infinite;
         border-radius: 10px;
         position: relative;
         overflow: hidden;
+    }
+    
+    .control-panel-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(68, 255, 68, 0.4), transparent);
+        animation: shimmer 2s linear infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
     }
     
     .control-panel-header h2 {
@@ -602,12 +639,25 @@ st.markdown("""
         text-align: center;
         margin-bottom: 30px;
         padding: 20px;
-        background: rgba(0, 0, 0, 0.7);
+        background: linear-gradient(-45deg, rgba(0, 0, 0, 0.7), rgba(68, 255, 68, 0.1), rgba(0, 0, 0, 0.8), rgba(34, 139, 34, 0.1));
+        background-size: 400% 400%;
+        animation: moveGradient 4s ease infinite;
         border-radius: 15px;
         border: 1px solid rgba(68, 255, 68, 0.3);
         backdrop-filter: blur(10px);
         position: relative;
         overflow: hidden;
+    }
+    
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(68, 255, 68, 0.3), transparent);
+        animation: shimmer 3s linear infinite;
     }
 
     .main-header h1 {
@@ -707,6 +757,7 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(68, 255, 68, 0.4) !important;
     }
 
+    /* Fixed navigation button styling */
     .nav-button {
         width: 100% !important;
         margin-bottom: 10px !important;
@@ -714,14 +765,51 @@ st.markdown("""
 
     .nav-button button {
         width: 100% !important;
+        height: 45px !important;
         background: rgba(0, 0, 0, 0.6) !important;
         border: 1px solid rgba(68, 255, 68, 0.3) !important;
         color: #44ff44 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s ease !important;
     }
 
     .nav-button button:hover {
         background: rgba(68, 255, 68, 0.1) !important;
         border-color: #44ff44 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(68, 255, 68, 0.2) !important;
+    }
+    
+    /* Ensure both nav buttons are identical */
+    .nav-button-main button,
+    .nav-button-analytics button {
+        width: 100% !important;
+        height: 45px !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        color: #44ff44 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 600 !important;
+        font-size: 0.9rem !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transition: all 0.3s ease !important;
+    }
+    
+    .nav-button-main button:hover,
+    .nav-button-analytics button:hover {
+        background: rgba(68, 255, 68, 0.1) !important;
+        border-color: #44ff44 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(68, 255, 68, 0.2) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -838,19 +926,23 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    # Navigation
+    # Navigation with fixed styling
     st.markdown('<div class="sidebar-header">📋 Navigation</div>', unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     with col1:
+        st.markdown('<div class="nav-button-main">', unsafe_allow_html=True)
         if st.button("🏠 Main", key="nav_main", help="Main Chat Interface"):
             st.session_state.current_page = 'main'
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
     
     with col2:
+        st.markdown('<div class="nav-button-analytics">', unsafe_allow_html=True)
         if st.button("📊 Analytics", key="nav_analytics", help="Crime Statistics & Analytics"):
             st.session_state.current_page = 'analytics'
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
     
     st.markdown("---")
     
