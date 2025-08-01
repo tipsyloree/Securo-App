@@ -725,7 +725,7 @@ def initialize_ai():
         # Try to get API key from environment first, then fallback to hardcoded
         api_key = os.getenv('GOOGLE_API_KEY', "AIzaSyA_9sB8o6y7dKK6yBRKWH_c5uSVDSoRYv0")
         
-        if not api_key or api_key == "your_api_key_here":
+        if not api_key or api_key == "AIzaSyA3ViHvNYuunum-qGA0Yo4MrOJFDvQok6g":
             st.session_state.ai_enabled = False
             st.session_state.ai_status = "❌ API Key Required"
             return None
@@ -1852,7 +1852,8 @@ elif st.session_state.current_page == 'chat':
                 "content": bot_response,
                 "timestamp": current_time
             })
-            st.rerun()
+            
+                            st.rerun()
     
     # Quick Action Buttons
     st.markdown('<h4 style="color: #44ff44; text-align: center; margin-bottom: 15px;">🚀 Quick Analysis Options</h4>', unsafe_allow_html=True)
