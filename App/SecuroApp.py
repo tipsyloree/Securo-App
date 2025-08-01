@@ -1663,8 +1663,7 @@ elif st.session_state.current_page == 'chat':
                 "content": bot_response,
                 "timestamp": current_time
             })
-            
-                            st.rerun()
+            st.rerun()
     
     # Quick Action Buttons
     st.markdown("### 🚀 Quick Analysis Options")
