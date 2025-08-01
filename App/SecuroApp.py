@@ -11,7 +11,6 @@ import re
 import requests
 import io
 import matplotlib.pyplot as plt
-import seaborn as sns
 from matplotlib.dates import DateFormatter
 from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import PolynomialFeatures
