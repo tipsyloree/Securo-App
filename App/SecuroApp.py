@@ -95,7 +95,7 @@ except Exception as e:
     st.session_state.ai_status = f"❌ AI Error: {str(e)}"
     model = None
 
-# Page configuration
+# Page configuration - Force sidebar to always be visible
 st.set_page_config(
     page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
     page_icon="https://i.postimg.cc/V69LH7F4/Logo.jpg",
@@ -108,22 +108,51 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
    
-    /* Hide default Streamlit elements but keep sidebar controls */
+    /* Hide default Streamlit elements but FORCE sidebar to stay visible */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Force sidebar to be visible and controllable */
+    /* FORCE sidebar to be permanently visible and prevent collapse */
     .css-1d391kg, .css-1cypcdb, .css-k1vhr6, .css-1lcbmhc, .css-17eq0hr,
     section[data-testid="stSidebar"], .stSidebar, [data-testid="stSidebar"] > div {
         visibility: visible !important;
         display: block !important;
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        height: 100vh !important;
+        z-index: 999999 !important;
+        min-width: 300px !important;
+        max-width: 400px !important;
+        width: 320px !important;
     }
     
-    /* Sidebar toggle button - keep it always visible */
-    button[kind="header"] {
-        visibility: visible !important;
-        display: block !important;
+    /* Hide the sidebar collapse button completely */
+    button[kind="header"], 
+    .css-vk3wp9,
+    .css-1kyxreq,
+    [data-testid="collapsedControl"] {
+        display: none !important;
+        visibility: hidden !important;
+    }
+    
+    /* Adjust main content to account for fixed sidebar */
+    .main .block-container {
+        margin-left: 340px !important;
+        max-width: none !important;
+        padding-left: 2rem !important;
+    }
+    
+    /* Make sidebar resizable */
+    section[data-testid="stSidebar"] {
+        resize: horizontal !important;
+        overflow: auto !important;
+        border-right: 3px solid rgba(255, 68, 68, 0.5) !important;
+    }
+    
+    section[data-testid="stSidebar"]:hover {
+        border-right: 3px solid rgba(255, 68, 68, 0.8) !important;
     }
    
     /* Main app background */
@@ -538,16 +567,23 @@ def get_ai_response(user_input, csv_results, language='en'):
         return csv_results
     
     try:
-        # Get current St. Kitts time for context
+        # Get current St. Kitts time for context (but don't always mention it)
         current_time = get_stkitts_time()
         current_date = get_stkitts_date()
+        
+        # Only include time context if user asks about time or current events
+        time_keywords = ['time', 'date', 'now', 'current', 'today', 'when', 'hora', 'fecha', 'hoy', 'temps', 'maintenant']
+        include_time = any(keyword in user_input.lower() for keyword in time_keywords)
+        
+        time_context = f"""
+        Current St. Kitts & Nevis time: {current_time}
+        Current St. Kitts & Nevis date: {current_date}
+        """ if include_time else ""
         
         # Combine system prompt with user context
         full_prompt = f"""
         {get_system_prompt(language)}
-        
-        Current St. Kitts & Nevis time: {current_time}
-        Current St. Kitts & Nevis date: {current_date}
+        {time_context}
         
         Context from crime database search:
         {csv_results}
@@ -555,7 +591,7 @@ def get_ai_response(user_input, csv_results, language='en'):
         User query: {user_input}
         
         Please provide a comprehensive response as SECURO based on the available data and your crime analysis capabilities.
-        Include the current local time if relevant to the user's query.
+        Only mention the current time/date if directly relevant to the user's query.
         Respond directly without using code blocks, backticks, or HTML formatting.
         """
         
@@ -601,12 +637,11 @@ def search_csv_data(df, query):
 # Initialize session state
 if 'messages' not in st.session_state:
     st.session_state.messages = []
-    # Add initial bot message with current time
-    current_time = get_stkitts_time()
+    # Add initial bot message without excessive time mentions
     st.session_state.messages.append({
         "role": "assistant",
-        "content": f"🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\n🕒 Current St. Kitts Time: {current_time}\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n• Multilingual communication support\n\n📊 Loading crime database... Please wait while I check for your data file.",
-        "timestamp": current_time
+        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n• Multilingual communication support\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "timestamp": get_stkitts_time()
     })
 
 if 'csv_data' not in st.session_state:
@@ -667,7 +702,7 @@ if not st.session_state.csv_loaded:
         if csv_data is not None:
             st.markdown(f'<div class="file-status file-found">{status_message}</div>', unsafe_allow_html=True)
            
-            # Add success message to chat
+            # Add success message to chat without time spam
             st.session_state.messages.append({
                 "role": "assistant",
                 "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🌍 I can also communicate in multiple languages - select your preferred language in the sidebar!",
@@ -729,7 +764,7 @@ with st.sidebar:
         if st.button(f"📞 {contact['name']}\n{contact['number']}", key=contact['name']):
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation at {get_stkitts_time()} AST. Emergency services are standing by for immediate response.",
+                "content": f"🚨 **Emergency Contact Accessed:**\n\n📞 **{contact['name']}:** {contact['number']}\n\n📝 Contact logged for case documentation. Emergency services are standing by for immediate response.",
                 "timestamp": get_stkitts_time()
             })
             st.rerun()
@@ -762,7 +797,7 @@ with st.sidebar:
         if st.button(f"{hotspot['level']} {hotspot['name']}", key=f"hotspot_{hotspot['name']}"):
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": f"📍 **Crime Hotspot Analysis:**\n\n🎯 **Location:** {hotspot['name']}\n📊 **Coordinates:** {hotspot['coords']}\n⚠ **Status:** {hotspot['level']}\n🕒 **Analysis Time:** {get_stkitts_time()} AST\n\n🚔 **Recommendation:** Increased patrol presence and witness canvassing recommended. Coordinating with local units for enhanced surveillance in this area.",
+                "content": f"📍 **Crime Hotspot Analysis:**\n\n🎯 **Location:** {hotspot['name']}\n📊 **Coordinates:** {hotspot['coords']}\n⚠ **Status:** {hotspot['level']}\n\n🚔 **Recommendation:** Increased patrol presence and witness canvassing recommended. Coordinating with local units for enhanced surveillance in this area.",
                 "timestamp": get_stkitts_time()
             })
             st.rerun()
