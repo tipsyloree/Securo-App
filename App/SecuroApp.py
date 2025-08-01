@@ -46,20 +46,6 @@ EMERGENCY_CONTACTS = {
     "NEMA": "466-5100"
 }
 
-# Crime Statistics URLs from St. Kitts & Nevis Police Force
-CRIME_STATS_URLS = [
-    "http://www.police.kn/statistics/links/1752416412.pdf",
-    "http://www.police.kn/statistics/links/1752414290.pdf",
-    "http://www.police.kn/statistics/links/1750875153.pdf",
-    "http://www.police.kn/statistics/links/1746572831.pdf",
-    "http://www.police.kn/statistics/links/1746572806.pdf",
-    "http://www.police.kn/statistics/links/1739113354.pdf",
-    "http://www.police.kn/statistics/links/1739113269.pdf",
-    "http://www.police.kn/statistics/links/1739112788.pdf",
-    "http://www.police.kn/statistics/links/1733163796.pdf",
-    "http://www.police.kn/statistics/links/1733163758.pdf",
-]
-
 # St. Kitts timezone (Atlantic Standard Time)
 SKN_TIMEZONE = pytz.timezone('America/St_Kitts')
 
@@ -324,45 +310,35 @@ def create_crime_charts(chart_type, crime_data):
 # Enhanced System Prompt with statistics capabilities
 def get_system_prompt(language='en'):
     base_prompt = """
-You are SECURO, an advanced AI crime analyst for the Royal St. Christopher & Nevis Police Force (RSCNPF). 
-You have access to comprehensive crime statistics and can provide:
+You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
 
-**STATISTICAL ANALYSIS:**
-- Real-time crime data analysis from official RSCNPF reports
-- Trend identification and pattern recognition
-- Crime prediction modeling using historical data
-- Detection rate analysis and performance metrics
-- Geographic crime distribution analysis
+Your mission is to support crime prevention, research, and public safety through:
+- Interactive maps and geographic analysis
+- Statistical analysis and trend identification
+- Predictive analytics for crime prevention
+- Visual data presentations (charts, graphs, etc.)
+- Emergency contact guidance
+- Multilingual communication support
 
-**CURRENT DATA AVAILABLE:**
-- Q2 2025 crime statistics (April-June)
-- Historical homicide data (2015-2024)
-- District-wise crime breakdown (Districts A, B, C)
-- Crime method analysis and victim demographics
-- Comparative year-over-year analysis
+Capabilities:
+- Analyze and summarize current and historical crime data (local and global)
+- Detect trends and patterns across time, location, and type
+- Recommend prevention strategies based on geographic and temporal factors
+- Provide accessible language for general users, while supporting technical depth for experts
+- Integrate with GIS, crime databases (e.g. Crimeometer), and public safety APIs
+- Generate visual outputs using Python tools like matplotlib, pandas, folium, etc.
+- Communicate effectively in multiple languages
+- Adapt responses to be clear, concise, and actionable
 
-**PREDICTION CAPABILITIES:**
-- Statistical forecasting for crime trends
-- Risk assessment for different areas and time periods
-- Resource allocation recommendations
-- Early warning systems for crime spikes
+Tone & Behavior:
+- Maintain a professional yet human tone
+- Be concise, accurate, and helpful
+- Explain visuals when necessary
+- Avoid panic-inducing language—focus on empowerment and awareness
+- Respond directly without using code blocks, backticks, or HTML formatting
+- Use the current St. Kitts & Nevis time and date in responses when relevant
 
-**CHART GENERATION:**
-When users request charts, you can create:
-- Homicide trend analysis with predictions
-- Crime method breakdowns
-- District comparison charts
-- Detection rate performance metrics
-- Age group and demographic analysis
-
-**KEY INSIGHTS FROM RECENT DATA:**
-- 2025 shows significant changes: 75% reduction in murders, 463% increase in drug crimes
-- Nevis has highest detection rate (52.9%) vs St. Kitts (32.9%)
-- Shootings account for 81% of homicides historically
-- Peak crime periods and seasonal patterns identified
-
-Always provide evidence-based analysis using the actual statistics. When creating predictions, 
-explain the methodology and confidence levels. Respond professionally but accessibly.
+Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
 """
     
     if language != 'en':
@@ -380,7 +356,7 @@ try:
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
-    st.session_state.ai_status = "✅ AI Ready (Enhanced Analytics)"
+    st.session_state.ai_status = "✅ AI Ready"
 except Exception as e:
     st.session_state.ai_enabled = False
     st.session_state.ai_status = f"❌ AI Error: {str(e)}"
@@ -388,13 +364,17 @@ except Exception as e:
 
 # Page configuration
 st.set_page_config(
-    page_title="SECURO - Enhanced Crime Analytics",
+    page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
     page_icon="🚔",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Enhanced CSS (keeping your original styling)
+# Initialize session state for page navigation
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = 'main'
+
+# CSS styling - Clean GREEN theme (your original design)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
@@ -487,38 +467,228 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace;
     }
 
-    .stats-card {
-        background: rgba(0, 0, 0, 0.8);
-        border: 1px solid rgba(68, 255, 68, 0.3);
+    .chat-message {
+        margin-bottom: 20px;
+        animation: fadeInUp 0.5s ease;
+        clear: both;
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-message {
+        text-align: right;
+    }
+
+    .bot-message {
+        text-align: left;
+    }
+
+    .message-content {
+        display: inline-block;
+        padding: 15px 20px;
         border-radius: 15px;
-        padding: 20px;
-        margin: 10px 0;
+        max-width: 80%;
+        position: relative;
+        font-family: 'JetBrains Mono', monospace;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+
+    .user-message .message-content {
+        background: linear-gradient(135deg, #44ff44, #33cc33);
+        color: #ffffff !important;
+        border-bottom-right-radius: 5px;
+    }
+
+    .bot-message .message-content {
+        background: rgba(0, 0, 0, 0.8) !important;
+        color: #e0e0e0 !important;
+        border: 1px solid rgba(68, 255, 68, 0.3);
+        border-bottom-left-radius: 5px;
+    }
+
+    .message-time {
+        font-size: 0.7rem;
+        color: #888 !important;
+        margin-top: 5px;
         font-family: 'JetBrains Mono', monospace;
     }
-    
-    .stats-number {
-        font-size: 2rem;
-        color: #44ff44;
-        font-weight: bold;
-        text-shadow: 0 0 10px rgba(68, 255, 68, 0.5);
+
+    .bot-message .message-content * {
+        color: #e0e0e0 !important;
     }
-    
-    .stats-label {
-        color: #e0e0e0;
-        font-size: 0.9rem;
-        margin-top: 5px;
+
+    .user-message .message-content * {
+        color: #ffffff !important;
+    }
+
+    .stTextInput input {
+        background: rgba(0, 0, 0, 0.5) !important;
+        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        border-radius: 25px !important;
+        color: #e0e0e0 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+    }
+
+    .stTextInput input:focus {
+        border-color: #44ff44 !important;
+        box-shadow: 0 0 20px rgba(68, 255, 68, 0.2) !important;
+    }
+
+    .stButton button {
+        background: linear-gradient(135deg, #44ff44, #33cc33) !important;
+        border: none !important;
+        border-radius: 25px !important;
+        color: #fff !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+    }
+
+    .stButton button:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 0 20px rgba(68, 255, 68, 0.4) !important;
+    }
+
+    .nav-button {
+        width: 100% !important;
+        margin-bottom: 10px !important;
+    }
+
+    .nav-button button {
+        width: 100% !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        color: #44ff44 !important;
+    }
+
+    .nav-button button:hover {
+        background: rgba(68, 255, 68, 0.1) !important;
+        border-color: #44ff44 !important;
     }
 </style>
 """, unsafe_allow_html=True)
+
+# CSV data handling
+@st.cache_data
+def load_csv_data():
+    csv_filename = "criminal_justice_qa.csv"
+    script_dir = os.path.dirname(__file__)
+    csv_path = os.path.join(script_dir, csv_filename)
+    try:
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            return df, f"Successfully loaded {csv_path}"
+        else:
+            current_dir = os.getcwd()
+            files_in_script_dir = os.listdir(script_dir)
+            files_in_current_dir = os.listdir(current_dir)
+            return None, f"""
+            Could not find '{csv_filename}'.
+            Expected: {csv_path}
+            Script directory: {script_dir}
+            CSV files in script dir: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
+            Current directory: {current_dir}
+            CSV files in current dir: {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
+            """
+    except Exception as e:
+        return None, f"Error loading CSV: {e}"
+
+def get_ai_response(user_input, csv_results, language='en'):
+    """Generate AI response using the system prompt and context with language support"""
+    if not st.session_state.get('ai_enabled', False) or model is None:
+        return csv_results
+    
+    try:
+        current_time = get_stkitts_time()
+        current_date = get_stkitts_date()
+        
+        time_keywords = ['time', 'date', 'now', 'current', 'today', 'when', 'hora', 'fecha', 'hoy', 'temps', 'maintenant']
+        include_time = any(keyword in user_input.lower() for keyword in time_keywords)
+        
+        time_context = f"""
+        Current St. Kitts & Nevis time: {current_time}
+        Current St. Kitts & Nevis date: {current_date}
+        """ if include_time else ""
+        
+        full_prompt = f"""
+        {get_system_prompt(language)}
+        {time_context}
+        
+        Context from crime database search:
+        {csv_results}
+        
+        User query: {user_input}
+        
+        Please provide a comprehensive response as SECURO based on the available data and your crime analysis capabilities.
+        Only mention the current time/date if directly relevant to the user's query.
+        Respond directly without using code blocks, backticks, or HTML formatting.
+        """
+        
+        response = model.generate_content(full_prompt)
+        
+        clean_response = response.text.strip()
+        clean_response = clean_response.replace('```', '')
+        clean_response = re.sub(r'<[^>]+>', '', clean_response)
+        
+        return clean_response
+        
+    except Exception as e:
+        return f"{csv_results}\n\n⚠ AI analysis temporarily unavailable. Showing database search results."
+
+def search_csv_data(df, query):
+    """Search through CSV data for relevant information"""
+    if df is None:
+        return "❌ No CSV data loaded. Please make sure 'criminal_justice_qa.csv' is in the correct location."
+   
+    search_term = query.lower()
+    results = []
+   
+    for column in df.columns:
+        if df[column].dtype == 'object':
+            try:
+                mask = df[column].astype(str).str.lower().str.contains(search_term, na=False)
+                matching_rows = df[mask]
+               
+                if not matching_rows.empty:
+                    for _, row in matching_rows.head(2).iterrows():
+                        result_dict = {k: v for k, v in row.to_dict().items() if pd.notna(v)}
+                        results.append(f"**Found in {column}:**\n{result_dict}")
+            except Exception as e:
+                continue
+   
+    if results:
+        return f"🔍 **Search Results for '{query}':**\n\n" + "\n\n---\n\n".join(results[:3])
+    else:
+        return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
 
 # Sidebar
 with st.sidebar:
     st.markdown("""
     <div class="control-panel-header">
         <h2>🚔 SECURO</h2>
-        <p>Enhanced Analytics</p>
+        <p>Control Panel</p>
     </div>
     """, unsafe_allow_html=True)
+    
+    # Navigation
+    st.markdown('<div class="sidebar-header">📋 Navigation</div>', unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🏠 Main", key="nav_main", help="Main Chat Interface"):
+            st.session_state.current_page = 'main'
+            st.rerun()
+    
+    with col2:
+        if st.button("📊 Analytics", key="nav_analytics", help="Crime Statistics & Analytics"):
+            st.session_state.current_page = 'analytics'
+            st.rerun()
+    
+    st.markdown("---")
     
     # Language Selection
     st.markdown('<div class="sidebar-header">🌍 Languages </div>', unsafe_allow_html=True)
@@ -530,32 +700,6 @@ with st.sidebar:
         key="language_selector"
     )
     st.session_state.selected_language = selected_language
-    
-    st.markdown("---")
-    
-    # Quick Stats
-    st.markdown('<div class="sidebar-header">📊 Quick Stats</div>', unsafe_allow_html=True)
-    
-    # Load crime data
-    if 'crime_stats' not in st.session_state:
-        st.session_state.crime_stats = load_crime_statistics()
-    
-    stats_data = st.session_state.crime_stats
-    
-    st.markdown(f"""
-    <div class="stats-card">
-        <div class="stats-number">{stats_data['current_quarter']['federation']['total_crimes']}</div>
-        <div class="stats-label">Total Crimes Q2 2025</div>
-    </div>
-    <div class="stats-card">
-        <div class="stats-number">{stats_data['current_quarter']['federation']['detection_rate']}%</div>
-        <div class="stats-label">Detection Rate</div>
-    </div>
-    <div class="stats-card">
-        <div class="stats-number">{stats_data['homicides']['yearly_totals'][2024]}</div>
-        <div class="stats-label">Homicides 2024</div>
-    </div>
-    """, unsafe_allow_html=True)
     
     st.markdown("---")
     
@@ -575,371 +719,403 @@ with st.sidebar:
         </div>
         """, unsafe_allow_html=True)
 
-def get_enhanced_ai_response(user_input, crime_data, language='en'):
-    """Enhanced AI response with statistics and chart capabilities"""
-    if not st.session_state.get('ai_enabled', False) or model is None:
-        return "AI analysis temporarily unavailable."
-    
-    try:
-        current_time = get_stkitts_time()
-        current_date = get_stkitts_date()
-        
-        # Check if user wants a chart
-        chart_keywords = ['chart', 'graph', 'plot', 'visualize', 'show me']
-        needs_chart = any(keyword in user_input.lower() for keyword in chart_keywords)
-        
-        # Generate predictions if requested
-        predictions = None
-        if any(word in user_input.lower() for word in ['predict', 'forecast', 'future', 'trend']):
-            predictions = generate_crime_predictions(crime_data)
-        
-        # Prepare comprehensive context
-        context = f"""
-CURRENT STATISTICS (Q2 2025):
-- Total Federation Crimes: {crime_data['current_quarter']['federation']['total_crimes']}
-- Detection Rate: {crime_data['current_quarter']['federation']['detection_rate']}%
-- Murders: {crime_data['current_quarter']['federation']['murder_manslaughter']['total']} (detected: {crime_data['current_quarter']['federation']['murder_manslaughter']['detected']})
-- Drug Crimes: {crime_data['current_quarter']['federation']['drugs']['total']} (100% detection rate)
-- Break-ins: {crime_data['current_quarter']['federation']['break_ins']['total']}
-- Larcenies: {crime_data['current_quarter']['federation']['larcenies']['total']}
-
-HISTORICAL HOMICIDE DATA (2015-2024):
-- 2024: {crime_data['homicides']['yearly_totals'][2024]} homicides
-- 2023: {crime_data['homicides']['yearly_totals'][2023]} homicides  
-- 10-year average: {sum(crime_data['homicides']['yearly_totals'].values()) / len(crime_data['homicides']['yearly_totals']):.1f}
-- Primary method: Shooting ({crime_data['homicides']['methods']['shooting']} of 213 total)
-- Most affected age group: 18-35 years ({crime_data['homicides']['age_groups']['18-35']} victims)
-
-DISTRICT BREAKDOWN:
-- District A (Basseterre): Highest crime area
-- District B: Medium activity  
-- District C (Nevis): Highest detection rate (52.9%)
-
-RECENT TRENDS:
-- 75% reduction in murders (2024 vs 2025 H1)
-- 463% increase in drug crimes (major enforcement success)
-- Detection rates vary: Nevis (52.9%) > Federation (38.7%) > St. Kitts (32.9%)
-
-{f"PREDICTIONS: {predictions}" if predictions else ""}
-
-Current St. Kitts time: {current_time}, Date: {current_date}
-"""
-        
-        full_prompt = f"""
-        {get_system_prompt(language)}
-        
-        CRIME STATISTICS CONTEXT:
-        {context}
-        
-        User Query: {user_input}
-        
-        Provide comprehensive analysis using the actual statistics. If trends or predictions are requested, 
-        use the historical data. Be specific with numbers and percentages. Explain methodology for any 
-        predictions. If charts are requested, mention that you'll provide visualization recommendations.
-        """
-        
-        response = model.generate_content(full_prompt)
-        clean_response = response.text.strip()
-        clean_response = clean_response.replace('```', '')
-        clean_response = re.sub(r'<[^>]+>', '', clean_response)
-        
-        return clean_response, needs_chart
-        
-    except Exception as e:
-        return f"Analysis temporarily unavailable. Error: {str(e)}", False
-
 # Initialize session state
 if 'messages' not in st.session_state:
     st.session_state.messages = []
+    # Add initial bot message
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\n📊 Loading crime database... Please wait while I check for your data file.",
+        "timestamp": get_stkitts_time()
+    })
+
+if 'csv_data' not in st.session_state:
+    st.session_state.csv_data = None
+
+if 'csv_loaded' not in st.session_state:
+    st.session_state.csv_loaded = False
+
+if 'selected_language' not in st.session_state:
+    st.session_state.selected_language = 'en'
+
 if 'crime_stats' not in st.session_state:
     st.session_state.crime_stats = load_crime_statistics()
 
-# Header
-st.markdown(f"""
-<div class="main-header">
-    <h1>SECURO ENHANCED</h1>
-    <div style="color: #888; text-transform: uppercase; letter-spacing: 2px;">AI Crime Analytics & Predictions</div>
-    <div style="color: #44ff44; margin-top: 5px;">🇰🇳 Royal St. Christopher & Nevis Police Force</div>
-    <div style="color: #888; margin-top: 8px; font-size: 0.8rem;">{get_stkitts_date()} | {get_stkitts_time()} AST</div>
-</div>
-""", unsafe_allow_html=True)
+# MAIN PAGE
+if st.session_state.current_page == 'main':
+    # Header with real-time St. Kitts time
+    current_time = get_stkitts_time()
+    current_date = get_stkitts_date()
 
-# Quick Action Buttons
-st.markdown("### 📊 Quick Analytics")
-col1, col2, col3, col4 = st.columns(4)
+    st.markdown(f"""
+    <div class="main-header">
+        <h1>SECURO</h1>
+        <div style="color: #888; text-transform: uppercase; letter-spacing: 2px;">AI Crime Investigation Assistant</div>
+        <div style="color: #44ff44; margin-top: 5px;">🇰🇳 St. Kitts & Nevis Law Enforcement</div>
+        <div style="color: #888; margin-top: 8px; font-size: 0.8rem;">📅 {current_date} | 🕒 {current_time} (AST)</div>
+    </div>
+    """, unsafe_allow_html=True)
 
-with col1:
-    if st.button("📈 Crime Trends"):
-        fig = create_crime_charts("homicide_trend", st.session_state.crime_stats)
-        st.plotly_chart(fig, use_container_width=True)
+    # Load CSV data with better error handling
+    st.markdown("### 📊 Crime Database Status")
 
-with col2:
-    if st.button("🔍 Crime Methods"):
-        fig = create_crime_charts("crime_methods", st.session_state.crime_stats)
-        st.plotly_chart(fig, use_container_width=True)
+    # Load CSV only once
+    if not st.session_state.csv_loaded:
+        with st.spinner("🔍 Searching for crime database..."):
+            csv_data, status_message = load_csv_data()
+            st.session_state.csv_data = csv_data
+            st.session_state.csv_loaded = True
+           
+            if csv_data is not None:
+                st.success(f"✅ Database loaded successfully! {len(csv_data)} records found.")
+               
+                # Add success message to chat
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": f"✅ Crime database loaded successfully!\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.",
+                    "timestamp": get_stkitts_time()
+                })
+            else:
+                st.error(f"❌ Database not found: {status_message}")
+               
+                # Add error message to chat
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": f"❌ **Database Error:** Could not find 'criminal_justice_qa.csv'\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance.",
+                    "timestamp": get_stkitts_time()
+                })
 
-with col3:
-    if st.button("🏘️ District Analysis"):
-        fig = create_crime_charts("district_comparison", st.session_state.crime_stats)
-        st.plotly_chart(fig, use_container_width=True)
-
-with col4:
-    if st.button("🎯 Detection Rates"):
-        fig = create_crime_charts("quarterly_performance", st.session_state.crime_stats)
-        st.plotly_chart(fig, use_container_width=True)
-
-# Chat interface
-st.markdown("### 💬 SECURO Crime Analytics Chat")
-
-# Display chat messages
-for message in st.session_state.messages:
-    if message["role"] == "user":
-        st.markdown(f"""
-        <div style="text-align: right; margin: 20px 0;">
-            <div style="display: inline-block; background: linear-gradient(135deg, #44ff44, #33cc33); 
-                        color: white; padding: 15px 20px; border-radius: 15px; max-width: 80%; 
-                        font-family: 'JetBrains Mono', monospace;">
-                {message["content"]}
-            </div>
-            <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">You • {message["timestamp"]} AST</div>
-        </div>
-        """, unsafe_allow_html=True)
+    # Show current status
+    ai_status = st.session_state.get('ai_status', 'AI Status Unknown')
+    if st.session_state.csv_data is not None:
+        st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded | {ai_status}")
     else:
-        st.markdown(f"""
-        <div style="text-align: left; margin: 20px 0;">
-            <div style="display: inline-block; background: rgba(0, 0, 0, 0.8); 
-                        color: #e0e0e0; padding: 15px 20px; border-radius: 15px; max-width: 80%; 
-                        border: 1px solid rgba(68, 255, 68, 0.3); font-family: 'JetBrains Mono', monospace;">
-                {message["content"]}
+        st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
+
+    # Main chat area
+    st.markdown("### 💬 Crime Investigation Chat")
+
+    # Display chat messages with proper St. Kitts time
+    for message in st.session_state.messages:
+        if message["role"] == "user":
+            clean_content = str(message["content"]).strip()
+            st.markdown(f"""
+            <div class="chat-message user-message">
+                <div class="message-content">{clean_content}</div>
+                <div class="message-time">You • {message["timestamp"]} AST</div>
             </div>
-            <div style="font-size: 0.7rem; color: #888; margin-top: 5px;">SECURO • {message["timestamp"]} AST</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Display chart if available
-        if 'chart' in message and message['chart']:
-            st.plotly_chart(message['chart'], use_container_width=True)
-
-# Chat input
-with st.form("enhanced_chat_form", clear_on_submit=True):
-    col1, col2 = st.columns([5, 1])
-    
-    with col1:
-        user_input = st.text_input(
-            "Ask about crime statistics, trends, predictions, or request charts...",
-            placeholder="Examples: 'Show homicide trends', 'Predict drug crimes for 2026', 'Which district is safest?'",
-            label_visibility="collapsed"
-        )
-    
-    with col2:
-        send_button = st.form_submit_button("🔍 Analyze", type="primary")
-
-    if send_button and user_input:
-        current_time = get_stkitts_time()
-        
-        # Add user message
-        st.session_state.messages.append({
-            "role": "user", 
-            "content": user_input,
-            "timestamp": current_time
-        })
-        
-        # Process with enhanced AI
-        with st.spinner("🧠 Analyzing crime data and generating insights..."):
-            response, needs_chart = get_enhanced_ai_response(
-                user_input, 
-                st.session_state.crime_stats, 
-                st.session_state.selected_language
-            )
+            """, unsafe_allow_html=True)
+        else:
+            clean_content = str(message["content"]).strip()
+            clean_content = re.sub(r'<[^>]+>', '', clean_content)
+            clean_content = clean_content.replace('```', '')
             
-            # Determine chart type based on user input
-            chart_fig = None
-            if needs_chart or any(word in user_input.lower() for word in ['chart', 'graph', 'plot', 'show']):
-                if any(word in user_input.lower() for word in ['homicide', 'murder', 'trend', 'year']):
-                    chart_fig = create_crime_charts("homicide_trend", st.session_state.crime_stats)
-                elif any(word in user_input.lower() for word in ['method', 'how', 'weapon']):
-                    chart_fig = create_crime_charts("crime_methods", st.session_state.crime_stats)
-                elif any(word in user_input.lower() for word in ['district', 'area', 'location', 'where']):
-                    chart_fig = create_crime_charts("district_comparison", st.session_state.crime_stats)
-                elif any(word in user_input.lower() for word in ['detection', 'solve', 'performance']):
-                    chart_fig = create_crime_charts("quarterly_performance", st.session_state.crime_stats)
+            if not clean_content.startswith("SECURO:") and not clean_content.startswith("🚔"):
+                if "SECURO" in clean_content.upper():
+                    pass
                 else:
-                    chart_fig = create_crime_charts("homicide_trend", st.session_state.crime_stats)
-        
-        # Add bot message
-        bot_message = {
-            "role": "assistant",
-            "content": response,
-            "timestamp": current_time
-        }
-        
-        if chart_fig:
-            bot_message["chart"] = chart_fig
+                    clean_content = f"SECURO: {clean_content}"
             
-        st.session_state.messages.append(bot_message)
-        st.rerun()
+            st.markdown(f"""
+            <div class="chat-message bot-message">
+                <div class="message-content">{clean_content}</div>
+                <div class="message-time">SECURO • {message["timestamp"]} AST</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-# Example Questions Section
-st.markdown("### 💡 Example Questions")
-
-example_questions = [
-    "📈 What are the homicide trends for the past 10 years?",
-    "🔮 Predict crime rates for 2026",
-    "🏘️ Which district has the highest crime rate?", 
-    "💊 How have drug crimes changed recently?",
-    "📊 Show me a chart of crime detection rates",
-    "🎯 What's the most common crime method?",
-    "📅 Are there seasonal crime patterns?",
-    "🚔 How effective is police performance?",
-    "⚠️ What are the biggest crime concerns?",
-    "📍 Where should police focus resources?"
-]
-
-cols = st.columns(2)
-for i, question in enumerate(example_questions):
-    col = cols[i % 2]
-    with col:
-        if st.button(question, key=f"example_{i}"):
-            # Auto-fill the question
-            st.session_state.auto_question = question.split(" ", 1)[1]  # Remove emoji
+    # Chat input with language support
+    with st.form("chat_form", clear_on_submit=True):
+        col1, col2 = st.columns([5, 1])
+        
+        with col1:
+            user_input = st.text_input(
+                "Message",
+                placeholder="Ask questions about crime data, investigations, or emergency procedures...",
+                label_visibility="collapsed",
+                key="user_input"
+            )
+        
+        with col2:
+            send_button = st.form_submit_button("Send", type="primary")
+        
+        if send_button and user_input:
+            current_time = get_stkitts_time()
+            
+            # Add user message
+            st.session_state.messages.append({
+                "role": "user",
+                "content": user_input,
+                "timestamp": current_time
+            })
+           
+            # Generate response using AI with language support
+            with st.spinner("🔍 Analyzing crime database..."):
+                csv_results = search_csv_data(st.session_state.csv_data, user_input)
+                response = get_ai_response(user_input, csv_results, st.session_state.selected_language)
+               
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response,
+                "timestamp": current_time
+            })
+           
             st.rerun()
 
-# Handle auto-filled questions
-if 'auto_question' in st.session_state:
-    user_input = st.session_state.auto_question
-    del st.session_state.auto_question
-    
+    # Status bar with real-time updates
+    status_message = "CSV Data Ready" if st.session_state.csv_data is not None else "CSV Data Missing"
+    status_class = "status-processing" if st.session_state.csv_data is not None else "status-evidence"
     current_time = get_stkitts_time()
-    
-    st.session_state.messages.append({
-        "role": "user",
-        "content": user_input, 
-        "timestamp": current_time
-    })
-    
-    with st.spinner("🧠 Analyzing crime data..."):
-        response, needs_chart = get_enhanced_ai_response(
-            user_input,
-            st.session_state.crime_stats,
-            st.session_state.selected_language
-        )
-        
-        chart_fig = None
-        if needs_chart or any(word in user_input.lower() for word in ['chart', 'graph', 'show']):
-            if any(word in user_input.lower() for word in ['homicide', 'murder', 'trend']):
-                chart_fig = create_crime_charts("homicide_trend", st.session_state.crime_stats)
-            elif any(word in user_input.lower() for word in ['method', 'how']):
-                chart_fig = create_crime_charts("crime_methods", st.session_state.crime_stats)
-            elif any(word in user_input.lower() for word in ['district', 'area']):
-                chart_fig = create_crime_charts("district_comparison", st.session_state.crime_stats)
-            elif any(word in user_input.lower() for word in ['detection', 'performance']):
-                chart_fig = create_crime_charts("quarterly_performance", st.session_state.crime_stats)
-    
-    bot_message = {
-        "role": "assistant",
-        "content": response,
-        "timestamp": current_time
-    }
-    
-    if chart_fig:
-        bot_message["chart"] = chart_fig
-        
-    st.session_state.messages.append(bot_message)
-    st.rerun()
 
-# Advanced Analytics Section
-st.markdown("### 🔬 Advanced Analytics")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.markdown("#### 📊 Crime Statistics Summary")
-    current_stats = st.session_state.crime_stats['current_quarter']['federation']
-    
-    # Create summary metrics
-    metrics_data = {
-        'Crime Type': ['Murder/Manslaughter', 'Drug Crimes', 'Larcenies', 'Break-ins', 'Bodily Harm'],
-        'Q2 2025': [
-            current_stats['murder_manslaughter']['total'],
-            current_stats['drugs']['total'], 
-            current_stats['larcenies']['total'],
-            current_stats['break_ins']['total'],
-            current_stats['bodily_harm']['total']
-        ],
-        'Detection Rate': [
-            f"{(current_stats['murder_manslaughter']['detected']/current_stats['murder_manslaughter']['total']*100) if current_stats['murder_manslaughter']['total'] > 0 else 0:.1f}%",
-            f"{(current_stats['drugs']['detected']/current_stats['drugs']['total']*100):.1f}%",
-            f"{(current_stats['larcenies']['detected']/current_stats['larcenies']['total']*100):.1f}%", 
-            f"{(current_stats['break_ins']['detected']/current_stats['break_ins']['total']*100):.1f}%",
-            f"{(current_stats['bodily_harm']['detected']/current_stats['bodily_harm']['total']*100):.1f}%"
-        ]
-    }
-    
-    st.dataframe(pd.DataFrame(metrics_data), use_container_width=True)
-
-with col2:
-    st.markdown("#### 🎯 Key Performance Indicators")
-    
-    kpi_col1, kpi_col2 = st.columns(2)
-    
-    with kpi_col1:
-        st.metric(
-            "Overall Detection Rate",
-            f"{current_stats['detection_rate']}%",
-            delta=f"+{current_stats['detection_rate'] - 32.9:.1f}% vs St. Kitts"
-        )
-        
-        st.metric(
-            "Drug Crime Success", 
-            "100%",
-            delta="+100% (Perfect detection)"
-        )
-    
-    with kpi_col2:
-        homicide_change = ((4 - 16) / 16) * 100  # 2025 vs 2024 H1
-        st.metric(
-            "Murder Reduction",
-            "75%",
-            delta=f"{homicide_change:.1f}% vs 2024"
-        )
-        
-        total_crimes_2025 = 574
-        total_crimes_2024 = 586
-        crime_change = ((total_crimes_2025 - total_crimes_2024) / total_crimes_2024) * 100
-        st.metric(
-            "Total Crime Change",
-            f"{crime_change:.1f}%",
-            delta="Downward trend"
-        )
-
-# Status bar
-st.markdown(f"""
-<div style="background: rgba(0, 0, 0, 0.8); padding: 15px; border-radius: 25px; margin-top: 30px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border: 1px solid rgba(68, 255, 68, 0.2); font-family: 'JetBrains Mono', monospace;">
-    <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
-        <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%; 
-                    animation: pulse 2s infinite;"></div>
-        SECURO Enhanced Analytics Online
+    st.markdown(f"""
+    <div style="background: rgba(0, 0, 0, 0.8); padding: 15px; border-radius: 25px; margin-top: 30px; 
+                display: flex; justify-content: space-between; align-items: center; 
+                border: 1px solid rgba(68, 255, 68, 0.2); font-family: 'JetBrains Mono', monospace;">
+        <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
+            <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%; 
+                        animation: pulse 2s infinite;"></div>
+            SECURO AI Online
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
+            <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%;"></div>
+            {status_message}
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
+            <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%;"></div>
+            {current_time} AST
+        </div>
+        <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
+            <div style="width: 8px; height: 8px; background: #33cc33; border-radius: 50%;"></div>
+            {SUPPORTED_LANGUAGES[st.session_state.selected_language]}
+        </div>
     </div>
-    <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
-        <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%;"></div>
-        Real-time Statistics Active
+    """, unsafe_allow_html=True)
+
+# ANALYTICS PAGE
+elif st.session_state.current_page == 'analytics':
+    # Analytics Header
+    st.markdown(f"""
+    <div class="main-header">
+        <h1>📊 SECURO ANALYTICS</h1>
+        <div style="color: #888; text-transform: uppercase; letter-spacing: 2px;">Crime Statistics & Predictions</div>
+        <div style="color: #44ff44; margin-top: 5px;">🇰🇳 Royal St. Christopher & Nevis Police Force</div>
+        <div style="color: #888; margin-top: 8px; font-size: 0.8rem;">{get_stkitts_date()} | {get_stkitts_time()} AST</div>
     </div>
-    <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
-        <div style="width: 8px; height: 8px; background: #44ff44; border-radius: 50%;"></div>
-        {get_stkitts_time()} AST
-    </div>
-    <div style="display: flex; align-items: center; gap: 10px; color: #e0e0e0; font-size: 0.9rem;">
-        <div style="width: 8px; height: 8px; background: #33cc33; border-radius: 50%;"></div>
-        {SUPPORTED_LANGUAGES[st.session_state.selected_language]}
-    </div>
-</div>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
+    # Quick Action Buttons
+    st.markdown("### 📊 Quick Analytics")
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        if st.button("📈 Crime Trends"):
+            fig = create_crime_charts("homicide_trend", st.session_state.crime_stats)
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col2:
+        if st.button("🔍 Crime Methods"):
+            fig = create_crime_charts("crime_methods", st.session_state.crime_stats)
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col3:
+        if st.button("🏘️ District Analysis"):
+            fig = create_crime_charts("district_comparison", st.session_state.crime_stats)
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col4:
+        if st.button("🎯 Detection Rates"):
+            fig = create_crime_charts("quarterly_performance", st.session_state.crime_stats)
+            st.plotly_chart(fig, use_container_width=True)
+
+    # Quick Stats Cards
+    st.markdown("### 📊 Quick Stats Overview")
+    
+    stats_data = st.session_state.crime_stats
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown(f"""
+        <div style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(68, 255, 68, 0.3); 
+                    border-radius: 15px; padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; color: #44ff44; font-weight: bold; 
+                        text-shadow: 0 0 10px rgba(68, 255, 68, 0.5);">
+                {stats_data['current_quarter']['federation']['total_crimes']}
+            </div>
+            <div style="color: #e0e0e0; font-size: 0.9rem; margin-top: 5px;">
+                Total Crimes Q2 2025
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown(f"""
+        <div style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(68, 255, 68, 0.3); 
+                    border-radius: 15px; padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; color: #44ff44; font-weight: bold; 
+                        text-shadow: 0 0 10px rgba(68, 255, 68, 0.5);">
+                {stats_data['current_quarter']['federation']['detection_rate']}%
+            </div>
+            <div style="color: #e0e0e0; font-size: 0.9rem; margin-top: 5px;">
+                Detection Rate
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown(f"""
+        <div style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(68, 255, 68, 0.3); 
+                    border-radius: 15px; padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; color: #44ff44; font-weight: bold; 
+                        text-shadow: 0 0 10px rgba(68, 255, 68, 0.5);">
+                {stats_data['homicides']['yearly_totals'][2024]}
+            </div>
+            <div style="color: #e0e0e0; font-size: 0.9rem; margin-top: 5px;">
+                Homicides 2024
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        drug_crimes = stats_data['current_quarter']['federation']['drugs']['total']
+        st.markdown(f"""
+        <div style="background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(68, 255, 68, 0.3); 
+                    border-radius: 15px; padding: 20px; text-align: center;">
+            <div style="font-size: 2rem; color: #44ff44; font-weight: bold; 
+                        text-shadow: 0 0 10px rgba(68, 255, 68, 0.5);">
+                {drug_crimes}
+            </div>
+            <div style="color: #e0e0e0; font-size: 0.9rem; margin-top: 5px;">
+                Drug Crimes Q2 2025
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Example Questions Section
+    st.markdown("### 💡 Analytics Questions")
+
+    example_questions = [
+        "📈 What are the homicide trends for the past 10 years?",
+        "🔮 Predict crime rates for 2026",
+        "🏘️ Which district has the highest crime rate?", 
+        "💊 How have drug crimes changed recently?",
+        "📊 Show me a chart of crime detection rates",
+        "🎯 What's the most common crime method?",
+        "📅 Are there seasonal crime patterns?",
+        "🚔 How effective is police performance?",
+        "⚠️ What are the biggest crime concerns?",
+        "📍 Where should police focus resources?"
+    ]
+
+    cols = st.columns(2)
+    for i, question in enumerate(example_questions):
+        col = cols[i % 2]
+        with col:
+            if st.button(question, key=f"analytics_example_{i}"):
+                # Switch to main page and add question
+                st.session_state.current_page = 'main'
+                
+                current_time = get_stkitts_time()
+                clean_question = question.split(" ", 1)[1]  # Remove emoji
+                
+                st.session_state.messages.append({
+                    "role": "user",
+                    "content": clean_question,
+                    "timestamp": current_time
+                })
+                
+                # Generate AI response with analytics data
+                with st.spinner("🧠 Analyzing crime data..."):
+                    # Create context with crime statistics
+                    context = f"""
+                    CURRENT STATISTICS (Q2 2025):
+                    - Total Federation Crimes: {stats_data['current_quarter']['federation']['total_crimes']}
+                    - Detection Rate: {stats_data['current_quarter']['federation']['detection_rate']}%
+                    - Murders: {stats_data['current_quarter']['federation']['murder_manslaughter']['total']}
+                    - Drug Crimes: {stats_data['current_quarter']['federation']['drugs']['total']}
+                    
+                    HISTORICAL DATA:
+                    - 2024 Homicides: {stats_data['homicides']['yearly_totals'][2024]}
+                    - 2023 Homicides: {stats_data['homicides']['yearly_totals'][2023]}
+                    """
+                    
+                    response = get_ai_response(clean_question, context, st.session_state.selected_language)
+                
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": response,
+                    "timestamp": current_time
+                })
+                
+                st.rerun()
+
+    # Advanced Analytics Section
+    st.markdown("### 🔬 Advanced Analytics")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### 📊 Crime Statistics Summary")
+        current_stats = st.session_state.crime_stats['current_quarter']['federation']
+        
+        # Create summary metrics table
+        metrics_data = {
+            'Crime Type': ['Murder/Manslaughter', 'Drug Crimes', 'Larcenies', 'Break-ins', 'Bodily Harm'],
+            'Q2 2025': [
+                current_stats['murder_manslaughter']['total'],
+                current_stats['drugs']['total'], 
+                current_stats['larcenies']['total'],
+                current_stats['break_ins']['total'],
+                current_stats['bodily_harm']['total']
+            ],
+            'Detection Rate': [
+                f"{(current_stats['murder_manslaughter']['detected']/current_stats['murder_manslaughter']['total']*100) if current_stats['murder_manslaughter']['total'] > 0 else 0:.1f}%",
+                f"{(current_stats['drugs']['detected']/current_stats['drugs']['total']*100):.1f}%",
+                f"{(current_stats['larcenies']['detected']/current_stats['larcenies']['total']*100):.1f}%", 
+                f"{(current_stats['break_ins']['detected']/current_stats['break_ins']['total']*100):.1f}%",
+                f"{(current_stats['bodily_harm']['detected']/current_stats['bodily_harm']['total']*100):.1f}%"
+            ]
+        }
+        
+        st.dataframe(pd.DataFrame(metrics_data), use_container_width=True)
+
+    with col2:
+        st.markdown("#### 🎯 Key Performance Indicators")
+        
+        kpi_col1, kpi_col2 = st.columns(2)
+        
+        with kpi_col1:
+            st.metric(
+                "Overall Detection Rate",
+                f"{current_stats['detection_rate']}%",
+                delta=f"+{current_stats['detection_rate'] - 32.9:.1f}% vs St. Kitts"
+            )
+            
+            st.metric(
+                "Drug Crime Success", 
+                "100%",
+                delta="+100% (Perfect detection)"
+            )
+        
+        with kpi_col2:
+            homicide_change = ((4 - 16) / 16) * 100  # 2025 vs 2024 H1
+            st.metric(
+                "Murder Reduction",
+                "75%",
+                delta=f"{homicide_change:.1f}% vs 2024"
+            )
+            
+            total_crimes_2025 = 574
+            total_crimes_2024 = 586
+            crime_change = ((total_crimes_2025 - total_crimes_2024) / total_crimes_2024) * 100
+            st.metric(
+                "Total Crime Change",
+                f"{crime_change:.1f}%",
+                delta="Downward trend"
+            )
 
 # Footer with data sources
 st.markdown("---")
-st.markdown("""
+st.markdown(f"""
 <div style="text-align: center; color: #666; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; padding: 20px;">
     📊 Data Source: Royal St. Christopher & Nevis Police Force (RSCNPF)<br>
     📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239 | liosk@police.kn<br>
