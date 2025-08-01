@@ -510,6 +510,7 @@ def get_ai_response(user_input, csv_results, language='en'):
         
     except Exception as e:
         return f"{csv_results}\n\n⚠ AI analysis temporarily unavailable. Showing database search results."
+
 def get_system_prompt(language='en'):
     base_prompt = """
 You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
@@ -694,6 +695,8 @@ def get_smart_fallback_response(user_input, csv_results):
     # Use the existing enhanced fallback for specific queries
     else:
         return get_fallback_response(user_input) + f"\n\n{csv_results}"
+
+def get_enhanced_ai_response(user_input, language='en'):
     """Generate enhanced AI response with comprehensive crime analysis"""
     if not st.session_state.get('ai_enabled', False) or model is None:
         return get_fallback_response(user_input)
@@ -818,149 +821,18 @@ def get_fallback_response(user_input):
     
     else:
         return f"SECURO: I understand you're asking about '{user_input}'. Based on our comprehensive crime database: Q2 2025 shows 292 total crimes with significant improvements in murder reduction (75% decrease) and perfect drug crime detection (100%). For specific analysis, please try rephrasing your question or specify if you need statistics, hotspot analysis, trends, or emergency information."
-    base_prompt = """
-You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
 
-Your mission is to support crime prevention, research, and public safety through:
-- Interactive maps and geographic analysis
-- Statistical analysis and trend identification
-- Predictive analytics for crime prevention
-- Visual data presentations (charts, graphs, etc.)
-- Emergency contact guidance
-- Multilingual communication support
-
-Capabilities:
-- Analyze and summarize current and historical crime data (local and global)
-- Detect trends and patterns across time, location, and type
-- Recommend prevention strategies based on geographic and temporal factors
-- Provide accessible language for general users, while supporting technical depth for experts
-- Integrate with GIS, crime databases (e.g. Crimeometer), and public safety APIs
-- Generate visual outputs using Python tools like matplotlib, pandas, folium, etc.
-- Communicate effectively in multiple languages
-- Adapt responses to be clear, concise, and actionable
-
-Tone & Behavior:
-- Maintain a professional yet human tone
-- Be concise, accurate, and helpful
-- Explain visuals when necessary
-- Avoid panic-inducing language—focus on empowerment and awareness
-- Respond directly without using code blocks, backticks, or HTML formatting
-- Use the current St. Kitts & Nevis time and date in responses when relevant
-
-Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
-"""
-    
-    if language != 'en':
-        language_instruction = f"""
-IMPORTANT: Respond primarily in {SUPPORTED_LANGUAGES.get(language, language)}, 
-but include English translations for technical terms when helpful.
-"""
-        return base_prompt + language_instruction
-    
-    return base_prompt
-
-# Initialize the AI model with proper API key handling
-def initialize_ai():
-    """Initialize AI model with proper configuration and error handling"""
-    try:
-        # Get API key from environment variable or use provided fallback
-        api_key = os.getenv('GOOGLE_API_KEY', 'AIzaSyA3ViHvNYuunum-qGA0Yo4MrOJFDvQok6g')
-        
-        if not api_key:
-            st.session_state.ai_enabled = False
-            st.session_state.ai_status = "❌ API Key Required"
-            st.session_state.ai_error = "No GOOGLE_API_KEY found."
-            return None
-            
-        genai.configure(api_key=api_key)
-        
-        # Configure the model with enhanced settings
-        generation_config = {
-            "temperature": 0.7,
-            "top_p": 0.8,
-            "top_k": 40,
-            "max_output_tokens": 2048,
-        }
-        
-        safety_settings = [
-            {
-                "category": "HARM_CATEGORY_HARASSMENT",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-                "category": "HARM_CATEGORY_HATE_SPEECH",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-                "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-                "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            }
-        ]
-        
-        model = genai.GenerativeModel(
-            model_name='gemini-1.5-flash',
-            generation_config=generation_config,
-            safety_settings=safety_settings
-        )
-        
-        # Test the connection with a simple query
-        try:
-            test_response = model.generate_content("Hello")
-            if test_response and test_response.text:
-                st.session_state.ai_enabled = True
-                st.session_state.ai_status = "✅ Google AI Connected"
-                st.session_state.ai_error = None
-                return model
-            else:
-                raise Exception("Empty response from API")
-        except Exception as test_error:
-            raise Exception(f"API test failed: {str(test_error)}")
-        
-    except Exception as e:
-        st.session_state.ai_enabled = False
-        st.session_state.ai_status = f"❌ API Error"
-        st.session_state.ai_error = str(e)
-        return None
-
-def reinitialize_ai_model():
-    """Reinitialize the AI model and update session state"""
-    global model
-    model = initialize_ai()
-    return model
-
-def set_custom_api_key(api_key):
-    """Set custom API key and reinitialize AI"""
-    global model
-    if api_key:
-        os.environ['GOOGLE_API_KEY'] = api_key
-        model = initialize_ai()
-        return model
-    return None
-
-def reset_to_default_api():
-    """Reset to default API key"""
-    global model
-    if 'GOOGLE_API_KEY' in os.environ:
-        del os.environ['GOOGLE_API_KEY']
-    model = initialize_ai()
-    return model
-
-# Initialize AI on startup with error handling
+# Initialize the AI model with simplified approach
 try:
-    model = initialize_ai()
+    GOOGLE_API_KEY = "AIzaSyCdAvG9i1oWVQVf8D1FHlwPWI0Yznoj_Pk"
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    st.session_state.ai_enabled = True
+    st.session_state.ai_status = "✅ AI Ready (Direct API Key)"
 except Exception as e:
-    model = None
     st.session_state.ai_enabled = False
-    st.session_state.ai_status = f"❌ Startup Error: {str(e)}"
-
-# Fallback function for any remaining references
-def get_enhanced_ai_response(user_input, language='en'):
-    """Legacy function name - redirects to new function"""
-    return generate_bot_response(user_input, language)
+    st.session_state.ai_status = f"❌ AI Error: {str(e)}"
+    model = None
 
 # Page configuration
 st.set_page_config(
@@ -1376,14 +1248,7 @@ st.markdown("""
 with st.sidebar:
     st.markdown("### 🤖 AI Configuration")
     
-    # Show current API key status
-    current_api_key = os.getenv('GOOGLE_API_KEY', 'AIzaSyA3ViHvNYuunum-qGA0Yo4MrOJFDvQok6g')
-    if current_api_key:
-        masked_key = current_api_key[:8] + "..." + current_api_key[-4:] if len(current_api_key) > 12 else "***"
-        st.success(f"🔑 API Key: {masked_key}")
-    else:
-        st.warning("🔑 No API Key Set")
-    
+    # Show current status
     st.write(f"**Status:** {st.session_state.get('ai_status', 'Unknown')}")
     
     # Show detailed error if any
@@ -1398,37 +1263,6 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Optional API Key override
-    with st.expander("🔧 Advanced API Settings"):
-        st.markdown("**Override API Key (Optional):**")
-        api_key_input = st.text_input(
-            "Custom GOOGLE_API_KEY",
-            type="password",
-            help="Override the built-in API key",
-            placeholder="Enter custom API key..."
-        )
-        
-        col1, col2 = st.columns(2)
-        with col1:
-            if st.button("🔄 Set Custom Key"):
-                if api_key_input:
-                    set_custom_api_key(api_key_input)
-                    if st.session_state.get('ai_enabled', False):
-                        st.success("✅ Custom key set!")
-                    else:
-                        st.error("❌ Invalid key")
-                    st.rerun()
-                else:
-                    st.error("Please enter an API key")
-        
-        with col2:
-            if st.button("🔄 Reset to Default"):
-                reset_to_default_api()
-                st.success("Reset to built-in key")
-                st.rerun()
-    
-    st.markdown("---")
-    
     # Status indicators
     if st.session_state.get('ai_enabled', False):
         st.success("🤖 Google AI Active")
@@ -1440,7 +1274,7 @@ with st.sidebar:
         st.warning("⚠️ AI Fallback Mode")
         st.write("• CSV database responses")
         st.write("• Basic crime analysis")
-        st.write("• Check API key settings")
+        st.write("• Check connection")
     
     if st.session_state.get('csv_data') is not None:
         st.success("📊 CSV Database Active")
