@@ -1730,7 +1730,7 @@ elif st.session_state.current_page == 'chat':
             
             # Generate enhanced AI response
             with st.spinner("🧠 SECURO AI analyzing crime data..."):
-                bot_response = get_enhanced_ai_response(user_input, st.session_state.selected_language)
+                bot_response = generate_bot_response(user_input, st.session_state.selected_language)
             
             st.session_state.messages.append({
                 "role": "assistant",
