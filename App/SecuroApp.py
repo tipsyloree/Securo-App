@@ -434,7 +434,7 @@ If you're not completely fluent in the requested language, do your best and indi
 
 # Initialize the AI model - FROM SHORTER CODE
 try:
-    GOOGLE_API_KEY = "AIzaSyAK-4Xklul9WNoiWnSrpzPkn5C-Dbny8B4"
+    GOOGLE_API_KEY = "AIzaSyCdAvG9i1oWVQVf8D1FHlwPWI0Yznoj_Pk"
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
