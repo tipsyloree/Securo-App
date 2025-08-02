@@ -1522,60 +1522,93 @@ elif st.session_state.current_page == 'chat':
             </div>
             """, unsafe_allow_html=True)
 
-    # Quick Action Buttons
+    # Quick Action Buttons - FIXED TO PREVENT LOOPS
     st.markdown('<h3 style="color: #44ff44;">🎯 Quick Actions</h3>', unsafe_allow_html=True)
     col1, col2, col3 = st.columns(3)
     
     with col1:
         if st.button("👋 Say Hello", key="quick_hello"):
-            quick_input = "Hi!"
-        else:
-            quick_input = None
+            current_time = get_stkitts_time()
+            st.session_state.messages.append({
+                "role": "user", 
+                "content": "Hi!",
+                "timestamp": current_time
+            })
+            with st.spinner("🤔 Processing..."):
+                response = generate_smart_response("Hi!", st.session_state.selected_language)
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response,
+                "timestamp": current_time
+            })
+            st.rerun()
     
     with col2:
         if st.button("📊 Crime Stats", key="quick_stats"):
-            quick_input = "Show me the latest crime statistics"
-        else:
-            quick_input = quick_input if 'quick_input' in locals() else None
+            current_time = get_stkitts_time()
+            query = "Show me the latest crime statistics"
+            st.session_state.messages.append({
+                "role": "user", 
+                "content": query,
+                "timestamp": current_time
+            })
+            with st.spinner("🤔 Processing..."):
+                response = generate_smart_response(query, st.session_state.selected_language)
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response,
+                "timestamp": current_time
+            })
+            st.rerun()
     
     with col3:
         if st.button("🗺️ Hotspots", key="quick_hotspots"):
-            quick_input = "Tell me about crime hotspots"
-        else:
-            quick_input = quick_input if 'quick_input' in locals() else None
+            current_time = get_stkitts_time()
+            query = "Tell me about crime hotspots"
+            st.session_state.messages.append({
+                "role": "user", 
+                "content": query,
+                "timestamp": current_time
+            })
+            with st.spinner("🤔 Processing..."):
+                response = generate_smart_response(query, st.session_state.selected_language)
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response,
+                "timestamp": current_time
+            })
+            st.rerun()
 
-    # CLEAN Chat input
-    user_input = st.text_input(
-        "💬 Message SECURO:",
-        placeholder="Type your message here... (try 'hi' or ask about crime data)",
-        key="chat_input"
-    )
-    
-    # Handle both button clicks and text input
-    if 'quick_input' in locals() and quick_input:
-        user_input = quick_input
-    
-    if user_input and user_input.strip():
-        current_time = get_stkitts_time()
+    # FIXED Chat input - separate from buttons
+    with st.container():
+        user_input = st.text_input(
+            "💬 Message SECURO:",
+            placeholder="Type your message here... (try 'hi' or ask about crime data)",
+            key="chat_input"
+        )
         
-        # Add user message
-        st.session_state.messages.append({
-            "role": "user", 
-            "content": user_input,
-            "timestamp": current_time
-        })
-        
-        # Generate response using pure API system
-        with st.spinner("🤔 Processing..."):
-            response = generate_smart_response(user_input, st.session_state.selected_language)
-        
-        st.session_state.messages.append({
-            "role": "assistant",
-            "content": response,
-            "timestamp": current_time
-        })
-        
-        st.rerun()
+        if st.button("Send", key="send_btn", type="primary"):
+            if user_input and user_input.strip():
+                current_time = get_stkitts_time()
+                
+                # Add user message
+                st.session_state.messages.append({
+                    "role": "user", 
+                    "content": user_input,
+                    "timestamp": current_time
+                })
+                
+                # Generate response using pure API system
+                with st.spinner("🤔 Processing..."):
+                    response = generate_smart_response(user_input, st.session_state.selected_language)
+                
+                st.session_state.messages.append({
+                    "role": "assistant",
+                    "content": response,
+                    "timestamp": current_time
+                })
+                
+                st.rerun()
 
 # Status bar with real-time updates
 current_time = get_stkitts_time()
