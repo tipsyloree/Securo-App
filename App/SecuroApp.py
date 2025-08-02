@@ -571,6 +571,9 @@ def generate_bot_response(user_input, language='en'):
     # Get conversation history for context
     conversation_context = get_conversation_context(st.session_state.messages)
     
+    # Get model from session state
+    model = st.session_state.get('model')
+    
     # Try Google AI API first
     if st.session_state.get('ai_enabled', False) and model is not None:
         try:
@@ -864,7 +867,9 @@ def get_enhanced_fallback_response(user_input):
 Please specify what type of analysis or information you need, and I'll provide detailed insights from our comprehensive crime database."""
 
 # Initialize the AI model with the enhanced function
-model = initialize_ai_model()
+if 'model' not in st.session_state:
+    st.session_state.model = initialize_ai_model()
+model = st.session_state.model
 
 # Page configuration
 st.set_page_config(
@@ -1327,7 +1332,7 @@ with st.sidebar:
     st.write(f"**API Key:** {api_key_status}")
     
     # AI Model Status
-    ai_model_status = "✅ Loaded" if 'model' in globals() and model is not None else "❌ Not Loaded"
+    ai_model_status = "✅ Loaded" if st.session_state.get('model') is not None else "❌ Not Loaded"
     st.write(f"**Model:** {ai_model_status}")
     
     # Session State Info
@@ -1336,6 +1341,7 @@ with st.sidebar:
     
     # Test AI Button
     if st.button("🧪 Test AI Connection"):
+        model = st.session_state.get('model')
         if model is not None:
             try:
                 test_response = model.generate_content("Say 'AI Test Successful'")
@@ -1361,8 +1367,7 @@ with st.sidebar:
             del st.session_state.ai_error
         
         # Reinitialize
-        global model
-        model = initialize_ai_model()
+        st.session_state.model = initialize_ai_model()
         st.success("🔄 AI Reset Complete")
         st.rerun()
     
