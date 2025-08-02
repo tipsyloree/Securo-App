@@ -414,51 +414,85 @@ def load_csv_data():
         return None, f"Error loading CSV: {e}"
 
 def search_csv_data(df, query):
-    """Enhanced search through CSV data for relevant information"""
+    """Targeted search through CSV data for specific relevant information"""
     if df is None:
         return "❌ No CSV data loaded. Please make sure 'criminal_justice_qa.csv' is in the correct location."
    
-    search_term = query.lower()
+    search_term = query.lower().strip()
     results = []
     
-    # Enhanced search terms - extract key words
-    search_words = [word.strip() for word in search_term.split() if len(word.strip()) > 2]
-    
-    # Search through all text columns
-    for column in df.columns:
-        if df[column].dtype == 'object':
-            try:
-                # Search for each word in the query
-                for word in search_words:
-                    mask = df[column].astype(str).str.lower().str.contains(word, na=False, regex=False)
+    # For "what is X" questions, look for exact or close matches first
+    if search_term.startswith('what is'):
+        concept = search_term.replace('what is', '').strip().rstrip('?')
+        
+        # Search through all text columns for the specific concept
+        for column in df.columns:
+            if df[column].dtype == 'object':
+                try:
+                    # Look for exact concept match in questions or content
+                    mask = df[column].astype(str).str.lower().str.contains(concept, na=False, regex=False)
                     matching_rows = df[mask]
                    
                     if not matching_rows.empty:
-                        for _, row in matching_rows.head(3).iterrows():
-                            # Create a clean result dictionary
-                            result_dict = {}
-                            for k, v in row.to_dict().items():
-                                if pd.notna(v) and str(v).strip():
-                                    result_dict[k] = str(v).strip()
+                        for _, row in matching_rows.head(1).iterrows():  # Only take the first/best match
+                            # Look for question-answer pairs
+                            row_dict = row.to_dict()
                             
-                            if result_dict:  # Only add if we have actual content
-                                result_text = f"**Found in {column} (searching '{word}'):**\n"
-                                for key, value in result_dict.items():
-                                    if len(value) > 10:  # Only show meaningful content
-                                        result_text += f"• **{key}:** {value[:500]}{'...' if len(value) > 500 else ''}\n"
-                                results.append(result_text)
-                                
-                        if len(results) >= 5:  # Limit results
-                            break
-                if len(results) >= 5:
-                    break
-            except Exception as e:
-                continue
-   
-    if results:
-        return f"🔍 **CSV Database Results for '{query}':**\n\n" + "\n---\n".join(results[:3])
+                            # Try to find the specific question and answer
+                            question_found = None
+                            answer_found = None
+                            
+                            for key, value in row_dict.items():
+                                if pd.notna(value) and str(value).strip():
+                                    value_str = str(value).lower().strip()
+                                    # If this looks like the question we're asking
+                                    if concept in value_str and ('what is' in value_str or value_str.startswith(concept)):
+                                        question_found = str(value).strip()
+                                    # If this looks like an answer (longer text)
+                                    elif concept in value_str and len(str(value).strip()) > 50:
+                                        answer_found = str(value).strip()
+                            
+                            # If we found a good match, return it
+                            if question_found and answer_found:
+                                return f"🔍 **Definition from Criminal Justice Database:**\n\n**Question:** {question_found}\n\n**Answer:** {answer_found}"
+                            elif answer_found:
+                                return f"🔍 **Definition from Criminal Justice Database:**\n\n**{concept.title()}:** {answer_found}"
+                            
+                        break  # Stop after finding the first relevant match
+                except Exception as e:
+                    continue
+    
+    # For other types of searches, look for key terms
     else:
-        return f"❌ No matches found for '{query}' in the CSV database. The question might use different terminology."
+        # Extract meaningful search terms (ignore common words)
+        stop_words = {'what', 'is', 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', '?'}
+        search_words = [word.strip() for word in search_term.split() if len(word.strip()) > 2 and word.strip() not in stop_words]
+        
+        if search_words:
+            # Search for the most relevant terms
+            main_term = ' '.join(search_words[:2])  # Use first 2 meaningful words
+            
+            for column in df.columns:
+                if df[column].dtype == 'object':
+                    try:
+                        mask = df[column].astype(str).str.lower().str.contains(main_term, na=False, regex=False)
+                        matching_rows = df[mask]
+                       
+                        if not matching_rows.empty:
+                            for _, row in matching_rows.head(1).iterrows():  # Only take the first match
+                                row_dict = {k: str(v).strip() for k, v in row.to_dict().items() if pd.notna(v) and str(v).strip()}
+                                
+                                if row_dict:
+                                    result_text = f"🔍 **Database Result for '{query}':**\n"
+                                    for key, value in row_dict.items():
+                                        if len(value) > 10:
+                                            result_text += f"• **{key}:** {value}\n"
+                                    return result_text
+                            break
+                    except Exception as e:
+                        continue
+   
+    return f"❌ No specific match found for '{query}' in the criminal justice database."
 
 def get_system_prompt(language='en'):
     base_prompt = """
@@ -597,7 +631,11 @@ def generate_bot_response(user_input, language='en'):
     csv_has_answer = False
     if st.session_state.get('csv_data') is not None:
         csv_search_result = search_csv_data(st.session_state.csv_data, user_input)
-        csv_has_answer = csv_search_result and "No matches found" not in csv_search_result and "❌" not in csv_search_result
+        csv_has_answer = csv_search_result and "No specific match found" not in csv_search_result and "❌" not in csv_search_result
+    
+    # For "what is" questions, if CSV has the answer, return it directly
+    if user_input.lower().strip().startswith('what is') and csv_has_answer:
+        return f"SECURO: {csv_search_result}\n\n💡 This definition comes directly from our comprehensive criminal justice database."
     
     # Get model from session state
     model = st.session_state.get('model')
@@ -615,10 +653,10 @@ def generate_bot_response(user_input, language='en'):
             csv_instruction = ""
             if csv_has_answer:
                 csv_instruction = f"""
-PRIORITY DATABASE ANSWER (Use this first if relevant):
+PRIORITY DATABASE ANSWER (Use this first):
 {csv_search_result}
 
-IMPORTANT: If the CSV database above contains a direct answer to the user's question, use that information as your primary source and reference it specifically."""
+IMPORTANT: The CSV database above contains the exact answer to the user's question. Use ONLY this information and present it clearly. Do not add additional unrelated information."""
             elif csv_search_result:
                 csv_instruction = f"""
 DATABASE SEARCH RESULT:
@@ -681,7 +719,7 @@ Generate an intelligent, data-driven response:"""
     
     # ENHANCED FALLBACK: Use CSV data directly if available
     if csv_has_answer:
-        return f"SECURO: Based on our crime database:\n\n{csv_search_result}\n\n💡 This information comes directly from our comprehensive criminal justice database."
+        return f"SECURO: {csv_search_result}\n\n💡 This information comes directly from our comprehensive criminal justice database."
     
     # Enhanced fallback with conversation awareness
     fallback_response = get_enhanced_fallback_response(user_input)
@@ -701,8 +739,12 @@ def get_enhanced_fallback_response(user_input):
         # Try CSV search first for definitions
         if st.session_state.get('csv_data') is not None:
             csv_result = search_csv_data(st.session_state.csv_data, user_input)
-            if csv_result and "No matches found" not in csv_result and "❌" not in csv_result:
-                return f"SECURO: Based on our criminal justice database:\n\n{csv_result}\n\n💡 This definition comes directly from our comprehensive law enforcement knowledge base."
+            if csv_result and "No specific match found" not in csv_result and "❌" not in csv_result:
+                return f"SECURO: {csv_result}\n\n💡 This definition comes directly from our comprehensive law enforcement knowledge base."
+        
+        # If no CSV match, provide general response
+        concept = lower_input.replace('what is', '').replace('define', '').replace('definition of', '').replace('explain', '').strip().rstrip('?')
+        return f"SECURO: I don't have a specific definition for '{concept}' in our current criminal justice database. However, I can help you with:\n\n• Crime statistics and trends for St. Kitts & Nevis\n• Hotspot analysis and geographic intelligence\n• Detection rates and performance metrics\n• Emergency contacts and procedures\n\nTry asking about these topics or search for related terms."
     
     # Handle greetings with current data
     if any(greeting in lower_input for greeting in ['hi', 'hello', 'hey', 'good morning', 'good afternoon']):
@@ -898,11 +940,11 @@ def get_enhanced_fallback_response(user_input):
     
     # Default intelligent response with current data
     else:
-        # Try CSV search for any remaining questions
+        # Try CSV search for specific questions only (not broad searches)
         csv_fallback = ""
-        if st.session_state.get('csv_data') is not None:
+        if st.session_state.get('csv_data') is not None and len(user_input.split()) <= 6:  # Only for specific questions
             csv_result = search_csv_data(st.session_state.csv_data, user_input)
-            if csv_result and "No matches found" not in csv_result and "❌" not in csv_result:
+            if csv_result and "No specific match found" not in csv_result and "❌" not in csv_result:
                 csv_fallback = f"\n\n**From our criminal justice database:**\n{csv_result}"
         
         return f"""SECURO: I understand you're asking about "{user_input}". Let me provide relevant information:
