@@ -124,7 +124,7 @@ def create_crime_hotspot_map():
             <hr style="margin: 8px 0;">
             <p style="font-size: 1rem; line-height: 1.6; color: #e0e0e0;">SECURO (Security & Crime Understanding & Response Operations) is an advanced platform designed to support law enforcement, enhance public safety, and provide data-driven insights for crime prevention and analysis.</p>
     </div>
-    """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True
     
     # Feature Cards
     col1, col2 = st.columns(2)
