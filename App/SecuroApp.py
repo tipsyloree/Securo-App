@@ -116,7 +116,7 @@ def create_crime_hotspot_map():
     # Add crime hotspots to the map
     for location, data in CRIME_HOTSPOTS.items():
         # Create popup content
-        popup_content = f"""
+        popup_content == f"""
         <div style="font-family: Arial, sans-serif; min-width: 200px;">
             <h4 style="color: {risk_colors[data['risk']]}; margin: 0; text-align: center;">
                 🚨 {location}
