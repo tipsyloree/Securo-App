@@ -483,207 +483,387 @@ but include English translations for technical terms when helpful.
 
 # FIXED AI FUNCTIONS
 def initialize_ai_model():
-    """Initialize the AI model with comprehensive error handling"""
+    """Initialize the AI model with direct API key"""
     try:
         GOOGLE_API_KEY = "AIzaSyCdAvG9i1oWVQVf8D1FHlwPWI0Yznoj_Pk"
         genai.configure(api_key=GOOGLE_API_KEY)
-        
-        # Test the API connection
         model = genai.GenerativeModel('gemini-1.5-flash')
-        
-        # Try a simple test to verify the API works
-        test_response = model.generate_content("Hello, can you respond with 'API Working'?")
-        
-        if test_response and hasattr(test_response, 'text') and "API Working" in test_response.text:
-            st.session_state.ai_enabled = True
-            st.session_state.ai_status = "✅ AI Ready & Tested"
-            return model
-        else:
-            raise Exception("API test failed - invalid response")
-            
+        st.session_state.ai_enabled = True
+        st.session_state.ai_status = "✅ AI Ready (Direct API Key)"
+        st.session_state.ai_error = None
+        return model
     except Exception as e:
         st.session_state.ai_enabled = False
-        st.session_state.ai_status = f"❌ AI Error: {str(e)[:50]}..."
+        st.session_state.ai_status = f"❌ AI Error: {str(e)}"
         st.session_state.ai_error = str(e)
+        model = None
         return None
+
+def create_enhanced_crime_context():
+    """Create a comprehensive but concise crime context for AI"""
+    return """CURRENT ST. KITTS & NEVIS CRIME DATA (Q2 2025):
+
+OVERALL PERFORMANCE:
+- Total Federation Crimes: 292 cases
+- Overall Detection Rate: 38.7% (113 cases solved)
+- St. Kitts: 207 crimes (32.9% detection rate)
+- Nevis: 85 crimes (52.9% detection rate) - Better performance
+
+CRIME BREAKDOWN Q2 2025:
+- Larcenies: 92 cases (31.5% of all crimes) - 21 detected (22.8% rate)
+- Malicious Damage: 59 cases (20.2%) - 17 detected (28.8% rate)
+- Bodily Harm: 33 cases (11.3%) - 19 detected (57.6% rate)
+- Drug Crimes: 31 cases (10.6%) - 31 detected (100% rate) ⭐ PERFECT
+- Break-ins: 26 cases (8.9%) - 7 detected (26.9% rate)
+- Murder/Manslaughter: 4 cases (1.4%) - 2 detected (50% rate)
+
+CRIME HOTSPOTS (13 MAPPED LOCATIONS):
+HIGH RISK: Basseterre Central (45 crimes), Molineux (33), Tabernacle (31)
+MEDIUM RISK: Cayon (28), Newton Ground (26), Old Road (22), Ramsbury (21), Charlestown (18), Cotton Ground (16)
+LOW RISK: Sandy Point (19), Dieppe Bay (15), Newcastle (14), Gingerland (12)
+
+HISTORICAL TRENDS:
+- 2023: 31 homicides, 2024: 28 homicides
+- 2025 H1: 4 homicides (75% reduction from 2024 H1)
+- Predicted 2025 total: 10 homicides (65% reduction)
+
+EMERGENCY CONTACTS:
+Police: 911, HQ: 465-2241, Intelligence: Ext. 4238/4239"""
+
+def get_conversation_context(messages, max_context=3):
+    """Get recent conversation context for better AI responses"""
+    if not messages or len(messages) < 2:
+        return ""
+    
+    # Get last few exchanges (excluding current)
+    recent_messages = messages[-max_context*2:-1] if len(messages) > 1 else []
+    
+    context_parts = []
+    for msg in recent_messages:
+        role = "User" if msg["role"] == "user" else "SECURO"
+        content = msg["content"][:200] + "..." if len(msg["content"]) > 200 else msg["content"]
+        context_parts.append(f"{role}: {content}")
+    
+    return "\n".join(context_parts) if context_parts else ""
+
+def get_smart_followup(user_input, response):
+    """Generate smart follow-up question suggestions"""
+    lower_input = user_input.lower()
+    
+    if any(word in lower_input for word in ['statistic', 'stats', 'data']):
+        return "Ask about 'detection rates by region' or 'crime trends over time'"
+    elif any(word in lower_input for word in ['hotspot', 'map', 'location']):
+        return "Try 'analyze Basseterre Central' or 'compare high vs low risk areas'"
+    elif any(word in lower_input for word in ['trend', 'predict', 'forecast']):
+        return "Ask 'what factors drive these trends?' or 'resource allocation recommendations'"
+    elif any(word in lower_input for word in ['detection', 'solve', 'rate']):
+        return "Try 'why is Nevis performing better?' or 'improve St. Kitts detection rates'"
+    else:
+        return "Ask about 'crime statistics', 'hotspot analysis', or 'trend predictions'"
 
 def generate_bot_response(user_input, language='en'):
     """
-    Generate bot response with proper priority:
-    1. Google AI API (primary)
-    2. CSV search (fallback)
-    3. Hardcoded responses (emergency fallback)
+    Enhanced bot response with conversation memory and better context
     """
     current_time = get_stkitts_time()
     current_date = get_stkitts_date()
     
-    # Try Google AI API first (PRIMARY METHOD)
+    # Get conversation history for context
+    conversation_context = get_conversation_context(st.session_state.messages)
+    
+    # Try Google AI API first
     if st.session_state.get('ai_enabled', False) and model is not None:
         try:
-            # Create comprehensive context for AI
-            crime_context = f"""
-            CURRENT ST. KITTS & NEVIS CRIME DATA (Q2 2025):
+            # Enhanced crime context
+            crime_context = create_enhanced_crime_context()
             
-            OVERALL STATISTICS:
-            - Total Federation Crimes: 292
-            - Overall Detection Rate: 38.7%
-            - St. Kitts: 207 crimes (32.9% detection rate)
-            - Nevis: 85 crimes (52.9% detection rate)
-            
-            CRIME BREAKDOWN Q2 2025:
-            - Murder/Manslaughter: 4 cases (2 detected, 50% rate)
-            - Drug Crimes: 31 cases (31 detected, 100% rate) - PERFECT PERFORMANCE
-            - Larcenies: 92 cases (21 detected, 22.8% rate)
-            - Bodily Harm: 33 cases (19 detected, 57.6% rate)
-            - Break-ins: 26 cases (7 detected, 26.9% rate)
-            - Malicious Damage: 59 cases (17 detected, 28.8% rate)
-            
-            CRIME HOTSPOTS (13 MAPPED LOCATIONS):
-            HIGH RISK: Basseterre Central (45 crimes), Molineux (33), Tabernacle (31)
-            MEDIUM RISK: Cayon (28), Newton Ground (26), Old Road (22), Ramsbury (21), Charlestown (18), Cotton Ground (16)
-            LOW RISK: Sandy Point (19), Dieppe Bay (15), Newcastle (14), Gingerland (12)
-            
-            HISTORICAL TRENDS:
-            - 2015: 29 homicides, 2016: 32, 2017: 23, 2018: 23, 2019: 12, 2020: 10
-            - 2021: 14, 2022: 11, 2023: 31 homicides, 2024: 28 homicides
-            - 2025 H1: 4 homicides (75% reduction from 2024)
-            
-            PREDICTIONS:
-            - 2025 Expected: 10 homicides (down from 28 in 2024)
-            - 2026 Prediction: 8 homicides (with current interventions)
-            - 2027 Prediction: 7 homicides (continued improvement)
-            
-            EMERGENCY CONTACTS:
-            Police: 911, HQ: 465-2241, Medical: 465-2551, Fire: 465-2515
-            Intelligence Office: 465-2241 Ext. 4238/4239
-            """
-            
-            # Search CSV data if available to include in context
+            # CSV search with better relevance
             csv_context = ""
             if st.session_state.get('csv_data') is not None:
                 csv_search = search_csv_data(st.session_state.csv_data, user_input)
-                csv_context = f"\n\nADDITIONAL DATABASE SEARCH:\n{csv_search}"
+                if csv_search and "No matches found" not in csv_search:
+                    csv_context = f"\n\nRELEVANT DATABASE RECORDS:\n{csv_search[:400]}..."
             
-            time_context = f"""
-            Current St. Kitts & Nevis Time: {current_time} AST
-            Current Date: {current_date}
-            """
+            # Build conversation-aware prompt
+            conversation_part = f"\n\nRECENT CONVERSATION:\n{conversation_context}" if conversation_context else ""
             
-            # Enhanced system prompt for AI
-            ai_prompt = f"""
-            You are SECURO, an intelligent and professional crime analysis AI assistant for St. Kitts & Nevis law enforcement. You provide data-driven insights, statistical analysis, and investigative support.
+            # Ultra-optimized AI prompt
+            ai_prompt = f"""You are SECURO, an elite AI crime analyst for St. Kitts & Nevis Police Force.
 
-            CORE CAPABILITIES:
-            - Analyze crime statistics and trends
-            - Provide predictive analytics
-            - Explain crime patterns and hotspots
-            - Support forensic investigations
-            - Offer strategic recommendations
-            - Emergency contact assistance
+CURRENT CRIME INTELLIGENCE:
+{crime_context}
+{csv_context}
+{conversation_part}
 
-            CRIME DATABASE CONTEXT:
-            {crime_context}
-            {csv_context}
+CURRENT CONTEXT:
+- Time: {current_time} AST
+- Date: {current_date}
+- User Query: "{user_input}"
+
+RESPONSE PROTOCOL:
+1. Always start with "SECURO:"
+2. Reference specific data from the context above
+3. Be conversational but professional
+4. Provide actionable intelligence
+5. Use exact statistics when available
+6. Build on previous conversation if relevant
+7. Suggest follow-up questions when appropriate
+
+INTELLIGENCE PRIORITIES:
+- For statistics: Use exact Q2 2025 numbers
+- For trends: Compare 2023→2024→2025 data
+- For hotspots: Reference the 13 mapped locations
+- For predictions: Use historical patterns
+- For detection rates: Compare regions and crime types
+
+Generate an intelligent, data-driven response:"""
             
-            TIME CONTEXT:
-            {time_context}
+            # Generate response with better error handling
+            response = model.generate_content(ai_prompt)
             
-            USER QUERY: {user_input}
-            
-            INSTRUCTIONS:
-            1. Always respond as "SECURO:" at the start
-            2. Use specific statistics and data from the context above
-            3. Provide actionable insights for law enforcement
-            4. Be professional but conversational
-            5. Include relevant crime data and recommendations
-            6. For statistics questions, cite exact numbers
-            7. For predictions, use historical data to make informed forecasts
-            8. For hotspot questions, reference specific locations and crime counts
-            9. Format clearly with appropriate sections if complex
-            10. Always provide value-added analysis, not just data repetition
-            
-            Generate a comprehensive, intelligent response based on the crime data:
-            """
-            
-            # Generate AI response with better error handling
-            try:
-                response = model.generate_content(ai_prompt)
+            if response and hasattr(response, 'text') and response.text.strip():
+                clean_response = response.text.strip()
                 
-                if response and hasattr(response, 'text') and response.text:
-                    clean_response = response.text.strip()
-                    clean_response = clean_response.replace('```', '')
-                    clean_response = re.sub(r'<[^>]+>', '', clean_response)
-                    
-                    # Ensure SECURO branding
-                    if not clean_response.startswith("SECURO:"):
-                        clean_response = f"SECURO: {clean_response}"
-                    
-                    return clean_response
-                else:
-                    raise Exception("Empty or invalid response from AI")
-                    
-            except Exception as ai_error:
-                # Log the specific AI error and disable AI
-                st.session_state.ai_error = f"AI Generation Error: {str(ai_error)}"
-                st.session_state.ai_enabled = False
-                st.session_state.ai_status = "❌ AI Failed - Using Fallback"
-                # Continue to fallback below
+                # Enhanced cleaning
+                clean_response = re.sub(r'```[\w]*\n?', '', clean_response)
+                clean_response = re.sub(r'<[^>]+>', '', clean_response)
+                clean_response = re.sub(r'\*\*([^*]+)\*\*', r'**\1**', clean_response)
                 
-        except Exception as e:
-            # Log the AI error for debugging
-            st.session_state.ai_error = f"API Error: {str(e)}"
+                # Ensure proper branding
+                if not clean_response.startswith("SECURO:"):
+                    clean_response = f"SECURO: {clean_response}"
+                
+                # Add smart follow-up suggestions based on query type
+                follow_up = get_smart_followup(user_input, clean_response)
+                if follow_up:
+                    clean_response += f"\n\n💡 **Follow-up suggestions:** {follow_up}"
+                
+                return clean_response
+            else:
+                raise Exception("Empty or invalid AI response")
+                
+        except Exception as ai_error:
+            st.session_state.ai_error = f"AI Error: {str(ai_error)}"
             st.session_state.ai_enabled = False
-            st.session_state.ai_status = "❌ API Failed - Using Fallback"
+            st.session_state.ai_status = "❌ AI Failed - Smart Fallback Active"
     
-    # FALLBACK 1: CSV Search + Smart Responses
-    if st.session_state.get('csv_data') is not None:
-        csv_results = search_csv_data(st.session_state.csv_data, user_input)
-        return get_smart_fallback_response(user_input, csv_results)
-    
-    # FALLBACK 2: Hardcoded Smart Responses (Emergency Fallback)
-    return get_smart_fallback_response(user_input, "⚠️ Operating in offline mode - CSV database not available.")
+    # Enhanced fallback with conversation awareness
+    return get_enhanced_fallback_response(user_input)
 
-def get_smart_fallback_response(user_input, csv_results):
-    """Provide intelligent responses when AI is not available"""
+def get_enhanced_fallback_response(user_input):
+    """Enhanced fallback system that leverages the comprehensive crime data"""
     lower_input = user_input.lower()
     
-    # Handle greetings
-    if any(greeting in lower_input for greeting in ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening']):
-        return f"SECURO: Hello! I'm SECURO, your AI crime analysis assistant for St. Kitts & Nevis. I'm here to help with:\n\n🔍 Crime data analysis and statistics\n🗺️ Hotspot identification and mapping\n📈 Trend analysis and predictions\n🚨 Emergency contact information\n💼 Forensic investigation support\n\nCurrent Status: Q2 2025 shows 292 total crimes with 38.7% detection rate.\n\nHow can I assist you today?\n\n{csv_results}"
-    
-    # Handle statistics questions
-    elif any(word in lower_input for word in ['statistic', 'stats', 'data', 'number', 'total', 'how many', 'count']):
-        return f"SECURO: **Q2 2025 Crime Statistics Analysis:**\n\n📊 **Overall Federation Performance:**\n• Total Crimes: 292 cases\n• Detection Rate: 38.7% (113 cases solved)\n• St. Kitts: 207 crimes (32.9% detection)\n• Nevis: 85 crimes (52.9% detection - significantly better)\n\n🔍 **Top Crime Categories:**\n• Larcenies: 92 cases (31.5% of all crimes)\n• Malicious Damage: 59 cases (20.2%)\n• Bodily Harm: 33 cases (11.3%)\n• Drug Crimes: 31 cases - **100% detection rate!**\n• Break-ins: 26 cases (8.9%)\n• Murder: 4 cases (1.4%) - 75% reduction from 2024\n\n📈 **Key Insights:** Drug enforcement is performing excellently, while property crimes need attention.\n\n{csv_results}"
-    
-    # Handle prediction questions
-    elif any(word in lower_input for word in ['predict', 'forecast', 'future', 'trend', 'projection', 'expect']):
-        return f"SECURO: **Crime Trend Analysis & Predictions:**\n\n📈 **Historical Homicide Trends:**\n• 2023: 31 homicides (peak year)\n• 2024: 28 homicides (-10% improvement)\n• 2025 H1: 4 homicides (on track for ~10 total)\n• **75% reduction** compared to 2024 H1\n\n🔮 **Predictive Analysis:**\n• 2025 Projection: 10 homicides (65% reduction from 2024)\n• 2026 Forecast: 8 homicides (with continued interventions)\n• 2027 Forecast: 7 homicides (sustained improvement)\n\n📊 **Overall Crime Trends:**\n• Total crimes stabilizing around 580-590 annually\n• Drug detection rates improving (now 100%)\n• Property crimes remain challenge area\n• Nevis consistently outperforming St. Kitts\n\n💡 **Strategic Recommendations:** Focus resources on property crime detection and replicate Nevis' successful strategies on St. Kitts.\n\n{csv_results}"
-    
-    # Handle hotspot/map questions
-    elif any(word in lower_input for word in ['hotspot', 'map', 'location', 'area', 'where', 'dangerous', 'risk']):
-        return f"SECURO: **Crime Hotspot Analysis - 13 Mapped Locations:**\n\n🔴 **HIGH RISK AREAS (3 locations):**\n• Basseterre Central: 45 crimes (Larceny, Drug Crimes, Assault)\n• Molineux: 33 crimes (Armed Robbery, Assault)\n• Tabernacle: 31 crimes (Robbery, Assault)\n**Total High-Risk Crimes: 109**\n\n🟡 **MEDIUM RISK AREAS (6 locations):**\n• Cayon: 28 crimes • Newton Ground: 26 crimes\n• Old Road: 22 crimes • Ramsbury: 21 crimes\n• Charlestown: 18 crimes • Cotton Ground: 16 crimes\n**Total Medium-Risk Crimes: 131**\n\n🟢 **LOW RISK AREAS (4 locations):**\n• Sandy Point: 19 crimes • Dieppe Bay: 15 crimes\n• Newcastle: 14 crimes • Gingerland: 12 crimes\n**Total Low-Risk Crimes: 60**\n\n💡 **Strategic Insight:** High-risk areas concentrate 36% of mapped crimes in just 23% of locations. Recommend increased patrol presence in Basseterre Central corridor.\n\n{csv_results}"
-    
-    # Handle detection rate questions
-    elif any(word in lower_input for word in ['detection', 'solve', 'solved', 'rate', 'success', 'performance']):
-        return f"SECURO: **Detection Rate Performance Analysis:**\n\n🎯 **Regional Performance (Q2 2025):**\n• **Nevis: 52.9%** - Excellent performance\n• **Federation: 38.7%** - Above average\n• **St. Kitts: 32.9%** - Needs improvement\n\n📊 **By Crime Type:**\n• **Drug Crimes: 100%** - Perfect performance (31/31)\n• **Bodily Harm: 57.6%** - Good (19/33)\n• **Murder: 50%** - Average (2/4)\n• **Malicious Damage: 28.8%** - Below target (17/59)\n• **Break-ins: 26.9%** - Needs improvement (7/26)\n• **Larcenies: 22.8%** - Priority area (21/92)\n\n💡 **Performance Insights:**\n- Nevis is outperforming St. Kitts by 20 percentage points\n- Drug enforcement strategies are highly effective\n- Property crimes (larceny, break-ins) require strategic focus\n- Overall trend is positive compared to historical averages\n\n{csv_results}"
-    
-    # Handle emergency contacts
-    elif any(word in lower_input for word in ['emergency', 'contact', 'help', 'call', 'phone', 'number']):
-        return f"SECURO: **Emergency Contacts - St. Kitts & Nevis:**\n\n🚨 **IMMEDIATE EMERGENCY:**\n• **Police Emergency: 911**\n• **Medical Emergency: 465-2551**\n• **Fire Emergency: 465-2515**\n\n🏢 **Police Services:**\n• **Headquarters: 465-2241**\n• **Intelligence Office: Ext. 4238/4239**\n• **Email: liosk@police.kn**\n\n🌊 **Other Emergency Services:**\n• **Coast Guard: 465-8384** (Alt: 466-9280)\n• **NEMA: 466-5100** (Emergency Management)\n• **Red Cross: 465-2584**\n• **Met Office: 465-2749** (Weather emergencies)\n\n⚠️ **Remember:** For life-threatening emergencies, always call 911 first and provide exact location.\n\n{csv_results}"
-    
-    # Handle thanks
-    elif any(thanks in lower_input for thanks in ['thank', 'thanks', 'appreciate']):
-        return "SECURO: You're welcome! I'm here to support law enforcement and public safety in St. Kitts & Nevis. Feel free to ask me anything about crime analysis, statistics, predictions, hotspots, or investigative support."
-    
-    # Handle capabilities questions
-    elif any(word in lower_input for word in ['what can you do', 'capabilities', 'help me', 'assist', 'features']):
-        return f"SECURO: **My Crime Analysis Capabilities:**\n\n📊 **Statistical Analysis:**\n• Q2 2025 comprehensive data (292 crimes)\n• Historical trend analysis (2015-2024)\n• Detection rate performance metrics\n• Regional comparison (St. Kitts vs Nevis)\n\n🗺️ **Geographic Intelligence:**\n• 13 mapped crime hotspots\n• Risk level assessments\n• Location-based crime patterns\n• Strategic deployment recommendations\n\n🔮 **Predictive Analytics:**\n• Crime trend forecasting\n• Resource allocation optimization\n• Intervention impact assessment\n• Strategic planning support\n\n🔬 **Investigation Support:**\n• Case pattern analysis\n• Evidence correlation\n• Forensic guidance\n• Multi-case connections\n\n💬 **Try asking:** 'Show crime statistics', 'Analyze hotspots', 'Predict crime trends', 'Emergency contacts', or any specific investigation questions.\n\n{csv_results}"
-    
-    # Default intelligent response
-    else:
-        return f"SECURO: I understand you're asking about '{user_input}'. Based on our comprehensive crime database:\n\n📊 **Current Status (Q2 2025):**\n• 292 total crimes with 38.7% detection rate\n• Significant 75% reduction in murders\n• Perfect drug crime detection (100%)\n• 13 mapped hotspot locations\n\n💡 **How I can help:**\n• **Statistics:** Ask about crime numbers, trends, comparisons\n• **Predictions:** Request forecasts and trend analysis\n• **Hotspots:** Inquire about dangerous areas and risk levels\n• **Performance:** Question detection rates and success metrics\n• **Emergency:** Get contact information and procedures\n\nPlease rephrase your question or specify what type of analysis you need.\n\n{csv_results}"
+    # Handle greetings with current data
+    if any(greeting in lower_input for greeting in ['hi', 'hello', 'hey', 'good morning', 'good afternoon']):
+        return f"""SECURO: Hello! I'm SECURO, your AI crime analysis assistant for St. Kitts & Nevis.
 
-# Initialize the AI model with the new function
+📊 **Current Status (Q2 2025):**
+• 292 total crimes with 38.7% detection rate
+• 75% reduction in murders (4 vs 16 in 2024 H1)
+• Perfect drug crime detection (100% success rate)
+• 13 crime hotspots mapped and monitored
+
+🔍 **I can help you analyze:**
+• Crime statistics and trends
+• Hotspot identification and risk assessment
+• Detection rate performance by region
+• Predictive analytics and forecasting
+• Emergency contact information
+
+**Try asking:** "Show crime statistics", "Analyze hotspots", "What are the trends?", or any specific investigation questions."""
+    
+    # Enhanced statistics responses
+    elif any(word in lower_input for word in ['statistic', 'stats', 'data', 'number', 'total', 'how many']):
+        return f"""SECURO: **Q2 2025 Crime Statistics Analysis:**
+
+📊 **Federation Overview:**
+• **Total Crimes:** 292 cases
+• **Detection Rate:** 38.7% (113 solved)
+• **Regional Performance:** Nevis (52.9%) outperforming St. Kitts (32.9%)
+
+🏆 **Top Performing Areas:**
+• **Drug Enforcement:** 31/31 cases solved (100% success) 
+• **Bodily Harm:** 19/33 cases solved (57.6% rate)
+• **Murder Cases:** 2/4 cases solved (50% rate)
+
+⚠️ **Areas Needing Attention:**
+• **Larcenies:** 21/92 solved (22.8% rate) - Largest crime category
+• **Break-ins:** 7/26 solved (26.9% rate)
+• **Malicious Damage:** 17/59 solved (28.8% rate)
+
+📈 **Key Insights:**
+• 75% reduction in murders compared to 2024
+• Drug enforcement strategies are highly effective
+• Property crimes need strategic focus
+• Nevis strategies should be replicated on St. Kitts
+
+**Need specific data?** Ask about any crime type, location, or time period."""
+    
+    # Enhanced hotspot analysis
+    elif any(word in lower_input for word in ['hotspot', 'map', 'location', 'area', 'where', 'dangerous']):
+        return f"""SECURO: **Crime Hotspot Intelligence Report:**
+
+🔴 **HIGH RISK ZONES (3 locations - 36% of mapped crimes):**
+• **Basseterre Central:** 45 crimes - Larceny, Drug Crimes, Assault
+• **Molineux:** 33 crimes - Armed Robbery, Assault  
+• **Tabernacle:** 31 crimes - Robbery, Assault
+**Total High-Risk:** 109 crimes
+
+🟡 **MEDIUM RISK ZONES (6 locations):**
+• Cayon (28), Newton Ground (26), Old Road (22)
+• Ramsbury (21), Charlestown (18), Cotton Ground (16)
+**Total Medium-Risk:** 131 crimes
+
+🟢 **LOW RISK ZONES (4 locations):**
+• Sandy Point (19), Dieppe Bay (15), Newcastle (14), Gingerland (12)
+**Total Low-Risk:** 60 crimes
+
+🎯 **Strategic Recommendations:**
+• Increase patrol presence in Basseterre Central corridor
+• Deploy specialized units to high-risk areas during peak hours
+• Implement community policing in medium-risk zones
+• Use successful Nevis strategies in St. Kitts hotspots
+
+**Want specific location analysis?** Ask about any district or area."""
+    
+    # Enhanced trend analysis
+    elif any(word in lower_input for word in ['trend', 'predict', 'forecast', 'future', 'projection']):
+        return f"""SECURO: **Crime Trend Analysis & Predictions:**
+
+📈 **Historical Homicide Trends:**
+• 2023: 31 homicides (peak recent year)
+• 2024: 28 homicides (-10% improvement)
+• 2025 H1: 4 homicides (75% reduction vs 2024 H1)
+
+🔮 **Predictive Analysis:**
+• **2025 Projection:** 10 total homicides (65% reduction from 2024)
+• **2026 Forecast:** 8 homicides (continued improvement)
+• **2027 Projection:** 7 homicides (sustained decline)
+
+📊 **Overall Crime Trends:**
+• Total crimes stabilizing around 580-590 annually
+• Drug detection improving dramatically (now 100%)
+• Property crimes (larceny, break-ins) remain challenge areas
+• Regional disparity: Nevis consistently outperforming St. Kitts
+
+💡 **Trend Drivers:**
+• Enhanced drug enforcement protocols
+• Improved intelligence gathering
+• Community policing initiatives
+• Technology integration in investigations
+
+**Strategic Implications:** Current interventions are working. Recommend maintaining drug enforcement excellence while increasing focus on property crime prevention."""
+    
+    # Enhanced detection rate analysis
+    elif any(word in lower_input for word in ['detection', 'solve', 'solved', 'rate', 'performance']):
+        return f"""SECURO: **Detection Rate Performance Analysis:**
+
+🏆 **Exceptional Performance:**
+• **Drug Crimes:** 100% detection rate (31/31 cases)
+• **Bodily Harm:** 57.6% detection rate (19/33 cases)
+
+🎯 **Regional Comparison:**
+• **Nevis:** 52.9% overall detection rate
+• **St. Kitts:** 32.9% overall detection rate  
+• **Federation:** 38.7% overall detection rate
+
+📊 **Performance by Crime Type:**
+• Murder/Manslaughter: 50% (2/4 cases)
+• Break-ins: 26.9% (7/26 cases)
+• Malicious Damage: 28.8% (17/59 cases)
+• Larcenies: 22.8% (21/92 cases) - Needs improvement
+
+💡 **Performance Insights:**
+• Nevis outperforming St. Kitts by 20 percentage points
+• Drug strategies should be replicated for other crime types
+• Property crime detection needs strategic overhaul
+• Specialized units showing better results than general patrol
+
+**Recommendations:** Study and replicate Nevis successful practices, focus training on property crime investigation techniques."""
+    
+    # Emergency contacts
+    elif any(word in lower_input for word in ['emergency', 'contact', 'help', 'call', 'phone']):
+        return f"""SECURO: **Emergency Contacts - St. Kitts & Nevis:**
+
+🚨 **IMMEDIATE EMERGENCY:** 911
+🏢 **Police HQ:** 465-2241
+🔍 **Intelligence Office:** 465-2241 Ext. 4238/4239
+📧 **Email:** liosk@police.kn
+
+🏥 **Medical:** 465-2551
+🔥 **Fire:** 465-2515 / 465-7167  
+🚢 **Coast Guard:** 465-8384 / 466-9280
+⚡ **NEMA:** 466-5100
+➕ **Red Cross:** 465-2584
+
+⚠️ **Emergency Protocol:**
+1. Call 911 for immediate life-threatening situations
+2. Provide exact location and nature of emergency
+3. Stay on line until instructed otherwise
+4. Contact Intelligence Office for ongoing investigations"""
+    
+    # Enhanced capabilities
+    elif any(word in lower_input for word in ['what can you', 'help', 'capabilities', 'assist']):
+        return f"""SECURO: **Advanced Crime Analysis Capabilities:**
+
+📊 **Real-Time Analytics:**
+• Q2 2025 comprehensive database (292 crimes)
+• Detection rate analysis by region and crime type
+• Historical trend analysis (2015-2024)
+• Performance benchmarking and comparisons
+
+🗺️ **Geographic Intelligence:**
+• 13 mapped crime hotspots with risk assessments
+• Location-based crime pattern analysis
+• Strategic deployment recommendations
+• Resource allocation optimization
+
+🔮 **Predictive Analytics:**
+• Crime trend forecasting using historical data
+• Resource demand predictions
+• Intervention impact assessments
+• Strategic planning support
+
+🔬 **Investigation Support:**
+• Pattern recognition across cases
+• Statistical correlation analysis
+• Evidence-based recommendations
+• Multi-jurisdictional data analysis
+
+**Current Focus Areas:**
+• 75% murder reduction analysis
+• 100% drug detection success study
+• Property crime improvement strategies
+• Regional performance optimization
+
+**Ask me anything about:** crime patterns, statistics, hotspots, trends, investigations, or strategic planning."""
+    
+    # Default intelligent response with current data
+    else:
+        return f"""SECURO: I understand you're asking about "{user_input}". Let me provide relevant information:
+
+📊 **Current Crime Intelligence (Q2 2025):**
+• 292 total crimes across St. Kitts & Nevis
+• 38.7% overall detection rate
+• Significant 75% reduction in murders
+• Perfect performance in drug crime detection (100%)
+
+🗺️ **Geographic Intelligence:**
+• 13 crime hotspots mapped and analyzed
+• High-risk areas: Basseterre Central, Molineux, Tabernacle
+• Nevis showing superior performance vs St. Kitts
+
+💡 **How I can help you:**
+• **"Show statistics"** - Get detailed crime numbers and trends
+• **"Analyze hotspots"** - Location-based crime intelligence
+• **"What are the trends?"** - Historical analysis and predictions
+• **"Detection rates"** - Performance analysis by region/type
+• **"Emergency contacts"** - Immediate assistance information
+
+Please specify what type of analysis or information you need, and I'll provide detailed insights from our comprehensive crime database."""
+
+# Initialize the AI model with the enhanced function
 model = initialize_ai_model()
 
 # Page configuration
@@ -1137,6 +1317,73 @@ with st.sidebar:
         st.warning("⚠️ CSV Database Missing")
         st.write("• Add criminal_justice_qa.csv")
         st.write("• Place in app directory")
+    
+    # DEBUG PANEL
+    st.markdown("---")
+    st.markdown("### 🔧 AI Debug Panel")
+    
+    # API Key Status
+    api_key_status = "✅ Direct Key Configured"
+    st.write(f"**API Key:** {api_key_status}")
+    
+    # AI Model Status
+    ai_model_status = "✅ Loaded" if 'model' in globals() and model is not None else "❌ Not Loaded"
+    st.write(f"**Model:** {ai_model_status}")
+    
+    # Session State Info
+    st.write(f"**AI Enabled:** {st.session_state.get('ai_enabled', 'Unknown')}")
+    st.write(f"**Messages:** {len(st.session_state.get('messages', []))}")
+    
+    # Test AI Button
+    if st.button("🧪 Test AI Connection"):
+        if model is not None:
+            try:
+                test_response = model.generate_content("Say 'AI Test Successful'")
+                if test_response and test_response.text:
+                    st.success(f"✅ AI Response: {test_response.text}")
+                    st.session_state.ai_enabled = True
+                else:
+                    st.error("❌ Empty response from AI")
+            except Exception as e:
+                st.error(f"❌ AI Test Failed: {str(e)}")
+                st.session_state.ai_enabled = False
+        else:
+            st.error("❌ Model not initialized")
+    
+    # Reset AI Button
+    if st.button("🔄 Reset AI"):
+        # Clear AI status
+        if 'ai_enabled' in st.session_state:
+            del st.session_state.ai_enabled
+        if 'ai_status' in st.session_state:
+            del st.session_state.ai_status
+        if 'ai_error' in st.session_state:
+            del st.session_state.ai_error
+        
+        # Reinitialize
+        global model
+        model = initialize_ai_model()
+        st.success("🔄 AI Reset Complete")
+        st.rerun()
+    
+    # CSV Debug Info
+    st.markdown("### 📊 Database Debug")
+    if st.session_state.get('csv_data') is not None:
+        df = st.session_state.csv_data
+        st.success(f"✅ {len(df)} records loaded")
+        st.write(f"**Columns:** {', '.join(df.columns[:3])}...")
+        if st.button("🔍 Show Sample Data"):
+            st.dataframe(df.head(3))
+    else:
+        st.error("❌ CSV not loaded")
+        if st.button("🔄 Reload CSV"):
+            csv_data, status = load_csv_data()
+            st.session_state.csv_data = csv_data
+            if csv_data is not None:
+                st.success("✅ CSV Reloaded")
+            else:
+                st.error(f"❌ {status}")
+            st.rerun()
 
 # Main Header
 current_time = get_stkitts_time()
