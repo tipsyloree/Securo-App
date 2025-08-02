@@ -414,30 +414,51 @@ def load_csv_data():
         return None, f"Error loading CSV: {e}"
 
 def search_csv_data(df, query):
-    """Search through CSV data for relevant information"""
+    """Enhanced search through CSV data for relevant information"""
     if df is None:
         return "❌ No CSV data loaded. Please make sure 'criminal_justice_qa.csv' is in the correct location."
    
     search_term = query.lower()
     results = []
-   
+    
+    # Enhanced search terms - extract key words
+    search_words = [word.strip() for word in search_term.split() if len(word.strip()) > 2]
+    
+    # Search through all text columns
     for column in df.columns:
         if df[column].dtype == 'object':
             try:
-                mask = df[column].astype(str).str.lower().str.contains(search_term, na=False)
-                matching_rows = df[mask]
-               
-                if not matching_rows.empty:
-                    for _, row in matching_rows.head(2).iterrows():
-                        result_dict = {k: v for k, v in row.to_dict().items() if pd.notna(v)}
-                        results.append(f"**Found in {column}:**\n{result_dict}")
+                # Search for each word in the query
+                for word in search_words:
+                    mask = df[column].astype(str).str.lower().str.contains(word, na=False, regex=False)
+                    matching_rows = df[mask]
+                   
+                    if not matching_rows.empty:
+                        for _, row in matching_rows.head(3).iterrows():
+                            # Create a clean result dictionary
+                            result_dict = {}
+                            for k, v in row.to_dict().items():
+                                if pd.notna(v) and str(v).strip():
+                                    result_dict[k] = str(v).strip()
+                            
+                            if result_dict:  # Only add if we have actual content
+                                result_text = f"**Found in {column} (searching '{word}'):**\n"
+                                for key, value in result_dict.items():
+                                    if len(value) > 10:  # Only show meaningful content
+                                        result_text += f"• **{key}:** {value[:500]}{'...' if len(value) > 500 else ''}\n"
+                                results.append(result_text)
+                                
+                        if len(results) >= 5:  # Limit results
+                            break
+                if len(results) >= 5:
+                    break
             except Exception as e:
                 continue
    
     if results:
-        return f"🔍 **Search Results for '{query}':**\n\n" + "\n\n---\n\n".join(results[:3])
+        return f"🔍 **CSV Database Results for '{query}':**\n\n" + "\n---\n".join(results[:3])
     else:
-        return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
+        return f"❌ No matches found for '{query}' in the CSV database. The question might use different terminology."
 
 def get_system_prompt(language='en'):
     base_prompt = """
@@ -563,7 +584,7 @@ def get_smart_followup(user_input, response):
 
 def generate_bot_response(user_input, language='en'):
     """
-    Enhanced bot response with conversation memory and better context
+    Enhanced bot response with CSV priority and better context
     """
     current_time = get_stkitts_time()
     current_date = get_stkitts_date()
@@ -571,31 +592,45 @@ def generate_bot_response(user_input, language='en'):
     # Get conversation history for context
     conversation_context = get_conversation_context(st.session_state.messages)
     
+    # PRIORITY: Search CSV first for direct answers
+    csv_search_result = ""
+    csv_has_answer = False
+    if st.session_state.get('csv_data') is not None:
+        csv_search_result = search_csv_data(st.session_state.csv_data, user_input)
+        csv_has_answer = csv_search_result and "No matches found" not in csv_search_result and "❌" not in csv_search_result
+    
     # Get model from session state
     model = st.session_state.get('model')
     
-    # Try Google AI API first
+    # Try Google AI API with CSV priority
     if st.session_state.get('ai_enabled', False) and model is not None:
         try:
             # Enhanced crime context
             crime_context = create_enhanced_crime_context()
             
-            # CSV search with better relevance
-            csv_context = ""
-            if st.session_state.get('csv_data') is not None:
-                csv_search = search_csv_data(st.session_state.csv_data, user_input)
-                if csv_search and "No matches found" not in csv_search:
-                    csv_context = f"\n\nRELEVANT DATABASE RECORDS:\n{csv_search[:400]}..."
-            
             # Build conversation-aware prompt
             conversation_part = f"\n\nRECENT CONVERSATION:\n{conversation_context}" if conversation_context else ""
             
-            # Ultra-optimized AI prompt
+            # CSV context with priority handling
+            csv_instruction = ""
+            if csv_has_answer:
+                csv_instruction = f"""
+PRIORITY DATABASE ANSWER (Use this first if relevant):
+{csv_search_result}
+
+IMPORTANT: If the CSV database above contains a direct answer to the user's question, use that information as your primary source and reference it specifically."""
+            elif csv_search_result:
+                csv_instruction = f"""
+DATABASE SEARCH RESULT:
+{csv_search_result}"""
+            
+            # Ultra-optimized AI prompt with CSV priority
             ai_prompt = f"""You are SECURO, an elite AI crime analyst for St. Kitts & Nevis Police Force.
+
+{csv_instruction}
 
 CURRENT CRIME INTELLIGENCE:
 {crime_context}
-{csv_context}
 {conversation_part}
 
 CURRENT CONTEXT:
@@ -605,19 +640,18 @@ CURRENT CONTEXT:
 
 RESPONSE PROTOCOL:
 1. Always start with "SECURO:"
-2. Reference specific data from the context above
-3. Be conversational but professional
-4. Provide actionable intelligence
-5. Use exact statistics when available
-6. Build on previous conversation if relevant
-7. Suggest follow-up questions when appropriate
+2. If CSV database has relevant info, prioritize that information
+3. Use specific data from all available sources
+4. Be conversational but professional
+5. Provide actionable intelligence
+6. Reference your sources (CSV database vs general statistics)
 
 INTELLIGENCE PRIORITIES:
+- For definitions/concepts: Use CSV database if available
 - For statistics: Use exact Q2 2025 numbers
 - For trends: Compare 2023→2024→2025 data
 - For hotspots: Reference the 13 mapped locations
 - For predictions: Use historical patterns
-- For detection rates: Compare regions and crime types
 
 Generate an intelligent, data-driven response:"""
             
@@ -636,11 +670,6 @@ Generate an intelligent, data-driven response:"""
                 if not clean_response.startswith("SECURO:"):
                     clean_response = f"SECURO: {clean_response}"
                 
-                # Add smart follow-up suggestions based on query type
-                follow_up = get_smart_followup(user_input, clean_response)
-                if follow_up:
-                    clean_response += f"\n\n💡 **Follow-up suggestions:** {follow_up}"
-                
                 return clean_response
             else:
                 raise Exception("Empty or invalid AI response")
@@ -648,14 +677,32 @@ Generate an intelligent, data-driven response:"""
         except Exception as ai_error:
             st.session_state.ai_error = f"AI Error: {str(ai_error)}"
             st.session_state.ai_enabled = False
-            st.session_state.ai_status = "❌ AI Failed - Smart Fallback Active"
+            st.session_state.ai_status = "❌ AI Failed - Using CSV + Smart Fallback"
+    
+    # ENHANCED FALLBACK: Use CSV data directly if available
+    if csv_has_answer:
+        return f"SECURO: Based on our crime database:\n\n{csv_search_result}\n\n💡 This information comes directly from our comprehensive criminal justice database."
     
     # Enhanced fallback with conversation awareness
-    return get_enhanced_fallback_response(user_input)
+    fallback_response = get_enhanced_fallback_response(user_input)
+    
+    # Add CSV search result to fallback if available
+    if csv_search_result and "❌" not in csv_search_result:
+        fallback_response += f"\n\n**Additional Database Search:**\n{csv_search_result}"
+    
+    return fallback_response
 
 def get_enhanced_fallback_response(user_input):
     """Enhanced fallback system that leverages the comprehensive crime data"""
     lower_input = user_input.lower()
+    
+    # Handle definition/what is questions specifically
+    if any(pattern in lower_input for pattern in ['what is', 'define', 'definition of', 'explain']):
+        # Try CSV search first for definitions
+        if st.session_state.get('csv_data') is not None:
+            csv_result = search_csv_data(st.session_state.csv_data, user_input)
+            if csv_result and "No matches found" not in csv_result and "❌" not in csv_result:
+                return f"SECURO: Based on our criminal justice database:\n\n{csv_result}\n\n💡 This definition comes directly from our comprehensive law enforcement knowledge base."
     
     # Handle greetings with current data
     if any(greeting in lower_input for greeting in ['hi', 'hello', 'hey', 'good morning', 'good afternoon']):
@@ -672,9 +719,10 @@ def get_enhanced_fallback_response(user_input):
 • Hotspot identification and risk assessment
 • Detection rate performance by region
 • Predictive analytics and forecasting
+• Criminal justice definitions and concepts
 • Emergency contact information
 
-**Try asking:** "Show crime statistics", "Analyze hotspots", "What are the trends?", or any specific investigation questions."""
+**Try asking:** "What is crime mitigation?", "Show crime statistics", "Analyze hotspots", or any specific investigation questions."""
     
     # Enhanced statistics responses
     elif any(word in lower_input for word in ['statistic', 'stats', 'data', 'number', 'total', 'how many']):
@@ -731,7 +779,7 @@ def get_enhanced_fallback_response(user_input):
 **Want specific location analysis?** Ask about any district or area."""
     
     # Enhanced trend analysis
-    elif any(word in lower_input for word in ['trend', 'predict', 'forecast', 'future', 'projection']):
+    elif any(word in lower_input for word in ['trend', 'predict', 'forecast', 'future', 'projection', 'compare', 'previous years']):
         return f"""SECURO: **Crime Trend Analysis & Predictions:**
 
 📈 **Historical Homicide Trends:**
@@ -755,6 +803,11 @@ def get_enhanced_fallback_response(user_input):
 • Improved intelligence gathering
 • Community policing initiatives
 • Technology integration in investigations
+
+**Year-over-Year Comparison (H1):**
+• 2023: 672 crimes, 17 murders
+• 2024: 586 crimes, 16 murders  
+• 2025: 574 crimes, 4 murders ⬇️ 75% murder reduction
 
 **Strategic Implications:** Current interventions are working. Recommend maintaining drug enforcement excellence while increasing focus on property crime prevention."""
     
@@ -833,6 +886,7 @@ def get_enhanced_fallback_response(user_input):
 • Statistical correlation analysis
 • Evidence-based recommendations
 • Multi-jurisdictional data analysis
+• Criminal justice definitions and concepts
 
 **Current Focus Areas:**
 • 75% murder reduction analysis
@@ -840,10 +894,17 @@ def get_enhanced_fallback_response(user_input):
 • Property crime improvement strategies
 • Regional performance optimization
 
-**Ask me anything about:** crime patterns, statistics, hotspots, trends, investigations, or strategic planning."""
+**Ask me anything about:** crime patterns, statistics, hotspots, trends, investigations, definitions, or strategic planning."""
     
     # Default intelligent response with current data
     else:
+        # Try CSV search for any remaining questions
+        csv_fallback = ""
+        if st.session_state.get('csv_data') is not None:
+            csv_result = search_csv_data(st.session_state.csv_data, user_input)
+            if csv_result and "No matches found" not in csv_result and "❌" not in csv_result:
+                csv_fallback = f"\n\n**From our criminal justice database:**\n{csv_result}"
+        
         return f"""SECURO: I understand you're asking about "{user_input}". Let me provide relevant information:
 
 📊 **Current Crime Intelligence (Q2 2025):**
@@ -862,9 +923,10 @@ def get_enhanced_fallback_response(user_input):
 • **"Analyze hotspots"** - Location-based crime intelligence
 • **"What are the trends?"** - Historical analysis and predictions
 • **"Detection rates"** - Performance analysis by region/type
+• **"What is [term]?"** - Criminal justice definitions
 • **"Emergency contacts"** - Immediate assistance information
 
-Please specify what type of analysis or information you need, and I'll provide detailed insights from our comprehensive crime database."""
+Please specify what type of analysis or information you need, and I'll provide detailed insights from our comprehensive crime database.{csv_fallback}"""
 
 # Initialize the AI model with the enhanced function
 if 'model' not in st.session_state:
