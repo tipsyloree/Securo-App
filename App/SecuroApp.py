@@ -494,7 +494,98 @@ def search_csv_data(df, query):
    
     return f"❌ No specific match found for '{query}' in the criminal justice database."
 
+# SECURO Greeting System
+SECURO_GREETINGS = {
+    # Basic greetings
+    'hi': "Hello! How can I assist you with crime analysis today?",
+    'hello': "Hi there! What can I help you with?",
+    'hey': "Hey! I'm here to help with any crime intelligence questions.",
+    'good morning': "Good morning! How may I assist you today?",
+    'good afternoon': "Good afternoon! What crime analysis can I help you with?",
+    'good evening': "Good evening! How can I support your investigation?",
+    'good night': "Good night! Let me know if you need any assistance.",
+    
+    # Identity questions
+    'what are you': "I'm SECURO, your AI crime analysis assistant for St. Kitts & Nevis. How can I help?",
+    'who are you': "I'm SECURO, an AI assistant specializing in crime analysis. What do you need?",
+    'what is securo': "SECURO is an AI crime analysis system for St. Kitts & Nevis law enforcement. How may I assist?",
+    
+    # Status questions  
+    'how are you': "I'm functioning well and ready to help with crime analysis. What do you need?",
+    'how are you doing': "I'm operating optimally! How can I assist with your investigation?",
+    'are you working': "Yes, I'm fully operational and ready to help. What can I do for you?",
+    
+    # Casual greetings
+    'whats up': "Hello! Ready to help with any crime intelligence questions.",
+    "what's up": "Hi! What crime analysis can I assist you with today?",
+    'sup': "Hey! How can I help with your investigation?",
+    
+    # Professional greetings
+    'greetings': "Greetings! I'm here to assist with crime analysis and intelligence.",
+    'salutations': "Hello! How may I support your law enforcement needs?",
+    
+    # Help requests
+    'help': "I'm here to help! Ask me about crime statistics, hotspots, trends, or definitions.",
+    'assist me': "Absolutely! What type of crime analysis do you need?",
+    'i need help': "I'm ready to assist! What can I help you with?",
+}
+
+def get_greeting_response(user_input):
+    """Get appropriate greeting response for user input"""
+    user_lower = user_input.lower().strip().rstrip('?!.')
+    
+    # Check for exact matches first
+    if user_lower in SECURO_GREETINGS:
+        return f"SECURO: {SECURO_GREETINGS[user_lower]}"
+    
+    # Check for partial matches
+    for greeting, response in SECURO_GREETINGS.items():
+        if greeting in user_lower:
+            return f"SECURO: {response}"
+    
+    return None  # No greeting found
+
 def get_system_prompt(language='en'):
+    base_prompt = """
+You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
+
+Your mission is to support crime prevention, research, and public safety through:
+- Interactive maps and geographic analysis
+- Statistical analysis and trend identification
+- Predictive analytics for crime prevention
+- Visual data presentations (charts, graphs, etc.)
+- Emergency contact guidance
+- Multilingual communication support
+
+Capabilities:
+- Analyze and summarize current and historical crime data (local and global)
+- Detect trends and patterns across time, location, and type
+- Recommend prevention strategies based on geographic and temporal factors
+- Provide accessible language for general users, while supporting technical depth for experts
+- Integrate with GIS, crime databases (e.g. Crimeometer), and public safety APIs
+- Generate visual outputs using Python tools like matplotlib, pandas, folium, etc.
+- Communicate effectively in multiple languages
+- Adapt responses to be clear, concise, and actionable
+
+Tone & Behavior:
+- Maintain a professional yet human tone
+- Be concise, accurate, and helpful
+- Explain visuals when necessary
+- Avoid panic-inducing language—focus on empowerment and awareness
+- Respond directly without using code blocks, backticks, or HTML formatting
+- Use the current St. Kitts & Nevis time and date in responses when relevant
+
+Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
+"""
+    
+    if language != 'en':
+        language_instruction = f"""
+IMPORTANT: Respond primarily in {SUPPORTED_LANGUAGES.get(language, language)}, 
+but include English translations for technical terms when helpful.
+"""
+        return base_prompt + language_instruction
+    
+    return base_prompt
     base_prompt = """
 You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
 
@@ -734,6 +825,11 @@ def get_enhanced_fallback_response(user_input):
     """Enhanced fallback system that leverages the comprehensive crime data"""
     lower_input = user_input.lower()
     
+    # Check for greetings first - return simple responses
+    greeting_response = get_greeting_response(user_input)
+    if greeting_response:
+        return greeting_response
+    
     # Handle definition/what is questions specifically
     if any(pattern in lower_input for pattern in ['what is', 'define', 'definition of', 'explain']):
         # Try CSV search first for definitions
@@ -745,26 +841,6 @@ def get_enhanced_fallback_response(user_input):
         # If no CSV match, provide general response
         concept = lower_input.replace('what is', '').replace('define', '').replace('definition of', '').replace('explain', '').strip().rstrip('?')
         return f"SECURO: I don't have a specific definition for '{concept}' in our current criminal justice database. However, I can help you with:\n\n• Crime statistics and trends for St. Kitts & Nevis\n• Hotspot analysis and geographic intelligence\n• Detection rates and performance metrics\n• Emergency contacts and procedures\n\nTry asking about these topics or search for related terms."
-    
-    # Handle greetings with current data
-    if any(greeting in lower_input for greeting in ['hi', 'hello', 'hey', 'good morning', 'good afternoon']):
-        return f"""SECURO: Hello! I'm SECURO, your AI crime analysis assistant for St. Kitts & Nevis.
-
-📊 **Current Status (Q2 2025):**
-• 292 total crimes with 38.7% detection rate
-• 75% reduction in murders (4 vs 16 in 2024 H1)
-• Perfect drug crime detection (100% success rate)
-• 13 crime hotspots mapped and monitored
-
-🔍 **I can help you analyze:**
-• Crime statistics and trends
-• Hotspot identification and risk assessment
-• Detection rate performance by region
-• Predictive analytics and forecasting
-• Criminal justice definitions and concepts
-• Emergency contact information
-
-**Try asking:** "What is crime mitigation?", "Show crime statistics", "Analyze hotspots", or any specific investigation questions."""
     
     # Enhanced statistics responses
     elif any(word in lower_input for word in ['statistic', 'stats', 'data', 'number', 'total', 'how many']):
