@@ -812,17 +812,22 @@ st.markdown(f"""
     🗺️ Crime Hotspot Intelligence: 13 locations mapped | 🎯 Detection Rate Analysis: 38.7% overall (Nevis 52.9%, St. Kitts 32.9%)<br>
     🌍 Multi-language Support: 12 languages | 🔒 Secure Law Enforcement Platform | 🤖 AI-Enhanced Crime Prevention
 </div>
-""", unsafe_allow_html=True)margin: 4px 0;"><strong>📊 Total Crimes:</strong> {data['crimes']}</p>
-            <p style="margin: 4px 0;"><strong>⚠️ Risk Level:</strong> 
-               <span style="color: {risk_colors[data['risk']]}; font-weight: bold;">{data['risk']}</span>
-            </p>
-            <p style="margin: 4px 0;"><strong>🔍 Common Types:</strong></p>
-            <ul style="margin: 4px 0; padding-left: 20px;">
-                {''.join([f'<li>{crime_type}</li>' for crime_type in data['types']])}
-            </ul>
-            <small style="color: #666;">📍 Lat: {data['lat']:.4f}, Lon: {data['lon']:.4f}</small>
-        </div>
-        """
+""", unsafe_allow_html=True)
+
+# The second part should be a separate st.markdown() call or part of another function
+st.markdown(f"""
+<div>
+    <p style="margin: 4px 0;"><strong>📊 Total Crimes:</strong> {data['crimes']}</p>
+    <p style="margin: 4px 0;"><strong>⚠️ Risk Level:</strong> 
+       <span style="color: {risk_colors[data['risk']]}; font-weight: bold;">{data['risk']}</span>
+    </p>
+    <p style="margin: 4px 0;"><strong>🔍 Common Types:</strong></p>
+    <ul style="margin: 4px 0; padding-left: 20px;">
+        {''.join([f'<li>{crime_type}</li>' for crime_type in data['types']])}
+    </ul>
+    <small style="color: #666;">📍 Lat: {data['lat']:.4f}, Lon: {data['lon']:.4f}</small>
+</div>
+""", unsafe_allow_html=True)
         
         # Calculate marker size based on crime count
         marker_size = max(10, min(30, data['crimes'] * 0.8))
