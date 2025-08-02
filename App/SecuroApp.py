@@ -388,163 +388,7 @@ def create_crime_charts(chart_type, crime_data):
         
         return fig
 
-# CSV data handling
-@st.cache_data
-def load_csv_data():
-    csv_filename = "criminal_justice_qa.csv"
-    script_dir = os.path.dirname(__file__)
-    csv_path = os.path.join(script_dir, csv_filename)
-    try:
-        if os.path.exists(csv_path):
-            df = pd.read_csv(csv_path)
-            return df, f"Successfully loaded {csv_path}"
-        else:
-            current_dir = os.getcwd()
-            files_in_script_dir = os.listdir(script_dir) if os.path.exists(script_dir) else []
-            files_in_current_dir = os.listdir(current_dir)
-            return None, f"""
-            Could not find '{csv_filename}'.
-            Expected: {csv_path}
-            Script directory: {script_dir}
-            CSV files in script dir: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
-            Current directory: {current_dir}
-            CSV files in current dir: {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
-            """
-    except Exception as e:
-        return None, f"Error loading CSV: {e}"
-
-def search_csv_data(df, query):
-    """Targeted search through CSV data for specific relevant information"""
-    if df is None:
-        return "❌ No CSV data loaded. Please make sure 'criminal_justice_qa.csv' is in the correct location."
-   
-    search_term = query.lower().strip()
-    results = []
-    
-    # For "what is X" questions, look for exact or close matches first
-    if search_term.startswith('what is'):
-        concept = search_term.replace('what is', '').strip().rstrip('?')
-        
-        # Search through all text columns for the specific concept
-        for column in df.columns:
-            if df[column].dtype == 'object':
-                try:
-                    # Look for exact concept match in questions or content
-                    mask = df[column].astype(str).str.lower().str.contains(concept, na=False, regex=False)
-                    matching_rows = df[mask]
-                   
-                    if not matching_rows.empty:
-                        for _, row in matching_rows.head(1).iterrows():  # Only take the first/best match
-                            # Look for question-answer pairs
-                            row_dict = row.to_dict()
-                            
-                            # Try to find the specific question and answer
-                            question_found = None
-                            answer_found = None
-                            
-                            for key, value in row_dict.items():
-                                if pd.notna(value) and str(value).strip():
-                                    value_str = str(value).lower().strip()
-                                    # If this looks like the question we're asking
-                                    if concept in value_str and ('what is' in value_str or value_str.startswith(concept)):
-                                        question_found = str(value).strip()
-                                    # If this looks like an answer (longer text)
-                                    elif concept in value_str and len(str(value).strip()) > 50:
-                                        answer_found = str(value).strip()
-                            
-                            # If we found a good match, return it
-                            if question_found and answer_found:
-                                return f"🔍 **Definition from Criminal Justice Database:**\n\n**Question:** {question_found}\n\n**Answer:** {answer_found}"
-                            elif answer_found:
-                                return f"🔍 **Definition from Criminal Justice Database:**\n\n**{concept.title()}:** {answer_found}"
-                            
-                        break  # Stop after finding the first relevant match
-                except Exception as e:
-                    continue
-    
-    # For other types of searches, look for key terms
-    else:
-        # Extract meaningful search terms (ignore common words)
-        stop_words = {'what', 'is', 'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', '?'}
-        search_words = [word.strip() for word in search_term.split() if len(word.strip()) > 2 and word.strip() not in stop_words]
-        
-        if search_words:
-            # Search for the most relevant terms
-            main_term = ' '.join(search_words[:2])  # Use first 2 meaningful words
-            
-            for column in df.columns:
-                if df[column].dtype == 'object':
-                    try:
-                        mask = df[column].astype(str).str.lower().str.contains(main_term, na=False, regex=False)
-                        matching_rows = df[mask]
-                       
-                        if not matching_rows.empty:
-                            for _, row in matching_rows.head(1).iterrows():  # Only take the first match
-                                row_dict = {k: str(v).strip() for k, v in row.to_dict().items() if pd.notna(v) and str(v).strip()}
-                                
-                                if row_dict:
-                                    result_text = f"🔍 **Database Result for '{query}':**\n"
-                                    for key, value in row_dict.items():
-                                        if len(value) > 10:
-                                            result_text += f"• **{key}:** {value}\n"
-                                    return result_text
-                            break
-                    except Exception as e:
-                        continue
-   
-    return f"❌ No specific match found for '{query}' in the criminal justice database."
-
-# SECURO Greeting System
-SECURO_GREETINGS = {
-    # Basic greetings
-    'hi': "Hello! How can I assist you with crime analysis today?",
-    'hello': "Hi there! What can I help you with?",
-    'hey': "Hey! I'm here to help with any crime intelligence questions.",
-    'good morning': "Good morning! How may I assist you today?",
-    'good afternoon': "Good afternoon! What crime analysis can I help you with?",
-    'good evening': "Good evening! How can I support your investigation?",
-    'good night': "Good night! Let me know if you need any assistance.",
-    
-    # Identity questions
-    'what are you': "I'm SECURO, your AI crime analysis assistant for St. Kitts & Nevis. How can I help?",
-    'who are you': "I'm SECURO, an AI assistant specializing in crime analysis. What do you need?",
-    'what is securo': "SECURO is an AI crime analysis system for St. Kitts & Nevis law enforcement. How may I assist?",
-    
-    # Status questions  
-    'how are you': "I'm functioning well and ready to help with crime analysis. What do you need?",
-    'how are you doing': "I'm operating optimally! How can I assist with your investigation?",
-    'are you working': "Yes, I'm fully operational and ready to help. What can I do for you?",
-    
-    # Casual greetings
-    'whats up': "Hello! Ready to help with any crime intelligence questions.",
-    "what's up": "Hi! What crime analysis can I assist you with today?",
-    'sup': "Hey! How can I help with your investigation?",
-    
-    # Professional greetings
-    'greetings': "Greetings! I'm here to assist with crime analysis and intelligence.",
-    'salutations': "Hello! How may I support your law enforcement needs?",
-    
-    # Help requests
-    'help': "I'm here to help! Ask me about crime statistics, hotspots, trends, or definitions.",
-    'assist me': "Absolutely! What type of crime analysis do you need?",
-    'i need help': "I'm ready to assist! What can I help you with?",
-}
-
-def get_greeting_response(user_input):
-    """Get appropriate greeting response for user input"""
-    user_lower = user_input.lower().strip().rstrip('?!.')
-    
-    # Check for exact matches first
-    if user_lower in SECURO_GREETINGS:
-        return f"SECURO: {SECURO_GREETINGS[user_lower]}"
-    
-    # Check for partial matches
-    for greeting, response in SECURO_GREETINGS.items():
-        if greeting in user_lower:
-            return f"SECURO: {response}"
-    
-    return None  # No greeting found
-
+# Enhanced System Prompt with multilingual support - FROM SHORTER CODE
 def get_system_prompt(language='en'):
     base_prompt = """
 You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
@@ -577,479 +421,126 @@ Tone & Behavior:
 
 Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
 """
-    
+   
     if language != 'en':
         language_instruction = f"""
-IMPORTANT: Respond primarily in {SUPPORTED_LANGUAGES.get(language, language)}, 
-but include English translations for technical terms when helpful.
+IMPORTANT: The user has selected {SUPPORTED_LANGUAGES.get(language, language)} as their preferred language.
+Please respond primarily in {SUPPORTED_LANGUAGES.get(language, language)}, but you may include English translations for technical terms when helpful for clarity.
+If you're not completely fluent in the requested language, do your best and indicate that you're providing assistance in that language.
 """
         return base_prompt + language_instruction
-    
-    return base_prompt
-    base_prompt = """
-You are SECURO, an intelligent and professional multilingual crime mitigation chatbot built to provide real-time, data-driven insights for a wide range of users, including law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.
-
-Your mission is to support crime prevention, research, and public safety through:
-- Interactive maps and geographic analysis
-- Statistical analysis and trend identification
-- Predictive analytics for crime prevention
-- Visual data presentations (charts, graphs, etc.)
-- Emergency contact guidance
-- Multilingual communication support
-
-Capabilities:
-- Analyze and summarize current and historical crime data (local and global)
-- Detect trends and patterns across time, location, and type
-- Recommend prevention strategies based on geographic and temporal factors
-- Provide accessible language for general users, while supporting technical depth for experts
-- Integrate with GIS, crime databases (e.g. Crimeometer), and public safety APIs
-- Generate visual outputs using Python tools like matplotlib, pandas, folium, etc.
-- Communicate effectively in multiple languages
-- Adapt responses to be clear, concise, and actionable
-
-Tone & Behavior:
-- Maintain a professional yet human tone
-- Be concise, accurate, and helpful
-- Explain visuals when necessary
-- Avoid panic-inducing language—focus on empowerment and awareness
-- Respond directly without using code blocks, backticks, or HTML formatting
-- Use the current St. Kitts & Nevis time and date in responses when relevant
-
-Your responses should reflect an understanding of criminology, public safety, and data visualization best practices.
-"""
-    
-    if language != 'en':
-        language_instruction = f"""
-IMPORTANT: Respond primarily in {SUPPORTED_LANGUAGES.get(language, language)}, 
-but include English translations for technical terms when helpful.
-"""
-        return base_prompt + language_instruction
-    
+   
     return base_prompt
 
-# FIXED AI FUNCTIONS
-def initialize_ai_model():
-    """Initialize the AI model with direct API key"""
+# Initialize the AI model - FROM SHORTER CODE
+try:
+    GOOGLE_API_KEY = "AIzaSyAK-4Xklul9WNoiWnSrpzPkn5C-Dbny8B4"
+    genai.configure(api_key=GOOGLE_API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+    st.session_state.ai_enabled = True
+    st.session_state.ai_status = "✅ AI Ready (Direct API Key)"
+except Exception as e:
+    st.session_state.ai_enabled = False
+    st.session_state.ai_status = f"❌ AI Error: {str(e)}"
+    model = None
+
+# CSV data handling - FROM SHORTER CODE
+@st.cache_data
+def load_csv_data():
+    csv_filename = "criminal_justice_qa.csv"
+    script_dir = os.path.dirname(__file__)
+    csv_path = os.path.join(script_dir, csv_filename)
     try:
-        GOOGLE_API_KEY = "AIzaSyCdAvG9i1oWVQVf8D1FHlwPWI0Yznoj_Pk"
-        genai.configure(api_key=GOOGLE_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
-        st.session_state.ai_enabled = True
-        st.session_state.ai_status = "✅ AI Ready (Direct API Key)"
-        st.session_state.ai_error = None
-        return model
+        if os.path.exists(csv_path):
+            df = pd.read_csv(csv_path)
+            return df, f"Successfully loaded {csv_path}"
+        else:
+            current_dir = os.getcwd()
+            files_in_script_dir = os.listdir(script_dir)
+            files_in_current_dir = os.listdir(current_dir)
+            return None, f"""
+            Could not find '{csv_filename}'.
+            Expected: {csv_path}
+            Script directory: {script_dir}
+            CSV files in script dir: {', '.join([f for f in files_in_script_dir if f.endswith('.csv')])}
+            Current directory: {current_dir}
+            CSV files in current dir: {', '.join([f for f in files_in_current_dir if f.endswith('.csv')])}
+            """
     except Exception as e:
-        st.session_state.ai_enabled = False
-        st.session_state.ai_status = f"❌ AI Error: {str(e)}"
-        st.session_state.ai_error = str(e)
-        model = None
-        return None
+        return None, f"Error loading CSV: {e}"
 
-def create_enhanced_crime_context():
-    """Create a comprehensive but concise crime context for AI"""
-    return """CURRENT ST. KITTS & NEVIS CRIME DATA (Q2 2025):
+def get_ai_response(user_input, csv_results, language='en'):
+    """Generate AI response using the system prompt and context with language support - FROM SHORTER CODE"""
+    if not st.session_state.get('ai_enabled', False) or model is None:
+        return csv_results
+   
+    try:
+        # Get current St. Kitts time for context (but don't always mention it)
+        current_time = get_stkitts_time()
+        current_date = get_stkitts_date()
+       
+        # Only include time context if user asks about time or current events
+        time_keywords = ['time', 'date', 'now', 'current', 'today', 'when', 'hora', 'fecha', 'hoy', 'temps', 'maintenant']
+        include_time = any(keyword in user_input.lower() for keyword in time_keywords)
+       
+        time_context = f"""
+        Current St. Kitts & Nevis time: {current_time}
+        Current St. Kitts & Nevis date: {current_date}
+        """ if include_time else ""
+       
+        # Combine system prompt with user context
+        full_prompt = f"""
+        {get_system_prompt(language)}
+        {time_context}
+       
+        Context from crime database search:
+        {csv_results}
+       
+        User query: {user_input}
+       
+        Please provide a comprehensive response as SECURO based on the available data and your crime analysis capabilities.
+        Only mention the current time/date if directly relevant to the user's query.
+        Respond directly without using code blocks, backticks, or HTML formatting.
+        """
+       
+        response = model.generate_content(full_prompt)
+       
+        # Clean the response
+        clean_response = response.text.strip()
+        clean_response = clean_response.replace('```', '')
+        clean_response = re.sub(r'<[^>]+>', '', clean_response)
+       
+        return clean_response
+       
+    except Exception as e:
+        return f"{csv_results}\n\n⚠ AI analysis temporarily unavailable. Showing database search results."
 
-OVERALL PERFORMANCE:
-- Total Federation Crimes: 292 cases
-- Overall Detection Rate: 38.7% (113 cases solved)
-- St. Kitts: 207 crimes (32.9% detection rate)
-- Nevis: 85 crimes (52.9% detection rate) - Better performance
-
-CRIME BREAKDOWN Q2 2025:
-- Larcenies: 92 cases (31.5% of all crimes) - 21 detected (22.8% rate)
-- Malicious Damage: 59 cases (20.2%) - 17 detected (28.8% rate)
-- Bodily Harm: 33 cases (11.3%) - 19 detected (57.6% rate)
-- Drug Crimes: 31 cases (10.6%) - 31 detected (100% rate) ⭐ PERFECT
-- Break-ins: 26 cases (8.9%) - 7 detected (26.9% rate)
-- Murder/Manslaughter: 4 cases (1.4%) - 2 detected (50% rate)
-
-CRIME HOTSPOTS (13 MAPPED LOCATIONS):
-HIGH RISK: Basseterre Central (45 crimes), Molineux (33), Tabernacle (31)
-MEDIUM RISK: Cayon (28), Newton Ground (26), Old Road (22), Ramsbury (21), Charlestown (18), Cotton Ground (16)
-LOW RISK: Sandy Point (19), Dieppe Bay (15), Newcastle (14), Gingerland (12)
-
-HISTORICAL TRENDS:
-- 2023: 31 homicides, 2024: 28 homicides
-- 2025 H1: 4 homicides (75% reduction from 2024 H1)
-- Predicted 2025 total: 10 homicides (65% reduction)
-
-EMERGENCY CONTACTS:
-Police: 911, HQ: 465-2241, Intelligence: Ext. 4238/4239"""
-
-def get_conversation_context(messages, max_context=3):
-    """Get recent conversation context for better AI responses"""
-    if not messages or len(messages) < 2:
-        return ""
-    
-    # Get last few exchanges (excluding current)
-    recent_messages = messages[-max_context*2:-1] if len(messages) > 1 else []
-    
-    context_parts = []
-    for msg in recent_messages:
-        role = "User" if msg["role"] == "user" else "SECURO"
-        content = msg["content"][:200] + "..." if len(msg["content"]) > 200 else msg["content"]
-        context_parts.append(f"{role}: {content}")
-    
-    return "\n".join(context_parts) if context_parts else ""
-
-def get_smart_followup(user_input, response):
-    """Generate smart follow-up question suggestions"""
-    lower_input = user_input.lower()
-    
-    if any(word in lower_input for word in ['statistic', 'stats', 'data']):
-        return "Ask about 'detection rates by region' or 'crime trends over time'"
-    elif any(word in lower_input for word in ['hotspot', 'map', 'location']):
-        return "Try 'analyze Basseterre Central' or 'compare high vs low risk areas'"
-    elif any(word in lower_input for word in ['trend', 'predict', 'forecast']):
-        return "Ask 'what factors drive these trends?' or 'resource allocation recommendations'"
-    elif any(word in lower_input for word in ['detection', 'solve', 'rate']):
-        return "Try 'why is Nevis performing better?' or 'improve St. Kitts detection rates'"
+def search_csv_data(df, query):
+    """Search through CSV data for relevant information - FROM SHORTER CODE"""
+    if df is None:
+        return "❌ No CSV data loaded. Please make sure 'criminal_justice_qa.csv' is in the correct location."
+   
+    search_term = query.lower()
+    results = []
+   
+    # Search through all text columns
+    for column in df.columns:
+        if df[column].dtype == 'object':
+            try:
+                mask = df[column].astype(str).str.lower().str.contains(search_term, na=False)
+                matching_rows = df[mask]
+               
+                if not matching_rows.empty:
+                    for _, row in matching_rows.head(2).iterrows():
+                        result_dict = {k: v for k, v in row.to_dict().items() if pd.notna(v)}
+                        results.append(f"**Found in {column}:**\n{result_dict}")
+            except Exception as e:
+                continue
+   
+    if results:
+        return f"🔍 **Search Results for '{query}':**\n\n" + "\n\n---\n\n".join(results[:3])
     else:
-        return "Ask about 'crime statistics', 'hotspot analysis', or 'trend predictions'"
-
-def generate_bot_response(user_input, language='en'):
-    """
-    Enhanced bot response with CSV priority and better context
-    """
-    current_time = get_stkitts_time()
-    current_date = get_stkitts_date()
-    
-    # Get conversation history for context
-    conversation_context = get_conversation_context(st.session_state.messages)
-    
-    # PRIORITY: Search CSV first for direct answers
-    csv_search_result = ""
-    csv_has_answer = False
-    if st.session_state.get('csv_data') is not None:
-        csv_search_result = search_csv_data(st.session_state.csv_data, user_input)
-        csv_has_answer = csv_search_result and "No specific match found" not in csv_search_result and "❌" not in csv_search_result
-    
-    # For "what is" questions, if CSV has the answer, return it directly
-    if user_input.lower().strip().startswith('what is') and csv_has_answer:
-        return f"SECURO: {csv_search_result}\n\n💡 This definition comes directly from our comprehensive criminal justice database."
-    
-    # Get model from session state
-    model = st.session_state.get('model')
-    
-    # Try Google AI API with CSV priority
-    if st.session_state.get('ai_enabled', False) and model is not None:
-        try:
-            # Enhanced crime context
-            crime_context = create_enhanced_crime_context()
-            
-            # Build conversation-aware prompt
-            conversation_part = f"\n\nRECENT CONVERSATION:\n{conversation_context}" if conversation_context else ""
-            
-            # CSV context with priority handling
-            csv_instruction = ""
-            if csv_has_answer:
-                csv_instruction = f"""
-PRIORITY DATABASE ANSWER (Use this first):
-{csv_search_result}
-
-IMPORTANT: The CSV database above contains the exact answer to the user's question. Use ONLY this information and present it clearly. Do not add additional unrelated information."""
-            elif csv_search_result:
-                csv_instruction = f"""
-DATABASE SEARCH RESULT:
-{csv_search_result}"""
-            
-            # Ultra-optimized AI prompt with CSV priority
-            ai_prompt = f"""You are SECURO, an elite AI crime analyst for St. Kitts & Nevis Police Force.
-
-{csv_instruction}
-
-CURRENT CRIME INTELLIGENCE:
-{crime_context}
-{conversation_part}
-
-CURRENT CONTEXT:
-- Time: {current_time} AST
-- Date: {current_date}
-- User Query: "{user_input}"
-
-RESPONSE PROTOCOL:
-1. Always start with "SECURO:"
-2. If CSV database has relevant info, prioritize that information
-3. Use specific data from all available sources
-4. Be conversational but professional
-5. Provide actionable intelligence
-6. Reference your sources (CSV database vs general statistics)
-
-INTELLIGENCE PRIORITIES:
-- For definitions/concepts: Use CSV database if available
-- For statistics: Use exact Q2 2025 numbers
-- For trends: Compare 2023→2024→2025 data
-- For hotspots: Reference the 13 mapped locations
-- For predictions: Use historical patterns
-
-Generate an intelligent, data-driven response:"""
-            
-            # Generate response with better error handling
-            response = model.generate_content(ai_prompt)
-            
-            if response and hasattr(response, 'text') and response.text.strip():
-                clean_response = response.text.strip()
-                
-                # Enhanced cleaning
-                clean_response = re.sub(r'```[\w]*\n?', '', clean_response)
-                clean_response = re.sub(r'<[^>]+>', '', clean_response)
-                clean_response = re.sub(r'\*\*([^*]+)\*\*', r'**\1**', clean_response)
-                
-                # Ensure proper branding
-                if not clean_response.startswith("SECURO:"):
-                    clean_response = f"SECURO: {clean_response}"
-                
-                return clean_response
-            else:
-                raise Exception("Empty or invalid AI response")
-                
-        except Exception as ai_error:
-            st.session_state.ai_error = f"AI Error: {str(ai_error)}"
-            st.session_state.ai_enabled = False
-            st.session_state.ai_status = "❌ AI Failed - Using CSV + Smart Fallback"
-    
-    # ENHANCED FALLBACK: Use CSV data directly if available
-    if csv_has_answer:
-        return f"SECURO: {csv_search_result}\n\n💡 This information comes directly from our comprehensive criminal justice database."
-    
-    # Enhanced fallback with conversation awareness
-    fallback_response = get_enhanced_fallback_response(user_input)
-    
-    # Add CSV search result to fallback if available
-    if csv_search_result and "❌" not in csv_search_result:
-        fallback_response += f"\n\n**Additional Database Search:**\n{csv_search_result}"
-    
-    return fallback_response
-
-def get_enhanced_fallback_response(user_input):
-    """Enhanced fallback system that leverages the comprehensive crime data"""
-    lower_input = user_input.lower()
-    
-    # Check for greetings first - return simple responses
-    greeting_response = get_greeting_response(user_input)
-    if greeting_response:
-        return greeting_response
-    
-    # Handle definition/what is questions specifically
-    if any(pattern in lower_input for pattern in ['what is', 'define', 'definition of', 'explain']):
-        # Try CSV search first for definitions
-        if st.session_state.get('csv_data') is not None:
-            csv_result = search_csv_data(st.session_state.csv_data, user_input)
-            if csv_result and "No specific match found" not in csv_result and "❌" not in csv_result:
-                return f"SECURO: {csv_result}\n\n💡 This definition comes directly from our comprehensive law enforcement knowledge base."
-        
-        # If no CSV match, provide general response
-        concept = lower_input.replace('what is', '').replace('define', '').replace('definition of', '').replace('explain', '').strip().rstrip('?')
-        return f"SECURO: I don't have a specific definition for '{concept}' in our current criminal justice database. However, I can help you with:\n\n• Crime statistics and trends for St. Kitts & Nevis\n• Hotspot analysis and geographic intelligence\n• Detection rates and performance metrics\n• Emergency contacts and procedures\n\nTry asking about these topics or search for related terms."
-    
-    # Enhanced statistics responses
-    elif any(word in lower_input for word in ['statistic', 'stats', 'data', 'number', 'total', 'how many']):
-        return f"""SECURO: **Q2 2025 Crime Statistics Analysis:**
-
-📊 **Federation Overview:**
-• **Total Crimes:** 292 cases
-• **Detection Rate:** 38.7% (113 solved)
-• **Regional Performance:** Nevis (52.9%) outperforming St. Kitts (32.9%)
-
-🏆 **Top Performing Areas:**
-• **Drug Enforcement:** 31/31 cases solved (100% success) 
-• **Bodily Harm:** 19/33 cases solved (57.6% rate)
-• **Murder Cases:** 2/4 cases solved (50% rate)
-
-⚠️ **Areas Needing Attention:**
-• **Larcenies:** 21/92 solved (22.8% rate) - Largest crime category
-• **Break-ins:** 7/26 solved (26.9% rate)
-• **Malicious Damage:** 17/59 solved (28.8% rate)
-
-📈 **Key Insights:**
-• 75% reduction in murders compared to 2024
-• Drug enforcement strategies are highly effective
-• Property crimes need strategic focus
-• Nevis strategies should be replicated on St. Kitts
-
-**Need specific data?** Ask about any crime type, location, or time period."""
-    
-    # Enhanced hotspot analysis
-    elif any(word in lower_input for word in ['hotspot', 'map', 'location', 'area', 'where', 'dangerous']):
-        return f"""SECURO: **Crime Hotspot Intelligence Report:**
-
-🔴 **HIGH RISK ZONES (3 locations - 36% of mapped crimes):**
-• **Basseterre Central:** 45 crimes - Larceny, Drug Crimes, Assault
-• **Molineux:** 33 crimes - Armed Robbery, Assault  
-• **Tabernacle:** 31 crimes - Robbery, Assault
-**Total High-Risk:** 109 crimes
-
-🟡 **MEDIUM RISK ZONES (6 locations):**
-• Cayon (28), Newton Ground (26), Old Road (22)
-• Ramsbury (21), Charlestown (18), Cotton Ground (16)
-**Total Medium-Risk:** 131 crimes
-
-🟢 **LOW RISK ZONES (4 locations):**
-• Sandy Point (19), Dieppe Bay (15), Newcastle (14), Gingerland (12)
-**Total Low-Risk:** 60 crimes
-
-🎯 **Strategic Recommendations:**
-• Increase patrol presence in Basseterre Central corridor
-• Deploy specialized units to high-risk areas during peak hours
-• Implement community policing in medium-risk zones
-• Use successful Nevis strategies in St. Kitts hotspots
-
-**Want specific location analysis?** Ask about any district or area."""
-    
-    # Enhanced trend analysis
-    elif any(word in lower_input for word in ['trend', 'predict', 'forecast', 'future', 'projection', 'compare', 'previous years']):
-        return f"""SECURO: **Crime Trend Analysis & Predictions:**
-
-📈 **Historical Homicide Trends:**
-• 2023: 31 homicides (peak recent year)
-• 2024: 28 homicides (-10% improvement)
-• 2025 H1: 4 homicides (75% reduction vs 2024 H1)
-
-🔮 **Predictive Analysis:**
-• **2025 Projection:** 10 total homicides (65% reduction from 2024)
-• **2026 Forecast:** 8 homicides (continued improvement)
-• **2027 Projection:** 7 homicides (sustained decline)
-
-📊 **Overall Crime Trends:**
-• Total crimes stabilizing around 580-590 annually
-• Drug detection improving dramatically (now 100%)
-• Property crimes (larceny, break-ins) remain challenge areas
-• Regional disparity: Nevis consistently outperforming St. Kitts
-
-💡 **Trend Drivers:**
-• Enhanced drug enforcement protocols
-• Improved intelligence gathering
-• Community policing initiatives
-• Technology integration in investigations
-
-**Year-over-Year Comparison (H1):**
-• 2023: 672 crimes, 17 murders
-• 2024: 586 crimes, 16 murders  
-• 2025: 574 crimes, 4 murders ⬇️ 75% murder reduction
-
-**Strategic Implications:** Current interventions are working. Recommend maintaining drug enforcement excellence while increasing focus on property crime prevention."""
-    
-    # Enhanced detection rate analysis
-    elif any(word in lower_input for word in ['detection', 'solve', 'solved', 'rate', 'performance']):
-        return f"""SECURO: **Detection Rate Performance Analysis:**
-
-🏆 **Exceptional Performance:**
-• **Drug Crimes:** 100% detection rate (31/31 cases)
-• **Bodily Harm:** 57.6% detection rate (19/33 cases)
-
-🎯 **Regional Comparison:**
-• **Nevis:** 52.9% overall detection rate
-• **St. Kitts:** 32.9% overall detection rate  
-• **Federation:** 38.7% overall detection rate
-
-📊 **Performance by Crime Type:**
-• Murder/Manslaughter: 50% (2/4 cases)
-• Break-ins: 26.9% (7/26 cases)
-• Malicious Damage: 28.8% (17/59 cases)
-• Larcenies: 22.8% (21/92 cases) - Needs improvement
-
-💡 **Performance Insights:**
-• Nevis outperforming St. Kitts by 20 percentage points
-• Drug strategies should be replicated for other crime types
-• Property crime detection needs strategic overhaul
-• Specialized units showing better results than general patrol
-
-**Recommendations:** Study and replicate Nevis successful practices, focus training on property crime investigation techniques."""
-    
-    # Emergency contacts
-    elif any(word in lower_input for word in ['emergency', 'contact', 'help', 'call', 'phone']):
-        return f"""SECURO: **Emergency Contacts - St. Kitts & Nevis:**
-
-🚨 **IMMEDIATE EMERGENCY:** 911
-🏢 **Police HQ:** 465-2241
-🔍 **Intelligence Office:** 465-2241 Ext. 4238/4239
-📧 **Email:** liosk@police.kn
-
-🏥 **Medical:** 465-2551
-🔥 **Fire:** 465-2515 / 465-7167  
-🚢 **Coast Guard:** 465-8384 / 466-9280
-⚡ **NEMA:** 466-5100
-➕ **Red Cross:** 465-2584
-
-⚠️ **Emergency Protocol:**
-1. Call 911 for immediate life-threatening situations
-2. Provide exact location and nature of emergency
-3. Stay on line until instructed otherwise
-4. Contact Intelligence Office for ongoing investigations"""
-    
-    # Enhanced capabilities
-    elif any(word in lower_input for word in ['what can you', 'help', 'capabilities', 'assist']):
-        return f"""SECURO: **Advanced Crime Analysis Capabilities:**
-
-📊 **Real-Time Analytics:**
-• Q2 2025 comprehensive database (292 crimes)
-• Detection rate analysis by region and crime type
-• Historical trend analysis (2015-2024)
-• Performance benchmarking and comparisons
-
-🗺️ **Geographic Intelligence:**
-• 13 mapped crime hotspots with risk assessments
-• Location-based crime pattern analysis
-• Strategic deployment recommendations
-• Resource allocation optimization
-
-🔮 **Predictive Analytics:**
-• Crime trend forecasting using historical data
-• Resource demand predictions
-• Intervention impact assessments
-• Strategic planning support
-
-🔬 **Investigation Support:**
-• Pattern recognition across cases
-• Statistical correlation analysis
-• Evidence-based recommendations
-• Multi-jurisdictional data analysis
-• Criminal justice definitions and concepts
-
-**Current Focus Areas:**
-• 75% murder reduction analysis
-• 100% drug detection success study
-• Property crime improvement strategies
-• Regional performance optimization
-
-**Ask me anything about:** crime patterns, statistics, hotspots, trends, investigations, definitions, or strategic planning."""
-    
-    # Default intelligent response with current data
-    else:
-        # Try CSV search for specific questions only (not broad searches)
-        csv_fallback = ""
-        if st.session_state.get('csv_data') is not None and len(user_input.split()) <= 6:  # Only for specific questions
-            csv_result = search_csv_data(st.session_state.csv_data, user_input)
-            if csv_result and "No specific match found" not in csv_result and "❌" not in csv_result:
-                csv_fallback = f"\n\n**From our criminal justice database:**\n{csv_result}"
-        
-        return f"""SECURO: I understand you're asking about "{user_input}". Let me provide relevant information:
-
-📊 **Current Crime Intelligence (Q2 2025):**
-• 292 total crimes across St. Kitts & Nevis
-• 38.7% overall detection rate
-• Significant 75% reduction in murders
-• Perfect performance in drug crime detection (100%)
-
-🗺️ **Geographic Intelligence:**
-• 13 crime hotspots mapped and analyzed
-• High-risk areas: Basseterre Central, Molineux, Tabernacle
-• Nevis showing superior performance vs St. Kitts
-
-💡 **How I can help you:**
-• **"Show statistics"** - Get detailed crime numbers and trends
-• **"Analyze hotspots"** - Location-based crime intelligence
-• **"What are the trends?"** - Historical analysis and predictions
-• **"Detection rates"** - Performance analysis by region/type
-• **"What is [term]?"** - Criminal justice definitions
-• **"Emergency contacts"** - Immediate assistance information
-
-Please specify what type of analysis or information you need, and I'll provide detailed insights from our comprehensive crime database.{csv_fallback}"""
-
-# Initialize the AI model with the enhanced function
-if 'model' not in st.session_state:
-    st.session_state.model = initialize_ai_model()
-model = st.session_state.model
+        return f"🔍 No matches found for '{query}' in the crime database. Try different search terms or check spelling."
 
 # Page configuration
 st.set_page_config(
@@ -1502,73 +993,6 @@ with st.sidebar:
         st.warning("⚠️ CSV Database Missing")
         st.write("• Add criminal_justice_qa.csv")
         st.write("• Place in app directory")
-    
-    # DEBUG PANEL
-    st.markdown("---")
-    st.markdown("### 🔧 AI Debug Panel")
-    
-    # API Key Status
-    api_key_status = "✅ Direct Key Configured"
-    st.write(f"**API Key:** {api_key_status}")
-    
-    # AI Model Status
-    ai_model_status = "✅ Loaded" if st.session_state.get('model') is not None else "❌ Not Loaded"
-    st.write(f"**Model:** {ai_model_status}")
-    
-    # Session State Info
-    st.write(f"**AI Enabled:** {st.session_state.get('ai_enabled', 'Unknown')}")
-    st.write(f"**Messages:** {len(st.session_state.get('messages', []))}")
-    
-    # Test AI Button
-    if st.button("🧪 Test AI Connection"):
-        model = st.session_state.get('model')
-        if model is not None:
-            try:
-                test_response = model.generate_content("Say 'AI Test Successful'")
-                if test_response and test_response.text:
-                    st.success(f"✅ AI Response: {test_response.text}")
-                    st.session_state.ai_enabled = True
-                else:
-                    st.error("❌ Empty response from AI")
-            except Exception as e:
-                st.error(f"❌ AI Test Failed: {str(e)}")
-                st.session_state.ai_enabled = False
-        else:
-            st.error("❌ Model not initialized")
-    
-    # Reset AI Button
-    if st.button("🔄 Reset AI"):
-        # Clear AI status
-        if 'ai_enabled' in st.session_state:
-            del st.session_state.ai_enabled
-        if 'ai_status' in st.session_state:
-            del st.session_state.ai_status
-        if 'ai_error' in st.session_state:
-            del st.session_state.ai_error
-        
-        # Reinitialize
-        st.session_state.model = initialize_ai_model()
-        st.success("🔄 AI Reset Complete")
-        st.rerun()
-    
-    # CSV Debug Info
-    st.markdown("### 📊 Database Debug")
-    if st.session_state.get('csv_data') is not None:
-        df = st.session_state.csv_data
-        st.success(f"✅ {len(df)} records loaded")
-        st.write(f"**Columns:** {', '.join(df.columns[:3])}...")
-        if st.button("🔍 Show Sample Data"):
-            st.dataframe(df.head(3))
-    else:
-        st.error("❌ CSV not loaded")
-        if st.button("🔄 Reload CSV"):
-            csv_data, status = load_csv_data()
-            st.session_state.csv_data = csv_data
-            if csv_data is not None:
-                st.success("✅ CSV Reloaded")
-            else:
-                st.error(f"❌ {status}")
-            st.rerun()
 
 # Main Header
 current_time = get_stkitts_time()
@@ -2060,11 +1484,11 @@ elif st.session_state.current_page == 'emergency':
     </div>
     """, unsafe_allow_html=True)
 
-# AI ASSISTANT CHAT PAGE
+# AI ASSISTANT CHAT PAGE - UPDATED WITH SHORTER CODE VERSION
 elif st.session_state.current_page == 'chat':
     st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Chat with SECURO AI</h2>', unsafe_allow_html=True)
     
-    # Load CSV data with better error handling
+    # Load CSV data with better error handling - FROM SHORTER CODE
     st.markdown('<h3 style="color: #44ff44;">📊 Crime Database Status</h3>', unsafe_allow_html=True)
 
     # Load CSV only once
@@ -2081,7 +1505,7 @@ elif st.session_state.current_page == 'chat':
                 if not st.session_state.messages:
                     st.session_state.messages.append({
                         "role": "assistant",
-                        "content": f"✅ Crime database loaded successfully!\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🗺️ Don't forget to check out the interactive crime hotspot map in the sidebar to explore high-risk areas across St. Kitts & Nevis!",
+                        "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🌍 I can also communicate in multiple languages!",
                         "timestamp": get_stkitts_time()
                     })
             else:
@@ -2091,7 +1515,7 @@ elif st.session_state.current_page == 'chat':
                 if not st.session_state.messages:
                     st.session_state.messages.append({
                         "role": "assistant",
-                        "content": f"❌ **Database Error:** Could not find 'criminal_justice_qa.csv'\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance and the interactive hotspot map is available in the Crime Hotspots section.",
+                        "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance.",
                         "timestamp": get_stkitts_time()
                     })
 
@@ -2110,119 +1534,99 @@ elif st.session_state.current_page == 'chat':
     
     st.info(f"🗺️ **Crime Hotspot Map:** {total_hotspots} locations mapped | {high_risk} High Risk | {medium_risk} Medium Risk | {low_risk} Low Risk areas")
     
-    # Initialize chat messages
+    # Initialize chat messages - FROM SHORTER CODE
     if not st.session_state.messages:
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "🛡️ **Welcome to SECURO AI Crime Analysis System**\n\nI'm your intelligent crime analysis assistant for St. Kitts & Nevis. I have access to comprehensive crime data including:\n\n📊 **Current Data (Q2 2025):**\n• 292 total crimes across the Federation\n• 38.7% overall detection rate\n• 13+ mapped crime hotspots\n• Real-time analytics and predictions\n\n🔍 **I can help you with:**\n• Crime pattern analysis and trends\n• Statistical insights and comparisons\n• Hotspot identification and risk assessment\n• Predictive analytics for resource planning\n• Forensic case support and investigations\n• Emergency contact information\n\n💬 **Try saying:** 'Hi', 'Show crime hotspots', 'What are the trends?', or ask anything about crime statistics, investigations, or law enforcement strategy for St. Kitts & Nevis.",
+            "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n• Multilingual communication support\n\n📊 Loading crime database... Please wait while I check for your data file.",
             "timestamp": get_stkitts_time()
         })
     
-    # Display chat messages
+    # Display chat messages with proper St. Kitts time - FROM SHORTER CODE
     for message in st.session_state.messages:
         if message["role"] == "user":
+            # Clean user message
+            clean_content = str(message["content"]).strip()
             st.markdown(f"""
             <div class="chat-message user-message">
-                <div class="message-content">{message["content"]}</div>
+                <div class="message-content">{clean_content}</div>
                 <div class="message-time">You • {message["timestamp"]} AST</div>
             </div>
             """, unsafe_allow_html=True)
         else:
+            # Clean bot message and ensure proper formatting
+            clean_content = str(message["content"]).strip()
+            # Remove any unwanted HTML or formatting
+            clean_content = re.sub(r'<[^>]+>', '', clean_content)
+            clean_content = clean_content.replace('```', '')
+           
+            # Format with SECURO prefix if it doesn't already have it
+            if not clean_content.startswith("SECURO:") and not clean_content.startswith("🚔"):
+                if "SECURO" in clean_content.upper():
+                    # If SECURO is mentioned but not at start, leave as is
+                    pass
+                else:
+                    clean_content = f"SECURO: {clean_content}"
+           
             st.markdown(f"""
             <div class="chat-message bot-message">
-                <div class="message-content">{message["content"]}</div>
-                <div class="message-time">SECURO AI • {message["timestamp"]} AST</div>
+                <div class="message-content">{clean_content}</div>
+                <div class="message-time">SECURO • {message["timestamp"]} AST</div>
             </div>
             """, unsafe_allow_html=True)
-    
-    # Chat input
+
+    # Chat input with language support - FROM SHORTER CODE
     with st.form("chat_form", clear_on_submit=True):
         col1, col2 = st.columns([5, 1])
-        
+       
         with col1:
             user_input = st.text_input(
                 "Message",
-                placeholder="Ask about crime statistics, hotspots, trends, investigations...",
+                placeholder="Ask questions about crime data, investigations, or emergency procedures...",
                 label_visibility="collapsed",
                 key="user_input"
             )
-        
+       
         with col2:
             send_button = st.form_submit_button("Send", type="primary")
-        
+       
         if send_button and user_input:
             current_time = get_stkitts_time()
-            
+           
             # Add user message
             st.session_state.messages.append({
                 "role": "user",
                 "content": user_input,
                 "timestamp": current_time
             })
-            
-            # Generate enhanced AI response
-            with st.spinner("🧠 SECURO AI analyzing crime data..."):
-                bot_response = generate_bot_response(user_input, st.session_state.selected_language)
-            
+           
+            # Generate response using AI with language support - FROM SHORTER CODE
+            with st.spinner("🔍 Analyzing crime database..."):
+                csv_results = search_csv_data(st.session_state.csv_data, user_input)
+                response = get_ai_response(user_input, csv_results, st.session_state.selected_language)
+           
             st.session_state.messages.append({
                 "role": "assistant",
-                "content": bot_response,
+                "content": response,
                 "timestamp": current_time
             })
+           
             st.rerun()
-    
-    # Quick Action Buttons
-    st.markdown('<h4 style="color: #44ff44; text-align: center; margin-bottom: 15px;">🚀 Quick Analysis Options</h4>', unsafe_allow_html=True)
-    
-    quick_options = [
-        ("🗺️ Analyze Hotspots", "Show me a detailed analysis of the current crime hotspots across St. Kitts & Nevis"),
-        ("📈 Crime Trends", "What are the current crime trends and how do they compare to previous years?"),
-        ("🎯 Detection Rates", "Analyze the detection rates across different regions and crime types"),
-        ("🔮 Predictions", "What are your predictions for crime rates in the coming years?"),
-        ("🏘️ District Analysis", "Compare the performance of different police districts"),
-        ("🔬 Forensic Support", "How can SECURO assist with forensic analysis and investigation support?")
-    ]
-    
-    col1, col2, col3 = st.columns(3)
-    
-    for i, (button_text, query_text) in enumerate(quick_options):
-        col = [col1, col2, col3][i % 3]
-        with col:
-            if st.button(button_text, key=f"quick_{i}"):
-                current_time = get_stkitts_time()
-                
-                st.session_state.messages.append({
-                    "role": "user",
-                    "content": query_text,
-                    "timestamp": current_time
-                })
-                
-                # Generate enhanced response using new system
-                with st.spinner("🧠 SECURO AI analyzing..."):
-                    response = generate_bot_response(query_text, st.session_state.selected_language)
-                
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": response,
-                    "timestamp": current_time
-                })
-                
-                st.rerun()
 
-# Status Bar
-csv_status = f"{len(st.session_state.csv_data)} CSV Records" if st.session_state.get('csv_data') is not None else "CSV Missing"
-ai_status = "AI Active" if st.session_state.get('ai_enabled', False) else "AI Fallback"
+# Status bar with real-time updates - FROM SHORTER CODE
+status_message = "CSV Data Ready" if st.session_state.csv_data is not None else "CSV Data Missing"
+status_class = "status-processing" if st.session_state.csv_data is not None else "status-evidence"
 current_time = get_stkitts_time()
 
 st.markdown(f"""
 <div class="status-bar">
     <div class="status-item">
         <div class="status-dot"></div>
-        <span>SECURO {ai_status}</span>
+        <span>SECURO {"AI Active" if st.session_state.get('ai_enabled', False) else "AI Fallback"}</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
-        <span>Database: {csv_status}</span>
+        <span>Database: {len(st.session_state.csv_data) if st.session_state.get('csv_data') is not None else "Not Found"} records</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
@@ -2233,7 +1637,7 @@ st.markdown(f"""
         <span>{current_time} AST</span>
     </div>
     <div class="status-item">
-        <div class="status-dot" style="background: #33cc33;"></div>
+        <div class="status-dot"></div>
         <span>{SUPPORTED_LANGUAGES[st.session_state.selected_language]}</span>
     </div>
 </div>
