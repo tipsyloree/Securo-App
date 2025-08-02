@@ -2030,4 +2030,617 @@ if st.session_state.current_page == 'welcome':
     <div style="text-align: center; margin-bottom: 40px;">
         <h2 style="color: #44ff44; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(68, 255, 68, 0.5);">Welcome to SECURO</h2>
         <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; color: #e0e0e0;">Your comprehensive AI-powered crime analysis and security system for St. Kitts & Nevis</p>
-        <p style="
+        <p style="font-size: 1rem; line-height: 1.6; color: #e0e0e0;">SECURO (Security & Crime Understanding & Response Operations) is an advanced platform designed to support law enforcement, enhance public safety, and provide data-driven insights for crime prevention and analysis.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Feature Cards
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">🗺️</div>
+            <h3>Interactive Crime Mapping</h3>
+            <p>Visualize crime patterns across 13+ mapped locations with real-time risk assessments and hotspot identification.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">🤖</div>
+            <h3>AI Crime Assistant</h3>
+            <p>Chat with SECURO for intelligent analysis, pattern recognition, and investigative support with multilingual capabilities.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Real-Time Analytics</h3>
+            <p>Access comprehensive crime statistics with Q2 2025 data showing 292 total crimes and detailed performance metrics.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">🔮</div>
+            <h3>Predictive Analytics</h3>
+            <p>Advanced algorithms analyze historical data to predict crime trends and support strategic planning efforts.</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ABOUT PAGE
+elif st.session_state.current_page == 'about':
+    st.markdown("""
+    <h2 style="color: #44ff44; margin-bottom: 20px; text-align: center;">About SECURO</h2>
+    
+    <p style="color: #e0e0e0;"><strong style="color: #44ff44;">SECURO</strong> is an intelligent and professional multilingual crime mitigation system built to provide real-time, data-driven insights for law enforcement, criminologists, policy makers, and the general public in St. Kitts & Nevis.</p>
+
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Mission</h3>
+    <p style="color: #e0e0e0;">Our mission is to support crime prevention, research, and public safety through:</p>
+    <ul style="list-style: none; padding: 0; color: #e0e0e0;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Interactive maps and geographic analysis</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Statistical analysis and trend identification</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Predictive analytics for crime prevention</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Visual data presentations (charts, graphs, etc.)</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Emergency contact guidance</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Multilingual communication support</span>
+        </li>
+    </ul>
+
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Core Capabilities</h3>
+    <ul style="list-style: none; padding: 0; color: #e0e0e0;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Analyze and summarize current and historical crime data (local and global)</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Detect trends and patterns across time, location, and type</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Recommend prevention strategies based on geographic and temporal factors</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Provide accessible language for general users, while supporting technical depth for experts</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Integrate with GIS, crime databases, and public safety systems</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Generate visual outputs and interactive maps</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Communicate effectively in multiple languages</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Adapt responses to be clear, concise, and actionable</span>
+        </li>
+    </ul>
+
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Current Data Integration</h3>
+    <ul style="list-style: none; padding: 0; color: #e0e0e0;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Q2 2025 Crime Statistics (292 total crimes)</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Historical Homicide Data (2015-2024)</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">13+ Crime Hotspot Locations Mapped</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">District-wise Performance Analytics</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Multi-language Support (12 languages)</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Real-time Emergency Contact Database</span>
+        </li>
+    </ul>
+
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Professional Standards</h3>
+    <p style="color: #e0e0e0;">SECURO maintains professional standards with:</p>
+    <ul style="list-style: none; padding: 0; color: #e0e0e0;">
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Accurate, evidence-based analysis</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Clear, non-panic-inducing communication</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Focus on empowerment and awareness</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Understanding of criminology and public safety best practices</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #e0e0e0;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #e0e0e0;">Real-time St. Kitts & Nevis time and date integration</span>
+        </li>
+    </ul>
+
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">Data Security & Accuracy</h3>
+    <p style="color: #e0e0e0;">All crime data is sourced directly from the Royal St. Christopher and Nevis Police Force and is updated regularly to ensure accuracy and relevance for operational decision-making. SECURO maintains the highest standards of data security and privacy.</p>
+    """, unsafe_allow_html=True)
+
+# CRIME HOTSPOTS PAGE
+elif st.session_state.current_page == 'map':
+    st.markdown('<h2 style="color: #44ff44;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h2>', unsafe_allow_html=True)
+    
+    try:
+        with st.spinner("🗺️ Loading interactive crime hotspot map..."):
+            crime_map = create_crime_hotspot_map()
+            map_data = st_folium(
+                crime_map,
+                width="100%",
+                height=600,
+                returned_objects=["last_object_clicked_tooltip", "last_clicked"],
+                key="crime_hotspot_map"
+            )
+            
+            # Display clicked location info
+            if map_data['last_object_clicked_tooltip']:
+                clicked_info = map_data['last_object_clicked_tooltip']
+                st.info(f"📍 **Last Clicked Location:** {clicked_info}")
+    
+    except Exception as e:
+        st.error(f"❌ Map Error: {str(e)}")
+        st.info("💡 Note: Make sure folium and streamlit-folium are installed")
+    
+    # Hotspot Analysis Summary
+    st.markdown('<h3 style="color: #44ff44;">📍 Hotspot Analysis Summary</h3>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c;">
+            <strong style="color: #e74c3c;">High Risk Areas (3)</strong><br>
+            <span style="color: #e0e0e0; font-size: 0.9rem;">Basseterre Central, Molineux, Tabernacle<br>Total: 109 crimes</span>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12;">
+            <strong style="color: #f39c12;">Medium Risk Areas (6)</strong><br>
+            <span style="color: #e0e0e0; font-size: 0.9rem;">Cayon, Newton Ground, Old Road, etc.<br>Total: 133 crimes</span>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: rgba(39, 174, 96, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
+            <strong style="color: #27ae60;">Low Risk Areas (4)</strong><br>
+            <span style="color: #e0e0e0; font-size: 0.9rem;">Sandy Point, Dieppe Bay, etc.<br>Total: 60 crimes</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+# STATISTICS & ANALYTICS PAGE
+elif st.session_state.current_page == 'statistics':
+    st.markdown('<h2 style="color: #44ff44;">📊 Crime Statistics & Analytics</h2>', unsafe_allow_html=True)
+    
+    # Q2 2025 Overview
+    st.markdown('<h3 style="color: #44ff44;">Q2 2025 Crime Statistics Overview</h3>', unsafe_allow_html=True)
+    
+    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    
+    stats_data = st.session_state.crime_stats
+    
+    with col1:
+        st.markdown("""
+        <div class="stat-card">
+            <div class="stat-number">292</div>
+            <div class="stat-label">Total Crimes (Q2 2025)</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="stat-card">
+            <div class="stat-number">38.7%</div>
+            <div class="stat-label">Overall Detection Rate</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="stat-card">
+            <div class="stat-number">207</div>
+            <div class="stat-label">St. Kitts Crimes</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="stat-card">
+            <div class="stat-number">85</div>
+            <div class="stat-label">Nevis Crimes</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col5:
+        st.markdown("""
+        <div class="stat-card">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Murders (Q2 2025)</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col6:
+        st.markdown("""
+        <div class="stat-card">
+            <div class="stat-number">31</div>
+            <div class="stat-label">Drug Crimes (100% detected)</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Chart Controls
+    st.markdown('<h3 style="color: #44ff44;">📈 Interactive Analytics</h3>', unsafe_allow_html=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("📈 Homicide Trends", key="chart_trends"):
+            fig = create_crime_charts("homicide_trend", stats_data)
+            st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        if st.button("🔍 Crime Breakdown", key="chart_breakdown"):
+            fig = create_crime_charts("crime_breakdown", stats_data)
+            st.plotly_chart(fig, use_container_width=True)
+    
+    with col3:
+        if st.button("🎯 Detection Rates", key="chart_detection"):
+            fig = create_crime_charts("detection_rates", stats_data)
+            st.plotly_chart(fig, use_container_width=True)
+    
+    with col4:
+        if st.button("🔮 Predictions", key="chart_predictions"):
+            fig = create_crime_charts("predictions", stats_data)
+            st.plotly_chart(fig, use_container_width=True)
+    
+    # Crime Breakdown Details
+    st.markdown('<h3 style="color: #44ff44;">🔍 Q2 2025 Crime Breakdown by Category</h3>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #44ff44; margin-bottom: 15px;">
+            <strong style="color: #44ff44;">Larcenies</strong><br>
+            <span style="color: #e0e0e0;">92 cases (31.5%) | 21 detected (22.8%)</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12; margin-bottom: 15px;">
+            <strong style="color: #f39c12;">Malicious Damage</strong><br>
+            <span style="color: #e0e0e0;">59 cases (20.2%) | 17 detected (28.8%)</span>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c; margin-bottom: 15px;">
+            <strong style="color: #e74c3c;">Bodily Harm</strong><br>
+            <span style="color: #e0e0e0;">33 cases (11.3%) | 19 detected (57.6%)</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60; margin-bottom: 15px;">
+            <strong style="color: #27ae60;">Drug Crimes</strong><br>
+            <span style="color: #e0e0e0;">31 cases (10.6%) | 31 detected (100%)</span>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #9b59b6; margin-bottom: 15px;">
+            <strong style="color: #9b59b6;">Break-ins</strong><br>
+            <span style="color: #e0e0e0;">26 cases (8.9%) | 7 detected (26.9%)</span>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #34495e; margin-bottom: 15px;">
+            <strong style="color: #34495e;">Murder/Manslaughter</strong><br>
+            <span style="color: #e0e0e0;">4 cases (1.4%) | 2 detected (50%)</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+    # Historical Comparison
+    st.markdown('<h3 style="color: #44ff44;">📈 Historical Comparison (Jan-June)</h3>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="text-align: center; padding: 15px; background: rgba(68, 255, 68, 0.05); border-radius: 8px;">
+            <div style="font-size: 1.5rem; color: #44ff44; font-weight: bold;">2023 H1</div>
+            <div style="color: #e0e0e0;">672 total crimes</div>
+            <div style="color: #e74c3c; font-size: 0.9rem;">17 murders</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="text-align: center; padding: 15px; background: rgba(68, 255, 68, 0.05); border-radius: 8px;">
+            <div style="font-size: 1.5rem; color: #44ff44; font-weight: bold;">2024 H1</div>
+            <div style="color: #e0e0e0;">586 total crimes</div>
+            <div style="color: #e74c3c; font-size: 0.9rem;">16 murders</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="text-align: center; padding: 15px; background: rgba(68, 255, 68, 0.1); border-radius: 8px; border: 1px solid rgba(68, 255, 68, 0.3);">
+            <div style="font-size: 1.5rem; color: #44ff44; font-weight: bold;">2025 H1</div>
+            <div style="color: #e0e0e0;">574 total crimes</div>
+            <div style="color: #27ae60; font-size: 0.9rem;">4 murders (↓75%)</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# EMERGENCY CONTACTS PAGE
+elif st.session_state.current_page == 'emergency':
+    st.markdown("""
+    <h2 style="color: #e74c3c; margin-bottom: 30px; text-align: center;">🚨 Emergency Contacts</h2>
+    """, unsafe_allow_html=True)
+    
+    col1, col2, col3, col4 = st.columns(4)
+    
+    emergency_contacts = [
+        ("🚔 Police Emergency", "911", "For immediate police assistance and emergency response"),
+        ("🏢 Police Headquarters", "465-2241", "Royal St. Christopher and Nevis Police Force\nLocal Intelligence: Ext. 4238/4239"),
+        ("🏥 Medical Emergency", "465-2551", "Hospital services and medical emergencies"),
+        ("🔥 Fire Department", "465-2515", "Fire emergencies and rescue operations\nAlt: 465-7167"),
+        ("🚢 Coast Guard", "465-8384", "Maritime emergencies and water rescue\nAlt: 466-9280"),
+        ("🌡️ Met Office", "465-2749", "Weather emergencies and warnings"),
+        ("➕ Red Cross", "465-2584", "Disaster relief and emergency aid"),
+        ("⚡ NEMA", "466-5100", "National Emergency Management Agency")
+    ]
+    
+    for i, (title, number, description) in enumerate(emergency_contacts):
+        col = [col1, col2, col3, col4][i % 4]
+        with col:
+            st.markdown(f"""
+            <div class="emergency-card">
+                <h3>{title}</h3>
+                <div class="phone-number">{number}</div>
+                <p style="color: #e0e0e0;">{description}</p>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # Emergency Guidelines
+    st.markdown("""
+    <div style="background: rgba(255, 243, 205, 0.1); border: 1px solid rgba(255, 234, 167, 0.3); padding: 20px; border-radius: 10px; margin-top: 30px;">
+        <h3 style="color: #f39c12; margin-bottom: 15px;">⚠️ Important Emergency Guidelines</h3>
+        <ul style="color: #e0e0e0; line-height: 1.6; list-style: none; padding: 0;">
+            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
+                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+                <strong>For life-threatening emergencies, always call 911 first</strong>
+            </li>
+            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
+                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+                When calling, provide your exact location and nature of emergency
+            </li>
+            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
+                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+                Stay on the line until instructed to hang up
+            </li>
+            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
+                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+                Keep these numbers easily accessible at all times
+            </li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+# AI ASSISTANT CHAT PAGE - UPDATED WITH SHORTER CODE VERSION
+elif st.session_state.current_page == 'chat':
+    st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Chat with SECURO AI</h2>', unsafe_allow_html=True)
+    
+    # Load CSV data with better error handling - FROM SHORTER CODE
+    st.markdown('<h3 style="color: #44ff44;">📊 Crime Database Status</h3>', unsafe_allow_html=True)
+
+    # Load CSV only once
+    if not st.session_state.csv_loaded:
+        with st.spinner("🔍 Searching for crime database..."):
+            csv_data, status_message = load_csv_data()
+            st.session_state.csv_data = csv_data
+            st.session_state.csv_loaded = True
+           
+            if csv_data is not None:
+                st.success(f"✅ Database loaded successfully! {len(csv_data)} records found.")
+               
+                # Add success message to chat if messages are empty
+                if not st.session_state.messages:
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": f"✅ Crime database loaded successfully!\n\n📊 Database contains {len(csv_data)} records with {len(csv_data.columns)} data fields.\n\n🔍 You can now ask me questions about the crime data. Try asking about specific crimes, locations, dates, or any other information you need for your investigation.\n\n🌍 I can also communicate in multiple languages!",
+                        "timestamp": get_stkitts_time()
+                    })
+            else:
+                st.error(f"❌ Database not found: {status_message}")
+               
+                # Add error message to chat if messages are empty
+                if not st.session_state.messages:
+                    st.session_state.messages.append({
+                        "role": "assistant",
+                        "content": f"❌ **Database Error:** {status_message}\n\n🔧 **How to fix:**\n1. Make sure your CSV file is named exactly `criminal_justice_qa.csv`\n2. Place it in the same folder as your Streamlit app\n3. Restart the application\n\n💡 Without the database, I can still help with general crime investigation guidance.",
+                        "timestamp": get_stkitts_time()
+                    })
+
+    # Show current status
+    ai_status = st.session_state.get('ai_status', 'AI Status Unknown')
+    if st.session_state.csv_data is not None:
+        st.success(f"✅ Database Ready: {len(st.session_state.csv_data)} crime records loaded | {ai_status}")
+    else:
+        st.error(f"❌ Database Not Found: Place 'criminal_justice_qa.csv' in app directory | {ai_status}")
+
+    # Crime Hotspot Summary
+    total_hotspots = len(CRIME_HOTSPOTS)
+    high_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'High'])
+    medium_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Medium'])
+    low_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Low'])
+    
+    st.info(f"🗺️ **Crime Hotspot Map:** {total_hotspots} locations mapped | {high_risk} High Risk | {medium_risk} Medium Risk | {low_risk} Low Risk areas")
+    
+    # Initialize chat messages - FROM SHORTER CODE
+    if not st.session_state.messages:
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": "🚔 Welcome to SECURO - Your AI Crime Investigation Assistant for St. Kitts & Nevis Law Enforcement.\n\nI assist criminologists, police officers, forensic experts, and autopsy professionals with:\n• Case analysis and evidence correlation\n• Crime data search and insights\n• Investigative support and recommendations\n• Multilingual communication support\n\n📊 Loading crime database... Please wait while I check for your data file.",
+            "timestamp": get_stkitts_time()
+        })
+    
+    # Display chat messages with proper St. Kitts time - FROM SHORTER CODE
+    for message in st.session_state.messages:
+        if message["role"] == "user":
+            # Clean user message
+            clean_content = str(message["content"]).strip()
+            st.markdown(f"""
+            <div class="chat-message user-message">
+                <div class="message-content">{clean_content}</div>
+                <div class="message-time">You • {message["timestamp"]} AST</div>
+            </div>
+            """, unsafe_allow_html=True)
+        else:
+            # Clean bot message and ensure proper formatting
+            clean_content = str(message["content"]).strip()
+            # Remove any unwanted HTML or formatting
+            clean_content = re.sub(r'<[^>]+>', '', clean_content)
+            clean_content = clean_content.replace('```', '')
+           
+            # Format with SECURO prefix if it doesn't already have it
+            if not clean_content.startswith("SECURO:") and not clean_content.startswith("🚔"):
+                if "SECURO" in clean_content.upper():
+                    # If SECURO is mentioned but not at start, leave as is
+                    pass
+                else:
+                    clean_content = f"SECURO: {clean_content}"
+           
+            st.markdown(f"""
+            <div class="chat-message bot-message">
+                <div class="message-content">{clean_content}</div>
+                <div class="message-time">SECURO • {message["timestamp"]} AST</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Chat input with language support - FROM SHORTER CODE
+    with st.form("chat_form", clear_on_submit=True):
+        col1, col2 = st.columns([5, 1])
+       
+        with col1:
+            user_input = st.text_input(
+                "Message",
+                placeholder="Ask questions about crime data, investigations, or emergency procedures...",
+                label_visibility="collapsed",
+                key="user_input"
+            )
+       
+        with col2:
+            send_button = st.form_submit_button("Send", type="primary")
+       
+        if send_button and user_input:
+            current_time = get_stkitts_time()
+           
+            # Add user message
+            st.session_state.messages.append({
+                "role": "user",
+                "content": user_input,
+                "timestamp": current_time
+            })
+           
+            # Generate response using AI with language support - FROM SHORTER CODE
+            with st.spinner("🔍 Analyzing crime database..."):
+                csv_results = search_csv_data(st.session_state.csv_data, user_input)
+                response = get_ai_response(user_input, csv_results, st.session_state.selected_language)
+           
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response,
+                "timestamp": current_time
+            })
+           
+            st.rerun()
+
+# Status bar with real-time updates - FROM SHORTER CODE
+status_message = "CSV Data Ready" if st.session_state.csv_data is not None else "CSV Data Missing"
+status_class = "status-processing" if st.session_state.csv_data is not None else "status-evidence"
+current_time = get_stkitts_time()
+
+st.markdown(f"""
+<div class="status-bar">
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>SECURO {"AI Active" if st.session_state.get('ai_enabled', False) else "AI Fallback"}</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>Database: {len(st.session_state.csv_data) if st.session_state.get('csv_data') is not None else "Not Found"} records</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>Hotspots: 13 Locations Mapped</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>{current_time} AST</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>{SUPPORTED_LANGUAGES[st.session_state.selected_language]}</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Footer
+st.markdown(f"""
+<div style="text-align: center; color: #666; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; padding: 20px; margin-top: 20px; border-top: 1px solid rgba(68, 255, 68, 0.2);">
+    📊 Data Source: Royal St. Christopher & Nevis Police Force (RSCNPF)<br>
+    📞 Local Intelligence Office: <a href="tel:+18694652241" style="color: #44ff44; text-decoration: none;">869-465-2241</a> Ext. 4238/4239 | 
+    📧 <a href="mailto:liosk@police.kn" style="color: #44ff44; text-decoration: none;">liosk@police.kn</a><br>
+    🔄 Last Updated: {get_stkitts_date()} {get_stkitts_time()} AST | Real-time Analytics Powered by SECURO AI<br>
+    🗺️ Interactive Crime Hotspot System: 13 locations mapped across St. Kitts & Nevis<br>
+    🌍 Multi-language Support Available | 🔒 Secure Law Enforcement Platform
+</div>
+""", unsafe_allow_html=True)
