@@ -688,7 +688,7 @@ if 'crime_stats' not in st.session_state:
 if 'selected_periods' not in st.session_state:
     st.session_state.selected_periods = ['2025_Q2']
 
-# CSS styling (same as before)
+# CSS styling - Fixed for dropdown visibility
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
@@ -697,14 +697,62 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
+    /* Fix dropdown visibility issues */
+    .stMultiSelect {
+        background: transparent !important;
+    }
+    
+    .stMultiSelect > div > div {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        border-radius: 8px !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div > div {
+        color: #ffffff !important;
+    }
+    
+    /* Dropdown menu styling */
+    .stMultiSelect > div > div[data-baseweb="select"] > div {
+        background-color: rgba(0, 0, 0, 0.9) !important;
+        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul {
+        background-color: rgba(0, 0, 0, 0.95) !important;
+        border: 1px solid rgba(68, 255, 68, 0.3) !important;
+        border-radius: 8px !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul li {
+        background-color: rgba(0, 0, 0, 0.95) !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul li:hover {
+        background-color: rgba(68, 255, 68, 0.2) !important;
+        color: #44ff44 !important;
+    }
+    
+    /* Selected items styling */
+    .stMultiSelect span[data-baseweb="tag"] {
+        background-color: rgba(68, 255, 68, 0.2) !important;
+        border: 1px solid #44ff44 !important;
+        color: #44ff44 !important;
+    }
+    
+    /* Ensure all elements have proper visibility */
     .element-container {
         background: transparent !important;
     }
     
     .stButton > button {
-        background: none !important;
+        background: linear-gradient(135deg, #44ff44, #33cc33) !important;
         border: none !important;
         box-shadow: none !important;
+        color: #000 !important;
     }
     
     @keyframes moveGradient {
@@ -1266,16 +1314,24 @@ elif st.session_state.current_page == 'statistics':
     # **NEW: Year/Period Selection Dropdown**
     st.markdown('<h3 style="color: #44ff44;">📅 Select Time Periods for Analysis</h3>', unsafe_allow_html=True)
     
-    available_periods = list(st.session_state.crime_stats.keys())
-    period_labels = {key: data["period"] for key, data in st.session_state.crime_stats.items()}
-    
-    selected_periods = st.multiselect(
-        "Choose time periods to analyze:",
-        options=available_periods,
-        default=['2025_Q2'],
-        format_func=lambda x: period_labels.get(x, x),
-        help="Select one or more time periods to compare statistics and trends"
-    )
+    # Add some spacing and a container for better visibility
+    with st.container():
+        st.markdown("""
+        <div style="background: rgba(68, 255, 68, 0.05); padding: 20px; border-radius: 10px; margin: 20px 0; border: 1px solid rgba(68, 255, 68, 0.2);">
+        </div>
+        """, unsafe_allow_html=True)
+        
+        available_periods = list(st.session_state.crime_stats.keys())
+        period_labels = {key: data["period"] for key, data in st.session_state.crime_stats.items()}
+        
+        selected_periods = st.multiselect(
+            "📊 Choose time periods to analyze:",
+            options=available_periods,
+            default=['2025_Q2'],
+            format_func=lambda x: period_labels.get(x, x),
+            help="Select one or more time periods to compare statistics and trends",
+            key="period_selector"
+        )
     
     if not selected_periods:
         st.warning("Please select at least one time period to view statistics.")
