@@ -634,7 +634,7 @@ def generate_smart_response(user_input, language='en'):
 
 # Initialize the AI model - REPLACE WITH YOUR API KEY
 try:
-    GOOGLE_API_KEY = "AIzaSyAHShkbNY_BHNBsc1LMYXlQscJXc3Cpim8"  # REPLACE THIS WITH YOUR ACTUAL API KEY
+    GOOGLE_API_KEY = "AIzaSyBfqpVf3XWpYb_pRtKEMjxjwbbXKUgWicI"  # REPLACE THIS WITH YOUR ACTUAL API KEY
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
