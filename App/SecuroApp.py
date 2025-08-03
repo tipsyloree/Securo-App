@@ -69,54 +69,196 @@ CRIME_HOTSPOTS = {
     "Ramsbury": {"lat": 17.1500, "lon": -62.6167, "crimes": 21, "risk": "Medium", "types": ["Drug Crimes", "Assault"]},
 }
 
-# EXPANDED CRIME DATABASE - Based on Official Police Reports
-POLICE_CRIME_DATABASE = {
-    "Q2_2025": {
+# ENHANCED MULTI-YEAR CRIME DATABASE - Based on Official Police Reports
+HISTORICAL_CRIME_DATABASE = {
+    "2025_Q2": {
         "period": "Q2 2025 (Apr-Jun)",
         "total_crimes": 292,
         "detection_rate": 38.7,
-        "breakdown": {
-            "murder_manslaughter": {"total": 4, "detected": 2, "rate": "50%"},
-            "attempted_murder": {"total": 4, "detected": 0, "rate": "0%"},
-            "bodily_harm": {"total": 33, "detected": 19, "rate": "57.6%"},
-            "sex_crimes": {"total": 7, "detected": 1, "rate": "14.3%"},
-            "break_ins": {"total": 26, "detected": 7, "rate": "26.9%"},
-            "larcenies": {"total": 92, "detected": 21, "rate": "22.8%"},
-            "robberies": {"total": 8, "detected": 1, "rate": "12.5%"},
-            "firearms_offences": {"total": 5, "detected": 5, "rate": "100%"},
-            "drug_crimes": {"total": 31, "detected": 31, "rate": "100%"},
-            "malicious_damage": {"total": 59, "detected": 17, "rate": "28.8%"},
-            "other_crimes": {"total": 22, "detected": 8, "rate": "36.4%"}
+        "federation": {
+            "murder_manslaughter": {"total": 4, "detected": 2, "rate": 50.0},
+            "attempted_murder": {"total": 4, "detected": 0, "rate": 0.0},
+            "bodily_harm": {"total": 33, "detected": 19, "rate": 57.6},
+            "sex_crimes": {"total": 7, "detected": 1, "rate": 14.3},
+            "break_ins": {"total": 26, "detected": 7, "rate": 26.9},
+            "larcenies": {"total": 92, "detected": 21, "rate": 22.8},
+            "robberies": {"total": 8, "detected": 1, "rate": 12.5},
+            "firearms_offences": {"total": 5, "detected": 5, "rate": 100.0},
+            "drug_crimes": {"total": 31, "detected": 31, "rate": 100.0},
+            "malicious_damage": {"total": 59, "detected": 17, "rate": 28.8},
         },
-        "regional_breakdown": {
-            "st_kitts": {"crimes": 207, "detection_rate": 32.9},
-            "nevis": {"crimes": 85, "detection_rate": 52.9}
+        "st_kitts": {"crimes": 207, "detection_rate": 32.9},
+        "nevis": {"crimes": 85, "detection_rate": 52.9}
+    },
+    "2025_H1": {
+        "period": "H1 2025 (Jan-Jun)",
+        "total_crimes": 574,
+        "federation": {
+            "murder_manslaughter": {"total": 4},
+            "shooting_intent": {"total": 1},
+            "attempted_murder": {"total": 4},
+            "bodily_harm": {"total": 72},
+            "sex_crimes": {"total": 15},
+            "break_ins": {"total": 67},
+            "larcenies": {"total": 185},
+            "robberies": {"total": 13},
+            "firearms_offences": {"total": 13},
+            "drug_crimes": {"total": 45},
+            "malicious_damage": {"total": 115},
         }
     },
-    "Historical_Data": {
-        "homicide_trends": {
-            2015: 29, 2016: 32, 2017: 23, 2018: 23, 2019: 12,
-            2020: 10, 2021: 14, 2022: 11, 2023: 31, 2024: 28, 2025: 4
-        },
-        "yearly_comparison": {
-            "2023_H1": {"total": 672, "murders": 17, "larcenies": 231, "drugs": 6},
-            "2024_H1": {"total": 586, "murders": 16, "larcenies": 193, "drugs": 8},
-            "2025_H1": {"total": 574, "murders": 4, "larcenies": 185, "drugs": 45}
-        },
-        "crime_methods": {
-            "homicide_methods": {
-                "shooting": 173, "stabbing": 29, "bludgeoning": 4,
-                "strangulation": 5, "other": 2
-            }
+    "2024_H1": {
+        "period": "H1 2024 (Jan-Jun)", 
+        "total_crimes": 586,
+        "federation": {
+            "murder_manslaughter": {"total": 16},
+            "shooting_intent": {"total": 1},
+            "attempted_murder": {"total": 14},
+            "bodily_harm": {"total": 78},
+            "sex_crimes": {"total": 36},
+            "break_ins": {"total": 61},
+            "larcenies": {"total": 193},
+            "robberies": {"total": 22},
+            "firearms_offences": {"total": 6},
+            "drug_crimes": {"total": 8},
+            "malicious_damage": {"total": 109},
         }
     },
-    "Performance_Metrics": {
-        "best_detection_rates": ["Drug Crimes (100%)", "Firearms Offences (100%)", "Bodily Harm (57.6%)"],
-        "needs_improvement": ["Attempted Murder (0%)", "Robberies (12.5%)", "Sex Crimes (14.3%)"],
-        "regional_leaders": {
-            "nevis": "52.9% detection rate",
-            "federation_average": "38.7% detection rate"
+    "2024_Q1": {
+        "period": "Q1 2024 (Jan-Mar)",
+        "total_crimes": 276,
+        "federation": {
+            "murder_manslaughter": {"total": 6},
+            "attempted_murder": {"total": 3},
+            "bodily_harm": {"total": 46},
+            "sex_crimes": {"total": 19},
+            "break_ins": {"total": 32},
+            "larcenies": {"total": 89},
+            "robberies": {"total": 10},
+            "firearms_offences": {"total": 2},
+            "drug_crimes": {"total": 5},
+            "malicious_damage": {"total": 48},
         }
+    },
+    "2023_H1": {
+        "period": "H1 2023 (Jan-Jun)",
+        "total_crimes": 672,
+        "federation": {
+            "murder_manslaughter": {"total": 17},
+            "shooting_intent": {"total": 5},
+            "woundings_firearm": {"total": 2},
+            "attempted_murder": {"total": 5},
+            "bodily_harm": {"total": 93},
+            "sex_crimes": {"total": 37},
+            "break_ins": {"total": 62},
+            "larcenies": {"total": 231},
+            "robberies": {"total": 17},
+            "firearms_offences": {"total": 18},
+            "drug_crimes": {"total": 6},
+            "malicious_damage": {"total": 158},
+        }
+    },
+    "2022_Q1": {
+        "period": "Q1 2022 (Jan-Mar)",
+        "total_crimes": 368,
+        "federation": {
+            "murder_manslaughter": {"total": 4},
+            "shooting_intent": {"total": 1},
+            "attempted_murder": {"total": 5},
+            "bodily_harm": {"total": 38},
+            "sex_crimes": {"total": 10},
+            "break_ins": {"total": 43},
+            "larcenies": {"total": 159},
+            "robberies": {"total": 11},
+            "firearms_offences": {"total": 5},
+            "drug_crimes": {"total": 9},
+            "malicious_damage": {"total": 65},
+        }
+    }
+}
+
+# ENHANCED FORENSIC SCIENCE KNOWLEDGE BASE
+FORENSIC_KNOWLEDGE_BASE = {
+    "dna_analysis": {
+        "overview": "DNA profiling is the gold standard for human identification in forensic investigations.",
+        "key_points": [
+            "STR (Short Tandem Repeat) analysis is standard for CODIS database entries",
+            "Degraded samples require specialized extraction and amplification techniques",
+            "Mixture interpretation follows probabilistic genotyping methods",
+            "Touch DNA can be recovered from items handled for just seconds"
+        ],
+        "procedures": [
+            "Sample collection with sterile techniques and proper documentation",
+            "DNA extraction using organic or solid phase methods",
+            "PCR amplification of STR markers", 
+            "Capillary electrophoresis for fragment analysis",
+            "Statistical interpretation using population databases"
+        ],
+        "challenges": ["Degradation", "Inhibition", "Mixtures", "Low template DNA", "Contamination"]
+    },
+    "crime_scene": {
+        "overview": "Systematic documentation and evidence collection to reconstruct events.",
+        "key_points": [
+            "Photography, sketching, and measurements are essential",
+            "Chain of custody must be maintained for all evidence",
+            "Scene security prevents contamination and evidence loss",
+            "Bloodstain pattern analysis can reveal sequence of events"
+        ],
+        "procedures": [
+            "Scene security and initial assessment",
+            "Photography from overall to close-up views",
+            "Evidence mapping and documentation",
+            "Collection using appropriate packaging",
+            "Scene reconstruction based on physical evidence"
+        ]
+    },
+    "digital_forensics": {
+        "overview": "Recovery and analysis of digital evidence from electronic devices.",
+        "key_points": [
+            "Live data acquisition preserves volatile information",
+            "Write-blocking prevents evidence modification",
+            "Deleted data can often be recovered from unallocated space",
+            "Metadata provides crucial timeline information"
+        ],
+        "procedures": [
+            "Device seizure and documentation",
+            "Forensic imaging of storage media",
+            "Analysis using validated forensic tools",
+            "Timeline reconstruction",
+            "Report generation with findings"
+        ]
+    },
+    "ballistics": {
+        "overview": "Firearms and toolmark examination for weapon identification.",
+        "key_points": [
+            "Bullet comparison requires microscopic examination",
+            "Gunshot residue testing within 6 hours is optimal",
+            "Trajectory analysis determines shooter position",
+            "Serial number restoration may be possible"
+        ],
+        "procedures": [
+            "Firearm examination and test firing",
+            "Bullet and cartridge case comparison",
+            "GSR collection and analysis",
+            "Trajectory reconstruction",
+            "Distance determination testing"
+        ]
+    },
+    "toxicology": {
+        "overview": "Detection and quantification of drugs, poisons, and alcohol.",
+        "key_points": [
+            "Sample type affects detection window",
+            "Post-mortem redistribution affects interpretation",
+            "Hair testing provides longer detection window",
+            "Therapeutic vs toxic levels are crucial"
+        ],
+        "procedures": [
+            "Sample collection and preservation",
+            "Screening tests (immunoassays)",
+            "Confirmatory testing (GC-MS, LC-MS)",
+            "Quantitative analysis",
+            "Interpretation considering case circumstances"
+        ]
     }
 }
 
@@ -247,91 +389,61 @@ def create_crime_hotspot_map():
 @st.cache_data
 def load_crime_statistics():
     """Load and structure crime statistics data"""
-    return POLICE_CRIME_DATABASE
+    return HISTORICAL_CRIME_DATABASE
 
-def create_crime_charts(chart_type, crime_data):
-    """Create various crime analysis charts"""
+def create_historical_crime_charts(chart_type, selected_periods, crime_data):
+    """Create various crime analysis charts for selected periods"""
     
-    if chart_type == "homicide_trend":
-        # Homicide trend analysis
-        years = list(crime_data['Historical_Data']['homicide_trends'].keys())
-        counts = list(crime_data['Historical_Data']['homicide_trends'].values())
+    if chart_type == "crime_trends":
+        # Crime trends across selected periods
+        periods = []
+        total_crimes = []
+        
+        for period_key in selected_periods:
+            if period_key in crime_data:
+                periods.append(crime_data[period_key]["period"])
+                total_crimes.append(crime_data[period_key]["total_crimes"])
         
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=years, y=counts,
+            x=periods, y=total_crimes,
             mode='lines+markers',
-            name='Actual Homicides',
-            line=dict(color='#ff4444', width=3),
-            marker=dict(size=8)
-        ))
-        
-        # Add predictions
-        pred_years = [2026, 2027, 2028]
-        pred_counts = [8, 7, 6]
-        
-        fig.add_trace(go.Scatter(
-            x=pred_years, y=pred_counts,
-            mode='lines+markers',
-            name='Predicted',
-            line=dict(color='#44ff44', width=3, dash='dash'),
+            name='Total Crimes',
+            line=dict(color='#44ff44', width=3),
             marker=dict(size=8)
         ))
         
         fig.update_layout(
-            title="St. Kitts & Nevis Homicide Trends (2015-2028)",
-            xaxis_title="Year",
-            yaxis_title="Number of Homicides",
+            title="Crime Trends - Selected Periods",
+            xaxis_title="Time Period",
+            yaxis_title="Total Crimes",
             template="plotly_dark",
             height=500
         )
         
         return fig
     
-    elif chart_type == "crime_breakdown":
-        # Crime breakdown pie chart
-        q2_data = crime_data['Q2_2025']['breakdown']
-        crimes = ['Larcenies', 'Malicious Damage', 'Bodily Harm', 'Drug Crimes', 'Break-ins', 'Murder']
-        counts = [
-            q2_data['larcenies']['total'],
-            q2_data['malicious_damage']['total'],
-            q2_data['bodily_harm']['total'],
-            q2_data['drug_crimes']['total'],
-            q2_data['break_ins']['total'],
-            q2_data['murder_manslaughter']['total']
-        ]
+    elif chart_type == "detection_comparison":
+        # Detection rate comparison
+        periods = []
+        detection_rates = []
         
-        fig = go.Figure(data=[go.Pie(
-            labels=crimes,
-            values=counts,
-            hole=0.4,
-            marker_colors=['#44ff44', '#f39c12', '#e74c3c', '#27ae60', '#9b59b6', '#34495e']
-        )])
-        
-        fig.update_layout(
-            title="Crime Types Distribution Q2 2025",
-            template="plotly_dark",
-            height=500
-        )
-        
-        return fig
-    
-    elif chart_type == "detection_rates":
-        # Detection rates by quarter/region
-        regions = ['Federation', 'St. Kitts', 'Nevis']
-        detection_rates = [38.7, 32.9, 52.9]
+        for period_key in selected_periods:
+            if period_key in crime_data and "detection_rate" in crime_data[period_key]:
+                periods.append(crime_data[period_key]["period"])
+                detection_rates.append(crime_data[period_key]["detection_rate"])
         
         fig = go.Figure()
         fig.add_trace(go.Bar(
-            x=regions, y=detection_rates,
-            marker_color=['#f39c12', '#e74c3c', '#44ff44'],
+            x=periods, y=detection_rates,
+            marker_color='#44ff44',
             text=[f"{rate}%" for rate in detection_rates],
             textposition='auto'
         ))
         
         fig.update_layout(
-            title="Crime Detection Rates Q2 2025",
-            xaxis_title="Region",
+            title="Detection Rates - Selected Periods",
+            xaxis_title="Time Period",
             yaxis_title="Detection Rate (%)",
             template="plotly_dark",
             height=500
@@ -339,334 +451,206 @@ def create_crime_charts(chart_type, crime_data):
         
         return fig
     
-    elif chart_type == "predictions":
-        # Crime predictions
-        years = [2025, 2026, 2027]
-        predictions = [10, 8, 7]
-        upper_bound = [15, 12, 10]
-        lower_bound = [5, 4, 3]
-        
-        fig = go.Figure()
-        
-        # Add confidence interval
-        fig.add_trace(go.Scatter(
-            x=years + years[::-1],
-            y=upper_bound + lower_bound[::-1],
-            fill='toself',
-            fillcolor='rgba(68, 255, 68, 0.2)',
-            line=dict(color='rgba(255,255,255,0)'),
-            name='95% Confidence Interval'
-        ))
-        
-        fig.add_trace(go.Scatter(
-            x=years, y=predictions,
-            mode='lines+markers',
-            name='Predicted Homicides',
-            line=dict(color='#44ff44', width=3),
-            marker=dict(size=10)
-        ))
-        
-        fig.update_layout(
-            title="Homicide Predictions 2025-2027",
-            xaxis_title="Year",
-            yaxis_title="Predicted Homicides",
-            template="plotly_dark",
-            height=500
-        )
-        
-        return fig
+    elif chart_type == "crime_type_breakdown":
+        # Crime type breakdown for latest selected period
+        if selected_periods and selected_periods[-1] in crime_data:
+            latest_data = crime_data[selected_periods[-1]]
+            if "federation" in latest_data:
+                crimes = []
+                counts = []
+                
+                for crime_type, data in latest_data["federation"].items():
+                    if "total" in data:
+                        crimes.append(crime_type.replace('_', ' ').title())
+                        counts.append(data["total"])
+                
+                fig = go.Figure(data=[go.Pie(
+                    labels=crimes,
+                    values=counts,
+                    hole=0.4,
+                    marker_colors=['#44ff44', '#f39c12', '#e74c3c', '#27ae60', '#9b59b6', '#34495e', '#16a085', '#f1c40f']
+                )])
+                
+                fig.update_layout(
+                    title=f"Crime Type Distribution - {latest_data['period']}",
+                    template="plotly_dark",
+                    height=500
+                )
+                
+                return fig
 
-# SMART AI SYSTEM - PURE API DRIVEN
 def is_casual_greeting(user_input):
     """Detect if user input is a casual greeting"""
     casual_words = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'how are you', 'what\'s up', 'sup']
-    return any(word in user_input.lower().strip() for word in casual_words) and len(user_input.strip()) < 20
+    return any(word in user_input.lower().strip() for word in casual_words) and len(user_input.strip()) < 25
 
-def is_technical_query(user_input):
-    """Detect if user input needs technical crime analysis or forensic expertise"""
-    technical_keywords = [
-        # Crime analysis
-        'crime', 'statistics', 'analysis', 'trend', 'pattern', 'hotspot', 'murder', 'theft', 'drugs', 'assault', 'detection', 'rate', 'data', 'emergency',
-        # Forensic science
-        'dna', 'forensic', 'forensics', 'evidence', 'fingerprint', 'ballistics', 'toxicology', 'autopsy', 'pathology', 'trace', 'digital forensics',
-        'crime scene', 'investigation', 'laboratory', 'lab', 'testing', 'analysis', 'examination', 'expert testimony', 'court', 'admissible',
-        'chain of custody', 'contamination', 'quality control', 'profiling', 'codis', 'afis', 'gunshot residue', 'bullet', 'firearm',
-        'poison', 'drug testing', 'fiber', 'paint', 'glass', 'soil', 'impression', 'handwriting', 'document', 'forgery',
-        'serology', 'biology', 'chemistry', 'photography', 'reconstruction', 'wound', 'injury', 'cause of death', 'time of death'
+def is_detailed_request(user_input):
+    """Detect if user wants detailed information"""
+    detail_keywords = ['detailed', 'detail', 'explain', 'comprehensive', 'thorough', 'in depth', 'breakdown', 'elaborate', 'more information', 'tell me more']
+    return any(keyword in user_input.lower() for keyword in detail_keywords)
+
+def is_forensic_query(user_input):
+    """Detect if user input is about forensic science"""
+    forensic_keywords = [
+        'dna', 'forensic', 'evidence', 'fingerprint', 'ballistics', 'toxicology', 'autopsy', 'pathology',
+        'crime scene', 'investigation', 'laboratory', 'testing', 'analysis', 'examination', 'court',
+        'chain of custody', 'contamination', 'quality control', 'profiling', 'codis', 'afis',
+        'gunshot residue', 'bullet', 'firearm', 'poison', 'drug testing', 'fiber', 'paint', 'glass',
+        'impression', 'handwriting', 'document', 'forgery', 'serology', 'biology', 'chemistry',
+        'photography', 'reconstruction', 'wound', 'injury', 'cause of death', 'time of death'
     ]
-    return any(keyword in user_input.lower() for keyword in technical_keywords)
+    return any(keyword in user_input.lower() for keyword in forensic_keywords)
 
-def build_comprehensive_crime_context():
-    """Build complete crime intelligence context from police database"""
-    
-    # Load police crime data
-    crime_data = POLICE_CRIME_DATABASE
-    q2_data = crime_data['Q2_2025']
-    historical = crime_data['Historical_Data']
-    
-    # Build hotspot analysis
-    hotspot_analysis = []
-    high_risk_count = 0
-    medium_risk_count = 0
-    low_risk_count = 0
-    
-    for location, data in CRIME_HOTSPOTS.items():
-        risk_emoji = {"High": "🔴", "Medium": "🟡", "Low": "🟢"}[data['risk']]
-        hotspot_analysis.append(
-            f"{risk_emoji} {location}: {data['crimes']} crimes ({data['risk']} risk) - Types: {', '.join(data['types'])}"
-        )
-        
-        if data['risk'] == 'High': high_risk_count += 1
-        elif data['risk'] == 'Medium': medium_risk_count += 1
-        else: low_risk_count += 1
-    
-    # Build emergency contacts
-    emergency_list = []
-    for service, number in EMERGENCY_CONTACTS.items():
-        emergency_list.append(f"📞 {service}: {number}")
-    
-    # Build comprehensive context
-    return f"""🚔 ST. KITTS & NEVIS POLICE CRIME INTELLIGENCE SYSTEM 🚔
+def is_crime_statistics_query(user_input):
+    """Detect if user input is about crime statistics"""
+    stats_keywords = [
+        'statistics', 'stats', 'data', 'numbers', 'trends', 'crime rate', 'detection rate',
+        'murder', 'larceny', 'robbery', 'drug', 'assault', 'break', 'theft', 'violence',
+        'hotspot', 'area', 'location', 'comparison', 'year', 'quarter', 'period'
+    ]
+    return any(keyword in user_input.lower() for keyword in stats_keywords)
 
-📊 CURRENT CRIME STATISTICS (Q2 2025):
-═══════════════════════════════════════════════════════════
-• Total Federation Crimes: {q2_data['total_crimes']}
-• Overall Detection Rate: {q2_data['detection_rate']}%
-• St. Kitts: {q2_data['regional_breakdown']['st_kitts']['crimes']} crimes ({q2_data['regional_breakdown']['st_kitts']['detection_rate']}% detection)
-• Nevis: {q2_data['regional_breakdown']['nevis']['crimes']} crimes ({q2_data['regional_breakdown']['nevis']['detection_rate']}% detection)
-
-🔍 CRIME BREAKDOWN (Q2 2025):
-• 🔫 Murder/Manslaughter: {q2_data['breakdown']['murder_manslaughter']['total']} cases ({q2_data['breakdown']['murder_manslaughter']['rate']} detection)
-• 🏠 Break-ins: {q2_data['breakdown']['break_ins']['total']} cases ({q2_data['breakdown']['break_ins']['rate']} detection)
-• 💰 Larcenies: {q2_data['breakdown']['larcenies']['total']} cases ({q2_data['breakdown']['larcenies']['rate']} detection) - Highest volume crime
-• 🥊 Bodily Harm: {q2_data['breakdown']['bodily_harm']['total']} cases ({q2_data['breakdown']['bodily_harm']['rate']} detection)
-• 💊 Drug Crimes: {q2_data['breakdown']['drug_crimes']['total']} cases ({q2_data['breakdown']['drug_crimes']['rate']} detection) - PERFECT DETECTION
-• 🔥 Malicious Damage: {q2_data['breakdown']['malicious_damage']['total']} cases ({q2_data['breakdown']['malicious_damage']['rate']} detection)
-• 🔫 Robberies: {q2_data['breakdown']['robberies']['total']} cases ({q2_data['breakdown']['robberies']['rate']} detection)
-• 🔫 Firearms Offences: {q2_data['breakdown']['firearms_offences']['total']} cases ({q2_data['breakdown']['firearms_offences']['rate']} detection) - PERFECT DETECTION
-
-🗺️ CRIME HOTSPOT INTELLIGENCE ({len(CRIME_HOTSPOTS)} locations mapped):
-═══════════════════════════════════════════════════════════════════════════
-Risk Distribution: {high_risk_count} High Risk | {medium_risk_count} Medium Risk | {low_risk_count} Low Risk
-
-{chr(10).join(hotspot_analysis)}
-
-🚨 EMERGENCY RESPONSE CONTACTS:
-═══════════════════════════════════════════════
-{chr(10).join(emergency_list)}
-
-📈 HISTORICAL TRENDS & PERFORMANCE:
-═══════════════════════════════════════════════════════════════════════════
-• Homicide Reduction: 2023 (31) → 2024 (28) → 2025 (4) = 87% DECREASE
-• Best Performance: {', '.join(crime_data['Performance_Metrics']['best_detection_rates'])}
-• Needs Improvement: {', '.join(crime_data['Performance_Metrics']['needs_improvement'])}
-• Regional Leader: Nevis (52.9% detection vs 32.9% St. Kitts)
-
-🎯 HIGH-PRIORITY AREAS REQUIRING IMMEDIATE ATTENTION:
-{', '.join([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'High'])}
-
-📍 GEOGRAPHIC COORDINATES AVAILABLE FOR ALL HOTSPOTS
-🕒 Current AST Time: {get_stkitts_time()}
-📅 Current Date: {get_stkitts_date()}
-"""
-
-def get_smart_system_prompt(user_input):
-    """Return appropriate system prompt based on user input type"""
-    
-    if is_casual_greeting(user_input):
-        return """You are SECURO, a friendly AI assistant for St. Kitts & Nevis Police. 
-
-Keep responses warm, brief, and welcoming. For greetings, be conversational and mention you're ready to help with crime analysis, forensics, or any law enforcement questions.
-
-Example responses:
-- "Hi there! I'm SECURO, your AI forensic and crime analysis assistant. How can I help you today?"
-- "Good morning! Ready to assist with crime data, forensic science, DNA analysis, or any investigation questions."
-- "Hello! I'm here to help with forensics, crime statistics, evidence analysis, or any law enforcement topics."
-"""
-    
-    elif is_technical_query(user_input):
-        return """You are SECURO, an elite forensic science and crime analysis AI specialist for the Royal St. Christopher and Nevis Police Force.
-
-🎯 PRIMARY MISSION: Provide expert-level forensic science, crime analysis, and investigative support
-
-🧬 FORENSIC SCIENCE EXPERTISE:
-1. DNA ANALYSIS - DNA profiling, CODIS, degraded samples, mixture interpretation, familial searching
-2. CRIME SCENE INVESTIGATION - Evidence collection, chain of custody, scene documentation, reconstruction
-3. DIGITAL FORENSICS - Mobile devices, computers, social media, encrypted data, network analysis
-4. BALLISTICS & FIREARMS - Bullet comparison, gunshot residue, trajectory analysis, firearm identification
-5. TOXICOLOGY - Drug testing, poison detection, post-mortem toxicology, impairment assessment
-6. TRACE EVIDENCE - Fibers, paint, glass, soil, tire impressions, tool marks
-7. FINGERPRINT ANALYSIS - Classification, comparison, latent print development, AFIS searches
-8. FORENSIC PATHOLOGY - Cause of death, autopsy procedures, wound patterns, time of death
-9. DOCUMENT EXAMINATION - Handwriting analysis, ink dating, paper analysis, forgery detection
-10. FORENSIC ACCOUNTING - Financial fraud, money laundering, asset tracing
-
-📋 CRIME ANALYSIS CAPABILITIES:
-1. PATTERN ANALYSIS - Detect trends across time, location, and crime types
-2. RISK ASSESSMENT - Evaluate threat levels and deployment recommendations
-3. INVESTIGATIVE SUPPORT - Connect evidence, suggest leads, analyze criminal methods
-4. PREVENTION STRATEGIES - Data-driven recommendations for crime reduction
-5. RESOURCE ALLOCATION - Optimize patrol routes and manpower distribution
-6. EMERGENCY COORDINATION - Provide immediate contact information and protocols
-
-🔬 LABORATORY PROCEDURES:
-• DNA extraction and amplification protocols
-• Quality control and contamination prevention
-• Evidence handling and storage requirements
-• Expert testimony preparation and court procedures
-• International forensic standards and best practices
-
-🎓 EXPERT KNOWLEDGE AREAS:
-• Forensic biology and serology
-• Forensic chemistry and materials analysis
-• Crime scene photography and documentation
-• Evidence packaging and preservation
-• Laboratory accreditation standards
-• Legal admissibility requirements
-
-📊 RESPONSE STRUCTURE:
-🎯 **KEY FINDINGS:** [Main forensic/investigative insights]
-🧬 **FORENSIC ANALYSIS:** [Scientific procedures and interpretations]
-📊 **DATA ANALYSIS:** [Statistical patterns if relevant]
-🚨 **INVESTIGATIVE RECOMMENDATIONS:** [Specific next steps]
-🔬 **LABORATORY CONSIDERATIONS:** [Testing protocols if applicable]
-⚖️ **LEGAL/COURT CONSIDERATIONS:** [Admissibility and testimony guidance]
-
-Keep responses scientifically accurate, legally sound, and practically applicable to real investigations.
-"""
-    
-    else:
-        return """You are SECURO, a comprehensive forensic science and crime analysis AI assistant for St. Kitts & Nevis Police.
-
-You have expertise in:
-- Forensic science (DNA, fingerprints, ballistics, toxicology, digital forensics)
-- Crime scene investigation and evidence analysis
-- Laboratory procedures and quality control
-- Expert testimony and court procedures
-- Crime statistics and pattern analysis
-- Investigation techniques and case management
-
-Provide clear, scientifically accurate, and practical responses. Always maintain professional standards while being accessible to officers with varying levels of forensic training.
-"""
-
-def search_police_database(query):
-    """Search through the comprehensive police crime database"""
+def get_relevant_forensic_info(query):
+    """Get relevant forensic information based on query"""
     query_lower = query.lower()
-    results = []
+    relevant_info = []
     
-    # Search through crime data
-    crime_data = POLICE_CRIME_DATABASE
+    for topic, info in FORENSIC_KNOWLEDGE_BASE.items():
+        if any(keyword in query_lower for keyword in topic.split('_')):
+            relevant_info.append({
+                'topic': topic.replace('_', ' ').title(),
+                'overview': info['overview'],
+                'key_points': info['key_points'],
+                'procedures': info.get('procedures', []),
+                'challenges': info.get('challenges', [])
+            })
     
-    # Search Q2 2025 data
-    if any(term in query_lower for term in ['2025', 'current', 'recent', 'latest', 'q2']):
-        q2_data = crime_data['Q2_2025']
-        results.append({
-            'category': 'Current Quarter (Q2 2025)',
-            'total_crimes': q2_data['total_crimes'],
-            'detection_rate': q2_data['detection_rate'],
-            'breakdown': q2_data['breakdown'],
-            'regional': q2_data['regional_breakdown']
-        })
-    
-    # Search specific crime types
-    for crime_type in ['murder', 'larceny', 'theft', 'drug', 'assault', 'robbery', 'break']:
-        if crime_type in query_lower:
-            q2_breakdown = crime_data['Q2_2025']['breakdown']
-            for key, value in q2_breakdown.items():
-                if crime_type in key or (crime_type == 'theft' and 'larcen' in key):
-                    results.append({
-                        'crime_type': key.replace('_', ' ').title(),
-                        'data': value,
-                        'source': 'Q2 2025 Official Police Statistics'
-                    })
-    
-    # Search hotspots
-    if any(term in query_lower for term in ['hotspot', 'area', 'location', 'basseterre', 'charlestown', 'nevis']):
-        for location, data in CRIME_HOTSPOTS.items():
-            if any(term in location.lower() for term in query_lower.split()):
-                results.append({
-                    'location': location,
-                    'hotspot_data': data,
-                    'source': 'Crime Hotspot Analysis'
-                })
-    
-    # Search emergency contacts
-    if any(term in query_lower for term in ['emergency', 'contact', 'phone', 'police', 'help']):
-        results.append({
-            'emergency_contacts': EMERGENCY_CONTACTS,
-            'source': 'Emergency Response System'
-        })
-    
-    return {
-        'query': query,
-        'results_found': len(results),
-        'data': results,
-        'source': 'St. Kitts & Nevis Police Force Official Database'
-    }
+    return relevant_info
 
-def generate_smart_response(user_input, language='en'):
-    """Generate smart, context-aware response using only API and police data"""
+def get_relevant_crime_data(query):
+    """Get relevant crime statistics based on query"""
+    query_lower = query.lower()
+    
+    # Check for specific years or periods
+    relevant_data = {}
+    
+    for period_key, data in HISTORICAL_CRIME_DATABASE.items():
+        period_text = data['period'].lower()
+        if any(term in query_lower for term in ['2025', 'current', 'recent', 'latest']) and '2025' in period_text:
+            relevant_data[period_key] = data
+        elif any(term in query_lower for term in ['2024']) and '2024' in period_text:
+            relevant_data[period_key] = data
+        elif any(term in query_lower for term in ['2023']) and '2023' in period_text:
+            relevant_data[period_key] = data
+        elif any(term in query_lower for term in ['2022']) and '2022' in period_text:
+            relevant_data[period_key] = data
+    
+    # If no specific year mentioned, return recent data
+    if not relevant_data:
+        relevant_data = {k: v for k, v in list(HISTORICAL_CRIME_DATABASE.items())[:3]}
+    
+    return relevant_data
+
+def generate_enhanced_smart_response(user_input, language='en'):
+    """Generate enhanced, concise forensic and crime analysis responses"""
     
     if not st.session_state.get('ai_enabled', False):
-        return f"🔧 AI system offline. Please check your API key configuration."
+        return "🔧 AI system offline. Please check your API key configuration."
     
     try:
-        # Handle greetings differently from technical queries
+        # Handle different query types with appropriate response lengths
         if is_casual_greeting(user_input):
             # Simple greeting response
-            simple_prompt = f"""
-            {get_smart_system_prompt(user_input)}
+            prompt = f"""
+            You are SECURO, a forensic science and crime analysis AI for St. Kitts & Nevis Police.
             
             User said: "{user_input}"
             
-            Current time in St. Kitts: {get_stkitts_time()}
-            
-            Respond as SECURO with a friendly, brief greeting. Mention you're ready to help with crime analysis or any questions they have.
+            Respond with a brief, friendly greeting (2-3 sentences max). Mention you're ready to help with forensic science, crime analysis, or investigations.
             """
             
-            response = model.generate_content(simple_prompt)
-            clean_response = response.text.strip().replace('```', '')
-            return clean_response
+            response = model.generate_content(prompt)
+            return response.text.strip()
         
-        # For technical queries, provide full crime intelligence
-        elif is_technical_query(user_input):
-            crime_intelligence = build_comprehensive_crime_context()
-            database_results = search_police_database(user_input)
+        elif is_forensic_query(user_input):
+            # Forensic science response
+            forensic_info = get_relevant_forensic_info(user_input)
+            is_detailed = is_detailed_request(user_input)
             
-            expert_prompt = f"""
-            {get_smart_system_prompt(user_input)}
-
-            🔒 COMPREHENSIVE CRIME INTELLIGENCE BRIEFING 🔒
-            {crime_intelligence}
-
-            📋 TARGETED DATABASE SEARCH RESULTS:
-            {json.dumps(database_results, indent=2)}
-
-            🎯 USER QUERY: "{user_input}"
-
-            Provide focused crime analysis addressing this query. Include relevant statistics and actionable recommendations from the official police database.
-            """
-
-            response = model.generate_content(expert_prompt)
-            clean_response = response.text.strip().replace('```', '')
-            return clean_response
-        
-        # For general questions
-        else:
-            general_prompt = f"""
-            {get_smart_system_prompt(user_input)}
+            prompt = f"""
+            You are SECURO, an expert forensic science AI for St. Kitts & Nevis Police.
             
             User query: "{user_input}"
+            Detailed request: {is_detailed}
             
-            Provide a helpful, clear response as SECURO. If crime-related, include relevant data from St. Kitts & Nevis police statistics.
+            Relevant forensic knowledge: {json.dumps(forensic_info, indent=2)}
+            
+            **Response Guidelines:**
+            - If detailed=False: Give concise, practical answer (3-5 sentences)
+            - If detailed=True: Provide comprehensive explanation with procedures
+            - Focus on practical forensic applications
+            - Include scientific accuracy and legal considerations
+            - Mention St. Kitts context when relevant
+            
+            Provide expert forensic guidance.
             """
             
-            response = model.generate_content(general_prompt)
-            clean_response = response.text.strip().replace('```', '')
-            return clean_response
+            response = model.generate_content(prompt)
+            return response.text.strip()
+        
+        elif is_crime_statistics_query(user_input):
+            # Crime statistics response
+            crime_data = get_relevant_crime_data(user_input)
+            is_detailed = is_detailed_request(user_input)
+            
+            prompt = f"""
+            You are SECURO, a crime analysis AI for St. Kitts & Nevis Police.
+            
+            User query: "{user_input}"
+            Detailed request: {is_detailed}
+            
+            Relevant crime data: {json.dumps(crime_data, indent=2)}
+            
+            **Response Guidelines:**
+            - If detailed=False: Give key statistics only (3-5 sentences)
+            - If detailed=True: Provide comprehensive analysis with trends
+            - Focus on actionable insights
+            - Compare periods when relevant
+            - Highlight significant patterns or changes
+            
+            Provide crime intelligence analysis.
+            """
+            
+            response = model.generate_content(prompt)
+            return response.text.strip()
+        
+        else:
+            # General query
+            is_detailed = is_detailed_request(user_input)
+            
+            prompt = f"""
+            You are SECURO, a comprehensive forensic and crime analysis AI for St. Kitts & Nevis Police.
+            
+            User query: "{user_input}"
+            Detailed request: {is_detailed}
+            
+            **Response Guidelines:**
+            - If detailed=False: Keep response concise (3-5 sentences)
+            - If detailed=True: Provide thorough explanation
+            - Maintain professional expertise
+            - Include practical recommendations when appropriate
+            
+            Current time: {get_stkitts_time()} AST
+            Current date: {get_stkitts_date()}
+            
+            Provide helpful, accurate assistance.
+            """
+            
+            response = model.generate_content(prompt)
+            return response.text.strip()
             
     except Exception as e:
-        return f"🚨 AI analysis error: {str(e)}\n\nI'm still here to help! Try asking about crime statistics, hotspots, or emergency contacts."
+        return f"🚨 AI analysis error: {str(e)}\n\nI'm still here to help! Try asking about forensic procedures, crime statistics, or specific investigations."
 
 # Initialize the AI model - REPLACE WITH YOUR API KEY
 try:
@@ -701,7 +685,10 @@ if 'selected_language' not in st.session_state:
 if 'crime_stats' not in st.session_state:
     st.session_state.crime_stats = load_crime_statistics()
 
-# CLEANED CSS - NO WHITE BOXES
+if 'selected_periods' not in st.session_state:
+    st.session_state.selected_periods = ['2025_Q2']
+
+# CSS styling (same as before)
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
@@ -710,19 +697,16 @@ st.markdown("""
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* Remove any white boxes/overlays */
     .element-container {
         background: transparent !important;
     }
     
-    /* Remove default streamlit styling */
     .stButton > button {
         background: none !important;
         border: none !important;
         box-shadow: none !important;
     }
     
-    /* Moving gradient animation keyframes */
     @keyframes moveGradient {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
@@ -794,7 +778,6 @@ st.markdown("""
         min-height: 600px;
     }
 
-    /* Statistics Cards */
     .stat-card {
         background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(68, 255, 68, 0.1));
         color: #ffffff;
@@ -824,7 +807,6 @@ st.markdown("""
         color: #ffffff;
     }
 
-    /* Emergency Card Styles */
     .emergency-card {
         background: rgba(0, 0, 0, 0.8);
         border: 2px solid rgba(231, 76, 60, 0.5);
@@ -858,7 +840,6 @@ st.markdown("""
         margin: 10px 0;
     }
 
-    /* Feature card text fixes */
     .feature-card, .feature-card * {
         color: #ffffff !important;
     }
@@ -889,7 +870,6 @@ st.markdown("""
         color: #44ff44;
     }
 
-    /* Chat Styles */
     .chat-message {
         margin-bottom: 20px;
         animation: fadeInUp 0.5s ease;
@@ -935,7 +915,6 @@ st.markdown("""
         font-family: 'JetBrains Mono', monospace;
     }
 
-    /* Button Styles */
     .stButton button {
         background: linear-gradient(135deg, #44ff44, #33cc33) !important;
         border: none !important;
@@ -951,7 +930,6 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(68, 255, 68, 0.4) !important;
     }
 
-    /* Input Styles */
     .stTextInput input {
         background: rgba(0, 0, 0, 0.8) !important;
         border: 1px solid rgba(68, 255, 68, 0.3) !important;
@@ -965,7 +943,6 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(68, 255, 68, 0.2) !important;
     }
 
-    /* Status bar */
     .status-bar {
         background: rgba(0, 0, 0, 0.9);
         padding: 15px;
@@ -996,7 +973,6 @@ st.markdown("""
         animation: pulse 2s infinite;
     }
 
-    /* Global text color overrides */
     h1, h2, h3, h4, h5, h6 {
         color: #44ff44 !important;
     }
@@ -1005,7 +981,6 @@ st.markdown("""
         color: #ffffff !important;
     }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
         .main-header h1 {
             font-size: 2rem;
@@ -1018,7 +993,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# CLEANED Sidebar - No CSV References
+# Enhanced Sidebar
 with st.sidebar:
     st.markdown("### 🤖 AI Configuration")
     
@@ -1029,33 +1004,44 @@ with st.sidebar:
     
     # Status indicators
     if st.session_state.get('ai_enabled', False):
-        st.success("🧬 Forensic AI Active")
-        st.write("• DNA & fingerprint analysis")
+        st.success("🧬 Enhanced Forensic AI Active")
+        st.write("**Forensic Capabilities:**")
+        st.write("• DNA analysis & profiling")
         st.write("• Crime scene investigation")
-        st.write("• Digital forensics support")
+        st.write("• Digital forensics")
+        st.write("• Ballistics & firearms")
+        st.write("• Toxicology analysis")
         st.write("• Expert testimony prep")
-        st.write("• Laboratory procedures")
-        st.write("• Crime pattern analysis")
+        st.write("• Laboratory protocols")
+        st.write("• Evidence admissibility")
+        
+        st.write("**Response Types:**")
+        st.write("• Concise (default)")
+        st.write("• Detailed (on request)")
+        st.write("• Context-aware")
+        st.write("• Forensically accurate")
     else:
         st.warning("⚠️ AI Offline")
         st.write("• Check API key")
         st.write("• Verify internet connection")
     
-    st.success("📊 Integrated Systems")
-    st.write("• Forensic science database")
-    st.write("• Q2 2025 crime statistics")
-    st.write("• Laboratory protocols")  
+    st.success("📊 Enhanced Database")
+    st.write("**Historical Data:**")
+    st.write("• 2022-2025 crime statistics")
+    st.write("• Quarterly comparisons") 
+    st.write("• Detection rate analysis")
     st.write("• 13 crime hotspots mapped")
+    st.write("• Forensic knowledge base")
     st.write("• Emergency contact database")
 
-# Main Header - LOCK ICON
+# Main Header
 current_time = get_stkitts_time()
 current_date = get_stkitts_date()
 
 st.markdown(f"""
 <div class="main-header">
     <h1>🔒 SECURO</h1>
-    <div style="color: #888; text-transform: uppercase; letter-spacing: 2px; position: relative; z-index: 2;">Advanced Crime Analysis & Security AI for St. Kitts & Nevis</div>
+    <div style="color: #888; text-transform: uppercase; letter-spacing: 2px; position: relative; z-index: 2;">Enhanced Forensic Science & Crime Intelligence AI</div>
     <div style="color: #44ff44; margin-top: 5px; position: relative; z-index: 2;">🇰🇳 Royal St. Christopher & Nevis Police Force</div>
     <div style="color: #888; margin-top: 8px; font-size: 0.8rem; position: relative; z-index: 2;">📅 {current_date} | 🕒 {current_time} (AST)</div>
 </div>
@@ -1098,29 +1084,29 @@ with col6:
 if st.session_state.current_page == 'welcome':
     st.markdown("""
     <div style="text-align: center; margin-bottom: 40px;">
-        <h2 style="color: #44ff44; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(68, 255, 68, 0.5);">Welcome to SECURO</h2>
-        <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; color: #ffffff;">Your comprehensive AI-powered crime analysis and security system for St. Kitts & Nevis</p>
-        <p style="font-size: 1rem; line-height: 1.6; color: #ffffff;">SECURO (Security & Crime Understanding & Response Operations) is an advanced platform powered by official police data and smart AI analysis.</p>
+        <h2 style="color: #44ff44; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(68, 255, 68, 0.5);">Welcome to Enhanced SECURO</h2>
+        <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; color: #ffffff;">Your comprehensive AI-powered forensic science and crime analysis system for St. Kitts & Nevis</p>
+        <p style="font-size: 1rem; line-height: 1.6; color: #ffffff;">SECURO now includes enhanced forensic expertise, historical data from 2022-2025, and context-aware AI responses.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Feature Cards
+    # Enhanced Feature Cards
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div class="feature-card">
-            <div class="feature-icon">🗺️</div>
-            <h3>Interactive Crime Mapping</h3>
-            <p>Visualize crime patterns across 13+ mapped locations with real-time risk assessments and hotspot identification.</p>
+            <div class="feature-icon">🧬</div>
+            <h3>Advanced Forensic Science</h3>
+            <p>Expert knowledge in DNA analysis, ballistics, toxicology, digital forensics, and crime scene investigation with laboratory protocols.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
         <div class="feature-card">
             <div class="feature-icon">🤖</div>
-            <h3>Smart AI Assistant</h3>
-            <p>Pure API-driven intelligence with no external dependencies. Context-aware responses for both casual and technical queries.</p>
+            <h3>Enhanced AI Assistant</h3>
+            <p>Context-aware responses: concise by default, detailed on request. Forensically accurate with legal admissibility guidance.</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -1128,119 +1114,99 @@ if st.session_state.current_page == 'welcome':
         st.markdown("""
         <div class="feature-card">
             <div class="feature-icon">📊</div>
-            <h3>Official Police Statistics</h3>
-            <p>Direct integration with RSCNPF data showing Q2 2025: 292 crimes, 38.7% detection rate, and comprehensive analytics.</p>
+            <h3>Multi-Year Crime Database</h3>
+            <p>Historical data from 2022-2025 with quarterly analysis, detection rates, and trend comparison across time periods.</p>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
         <div class="feature-card">
-            <div class="feature-icon">🔮</div>
-            <h3>Predictive Analytics</h3>
-            <p>Advanced algorithms analyze historical data to predict crime trends and support strategic planning efforts.</p>
+            <div class="feature-icon">⚖️</div>
+            <h3>Court & Laboratory Support</h3>
+            <p>Expert testimony preparation, evidence admissibility standards, chain of custody protocols, and quality control procedures.</p>
         </div>
         """, unsafe_allow_html=True)
 
-# ABOUT PAGE
+# ABOUT PAGE (Enhanced)
 elif st.session_state.current_page == 'about':
     st.markdown("""
-    <h2 style="color: #44ff44; margin-bottom: 20px; text-align: center;">About SECURO</h2>
+    <h2 style="color: #44ff44; margin-bottom: 20px; text-align: center;">About Enhanced SECURO</h2>
     
-    <p style="color: #ffffff;"><strong style="color: #44ff44;">SECURO</strong> is a comprehensive forensic science and crime analysis AI system built specifically for the Royal St. Christopher and Nevis Police Force. Combining cutting-edge forensic expertise with real-time crime intelligence.</p>
+    <p style="color: #ffffff;"><strong style="color: #44ff44;">SECURO</strong> is a comprehensive forensic science and crime analysis AI system built specifically for the Royal St. Christopher and Nevis Police Force. Combining cutting-edge forensic expertise with multi-year crime intelligence and context-aware AI responses.</p>
 
     <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🧬 Forensic Science Expertise</h3>
     <ul style="list-style: none; padding: 0; color: #ffffff;">
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">DNA Analysis - Profiling, CODIS, degraded samples, mixture interpretation</span>
+            <span style="color: #ffffff;">DNA Analysis - STR profiling, CODIS, degraded samples, mixture interpretation, touch DNA</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Crime Scene Investigation - Evidence collection, documentation, reconstruction</span>
+            <span style="color: #ffffff;">Crime Scene Investigation - Evidence collection, photography, reconstruction, bloodstain pattern analysis</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Digital Forensics - Mobile devices, computers, encrypted data analysis</span>
+            <span style="color: #ffffff;">Digital Forensics - Mobile devices, computers, encrypted data, metadata analysis, timeline reconstruction</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Ballistics & Firearms - Bullet comparison, GSR, trajectory analysis</span>
+            <span style="color: #ffffff;">Ballistics & Firearms - Bullet comparison, GSR testing, trajectory analysis, distance determination</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Toxicology - Drug testing, poison detection, post-mortem analysis</span>
+            <span style="color: #ffffff;">Toxicology - Drug testing, poison detection, post-mortem analysis, therapeutic vs toxic levels</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Trace Evidence - Fibers, paint, glass, soil, tool marks analysis</span>
+            <span style="color: #ffffff;">Trace Evidence - Fibers, paint, glass, soil, tool marks, impression evidence analysis</span>
         </li>
     </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🔬 Laboratory & Court Support</h3>
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🔬 Enhanced AI Capabilities</h3>
     <ul style="list-style: none; padding: 0; color: #ffffff;">
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Quality control and contamination prevention protocols</span>
+            <span style="color: #ffffff;">Context-Aware Responses - Concise by default, detailed when requested</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Chain of custody procedures and documentation</span>
+            <span style="color: #ffffff;">Query Type Detection - Forensic, statistical, predictive, and general inquiries</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Expert testimony preparation and court procedures</span>
+            <span style="color: #ffffff;">Multi-Year Data Integration - 2022-2025 historical crime analysis</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Evidence admissibility and legal standards guidance</span>
+            <span style="color: #ffffff;">Forensic Knowledge Base - Procedures, protocols, and best practices</span>
         </li>
     </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">📊 Crime Intelligence Integration</h3>
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">📊 Historical Crime Intelligence (2022-2025)</h3>
     <ul style="list-style: none; padding: 0; color: #ffffff;">
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Q2 2025: 292 total crimes with detailed forensic breakdown</span>
+            <span style="color: #ffffff;">Q2 2025: 292 total crimes, 38.7% detection rate, 4 murders (↓87% from 2023)</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Historical trends: 2015-2025 homicide and evidence analysis</span>
+            <span style="color: #ffffff;">Quarterly comparisons showing crime trends and detection improvements</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">13 crime hotspots with forensic evidence patterns</span>
+            <span style="color: #ffffff;">St. Kitts vs Nevis comparative analysis with regional performance metrics</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Case linkage analysis and pattern recognition</span>
+            <span style="color: #ffffff;">Drug crimes: 100% detection rate, Firearms offences: 100% detection rate</span>
         </li>
     </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">📈 Performance Highlights</h3>
-    <ul style="list-style: none; padding: 0; color: #ffffff;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Drug Crimes: 100% detection rate with toxicology support</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Firearms Offences: 100% detection with ballistics analysis</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Homicide Reduction: 87% decrease with enhanced forensic capabilities</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Evidence Processing: DNA, fingerprints, digital forensics integrated</span>
-        </li>
-    </ul>
-
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🔒 Scientific Standards & Accuracy</h3>
-    <p style="color: #ffffff;">SECURO maintains the highest forensic science standards with protocols based on international best practices, ASTM standards, and Caribbean forensic guidelines. All recommendations are scientifically validated and court-admissible.</p>
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">⚖️ Legal & Laboratory Standards</h3>
+    <p style="color: #ffffff;">SECURO maintains the highest forensic science standards with protocols based on international best practices, ASTM standards, and Caribbean forensic guidelines. All recommendations are scientifically validated and court-admissible with proper chain of custody documentation.</p>
     """, unsafe_allow_html=True)
 
-# CRIME HOTSPOTS PAGE
+# CRIME HOTSPOTS PAGE (Same as before)
 elif st.session_state.current_page == 'map':
     st.markdown('<h2 style="color: #44ff44;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h2>', unsafe_allow_html=True)
     
@@ -1293,173 +1259,124 @@ elif st.session_state.current_page == 'map':
         </div>
         """, unsafe_allow_html=True)
 
-# STATISTICS & ANALYTICS PAGE
+# ENHANCED STATISTICS & ANALYTICS PAGE
 elif st.session_state.current_page == 'statistics':
-    st.markdown('<h2 style="color: #44ff44;">📊 Crime Statistics & Analytics</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="color: #44ff44;">📊 Enhanced Crime Statistics & Analytics</h2>', unsafe_allow_html=True)
     
-    # Q2 2025 Overview
-    st.markdown('<h3 style="color: #44ff44;">Q2 2025 Crime Statistics Overview</h3>', unsafe_allow_html=True)
+    # **NEW: Year/Period Selection Dropdown**
+    st.markdown('<h3 style="color: #44ff44;">📅 Select Time Periods for Analysis</h3>', unsafe_allow_html=True)
     
-    col1, col2, col3, col4, col5, col6 = st.columns(6)
+    available_periods = list(st.session_state.crime_stats.keys())
+    period_labels = {key: data["period"] for key, data in st.session_state.crime_stats.items()}
     
-    stats_data = st.session_state.crime_stats
+    selected_periods = st.multiselect(
+        "Choose time periods to analyze:",
+        options=available_periods,
+        default=['2025_Q2'],
+        format_func=lambda x: period_labels.get(x, x),
+        help="Select one or more time periods to compare statistics and trends"
+    )
     
-    with col1:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-number">292</div>
-            <div class="stat-label">Total Crimes (Q2 2025)</div>
-        </div>
-        """, unsafe_allow_html=True)
+    if not selected_periods:
+        st.warning("Please select at least one time period to view statistics.")
+        st.stop()
     
-    with col2:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-number">38.7%</div>
-            <div class="stat-label">Overall Detection Rate</div>
-        </div>
-        """, unsafe_allow_html=True)
+    st.session_state.selected_periods = selected_periods
     
-    with col3:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-number">207</div>
-            <div class="stat-label">St. Kitts Crimes</div>
-        </div>
-        """, unsafe_allow_html=True)
+    # Display stats for selected periods
+    if len(selected_periods) == 1:
+        # Single period detailed view
+        period_key = selected_periods[0]
+        period_data = st.session_state.crime_stats[period_key]
+        
+        st.markdown(f'<h3 style="color: #44ff44;">📈 {period_data["period"]} Overview</h3>', unsafe_allow_html=True)
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            st.markdown(f"""
+            <div class="stat-card">
+                <div class="stat-number">{period_data['total_crimes']}</div>
+                <div class="stat-label">Total Crimes</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col2:
+            detection_rate = period_data.get('detection_rate', 'N/A')
+            st.markdown(f"""
+            <div class="stat-card">
+                <div class="stat-number">{detection_rate}{'%' if detection_rate != 'N/A' else ''}</div>
+                <div class="stat-label">Detection Rate</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 'N/A')
+            st.markdown(f"""
+            <div class="stat-card">
+                <div class="stat-number">{st_kitts_crimes}</div>
+                <div class="stat-label">St. Kitts Crimes</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col4:
+            nevis_crimes = period_data.get('nevis', {}).get('crimes', 'N/A')
+            st.markdown(f"""
+            <div class="stat-card">
+                <div class="stat-number">{nevis_crimes}</div>
+                <div class="stat-label">Nevis Crimes</div>
+            </div>
+            """, unsafe_allow_html=True)
     
-    with col4:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-number">85</div>
-            <div class="stat-label">Nevis Crimes</div>
-        </div>
-        """, unsafe_allow_html=True)
+    else:
+        # Multiple periods comparison view
+        st.markdown('<h3 style="color: #44ff44;">📈 Multi-Period Comparison</h3>', unsafe_allow_html=True)
+        
+        # Create comparison table
+        comparison_data = []
+        for period_key in selected_periods:
+            period_data = st.session_state.crime_stats[period_key]
+            comparison_data.append({
+                "Period": period_data["period"],
+                "Total Crimes": period_data["total_crimes"],
+                "Detection Rate": f"{period_data.get('detection_rate', 'N/A')}{'%' if period_data.get('detection_rate') else ''}",
+                "St. Kitts": period_data.get('st_kitts', {}).get('crimes', 'N/A'),
+                "Nevis": period_data.get('nevis', {}).get('crimes', 'N/A')
+            })
+        
+        df = pd.DataFrame(comparison_data)
+        st.dataframe(df, use_container_width=True)
     
-    with col5:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-number">4</div>
-            <div class="stat-label">Murders (Q2 2025)</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col6:
-        st.markdown("""
-        <div class="stat-card">
-            <div class="stat-number">31</div>
-            <div class="stat-label">Drug Crimes (100% detected)</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-    # Chart Controls
+    # **NEW: Enhanced Chart Controls**
     st.markdown('<h3 style="color: #44ff44;">📈 Interactive Analytics</h3>', unsafe_allow_html=True)
     
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("📈 Homicide Trends", key="chart_trends"):
-            fig = create_crime_charts("homicide_trend", stats_data)
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with col2:
-        if st.button("🔍 Crime Breakdown", key="chart_breakdown"):
-            fig = create_crime_charts("crime_breakdown", stats_data)
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with col3:
-        if st.button("🎯 Detection Rates", key="chart_detection"):
-            fig = create_crime_charts("detection_rates", stats_data)
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with col4:
-        if st.button("🔮 Predictions", key="chart_predictions"):
-            fig = create_crime_charts("predictions", stats_data)
-            st.plotly_chart(fig, use_container_width=True)
-    
-    # Crime Breakdown Details
-    st.markdown('<h3 style="color: #44ff44;">🔍 Q2 2025 Crime Breakdown by Category</h3>', unsafe_allow_html=True)
-    
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("""
-        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #44ff44; margin-bottom: 15px;">
-            <strong style="color: #44ff44;">Larcenies</strong><br>
-            <span style="color: #ffffff;">92 cases (31.5%) | 21 detected (22.8%)</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12; margin-bottom: 15px;">
-            <strong style="color: #f39c12;">Malicious Damage</strong><br>
-            <span style="color: #ffffff;">59 cases (20.2%) | 17 detected (28.8%)</span>
-        </div>
-        """, unsafe_allow_html=True)
+        if st.button("📈 Crime Trends", key="chart_trends_new"):
+            if len(selected_periods) > 1:
+                fig = create_historical_crime_charts("crime_trends", selected_periods, st.session_state.crime_stats)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Select multiple periods to view trends.")
     
     with col2:
-        st.markdown("""
-        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c; margin-bottom: 15px;">
-            <strong style="color: #e74c3c;">Bodily Harm</strong><br>
-            <span style="color: #ffffff;">33 cases (11.3%) | 19 detected (57.6%)</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60; margin-bottom: 15px;">
-            <strong style="color: #27ae60;">Drug Crimes</strong><br>
-            <span style="color: #ffffff;">31 cases (10.6%) | 31 detected (100%)</span>
-        </div>
-        """, unsafe_allow_html=True)
+        if st.button("🎯 Detection Comparison", key="chart_detection_new"):
+            if len(selected_periods) > 1:
+                fig = create_historical_crime_charts("detection_comparison", selected_periods, st.session_state.crime_stats)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Select multiple periods to compare detection rates.")
     
     with col3:
-        st.markdown("""
-        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #9b59b6; margin-bottom: 15px;">
-            <strong style="color: #9b59b6;">Break-ins</strong><br>
-            <span style="color: #ffffff;">26 cases (8.9%) | 7 detected (26.9%)</span>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div style="background: rgba(0, 0, 0, 0.4); padding: 15px; border-radius: 8px; border-left: 4px solid #34495e; margin-bottom: 15px;">
-            <strong style="color: #34495e;">Murder/Manslaughter</strong><br>
-            <span style="color: #ffffff;">4 cases (1.4%) | 2 detected (50%)</span>
-        </div>
-        """, unsafe_allow_html=True)
+        if st.button("🔍 Crime Breakdown", key="chart_breakdown_new"):
+            fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, st.session_state.crime_stats)
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
 
-    # Historical Comparison
-    st.markdown('<h3 style="color: #44ff44;">📈 Historical Comparison (Jan-June)</h3>', unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="text-align: center; padding: 15px; background: rgba(68, 255, 68, 0.05); border-radius: 8px;">
-            <div style="font-size: 1.5rem; color: #44ff44; font-weight: bold;">2023 H1</div>
-            <div style="color: #ffffff;">672 total crimes</div>
-            <div style="color: #e74c3c; font-size: 0.9rem;">17 murders</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="text-align: center; padding: 15px; background: rgba(68, 255, 68, 0.05); border-radius: 8px;">
-            <div style="font-size: 1.5rem; color: #44ff44; font-weight: bold;">2024 H1</div>
-            <div style="color: #ffffff;">586 total crimes</div>
-            <div style="color: #e74c3c; font-size: 0.9rem;">16 murders</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="text-align: center; padding: 15px; background: rgba(68, 255, 68, 0.1); border-radius: 8px; border: 1px solid rgba(68, 255, 68, 0.3);">
-            <div style="font-size: 1.5rem; color: #44ff44; font-weight: bold;">2025 H1</div>
-            <div style="color: #ffffff;">574 total crimes</div>
-            <div style="color: #27ae60; font-size: 0.9rem;">4 murders (↓87%)</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-# EMERGENCY CONTACTS PAGE
+# EMERGENCY CONTACTS PAGE (Same as before)
 elif st.session_state.current_page == 'emergency':
     st.markdown("""
     <h2 style="color: #e74c3c; margin-bottom: 30px; text-align: center;">🚨 Emergency Contacts</h2>
@@ -1514,32 +1431,40 @@ elif st.session_state.current_page == 'emergency':
     </div>
     """, unsafe_allow_html=True)
 
-# AI ASSISTANT CHAT PAGE - PURE API VERSION
+# **ENHANCED AI ASSISTANT CHAT PAGE**
 elif st.session_state.current_page == 'chat':
-    st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Chat with SECURO AI</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Enhanced SECURO AI Assistant</h2>', unsafe_allow_html=True)
     
-    # CLEAN Status Display
-    st.markdown('<h3 style="color: #44ff44;">🤖 Pure API Intelligence System</h3>', unsafe_allow_html=True)
+    # Enhanced Status Display
+    st.markdown('<h3 style="color: #44ff44;">🧬 Enhanced Forensic Intelligence System</h3>', unsafe_allow_html=True)
     
     ai_status = st.session_state.get('ai_status', 'AI Status Unknown')
     if st.session_state.get('ai_enabled', False):
-        st.success(f"✅ Forensic AI Ready: Full forensic science expertise + crime intelligence database | {ai_status}")
+        st.success(f"✅ Enhanced AI Ready: Full forensic science expertise + multi-year crime intelligence + context-aware responses | {ai_status}")
     else:
         st.error(f"❌ AI Offline: Check your Google AI API key | {ai_status}")
 
-    # Crime Intelligence Summary
+    # Enhanced Intelligence Summary
     total_hotspots = len(CRIME_HOTSPOTS)
-    high_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'High'])
-    medium_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Medium'])
-    low_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Low'])
+    total_periods = len(HISTORICAL_CRIME_DATABASE)
     
-    st.info(f"🧬 **Forensic Intelligence:** DNA analysis • Digital forensics • Crime scenes • {total_hotspots} hotspots • Q2 2025: 292 crimes • Expert testimony support")
+    st.info(f"🧬 **Enhanced Capabilities:** DNA • Digital forensics • Ballistics • Toxicology • Crime scenes • {total_hotspots} hotspots • {total_periods} time periods • Context-aware responses • Forensic knowledge base")
+    
+    # Response Type Information
+    st.markdown("""
+    <div style="background: rgba(68, 255, 68, 0.1); padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #44ff44;">
+        <strong style="color: #44ff44;">💡 Response Types:</strong><br>
+        <span style="color: #ffffff;">• <strong>Concise:</strong> Brief, focused answers (default)</span><br>
+        <span style="color: #ffffff;">• <strong>Detailed:</strong> Comprehensive explanations (say "detailed" or "explain")</span><br>
+        <span style="color: #ffffff;">• <strong>Context-aware:</strong> Forensic, statistical, or general based on your query</span>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Initialize chat messages
     if not st.session_state.messages:
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "🔒 **SECURO Forensic & Crime Intelligence System Online!**\n\nHi! I'm your comprehensive forensic science and crime analysis AI assistant.\n\n🧬 **What I can help with:**\n• **Forensic Science** - DNA analysis, fingerprints, ballistics, toxicology\n• **Crime Scene Investigation** - Evidence collection, documentation, reconstruction\n• **Digital Forensics** - Mobile devices, computers, encrypted data\n• **Laboratory Procedures** - Testing protocols, quality control, contamination prevention\n• **Expert Testimony** - Court preparation, admissibility requirements\n• **Crime Analysis** - Statistics, patterns, hotspot intelligence\n• **Investigation Support** - Case management, evidence correlation\n\n💬 **Just ask naturally!** Whether you need help with DNA profiling, ballistics analysis, crime scene procedures, or case statistics.\n\nWhat forensic or investigative question can I help you with?",
+            "content": "🔒 **Enhanced SECURO Forensic & Crime Intelligence System Online!**\n\nHi! I'm your enhanced comprehensive forensic science and crime analysis AI assistant.\n\n🧬 **What I can help with:**\n• **Forensic Science** - DNA analysis, fingerprints, ballistics, toxicology, trace evidence\n• **Crime Scene Investigation** - Evidence collection, documentation, reconstruction procedures\n• **Digital Forensics** - Mobile devices, computers, encrypted data, timeline analysis\n• **Laboratory Procedures** - Testing protocols, quality control, contamination prevention\n• **Expert Testimony** - Court preparation, admissibility requirements, legal standards\n• **Crime Analysis** - Multi-year statistics (2022-2025), patterns, hotspot intelligence\n• **Investigation Support** - Case management, evidence correlation, predictive analysis\n\n**🎯 New Features:**\n• **Context-aware responses** - Concise by default, detailed on request\n• **Multi-year database** - Historical crime data from 2022-2025\n• **Enhanced forensic knowledge** - Procedures, protocols, best practices\n\n💬 **Just ask naturally!** Say \"detailed\" or \"explain\" for comprehensive answers. I'll keep responses concise otherwise.\n\nWhat forensic or investigative question can I help you with?",
             "timestamp": get_stkitts_time()
         })
     
@@ -1565,16 +1490,15 @@ elif st.session_state.current_page == 'chat':
             </div>
             """, unsafe_allow_html=True)
 
-    # CLEAN Chat input with Enter key support
+    # Enhanced Chat input
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input(
-            "💬 Message SECURO:",
-            placeholder="Type your message and press Enter...",
+            "💬 Message Enhanced SECURO:",
+            placeholder="Ask about forensics, crime stats, or investigations... (Say 'detailed' for comprehensive answers)",
             label_visibility="collapsed",
             key="chat_input"
         )
         
-        # Hidden submit button (form will submit on Enter)
         submitted = st.form_submit_button("Send", type="primary")
         
         if submitted and user_input and user_input.strip():
@@ -1587,9 +1511,9 @@ elif st.session_state.current_page == 'chat':
                 "timestamp": current_time
             })
             
-            # Generate response using pure API system
-            with st.spinner("🤔 Processing..."):
-                response = generate_smart_response(user_input, st.session_state.selected_language)
+            # Generate enhanced response
+            with st.spinner("🧬 Analyzing with enhanced forensic intelligence..."):
+                response = generate_enhanced_smart_response(user_input, st.session_state.selected_language)
             
             st.session_state.messages.append({
                 "role": "assistant",
@@ -1599,18 +1523,22 @@ elif st.session_state.current_page == 'chat':
             
             st.rerun()
 
-# Status bar with real-time updates
+# Enhanced Status bar
 current_time = get_stkitts_time()
 
 st.markdown(f"""
 <div class="status-bar">
     <div class="status-item">
         <div class="status-dot"></div>
-        <span>SECURO {"Pure API Active" if st.session_state.get('ai_enabled', False) else "API Offline"}</span>
+        <span>Enhanced SECURO {"AI Active" if st.session_state.get('ai_enabled', False) else "AI Offline"}</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
-        <span>Database: Official Police Stats</span>
+        <span>Database: 2022-2025</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>Forensic Knowledge Base</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
@@ -1620,26 +1548,22 @@ st.markdown(f"""
         <div class="status-dot"></div>
         <span>{current_time} AST</span>
     </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span>Q2 2025: 292 Crimes</span>
-    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Footer
+# Enhanced Footer
 st.markdown(f"""
 <div style="text-align: center; color: #666; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; padding: 20px; margin-top: 20px; border-top: 1px solid rgba(68, 255, 68, 0.2);">
-    📊 <span style="color: #44ff44;">Data Source:</span> Royal St. Christopher & Nevis Police Force (RSCNPF)<br>
+    📊 <span style="color: #44ff44;">Data Source:</span> Royal St. Christopher & Nevis Police Force (RSCNPF) • Multi-Year Database (2022-2025)<br>
     📞 <span style="color: #44ff44;">Local Intelligence Office:</span> <a href="tel:+18694652241" style="color: #44ff44; text-decoration: none;">869-465-2241</a> Ext. 4238/4239 | 
     📧 <a href="mailto:liosk@police.kn" style="color: #44ff44; text-decoration: none;">liosk@police.kn</a><br>
-    🔄 <span style="color: #44ff44;">Last Updated:</span> {get_stkitts_date()} {get_stkitts_time()} AST | <span style="color: #44ff44;">Pure API Intelligence</span><br>
-    🗺️ <span style="color: #44ff44;">Crime Intelligence System:</span> 13 hotspots • Context-aware AI • No external dependencies<br>
+    🔄 <span style="color: #44ff44;">Last Updated:</span> {get_stkitts_date()} {get_stkitts_time()} AST | <span style="color: #44ff44;">Enhanced Forensic Intelligence</span><br>
+    🗺️ <span style="color: #44ff44;">Intelligence System:</span> 13 hotspots • Multi-year analytics • Context-aware AI • Enhanced forensic database<br>
     🌍 <span style="color: #44ff44;">Multi-language Support</span> | 🔒 <span style="color: #44ff44;">Secure Law Enforcement Platform</span><br>
     <br>
     <div style="background: rgba(68, 255, 68, 0.1); padding: 10px; border-radius: 5px; margin-top: 10px;">
-        <span style="color: #44ff44; font-weight: bold;">🧬 Comprehensive Forensic Intelligence Platform</span><br>
-        <span style="color: #ffffff;">DNA analysis • Crime scene investigation • Digital forensics • Expert testimony • Laboratory protocols</span>
+        <span style="color: #44ff44; font-weight: bold;">🧬 Enhanced Comprehensive Forensic Intelligence Platform</span><br>
+        <span style="color: #ffffff;">DNA analysis • Crime scene investigation • Digital forensics • Ballistics • Toxicology • Expert testimony • Laboratory protocols • Court admissibility • Context-aware AI</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
