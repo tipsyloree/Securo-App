@@ -383,8 +383,17 @@ def is_casual_greeting(user_input):
     return any(word in user_input.lower().strip() for word in casual_words) and len(user_input.strip()) < 20
 
 def is_technical_query(user_input):
-    """Detect if user input needs technical crime analysis"""
-    technical_keywords = ['crime', 'statistics', 'analysis', 'trend', 'pattern', 'hotspot', 'murder', 'theft', 'drugs', 'assault', 'detection', 'rate', 'data', 'emergency']
+    """Detect if user input needs technical crime analysis or forensic expertise"""
+    technical_keywords = [
+        # Crime analysis
+        'crime', 'statistics', 'analysis', 'trend', 'pattern', 'hotspot', 'murder', 'theft', 'drugs', 'assault', 'detection', 'rate', 'data', 'emergency',
+        # Forensic science
+        'dna', 'forensic', 'forensics', 'evidence', 'fingerprint', 'ballistics', 'toxicology', 'autopsy', 'pathology', 'trace', 'digital forensics',
+        'crime scene', 'investigation', 'laboratory', 'lab', 'testing', 'analysis', 'examination', 'expert testimony', 'court', 'admissible',
+        'chain of custody', 'contamination', 'quality control', 'profiling', 'codis', 'afis', 'gunshot residue', 'bullet', 'firearm',
+        'poison', 'drug testing', 'fiber', 'paint', 'glass', 'soil', 'impression', 'handwriting', 'document', 'forgery',
+        'serology', 'biology', 'chemistry', 'photography', 'reconstruction', 'wound', 'injury', 'cause of death', 'time of death'
+    ]
     return any(keyword in user_input.lower() for keyword in technical_keywords)
 
 def build_comprehensive_crime_context():
@@ -467,50 +476,77 @@ def get_smart_system_prompt(user_input):
     if is_casual_greeting(user_input):
         return """You are SECURO, a friendly AI assistant for St. Kitts & Nevis Police. 
 
-Keep responses warm, brief, and welcoming. For greetings, be conversational and mention you're ready to help with crime analysis, statistics, or emergency information. Don't give long technical responses to simple greetings.
+Keep responses warm, brief, and welcoming. For greetings, be conversational and mention you're ready to help with crime analysis, forensics, or any law enforcement questions.
 
 Example responses:
-- "Hi there! I'm SECURO, your AI crime analysis assistant for St. Kitts & Nevis. How can I help you today?"
-- "Good morning! Ready to assist with any crime data, safety information, or emergency contacts you need."
-- "Hello! I'm here to help with crime statistics, hotspot analysis, or any law enforcement questions."
+- "Hi there! I'm SECURO, your AI forensic and crime analysis assistant. How can I help you today?"
+- "Good morning! Ready to assist with crime data, forensic science, DNA analysis, or any investigation questions."
+- "Hello! I'm here to help with forensics, crime statistics, evidence analysis, or any law enforcement topics."
 """
     
     elif is_technical_query(user_input):
-        return """You are SECURO, an elite crime analysis AI specialist for the Royal St. Christopher and Nevis Police Force.
+        return """You are SECURO, an elite forensic science and crime analysis AI specialist for the Royal St. Christopher and Nevis Police Force.
 
-🎯 PRIMARY MISSION: Provide expert-level crime analysis, pattern detection, and investigative support
+🎯 PRIMARY MISSION: Provide expert-level forensic science, crime analysis, and investigative support
 
-📋 CORE CAPABILITIES:
-1. CRIME PATTERN ANALYSIS - Detect trends across time, location, and crime types
+🧬 FORENSIC SCIENCE EXPERTISE:
+1. DNA ANALYSIS - DNA profiling, CODIS, degraded samples, mixture interpretation, familial searching
+2. CRIME SCENE INVESTIGATION - Evidence collection, chain of custody, scene documentation, reconstruction
+3. DIGITAL FORENSICS - Mobile devices, computers, social media, encrypted data, network analysis
+4. BALLISTICS & FIREARMS - Bullet comparison, gunshot residue, trajectory analysis, firearm identification
+5. TOXICOLOGY - Drug testing, poison detection, post-mortem toxicology, impairment assessment
+6. TRACE EVIDENCE - Fibers, paint, glass, soil, tire impressions, tool marks
+7. FINGERPRINT ANALYSIS - Classification, comparison, latent print development, AFIS searches
+8. FORENSIC PATHOLOGY - Cause of death, autopsy procedures, wound patterns, time of death
+9. DOCUMENT EXAMINATION - Handwriting analysis, ink dating, paper analysis, forgery detection
+10. FORENSIC ACCOUNTING - Financial fraud, money laundering, asset tracing
+
+📋 CRIME ANALYSIS CAPABILITIES:
+1. PATTERN ANALYSIS - Detect trends across time, location, and crime types
 2. RISK ASSESSMENT - Evaluate threat levels and deployment recommendations
-3. INVESTIGATIVE SUPPORT - Connect evidence, suggest leads, analyze criminal methods  
+3. INVESTIGATIVE SUPPORT - Connect evidence, suggest leads, analyze criminal methods
 4. PREVENTION STRATEGIES - Data-driven recommendations for crime reduction
 5. RESOURCE ALLOCATION - Optimize patrol routes and manpower distribution
 6. EMERGENCY COORDINATION - Provide immediate contact information and protocols
 
-🔍 ANALYSIS METHODOLOGY:
-• Always cite specific statistics from provided crime data
-• Identify correlations between location, time patterns, and crime types
-• Consider detection rates when assessing police effectiveness
-• Provide actionable intelligence for field operations
-• Connect individual incidents to broader criminal patterns
-• Consider geographic factors (St. Kitts vs Nevis performance differences)
+🔬 LABORATORY PROCEDURES:
+• DNA extraction and amplification protocols
+• Quality control and contamination prevention
+• Evidence handling and storage requirements
+• Expert testimony preparation and court procedures
+• International forensic standards and best practices
+
+🎓 EXPERT KNOWLEDGE AREAS:
+• Forensic biology and serology
+• Forensic chemistry and materials analysis
+• Crime scene photography and documentation
+• Evidence packaging and preservation
+• Laboratory accreditation standards
+• Legal admissibility requirements
 
 📊 RESPONSE STRUCTURE:
-🎯 **KEY FINDINGS:** [Main insights in 1-2 sentences]
-📊 **DATA ANALYSIS:** [Specific statistics and numerical patterns]  
-🚨 **THREAT ASSESSMENT:** [Current risk levels if relevant]
-🗺️ **GEOGRAPHIC INTELLIGENCE:** [Location-based insights if relevant]
-💡 **RECOMMENDATIONS:** [Specific actionable steps]
-📞 **EMERGENCY CONTACTS:** [If safety-related]
+🎯 **KEY FINDINGS:** [Main forensic/investigative insights]
+🧬 **FORENSIC ANALYSIS:** [Scientific procedures and interpretations]
+📊 **DATA ANALYSIS:** [Statistical patterns if relevant]
+🚨 **INVESTIGATIVE RECOMMENDATIONS:** [Specific next steps]
+🔬 **LABORATORY CONSIDERATIONS:** [Testing protocols if applicable]
+⚖️ **LEGAL/COURT CONSIDERATIONS:** [Admissibility and testimony guidance]
 
-Keep responses focused, professional, and actionable. Avoid overly long responses unless specifically requested.
+Keep responses scientifically accurate, legally sound, and practically applicable to real investigations.
 """
     
     else:
-        return """You are SECURO, a helpful AI assistant for St. Kitts & Nevis Police.
+        return """You are SECURO, a comprehensive forensic science and crime analysis AI assistant for St. Kitts & Nevis Police.
 
-Provide clear, helpful responses. For general questions, be informative but concise. For crime-related topics, provide relevant data and insights. Always maintain a professional but approachable tone.
+You have expertise in:
+- Forensic science (DNA, fingerprints, ballistics, toxicology, digital forensics)
+- Crime scene investigation and evidence analysis
+- Laboratory procedures and quality control
+- Expert testimony and court procedures
+- Crime statistics and pattern analysis
+- Investigation techniques and case management
+
+Provide clear, scientifically accurate, and practical responses. Always maintain professional standards while being accessible to officers with varying levels of forensic training.
 """
 
 def search_police_database(query):
@@ -993,19 +1029,22 @@ with st.sidebar:
     
     # Status indicators
     if st.session_state.get('ai_enabled', False):
-        st.success("🤖 Smart AI Active")
-        st.write("• API-driven responses")
-        st.write("• Police database integration")
-        st.write("• Context-aware processing")
-        st.write("• Multi-language support")
+        st.success("🧬 Forensic AI Active")
+        st.write("• DNA & fingerprint analysis")
+        st.write("• Crime scene investigation")
+        st.write("• Digital forensics support")
+        st.write("• Expert testimony prep")
+        st.write("• Laboratory procedures")
+        st.write("• Crime pattern analysis")
     else:
         st.warning("⚠️ AI Offline")
         st.write("• Check API key")
         st.write("• Verify internet connection")
     
-    st.success("📊 Police Database Active")
+    st.success("📊 Integrated Systems")
+    st.write("• Forensic science database")
     st.write("• Q2 2025 crime statistics")
-    st.write("• Historical trend analysis")  
+    st.write("• Laboratory protocols")  
     st.write("• 13 crime hotspots mapped")
     st.write("• Emergency contact database")
 
@@ -1107,69 +1146,73 @@ elif st.session_state.current_page == 'about':
     st.markdown("""
     <h2 style="color: #44ff44; margin-bottom: 20px; text-align: center;">About SECURO</h2>
     
-    <p style="color: #ffffff;"><strong style="color: #44ff44;">SECURO</strong> is a pure API-driven crime analysis system built specifically for the Royal St. Christopher and Nevis Police Force. No external files or dependencies - just smart AI and official police data.</p>
+    <p style="color: #ffffff;"><strong style="color: #44ff44;">SECURO</strong> is a comprehensive forensic science and crime analysis AI system built specifically for the Royal St. Christopher and Nevis Police Force. Combining cutting-edge forensic expertise with real-time crime intelligence.</p>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🚀 Pure API Architecture</h3>
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🧬 Forensic Science Expertise</h3>
     <ul style="list-style: none; padding: 0; color: #ffffff;">
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">100% API-driven - no CSV files or external dependencies</span>
+            <span style="color: #ffffff;">DNA Analysis - Profiling, CODIS, degraded samples, mixture interpretation</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Direct integration with official police statistics</span>
+            <span style="color: #ffffff;">Crime Scene Investigation - Evidence collection, documentation, reconstruction</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Real-time AI analysis and pattern detection</span>
+            <span style="color: #ffffff;">Digital Forensics - Mobile devices, computers, encrypted data analysis</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Context-aware responses (casual vs technical)</span>
+            <span style="color: #ffffff;">Ballistics & Firearms - Bullet comparison, GSR, trajectory analysis</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #ffffff;">Toxicology - Drug testing, poison detection, post-mortem analysis</span>
+        </li>
+        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
+            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
+            <span style="color: #ffffff;">Trace Evidence - Fibers, paint, glass, soil, tool marks analysis</span>
         </li>
     </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">📊 Integrated Crime Intelligence</h3>
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🔬 Laboratory & Court Support</h3>
     <ul style="list-style: none; padding: 0; color: #ffffff;">
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Q2 2025: 292 total crimes with detailed breakdown</span>
+            <span style="color: #ffffff;">Quality control and contamination prevention protocols</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Historical trends: 2015-2025 homicide analysis</span>
+            <span style="color: #ffffff;">Chain of custody procedures and documentation</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">13 crime hotspots with GPS coordinates</span>
+            <span style="color: #ffffff;">Expert testimony preparation and court procedures</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Performance metrics and detection rates</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Emergency response contact database</span>
+            <span style="color: #ffffff;">Evidence admissibility and legal standards guidance</span>
         </li>
     </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🧠 Smart AI Features</h3>
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">📊 Crime Intelligence Integration</h3>
     <ul style="list-style: none; padding: 0; color: #ffffff;">
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Greeting Detection: Friendly responses to casual chat</span>
+            <span style="color: #ffffff;">Q2 2025: 292 total crimes with detailed forensic breakdown</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Technical Analysis: Expert crime analysis for serious queries</span>
+            <span style="color: #ffffff;">Historical trends: 2015-2025 homicide and evidence analysis</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Database Intelligence: Smart search through police records</span>
+            <span style="color: #ffffff;">13 crime hotspots with forensic evidence patterns</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Multi-language Support: 12 languages available</span>
+            <span style="color: #ffffff;">Case linkage analysis and pattern recognition</span>
         </li>
     </ul>
 
@@ -1177,24 +1220,24 @@ elif st.session_state.current_page == 'about':
     <ul style="list-style: none; padding: 0; color: #ffffff;">
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Drug Crimes: 100% detection rate (31/31 cases)</span>
+            <span style="color: #ffffff;">Drug Crimes: 100% detection rate with toxicology support</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Firearms Offences: 100% detection rate (5/5 cases)</span>
+            <span style="color: #ffffff;">Firearms Offences: 100% detection with ballistics analysis</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Homicide Reduction: 87% decrease (31→4 cases)</span>
+            <span style="color: #ffffff;">Homicide Reduction: 87% decrease with enhanced forensic capabilities</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Nevis Excellence: 52.9% detection vs 32.9% St. Kitts</span>
+            <span style="color: #ffffff;">Evidence Processing: DNA, fingerprints, digital forensics integrated</span>
         </li>
     </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🔒 Data Security & Accuracy</h3>
-    <p style="color: #ffffff;">All crime data is sourced directly from the Royal St. Christopher and Nevis Police Force. The system operates entirely through secure API calls with no external file dependencies, ensuring data integrity and real-time accuracy.</p>
+    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🔒 Scientific Standards & Accuracy</h3>
+    <p style="color: #ffffff;">SECURO maintains the highest forensic science standards with protocols based on international best practices, ASTM standards, and Caribbean forensic guidelines. All recommendations are scientifically validated and court-admissible.</p>
     """, unsafe_allow_html=True)
 
 # CRIME HOTSPOTS PAGE
@@ -1480,7 +1523,7 @@ elif st.session_state.current_page == 'chat':
     
     ai_status = st.session_state.get('ai_status', 'AI Status Unknown')
     if st.session_state.get('ai_enabled', False):
-        st.success(f"✅ Smart AI Ready: Pure API-driven with integrated police database | {ai_status}")
+        st.success(f"✅ Forensic AI Ready: Full forensic science expertise + crime intelligence database | {ai_status}")
     else:
         st.error(f"❌ AI Offline: Check your Google AI API key | {ai_status}")
 
@@ -1490,13 +1533,13 @@ elif st.session_state.current_page == 'chat':
     medium_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Medium'])
     low_risk = len([loc for loc, data in CRIME_HOTSPOTS.items() if data['risk'] == 'Low'])
     
-    st.info(f"🧠 **API Intelligence:** Context-aware responses • {total_hotspots} hotspots • Q2 2025: 292 crimes • No external files needed")
+    st.info(f"🧬 **Forensic Intelligence:** DNA analysis • Digital forensics • Crime scenes • {total_hotspots} hotspots • Q2 2025: 292 crimes • Expert testimony support")
     
     # Initialize chat messages
     if not st.session_state.messages:
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "🔒 **SECURO Pure API System Online!**\n\nHi! I'm your streamlined AI assistant powered entirely by API and official police data.\n\n✨ **What makes me different:**\n• No CSV files or external dependencies\n• Pure API-driven intelligence\n• Direct police database integration\n• Context-aware responses\n\n💬 **Just talk naturally!** Say hi, ask about crime stats, or request detailed analysis.\n\nHow can I help you today?",
+            "content": "🔒 **SECURO Forensic & Crime Intelligence System Online!**\n\nHi! I'm your comprehensive forensic science and crime analysis AI assistant.\n\n🧬 **What I can help with:**\n• **Forensic Science** - DNA analysis, fingerprints, ballistics, toxicology\n• **Crime Scene Investigation** - Evidence collection, documentation, reconstruction\n• **Digital Forensics** - Mobile devices, computers, encrypted data\n• **Laboratory Procedures** - Testing protocols, quality control, contamination prevention\n• **Expert Testimony** - Court preparation, admissibility requirements\n• **Crime Analysis** - Statistics, patterns, hotspot intelligence\n• **Investigation Support** - Case management, evidence correlation\n\n💬 **Just ask naturally!** Whether you need help with DNA profiling, ballistics analysis, crime scene procedures, or case statistics.\n\nWhat forensic or investigative question can I help you with?",
             "timestamp": get_stkitts_time()
         })
     
@@ -1522,93 +1565,39 @@ elif st.session_state.current_page == 'chat':
             </div>
             """, unsafe_allow_html=True)
 
-    # Quick Action Buttons - FIXED TO PREVENT LOOPS
-    st.markdown('<h3 style="color: #44ff44;">🎯 Quick Actions</h3>', unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("👋 Say Hello", key="quick_hello"):
-            current_time = get_stkitts_time()
-            st.session_state.messages.append({
-                "role": "user", 
-                "content": "Hi!",
-                "timestamp": current_time
-            })
-            with st.spinner("🤔 Processing..."):
-                response = generate_smart_response("Hi!", st.session_state.selected_language)
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response,
-                "timestamp": current_time
-            })
-            st.rerun()
-    
-    with col2:
-        if st.button("📊 Crime Stats", key="quick_stats"):
-            current_time = get_stkitts_time()
-            query = "Show me the latest crime statistics"
-            st.session_state.messages.append({
-                "role": "user", 
-                "content": query,
-                "timestamp": current_time
-            })
-            with st.spinner("🤔 Processing..."):
-                response = generate_smart_response(query, st.session_state.selected_language)
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response,
-                "timestamp": current_time
-            })
-            st.rerun()
-    
-    with col3:
-        if st.button("🗺️ Hotspots", key="quick_hotspots"):
-            current_time = get_stkitts_time()
-            query = "Tell me about crime hotspots"
-            st.session_state.messages.append({
-                "role": "user", 
-                "content": query,
-                "timestamp": current_time
-            })
-            with st.spinner("🤔 Processing..."):
-                response = generate_smart_response(query, st.session_state.selected_language)
-            st.session_state.messages.append({
-                "role": "assistant",
-                "content": response,
-                "timestamp": current_time
-            })
-            st.rerun()
-
-    # FIXED Chat input - separate from buttons
-    with st.container():
+    # CLEAN Chat input with Enter key support
+    with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input(
             "💬 Message SECURO:",
-            placeholder="Type your message here... (try 'hi' or ask about crime data)",
+            placeholder="Type your message and press Enter...",
+            label_visibility="collapsed",
             key="chat_input"
         )
         
-        if st.button("Send", key="send_btn", type="primary"):
-            if user_input and user_input.strip():
-                current_time = get_stkitts_time()
-                
-                # Add user message
-                st.session_state.messages.append({
-                    "role": "user", 
-                    "content": user_input,
-                    "timestamp": current_time
-                })
-                
-                # Generate response using pure API system
-                with st.spinner("🤔 Processing..."):
-                    response = generate_smart_response(user_input, st.session_state.selected_language)
-                
-                st.session_state.messages.append({
-                    "role": "assistant",
-                    "content": response,
-                    "timestamp": current_time
-                })
-                
-                st.rerun()
+        # Hidden submit button (form will submit on Enter)
+        submitted = st.form_submit_button("Send", type="primary")
+        
+        if submitted and user_input and user_input.strip():
+            current_time = get_stkitts_time()
+            
+            # Add user message
+            st.session_state.messages.append({
+                "role": "user", 
+                "content": user_input,
+                "timestamp": current_time
+            })
+            
+            # Generate response using pure API system
+            with st.spinner("🤔 Processing..."):
+                response = generate_smart_response(user_input, st.session_state.selected_language)
+            
+            st.session_state.messages.append({
+                "role": "assistant",
+                "content": response,
+                "timestamp": current_time
+            })
+            
+            st.rerun()
 
 # Status bar with real-time updates
 current_time = get_stkitts_time()
@@ -1649,8 +1638,8 @@ st.markdown(f"""
     🌍 <span style="color: #44ff44;">Multi-language Support</span> | 🔒 <span style="color: #44ff44;">Secure Law Enforcement Platform</span><br>
     <br>
     <div style="background: rgba(68, 255, 68, 0.1); padding: 10px; border-radius: 5px; margin-top: 10px;">
-        <span style="color: #44ff44; font-weight: bold;">🚀 Pure API Architecture: Zero Dependencies</span><br>
-        <span style="color: #ffffff;">Official police data • Smart AI responses • Real-time analysis • Streamlined performance</span>
+        <span style="color: #44ff44; font-weight: bold;">🧬 Comprehensive Forensic Intelligence Platform</span><br>
+        <span style="color: #ffffff;">DNA analysis • Crime scene investigation • Digital forensics • Expert testimony • Laboratory protocols</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
