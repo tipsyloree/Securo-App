@@ -2129,7 +2129,7 @@ elif st.session_state.current_page == 'chat':
                 col1, col2, col3 = st.columns(3)
                 
                 with col1:
-                    if st.button("📈 Historical Homicide Trends", key=f"macro_trends_{int(time.time())}", use_container_width=True):
+                    if st.form_submit_button("📈 Historical Homicide Trends", use_container_width=True):
                         fig = create_macrotrends_comparison_charts("homicide_trends")
                         if fig:
                             st.plotly_chart(fig, use_container_width=True)
