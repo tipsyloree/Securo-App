@@ -357,6 +357,9 @@ if 'crime_stats' not in st.session_state:
 if 'selected_periods' not in st.session_state:
     st.session_state.selected_periods = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
 
+if 'chat_active' not in st.session_state:
+    st.session_state.chat_active = False
+
 # Professional CSS styling matching the screenshots
 st.markdown("""
 <style>
@@ -1376,7 +1379,7 @@ elif st.session_state.current_page == 'about':
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 🧠 Enhanced AI Capabilities")
+        st.markdown("### 🧠 Securo AI Capabilities")
         capabilities = [
             "Conversation Memory - Maintains context across entire chat sessions",
             "Statistical Knowledge Integration - Real access to 2023-2025 crime data", 
@@ -1811,26 +1814,57 @@ elif st.session_state.current_page == 'analytics':
 
 # AI ASSISTANT PAGE
 elif st.session_state.current_page == 'chat':
-    st.markdown("""
-    <div class="chat-welcome">
-        <div class="chat-logo">
-            🛡️
+    # Show welcome screen only if chat is not active
+    if not st.session_state.get('chat_active', False):
+        st.markdown("""
+        <div class="chat-welcome">
+            <div class="chat-logo">
+                🔒
+            </div>
+            <h1 class="chat-title">SECURO</h1>
+            <p class="chat-subtitle">AI Assistant</p>
+            <p style="color: #8b949e; max-width: 600px; margin: 0 auto 30px;">
+                Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having justloaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and find out more about my capabilities.
+            </p>
         </div>
-        <h1 class="chat-title">SECURO</h1>
-        <p class="chat-subtitle">Enhanced AI Assistant</p>
-        <p style="color: #8b949e; max-width: 600px; margin: 0 auto 30px;">
-            Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having justloaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and find out more about my capabilities.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Working start conversation button
-    if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
-        # Create new chat session
-        create_new_chat()
-        st.success("✅ New chat session created! You can now start chatting with SECURO AI.")
+        """, unsafe_allow_html=True)
         
-        # Display chat interface
+        # Working start conversation button
+        if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+            # Create new chat session and activate chat
+            create_new_chat()
+            st.session_state.chat_active = True
+            st.success("✅ New chat session created! You can now start chatting with SECURO AI.")
+            st.rerun()
+    
+    else:
+        # Chat is active - show chat interface
+        st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant</h2>', unsafe_allow_html=True)
+        
+        # Chat management controls
+        col1, col2, col3 = st.columns([2, 6, 2])
+        
+        with col1:
+            if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
+                create_new_chat()
+                st.rerun()
+        
+        with col2:
+            current_chat = get_current_chat()
+            st.markdown(f"""
+            <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
+                        border-radius: 8px; padding: 10px; text-align: center;">
+                <strong style="color: #00ff41;">Current Session:</strong>
+                <span style="color: #c9d1d9;">{current_chat['name']}</span>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            if st.button("🔙 Back to Welcome", key="back_welcome", use_container_width=True):
+                st.session_state.chat_active = False
+                st.rerun()
+        
+        # Get current chat and display messages
         current_chat = get_current_chat()
         messages = current_chat['messages']
         
@@ -1838,13 +1872,14 @@ elif st.session_state.current_page == 'chat':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nHow can I assist you today?",
+                "content": "🔒 SECURO AI System Online!",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
             current_chat['messages'] = messages
         
         # Display chat messages
+        st.markdown("### 💬 Conversation")
         for message in messages:
             if message["role"] == "user":
                 clean_content = str(message["content"]).strip()
@@ -1866,16 +1901,17 @@ elif st.session_state.current_page == 'chat':
                 </div>
                 """, unsafe_allow_html=True)
 
-        # Chat input
+        # Chat input (always show when chat is active)
+        st.markdown("---")
         with st.form("chat_form", clear_on_submit=True):
             user_input = st.text_input(
-                "💬 Message Enhanced AI Assistant:",
+                "💬 Message AI Assistant:",
                 placeholder="Ask about crime statistics, trends, international comparisons, or request charts...",
                 label_visibility="collapsed",
                 key="chat_input"
             )
             
-            submitted = st.form_submit_button("🚀 Send Message", type="primary")
+            submitted = st.form_submit_button("Send", type="primary")
             
             if submitted and user_input and user_input.strip():
                 current_time = get_stkitts_time()
@@ -1884,7 +1920,7 @@ elif st.session_state.current_page == 'chat':
                 add_message_to_chat("user", user_input)
                 
                 # Simple response (since we don't have the full AI function)
-                response = f"Thank you for your message: '{user_input}'. This is a demonstration response. In the full version, I would provide statistical analysis and crime intelligence based on your query."
+                response = f"Thank you for your message: '{user_input}'. This is a demonstration response. In the full version, I would provide statistical analysis and crime intelligence based on your query using the integrated database."
                 
                 # Add assistant response to current chat
                 add_message_to_chat("assistant", response)
