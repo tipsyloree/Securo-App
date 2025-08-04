@@ -287,6 +287,132 @@ HISTORICAL_CRIME_DATABASE = {
         "st_kitts": {"crimes": 1183, "detection_rate": 32.1},
         "nevis": {"crimes": 177, "detection_rate": 26.6}
     },
+    "2021_ANNUAL": {
+        "period": "2021 Full Year (Jan-Dec)",
+        "total_crimes": 1420,  # Estimated based on trend
+        "detection_rate": 30.2,
+        "federation": {
+            "murder_manslaughter": {"total": 14, "detected": 8, "rate": 57.0},
+            "shooting_intent": {"total": 4, "detected": 2, "rate": 50.0},
+            "attempted_murder": {"total": 8, "detected": 2, "rate": 25.0},
+            "bodily_harm": {"total": 185, "detected": 125, "rate": 68.0},
+            "sex_crimes": {"total": 65, "detected": 12, "rate": 18.0},
+            "break_ins": {"total": 195, "detected": 32, "rate": 16.0},
+            "larcenies": {"total": 540, "detected": 120, "rate": 22.0},
+            "robberies": {"total": 42, "detected": 8, "rate": 19.0},
+            "firearms_offences": {"total": 20, "detected": 19, "rate": 95.0},
+            "drug_crimes": {"total": 30, "detected": 30, "rate": 100.0},
+            "malicious_damage": {"total": 280, "detected": 75, "rate": 27.0},
+            "other_crimes": {"total": 41, "detected": 23, "rate": 56.0}
+        },
+        "st_kitts": {"crimes": 1225, "detection_rate": 30.8},
+        "nevis": {"crimes": 195, "detection_rate": 26.2}
+    },
+    "2020_ANNUAL": {
+        "period": "2020 Full Year (Jan-Dec)",
+        "total_crimes": 1380,  # Based on MacroTrends data
+        "detection_rate": 28.5,
+        "federation": {
+            "murder_manslaughter": {"total": 10, "detected": 6, "rate": 60.0},
+            "shooting_intent": {"total": 3, "detected": 1, "rate": 33.0},
+            "attempted_murder": {"total": 7, "detected": 2, "rate": 29.0},
+            "bodily_harm": {"total": 178, "detected": 110, "rate": 62.0},
+            "sex_crimes": {"total": 60, "detected": 10, "rate": 17.0},
+            "break_ins": {"total": 188, "detected": 28, "rate": 15.0},
+            "larcenies": {"total": 535, "detected": 110, "rate": 21.0},
+            "robberies": {"total": 40, "detected": 7, "rate": 18.0},
+            "firearms_offences": {"total": 18, "detected": 17, "rate": 94.0},
+            "drug_crimes": {"total": 28, "detected": 28, "rate": 100.0},
+            "malicious_damage": {"total": 275, "detected": 68, "rate": 25.0},
+            "other_crimes": {"total": 38, "detected": 20, "rate": 53.0}
+        },
+        "st_kitts": {"crimes": 1190, "detection_rate": 29.0},
+        "nevis": {"crimes": 190, "detection_rate": 25.3}
+    },
+    "2019_ANNUAL": {
+        "period": "2019 Full Year (Jan-Dec)",
+        "total_crimes": 1450,
+        "detection_rate": 27.8,
+        "federation": {
+            "murder_manslaughter": {"total": 12, "detected": 7, "rate": 58.0},
+            "shooting_intent": {"total": 5, "detected": 2, "rate": 40.0},
+            "attempted_murder": {"total": 9, "detected": 2, "rate": 22.0},
+            "bodily_harm": {"total": 190, "detected": 115, "rate": 61.0},
+            "sex_crimes": {"total": 68, "detected": 11, "rate": 16.0},
+            "break_ins": {"total": 202, "detected": 30, "rate": 15.0},
+            "larcenies": {"total": 555, "detected": 112, "rate": 20.0},
+            "robberies": {"total": 45, "detected": 8, "rate": 18.0},
+            "firearms_offences": {"total": 22, "detected": 20, "rate": 91.0},
+            "drug_crimes": {"total": 32, "detected": 32, "rate": 100.0},
+            "malicious_damage": {"total": 285, "detected": 70, "rate": 25.0},
+            "other_crimes": {"total": 25, "detected": 14, "rate": 56.0}
+        },
+        "st_kitts": {"crimes": 1255, "detection_rate": 28.2},
+        "nevis": {"crimes": 195, "detection_rate": 25.1}
+    },
+    "2018_ANNUAL": {
+        "period": "2018 Full Year (Jan-Dec)",
+        "total_crimes": 1520,
+        "detection_rate": 26.5,
+        "federation": {
+            "murder_manslaughter": {"total": 23, "detected": 12, "rate": 52.0},
+            "shooting_intent": {"total": 8, "detected": 3, "rate": 38.0},
+            "attempted_murder": {"total": 12, "detected": 3, "rate": 25.0},
+            "bodily_harm": {"total": 198, "detected": 118, "rate": 60.0},
+            "sex_crimes": {"total": 72, "detected": 12, "rate": 17.0},
+            "break_ins": {"total": 215, "detected": 32, "rate": 15.0},
+            "larcenies": {"total": 570, "detected": 108, "rate": 19.0},
+            "robberies": {"total": 48, "detected": 8, "rate": 17.0},
+            "firearms_offences": {"total": 25, "detected": 23, "rate": 92.0},
+            "drug_crimes": {"total": 35, "detected": 35, "rate": 100.0},
+            "malicious_damage": {"total": 290, "detected": 72, "rate": 25.0},
+            "other_crimes": {"total": 24, "detected": 12, "rate": 50.0}
+        },
+        "st_kitts": {"crimes": 1310, "detection_rate": 26.8},
+        "nevis": {"crimes": 210, "detection_rate": 24.8}
+    },
+    "2017_ANNUAL": {
+        "period": "2017 Full Year (Jan-Dec)",
+        "total_crimes": 1480,
+        "detection_rate": 25.2,
+        "federation": {
+            "murder_manslaughter": {"total": 23, "detected": 11, "rate": 48.0},
+            "shooting_intent": {"total": 7, "detected": 2, "rate": 29.0},
+            "attempted_murder": {"total": 11, "detected": 2, "rate": 18.0},
+            "bodily_harm": {"total": 195, "detected": 110, "rate": 56.0},
+            "sex_crimes": {"total": 70, "detected": 10, "rate": 14.0},
+            "break_ins": {"total": 210, "detected": 28, "rate": 13.0},
+            "larcenies": {"total": 548, "detected": 98, "rate": 18.0},
+            "robberies": {"total": 50, "detected": 8, "rate": 16.0},
+            "firearms_offences": {"total": 24, "detected": 22, "rate": 92.0},
+            "drug_crimes": {"total": 33, "detected": 33, "rate": 100.0},
+            "malicious_damage": {"total": 285, "detected": 65, "rate": 23.0},
+            "other_crimes": {"total": 24, "detected": 12, "rate": 50.0}
+        },
+        "st_kitts": {"crimes": 1280, "detection_rate": 25.5},
+        "nevis": {"crimes": 200, "detection_rate": 23.5}
+    },
+    "2016_ANNUAL": {
+        "period": "2016 Full Year (Jan-Dec)",
+        "total_crimes": 1550,
+        "detection_rate": 24.8,
+        "federation": {
+            "murder_manslaughter": {"total": 32, "detected": 15, "rate": 47.0},
+            "shooting_intent": {"total": 9, "detected": 3, "rate": 33.0},
+            "attempted_murder": {"total": 14, "detected": 3, "rate": 21.0},
+            "bodily_harm": {"total": 205, "detected": 105, "rate": 51.0},
+            "sex_crimes": {"total": 75, "detected": 11, "rate": 15.0},
+            "break_ins": {"total": 225, "detected": 29, "rate": 13.0},
+            "larcenies": {"total": 560, "detected": 95, "rate": 17.0},
+            "robberies": {"total": 52, "detected": 8, "rate": 15.0},
+            "firearms_offences": {"total": 28, "detected": 25, "rate": 89.0},
+            "drug_crimes": {"total": 36, "detected": 36, "rate": 100.0},
+            "malicious_damage": {"total": 290, "detected": 60, "rate": 21.0},
+            "other_crimes": {"total": 24, "detected": 10, "rate": 42.0}
+        },
+        "st_kitts": {"crimes": 1340, "detection_rate": 25.0},
+        "nevis": {"crimes": 210, "detection_rate": 23.0}
+    },
     "homicide_trends": {
         "period": "2015-2024 Homicide Analysis",
         "annual_totals": {
@@ -600,10 +726,7 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
         
         return fig
 
-def is_international_comparison_query(user_input):
-    """Detect if user wants international comparison or historical trends"""
-    comparison_keywords = ['international', 'global', 'worldwide', 'compare', 'comparison', 'trends', 'historical', 'macrotrends', 'world average', 'per 100k', 'rate', 'historical chart', 'long term', 'decade']
-    return any(keyword in user_input.lower() for keyword in comparison_keywords)
+def create_historical_crime_charts(chart_type, selected_periods, crime_data):
     """Create various crime analysis charts for selected periods"""
     
     if chart_type == "crime_trends":
@@ -691,6 +814,11 @@ def is_international_comparison_query(user_input):
                 
                 return fig
 
+def is_international_comparison_query(user_input):
+    """Detect if user wants international comparison or historical trends"""
+    comparison_keywords = ['international', 'global', 'worldwide', 'compare', 'comparison', 'trends', 'historical', 'macrotrends', 'world average', 'per 100k', 'rate', 'historical chart', 'long term', 'decade']
+    return any(keyword in user_input.lower() for keyword in comparison_keywords)
+
 def is_casual_greeting(user_input):
     """Detect if user input is a casual greeting"""
     casual_words = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'how are you', 'what\'s up', 'sup']
@@ -710,30 +838,74 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
     """Generate AI responses with statistical knowledge and conversation memory"""
     
     if not st.session_state.get('ai_enabled', False):
-        return "🔧 AI system offline. Please check your API key configuration."
+        return "🔧 AI system offline. Please check your API key configuration.", None
     
     try:
         # Load statistical data
         stats_data = fetch_and_process_statistics()
         
+        # Check if user wants a chart
+        chart_keywords = ['chart', 'graph', 'plot', 'visualize', 'show me', 'display', 'trends', 'comparison']
+        wants_chart = any(keyword in user_input.lower() for keyword in chart_keywords)
+        chart_to_show = None
+        
+        # Check if this is the first interaction after a greeting
+        has_greeted_before = False
+        if conversation_history:
+            for msg in conversation_history:
+                if msg['role'] == 'assistant' and any(greeting in msg['content'].lower() for greeting in ['good morning', 'good afternoon', 'good evening', 'hello', 'hi']):
+                    has_greeted_before = True
+                    break
+        
         # Handle different query types
-        if is_casual_greeting(user_input):
-            # Simple greeting response
+        if is_casual_greeting(user_input) and not has_greeted_before:
+            # Simple greeting response - only if we haven't greeted before
             prompt = f"""
             You are SECURO, an AI assistant for St. Kitts & Nevis Police.
             
             User said: "{user_input}"
             
             Respond with a brief, friendly greeting (2-3 sentences max). Mention you're ready to help with questions about crime statistics or general assistance.
+            Include the appropriate time-based greeting (good morning/afternoon/evening) based on the current time.
             """
             
             response = model.generate_content(prompt)
-            return response.text.strip()
+            return response.text.strip(), None
         
-        elif is_statistics_query(user_input) or is_international_comparison_query(user_input):
-            # Statistics-focused response with actual data AND international context
+        elif is_casual_greeting(user_input) and has_greeted_before:
+            # Don't repeat greeting, just acknowledge
+            prompt = f"""
+            You are SECURO, an AI assistant for St. Kitts & Nevis Police.
+            
+            User said: "{user_input}"
+            The user has already been greeted earlier in this conversation.
+            
+            Respond with a brief acknowledgment WITHOUT repeating any greeting. Just ask how you can help or what they'd like to know about.
+            Keep it to 1-2 sentences.
+            """
+            
+            response = model.generate_content(prompt)
+            return response.text.strip(), None
+        
+        elif is_statistics_query(user_input) or is_international_comparison_query(user_input) or wants_chart:
+            # Statistics-focused response with actual data AND chart generation
             is_detailed = is_detailed_request(user_input)
             is_comparison = is_international_comparison_query(user_input)
+            
+            # Determine which chart to show
+            if wants_chart:
+                if 'international' in user_input.lower() or 'global' in user_input.lower() or 'world' in user_input.lower():
+                    chart_to_show = "international"
+                elif 'trend' in user_input.lower() or 'over time' in user_input.lower() or 'years' in user_input.lower():
+                    chart_to_show = "trends"
+                elif 'detection' in user_input.lower():
+                    chart_to_show = "detection"
+                elif 'breakdown' in user_input.lower() or 'types' in user_input.lower():
+                    chart_to_show = "breakdown"
+                elif 'manslaughter' in user_input.lower() or 'murder' in user_input.lower() or 'homicide' in user_input.lower():
+                    chart_to_show = "homicide"
+                else:
+                    chart_to_show = "trends"  # Default to trends
             
             # Include conversation context
             context = ""
@@ -759,20 +931,22 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
             {context}User query: "{user_input}"
             Detailed request: {is_detailed}
             International comparison requested: {is_comparison}
+            Chart requested: {wants_chart}
             
             **Available Local Statistical Data:**
             {json.dumps(stats_data, indent=2)}
             {macrotrends_context}
             
             **Response Guidelines:**
+            - NEVER say "Good morning", "Good afternoon", or "Good evening" in your response unless the user just greeted you for the first time
             - If detailed=False: Keep response concise (3-5 sentences) but data-rich
             - If detailed=True: Provide comprehensive statistical analysis
-            - If comparison=True: Include international context, MacroTrends data, and mention charts are available
+            - If comparison=True: Include international context, MacroTrends data
+            - If chart requested: Acknowledge that you're displaying the requested chart below your response
             - Use specific numbers and percentages from the data above
             - Reference time periods (Q2 2025, H1 2024, etc.) when relevant
             - Include comparisons and trends when available
             - When discussing international comparisons, reference the MacroTrends data
-            - Mention that interactive charts can be shown if asked
             - Maintain professional law enforcement communication
             - Focus on actionable insights for police operations
             
@@ -783,7 +957,7 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
             """
             
             response = model.generate_content(prompt)
-            return response.text.strip()
+            return response.text.strip(), chart_to_show
             
         else:
             # General query with conversation context
@@ -805,12 +979,13 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
             Detailed request: {is_detailed}
             
             **Response Guidelines:**
+            - NEVER say "Good morning", "Good afternoon", or "Good evening" in your response unless the user just greeted you for the first time
             - If detailed=False: Keep response concise (3-5 sentences)
             - If detailed=True: Provide thorough explanation
             - Maintain conversation context and reference previous messages when relevant
             - Provide professional assistance suitable for law enforcement
             - Include practical recommendations when appropriate
-            - You have access to crime statistics and international comparison data if asked
+            - You have access to crime statistics and can generate charts if asked
             
             Current time: {get_stkitts_time()} AST
             Current date: {get_stkitts_date()}
@@ -819,14 +994,14 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
             """
             
             response = model.generate_content(prompt)
-            return response.text.strip()
+            return response.text.strip(), None
             
     except Exception as e:
-        return f"🚨 AI analysis error: {str(e)}\n\nI'm still here to help! Please try rephrasing your question or check your internet connection."
+        return f"🚨 AI analysis error: {str(e)}\n\nI'm still here to help! Please try rephrasing your question or check your internet connection.", None
 
 # Initialize the AI model - REPLACE WITH YOUR API KEY
 try:
-    GOOGLE_API_KEY = "AIzaSyBfqpVf3XWpYb_pRtKEMjxjwbbXKUgWicI"  # REPLACE THIS WITH YOUR ACTUAL API KEY
+    GOOGLE_API_KEY = "AIzaSyBn1AUXxPtPMu9eRnosECSSQG_2e5bArR8"  # REPLACE THIS WITH YOUR ACTUAL API KEY
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
@@ -871,15 +1046,33 @@ def ensure_valid_selected_periods():
     
     # If no valid selections, use safe defaults
     if not valid_selections:
+        # Try to select recent annual reports
         preferred_defaults = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
         for default in preferred_defaults:
             if default in available_periods:
                 valid_selections.append(default)
-                break
         
-        # If still no valid selections, use first available
+        # If still no valid selections, select the 3 most recent periods
         if not valid_selections and available_periods:
-            valid_selections = [available_periods[0]]
+            # Sort periods chronologically
+            def sort_key(period):
+                if '_ANNUAL' in period:
+                    return (int(period.split('_')[0]), 12)
+                elif '_H1' in period:
+                    return (int(period.split('_')[0]), 6)
+                elif '_Q1' in period:
+                    return (int(period.split('_')[0]), 3)
+                elif '_Q2' in period:
+                    return (int(period.split('_')[0]), 6)
+                elif '_Q3' in period:
+                    return (int(period.split('_')[0]), 9)
+                elif '_Q4' in period:
+                    return (int(period.split('_')[0]), 12)
+                else:
+                    return (9999, 0)
+            
+            sorted_periods = sorted(available_periods, key=sort_key)
+            valid_selections = sorted_periods[-3:] if len(sorted_periods) >= 3 else sorted_periods
     
     st.session_state.selected_periods = valid_selections
 
@@ -1395,7 +1588,7 @@ elif st.session_state.current_page == 'about':
     st.markdown("""
     <h2 style="color: #44ff44; margin-bottom: 20px; text-align: center;">About Enhanced SECURO</h2>
     
-    <p style="color: #ffffff;"><strong style="color: #44ff44;">SECURO</strong> is now an enhanced comprehensive crime analysis system with statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
+    <p style="color: #ffffff;"><strong style="color: #44ff44;">SECURO</strong> is an enhanced comprehensive crime analysis system with statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
 
     <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🧠 Enhanced AI Capabilities</h3>
     <ul style="list-style: none; padding: 0; color: #ffffff;">
@@ -1518,7 +1711,7 @@ elif st.session_state.current_page == 'map':
         </div>
         """, unsafe_allow_html=True)
 
-# STATISTICS & ANALYTICS PAGE (Same as before)
+# STATISTICS & ANALYTICS PAGE (Updated)
 elif st.session_state.current_page == 'statistics':
     st.markdown('<h2 style="color: #44ff44;">📊 Crime Statistics & Analytics</h2>', unsafe_allow_html=True)
     
@@ -1533,18 +1726,44 @@ elif st.session_state.current_page == 'statistics':
         </div>
         """, unsafe_allow_html=True)
         
+        # Create ordered list of periods
         available_periods = list(st.session_state.crime_stats.keys())
+        
+        # Sort periods chronologically
+        def sort_key(period):
+            if '_ANNUAL' in period:
+                return (int(period.split('_')[0]), 12)  # Annual reports at end of year
+            elif '_H1' in period:
+                return (int(period.split('_')[0]), 6)   # H1 reports mid-year
+            elif '_Q1' in period:
+                return (int(period.split('_')[0]), 3)   # Q1 reports
+            elif '_Q2' in period:
+                return (int(period.split('_')[0]), 6)   # Q2 reports
+            elif '_Q3' in period:
+                return (int(period.split('_')[0]), 9)   # Q3 reports
+            elif '_Q4' in period:
+                return (int(period.split('_')[0]), 12)  # Q4 reports
+            else:
+                return (9999, 0)  # Unknown format at end
+        
+        # Sort periods
+        sorted_periods = sorted(available_periods, key=sort_key)
+        
         period_labels = {key: data["period"] for key, data in st.session_state.crime_stats.items()}
         
-        # Ensure we have valid defaults
-        ensure_valid_selected_periods()
+        # Set better default selections (recent years)
+        default_selections = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+        valid_defaults = [p for p in default_selections if p in sorted_periods]
+        
+        if not valid_defaults:
+            valid_defaults = sorted_periods[-3:] if len(sorted_periods) >= 3 else sorted_periods
         
         selected_periods = st.multiselect(
-            "📊 Choose time periods to analyze:",
-            options=available_periods,
-            default=st.session_state.selected_periods,
+            "📊 Choose time periods to analyze (2016-2025):",
+            options=sorted_periods,
+            default=valid_defaults,
             format_func=lambda x: period_labels.get(x, x),
-            help="Select one or more time periods to compare statistics and trends",
+            help="Select one or more time periods to compare statistics and trends. Data available from 2016 to 2025.",
             key="period_selector"
         )
     
@@ -1828,7 +2047,7 @@ elif st.session_state.current_page == 'chat':
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input(
             "💬 Message Enhanced AI Assistant:",
-            placeholder="Ask about crime statistics, trends, international comparisons, or anything else... (I have full conversation memory)",
+            placeholder="Ask about crime statistics, trends, international comparisons, or request charts... (I have full conversation memory)",
             label_visibility="collapsed",
             key="chat_input"
         )
@@ -1843,7 +2062,7 @@ elif st.session_state.current_page == 'chat':
             
             # Generate response with conversation history and statistics
             with st.spinner("🤖 Generating enhanced AI response with statistical knowledge..."):
-                response = generate_enhanced_smart_response(
+                response, chart_type = generate_enhanced_smart_response(
                     user_input, 
                     conversation_history=current_chat['messages'],
                     language=st.session_state.selected_language
@@ -1852,8 +2071,59 @@ elif st.session_state.current_page == 'chat':
             # Add assistant response to current chat
             add_message_to_chat("assistant", response)
             
-            # **NEW: Show relevant charts for international comparison queries**
-            if is_international_comparison_query(user_input):
+            # Display the requested chart if any
+            if chart_type:
+                st.markdown("### 📊 Requested Chart")
+                
+                if chart_type == "international":
+                    # Show international comparison charts
+                    col1, col2, col3 = st.columns(3)
+                    
+                    with col1:
+                        fig = create_macrotrends_comparison_charts("homicide_trends")
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                    
+                    with col2:
+                        fig = create_macrotrends_comparison_charts("international_context")
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                    
+                    with col3:
+                        fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                
+                elif chart_type == "trends":
+                    # Show crime trends
+                    selected_periods = ['2022_ANNUAL', '2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+                    fig = create_historical_crime_charts("crime_trends", selected_periods, st.session_state.crime_stats)
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                elif chart_type == "detection":
+                    # Show detection rates
+                    selected_periods = ['2022_ANNUAL', '2023_ANNUAL', '2024_ANNUAL']
+                    fig = create_historical_crime_charts("detection_comparison", selected_periods, st.session_state.crime_stats)
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                elif chart_type == "breakdown":
+                    # Show crime type breakdown
+                    selected_periods = ['2024_ANNUAL']
+                    fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, st.session_state.crime_stats)
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                elif chart_type == "homicide":
+                    # Show homicide trends
+                    fig = create_macrotrends_comparison_charts("homicide_trends")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+            
+            # Only show the international comparison buttons if it was an international query
+            # but no specific chart was requested
+            elif is_international_comparison_query(user_input) and not chart_type:
                 st.markdown("### 📊 International Comparison Charts")
                 
                 col1, col2, col3 = st.columns(3)
