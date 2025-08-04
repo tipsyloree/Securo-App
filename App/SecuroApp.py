@@ -351,6 +351,12 @@ if 'current_page' not in st.session_state:
 if 'show_loading' not in st.session_state:
     st.session_state.show_loading = False
 
+if 'crime_stats' not in st.session_state:
+    st.session_state.crime_stats = HISTORICAL_CRIME_DATABASE
+
+if 'selected_periods' not in st.session_state:
+    st.session_state.selected_periods = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+
 # Professional CSS styling matching the screenshots
 st.markdown("""
 <style>
@@ -527,11 +533,19 @@ st.markdown("""
         text-align: center;
         padding: 30px 20px;
         margin: 20px 0;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 255, 65, 0.03) 50%, rgba(0, 0, 0, 0.8) 100%);
+        background: linear-gradient(-45deg, rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.1), rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.05));
+        background-size: 400% 400%;
+        animation: moveGradient 4s ease infinite;
         border-radius: 20px;
         border: 1px solid rgba(0, 255, 65, 0.2);
         position: relative;
         overflow: hidden;
+    }
+    
+    @keyframes moveGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
     
     .welcome-hero::before {
@@ -845,6 +859,55 @@ st.markdown("""
         left: 0 !important;
     }
     
+    /* Chat messages */
+    .chat-message {
+        margin-bottom: 20px;
+        animation: fadeInUp 0.5s ease;
+        clear: both;
+    }
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .user-message {
+        text-align: right;
+    }
+    
+    .bot-message {
+        text-align: left;
+    }
+    
+    .message-content {
+        display: inline-block;
+        padding: 15px 20px;
+        border-radius: 15px;
+        max-width: 80%;
+        position: relative;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+    
+    .user-message .message-content {
+        background: linear-gradient(135deg, #00ff41, #00cc34);
+        color: #000000 !important;
+        border-bottom-right-radius: 5px;
+    }
+    
+    .bot-message .message-content {
+        background: rgba(0, 0, 0, 0.9) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(0, 255, 65, 0.3);
+        border-bottom-left-radius: 5px;
+    }
+    
+    .message-time {
+        font-size: 0.7rem;
+        color: #888 !important;
+        margin-top: 5px;
+    }
+    
     /* Chat interface */
     .chat-welcome {
         text-align: center;
@@ -1077,6 +1140,62 @@ st.markdown("""
     .stTextInput input:focus {
         border-color: #00ff41 !important;
         box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.1) !important;
+    }
+    
+    /* Multiselect styling */
+    .stMultiSelect > div > div {
+        background-color: rgba(0, 0, 0, 0.6) !important;
+        border: 1px solid #30363d !important;
+        border-radius: 8px !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] > div {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        border: 1px solid #30363d !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul {
+        background-color: rgba(0, 0, 0, 0.95) !important;
+        border: 1px solid #30363d !important;
+        border-radius: 8px !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul li {
+        background-color: rgba(0, 0, 0, 0.95) !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul li:hover {
+        background-color: rgba(0, 255, 65, 0.2) !important;
+        color: #00ff41 !important;
+    }
+    
+    .stMultiSelect span[data-baseweb="tag"] {
+        background-color: rgba(0, 255, 65, 0.2) !important;
+        border: 1px solid #00ff41 !important;
+        color: #00ff41 !important;
+    }
+    
+    /* Metrics styling */
+    .stMetric {
+        background: linear-gradient(135deg, #21262d 0%, #161b22 100%) !important;
+        border: 1px solid #30363d !important;
+        border-radius: 12px !important;
+        padding: 15px !important;
+    }
+    
+    .stMetric [data-testid="metric-container"] {
+        background: transparent !important;
+    }
+    
+    .stMetric [data-testid="metric-container"] > div {
+        color: #00ff41 !important;
+    }
+    
+    .stMetric [data-testid="metric-container"] > div > div {
+        color: #ffffff !important;
     }
     
     /* Fix text colors */
@@ -1393,11 +1512,165 @@ elif st.session_state.current_page == 'hotspots':
 
 # ANALYTICS PAGE  
 elif st.session_state.current_page == 'analytics':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">📊 Quick Analytics</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">📊 Statistics & Analytics</h1>', unsafe_allow_html=True)
+    
+    st.info("📊 **Enhanced Statistics System** - Data is now integrated with the AI assistant for comprehensive statistical analysis.")
+    
+    # Year/Period Selection Dropdown
+    st.markdown('<h3>📅 Select Time Periods for Analysis</h3>', unsafe_allow_html=True)
+    
+    # Create ordered list of periods
+    available_periods = list(HISTORICAL_CRIME_DATABASE.keys())
+    
+    # Sort periods chronologically
+    def sort_key(period):
+        if '_ANNUAL' in period:
+            return (int(period.split('_')[0]), 12)
+        elif '_H1' in period:
+            return (int(period.split('_')[0]), 6)
+        elif '_Q1' in period:
+            return (int(period.split('_')[0]), 3)
+        elif '_Q2' in period:
+            return (int(period.split('_')[0]), 6)
+        elif '_Q3' in period:
+            return (int(period.split('_')[0]), 9)
+        elif '_Q4' in period:
+            return (int(period.split('_')[0]), 12)
+        else:
+            return (9999, 0)
+    
+    # Sort periods
+    sorted_periods = sorted(available_periods, key=sort_key)
+    
+    period_labels = {key: data["period"] for key, data in HISTORICAL_CRIME_DATABASE.items()}
+    
+    # Set better default selections
+    default_selections = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+    valid_defaults = [p for p in default_selections if p in sorted_periods]
+    
+    if not valid_defaults:
+        valid_defaults = sorted_periods[-3:] if len(sorted_periods) >= 3 else sorted_periods
+    
+    selected_periods = st.multiselect(
+        "📊 Choose time periods to analyze:",
+        options=sorted_periods,
+        default=valid_defaults,
+        format_func=lambda x: period_labels.get(x, x),
+        help="Select one or more time periods to compare statistics and trends.",
+        key="period_selector"
+    )
+    
+    if not selected_periods:
+        st.warning("Please select at least one time period to view statistics.")
+    else:
+        # Display stats for selected periods
+        if len(selected_periods) == 1:
+            # Single period detailed view
+            period_key = selected_periods[0]
+            period_data = HISTORICAL_CRIME_DATABASE[period_key]
+            
+            st.markdown(f'<h3>📈 {period_data["period"]} Overview</h3>', unsafe_allow_html=True)
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.metric("Total Crimes", period_data['total_crimes'])
+            
+            with col2:
+                detection_rate = period_data.get('detection_rate', 'N/A')
+                st.metric("Detection Rate", f"{detection_rate}%" if detection_rate != 'N/A' else 'N/A')
+            
+            with col3:
+                st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 'N/A')
+                st.metric("St. Kitts Crimes", st_kitts_crimes)
+            
+            with col4:
+                nevis_crimes = period_data.get('nevis', {}).get('crimes', 'N/A')
+                st.metric("Nevis Crimes", nevis_crimes)
+        
+        else:
+            # Multiple periods comparison view
+            st.markdown('<h3>📈 Multi-Period Comparison</h3>', unsafe_allow_html=True)
+            
+            # Create comparison table
+            comparison_data = []
+            for period_key in selected_periods:
+                period_data = HISTORICAL_CRIME_DATABASE[period_key]
+                comparison_data.append({
+                    "Period": period_data["period"],
+                    "Total Crimes": period_data["total_crimes"],
+                    "Detection Rate": f"{period_data.get('detection_rate', 'N/A')}{'%' if period_data.get('detection_rate') else ''}",
+                    "St. Kitts": period_data.get('st_kitts', {}).get('crimes', 'N/A'),
+                    "Nevis": period_data.get('nevis', {}).get('crimes', 'N/A')
+                })
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df, use_container_width=True)
+        
+        # Enhanced Chart Controls
+        st.markdown('<h3>📈 Interactive Analytics</h3>', unsafe_allow_html=True)
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        with col1:
+            if st.button("📈 Crime Trends", key="chart_trends_new", use_container_width=True):
+                if len(selected_periods) > 1:
+                    fig = create_historical_crime_charts("crime_trends", selected_periods, HISTORICAL_CRIME_DATABASE)
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Select multiple periods to view trends.")
+        
+        with col2:
+            if st.button("🎯 Detection Comparison", key="chart_detection_new", use_container_width=True):
+                if len(selected_periods) > 1:
+                    fig = create_historical_crime_charts("detection_comparison", selected_periods, HISTORICAL_CRIME_DATABASE)
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Select multiple periods to compare detection rates.")
+        
+        with col3:
+            if st.button("🔍 Crime Breakdown", key="chart_breakdown_new", use_container_width=True):
+                fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, HISTORICAL_CRIME_DATABASE)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        with col4:
+            if st.button("🌍 International Context", key="chart_international_new", use_container_width=True):
+                fig = create_macrotrends_comparison_charts("international_context")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        # MacroTrends Comparison Section
+        st.markdown('<h3>🌍 International Comparison Charts (MacroTrends Data)</h3>', unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if st.button("📊 Historical Homicide Rates", key="macro_homicide_trends", use_container_width=True):
+                fig = create_macrotrends_comparison_charts("homicide_trends")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        with col2:
+            if st.button("🌐 Global Comparison", key="macro_global_comparison", use_container_width=True):
+                fig = create_macrotrends_comparison_charts("international_context")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        with col3:
+            if st.button("📈 Recent Totals", key="macro_recent_totals", use_container_width=True):
+                fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        st.info("📊 **MacroTrends Integration**: These charts provide international context and historical perspective using global crime database comparisons.")
     
     # Analytics tabs
     tabs = ['Crime Trends', 'Crime Methods', 'District Analysis', 'Detection Rates']
     
+    st.markdown('<h3>📊 Quick Analytics</h3>', unsafe_allow_html=True)
     tab_cols = st.columns(4)
     for i, tab in enumerate(tabs):
         with tab_cols[i]:
@@ -1548,12 +1821,75 @@ elif st.session_state.current_page == 'chat':
         <p style="color: #8b949e; max-width: 600px; margin: 0 auto 30px;">
             Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having justloaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and find out more about my capabilities.
         </p>
-        <button class="start-button" onclick="startChat()">Start Conversation</button>
     </div>
     """, unsafe_allow_html=True)
     
+    # Working start conversation button
     if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
-        st.info("Chat functionality would be implemented here with the enhanced AI system!")
+        # Create new chat session
+        create_new_chat()
+        st.success("✅ New chat session created! You can now start chatting with SECURO AI.")
+        
+        # Display chat interface
+        current_chat = get_current_chat()
+        messages = current_chat['messages']
+        
+        # Initialize with welcome message if no messages
+        if not messages:
+            welcome_msg = {
+                "role": "assistant",
+                "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nHow can I assist you today?",
+                "timestamp": get_stkitts_time()
+            }
+            messages.append(welcome_msg)
+            current_chat['messages'] = messages
+        
+        # Display chat messages
+        for message in messages:
+            if message["role"] == "user":
+                clean_content = str(message["content"]).strip()
+                st.markdown(f"""
+                <div class="chat-message user-message">
+                    <div class="message-content">{clean_content}</div>
+                    <div class="message-time">You • {message["timestamp"]} AST</div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                clean_content = str(message["content"]).strip()
+                clean_content = re.sub(r'<[^>]+>', '', clean_content)
+                clean_content = clean_content.replace('```', '')
+               
+                st.markdown(f"""
+                <div class="chat-message bot-message">
+                    <div class="message-content">{clean_content}</div>
+                    <div class="message-time">SECURO • {message["timestamp"]} AST</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Chat input
+        with st.form("chat_form", clear_on_submit=True):
+            user_input = st.text_input(
+                "💬 Message Enhanced AI Assistant:",
+                placeholder="Ask about crime statistics, trends, international comparisons, or request charts...",
+                label_visibility="collapsed",
+                key="chat_input"
+            )
+            
+            submitted = st.form_submit_button("🚀 Send Message", type="primary")
+            
+            if submitted and user_input and user_input.strip():
+                current_time = get_stkitts_time()
+                
+                # Add user message to current chat
+                add_message_to_chat("user", user_input)
+                
+                # Simple response (since we don't have the full AI function)
+                response = f"Thank you for your message: '{user_input}'. This is a demonstration response. In the full version, I would provide statistical analysis and crime intelligence based on your query."
+                
+                # Add assistant response to current chat
+                add_message_to_chat("assistant", response)
+                
+                st.rerun()
 
 # CHAT HISTORY PAGE
 elif st.session_state.current_page == 'history':
