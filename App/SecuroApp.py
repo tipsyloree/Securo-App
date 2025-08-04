@@ -1260,7 +1260,7 @@ st.markdown(f"""
 <div class="main-header">
     <div class="header-content">
         <div class="logo-section">
-            <div class="shield-icon">🛡️</div>
+            <div class="shield-icon">🔒</div>
             <div class="logo-text">
                 <h1>SECURO</h1>
                 <p>Enhanced AI Assistant & Crime Intelligence System</p>
