@@ -1095,14 +1095,7 @@ st.markdown("""
         box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.2) !important;
     }
     
-    /* Content area styling */
-    .content-area {
-        background: rgba(0, 0, 0, 0.9);
-        border-radius: 15px;
-        border: 1px solid rgba(0, 255, 65, 0.3);
-        padding: 30px;
-        min-height: 200px;
-    }
+    /* Removed content-area styling as it was causing black boxes */
     
     /* Welcome section styling */
     .welcome-section {
@@ -1573,7 +1566,7 @@ with col6:
 st.markdown('</div>', unsafe_allow_html=True)
 
 # Main content area with enhanced styling
-st.markdown('<div class="content-area">', unsafe_allow_html=True)
+# Removed the large content-area div that was causing black space
 
 # HOME PAGE with enhanced HTML-style design
 if st.session_state.current_page == 'welcome':
@@ -1622,82 +1615,104 @@ if st.session_state.current_page == 'welcome':
         </div>
         """, unsafe_allow_html=True)
 
-# ABOUT PAGE (Enhanced with HTML styling)
+# ABOUT PAGE (Enhanced with better Streamlit components)
 elif st.session_state.current_page == 'about':
-    st.markdown("""
-    <h2 class="section-title">
-        <span>ℹ️</span>
-        About Enhanced SECURO
-    </h2>
+    st.markdown("## ℹ️ About Enhanced SECURO")
     
+    st.markdown("""
     <div class="feature-card">
         <p><strong style="color: #00ff41;">SECURO</strong> is an enhanced comprehensive crime analysis system with statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
-        
-        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">🧠 Enhanced AI Capabilities</h3>
-        <ul style="list-style: none; color: #c9d1d9; line-height: 2; padding: 0;">
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Conversation Memory - Maintains context across entire chat sessions</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Statistical Knowledge Integration - Real access to 2023-2025 crime data</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Context-Aware Responses - Understands conversation flow and history</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Multi-Chat Management - Multiple conversation sessions with history</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Statistical Query Processing - Answers questions with actual crime data</span>
-            </li>
-        </ul>
-
-        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">📊 Integrated Statistical Database</h3>
-        <ul style="list-style: none; color: #c9d1d9; line-height: 2; padding: 0;">
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Real PDF Integration - Data sourced from official police statistical reports</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>2022-2025 Crime Data - Complete annual statistics plus quarterly analysis</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Detection Rate Analysis - Performance metrics and trend identification</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Geographical Breakdown - St. Kitts vs. Nevis crime distribution</span>
-            </li>
-        </ul>
-
-        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">💬 Chat Management Features</h3>
-        <ul style="list-style: none; color: #c9d1d9; line-height: 2; padding: 0;">
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>New Chat Sessions - Start fresh conversations anytime</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Chat History - Access and resume previous conversations</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Context Preservation - AI remembers entire conversation context</span>
-            </li>
-            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
-                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
-                <span>Session Management - Switch between multiple chat sessions seamlessly</span>
-            </li>
-        </ul>
-
-        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">⚖️ Professional Standards</h3>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Enhanced AI Capabilities
+    st.markdown("### 🧠 Enhanced AI Capabilities")
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Conversation Memory** - Maintains context across entire chat sessions")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Statistical Knowledge Integration** - Real access to 2023-2025 crime data")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Context-Aware Responses** - Understands conversation flow and history")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Multi-Chat Management** - Multiple conversation sessions with history")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Statistical Query Processing** - Answers questions with actual crime data")
+    
+    # Integrated Statistical Database
+    st.markdown("### 📊 Integrated Statistical Database")
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Real PDF Integration** - Data sourced from official police statistical reports")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**2022-2025 Crime Data** - Complete annual statistics plus quarterly analysis")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Detection Rate Analysis** - Performance metrics and trend identification")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Geographical Breakdown** - St. Kitts vs. Nevis crime distribution")
+    
+    # Chat Management Features  
+    st.markdown("### 💬 Chat Management Features")
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**New Chat Sessions** - Start fresh conversations anytime")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Chat History** - Access and resume previous conversations")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Context Preservation** - AI remembers entire conversation context")
+    
+    col1, col2 = st.columns([1, 10])
+    with col1:
+        st.markdown("✅")
+    with col2:
+        st.markdown("**Session Management** - Switch between multiple chat sessions seamlessly")
+    
+    # Professional Standards
+    st.markdown("### ⚖️ Professional Standards")
+    st.markdown("""
+    <div class="feature-card">
         <p>Enhanced SECURO maintains professional communication standards appropriate for law enforcement operations. The AI assistant now provides statistically-informed assistance while preserving conversation context for more effective police support.</p>
     </div>
     """, unsafe_allow_html=True)
@@ -2187,7 +2202,6 @@ elif st.session_state.current_page == 'chat':
         current_chat['messages'] = messages
     
     # Display chat messages with enhanced styling
-    st.markdown('<div style="padding: 20px;">', unsafe_allow_html=True)
     for message in messages:
         if message["role"] == "user":
             clean_content = str(message["content"]).strip()
@@ -2211,11 +2225,7 @@ elif st.session_state.current_page == 'chat':
     st.markdown('</div>', unsafe_allow_html=True)
 
     # Enhanced Chat input with styling
-    st.markdown("""
-    <div style="background: #21262d; border-top: 1px solid #30363d; padding: 20px; 
-                border-radius: 0 0 12px 12px; margin-bottom: 20px;">
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("---")  # Simple separator instead of styled div
     
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input(
@@ -2323,8 +2333,7 @@ elif st.session_state.current_page == 'chat':
             
             st.rerun()
 
-# Close main content area
-st.markdown('</div>', unsafe_allow_html=True)
+# End of main pages
 
 # Enhanced Status bar matching HTML design
 current_time = get_stkitts_time()
