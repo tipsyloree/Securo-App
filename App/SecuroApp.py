@@ -1296,7 +1296,7 @@ elif st.session_state.current_page == 'emergency':
 
 # **UPDATED AI ASSISTANT CHAT PAGE - NO STATISTICS**
 elif st.session_state.current_page == 'chat':
-    st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Pure API-Dependent AI Assistant</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 AI Assistant</h2>', unsafe_allow_html=True)
     
     # Updated Status Display
     st.markdown('<h3 style="color: #44ff44;">🤖 AI Assistant System</h3>', unsafe_allow_html=True)
@@ -1325,7 +1325,7 @@ elif st.session_state.current_page == 'chat':
     if not st.session_state.messages:
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "🔒 **AI Assistant System Online!**\n\nHi! I'm SECURO, your AI assistant for the Royal St. Christopher & Nevis Police Force.",
+            "content": "🔒 Securo AI Assistant System Online!",
             "timestamp": get_stkitts_time()
         })
     
