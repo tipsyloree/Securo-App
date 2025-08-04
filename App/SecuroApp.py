@@ -287,132 +287,6 @@ HISTORICAL_CRIME_DATABASE = {
         "st_kitts": {"crimes": 1183, "detection_rate": 32.1},
         "nevis": {"crimes": 177, "detection_rate": 26.6}
     },
-    "2021_ANNUAL": {
-        "period": "2021 Full Year (Jan-Dec)",
-        "total_crimes": 1420,  # Estimated based on trend
-        "detection_rate": 30.2,
-        "federation": {
-            "murder_manslaughter": {"total": 14, "detected": 8, "rate": 57.0},
-            "shooting_intent": {"total": 4, "detected": 2, "rate": 50.0},
-            "attempted_murder": {"total": 8, "detected": 2, "rate": 25.0},
-            "bodily_harm": {"total": 185, "detected": 125, "rate": 68.0},
-            "sex_crimes": {"total": 65, "detected": 12, "rate": 18.0},
-            "break_ins": {"total": 195, "detected": 32, "rate": 16.0},
-            "larcenies": {"total": 540, "detected": 120, "rate": 22.0},
-            "robberies": {"total": 42, "detected": 8, "rate": 19.0},
-            "firearms_offences": {"total": 20, "detected": 19, "rate": 95.0},
-            "drug_crimes": {"total": 30, "detected": 30, "rate": 100.0},
-            "malicious_damage": {"total": 280, "detected": 75, "rate": 27.0},
-            "other_crimes": {"total": 41, "detected": 23, "rate": 56.0}
-        },
-        "st_kitts": {"crimes": 1225, "detection_rate": 30.8},
-        "nevis": {"crimes": 195, "detection_rate": 26.2}
-    },
-    "2020_ANNUAL": {
-        "period": "2020 Full Year (Jan-Dec)",
-        "total_crimes": 1380,  # Based on MacroTrends data
-        "detection_rate": 28.5,
-        "federation": {
-            "murder_manslaughter": {"total": 10, "detected": 6, "rate": 60.0},
-            "shooting_intent": {"total": 3, "detected": 1, "rate": 33.0},
-            "attempted_murder": {"total": 7, "detected": 2, "rate": 29.0},
-            "bodily_harm": {"total": 178, "detected": 110, "rate": 62.0},
-            "sex_crimes": {"total": 60, "detected": 10, "rate": 17.0},
-            "break_ins": {"total": 188, "detected": 28, "rate": 15.0},
-            "larcenies": {"total": 535, "detected": 110, "rate": 21.0},
-            "robberies": {"total": 40, "detected": 7, "rate": 18.0},
-            "firearms_offences": {"total": 18, "detected": 17, "rate": 94.0},
-            "drug_crimes": {"total": 28, "detected": 28, "rate": 100.0},
-            "malicious_damage": {"total": 275, "detected": 68, "rate": 25.0},
-            "other_crimes": {"total": 38, "detected": 20, "rate": 53.0}
-        },
-        "st_kitts": {"crimes": 1190, "detection_rate": 29.0},
-        "nevis": {"crimes": 190, "detection_rate": 25.3}
-    },
-    "2019_ANNUAL": {
-        "period": "2019 Full Year (Jan-Dec)",
-        "total_crimes": 1450,
-        "detection_rate": 27.8,
-        "federation": {
-            "murder_manslaughter": {"total": 12, "detected": 7, "rate": 58.0},
-            "shooting_intent": {"total": 5, "detected": 2, "rate": 40.0},
-            "attempted_murder": {"total": 9, "detected": 2, "rate": 22.0},
-            "bodily_harm": {"total": 190, "detected": 115, "rate": 61.0},
-            "sex_crimes": {"total": 68, "detected": 11, "rate": 16.0},
-            "break_ins": {"total": 202, "detected": 30, "rate": 15.0},
-            "larcenies": {"total": 555, "detected": 112, "rate": 20.0},
-            "robberies": {"total": 45, "detected": 8, "rate": 18.0},
-            "firearms_offences": {"total": 22, "detected": 20, "rate": 91.0},
-            "drug_crimes": {"total": 32, "detected": 32, "rate": 100.0},
-            "malicious_damage": {"total": 285, "detected": 70, "rate": 25.0},
-            "other_crimes": {"total": 25, "detected": 14, "rate": 56.0}
-        },
-        "st_kitts": {"crimes": 1255, "detection_rate": 28.2},
-        "nevis": {"crimes": 195, "detection_rate": 25.1}
-    },
-    "2018_ANNUAL": {
-        "period": "2018 Full Year (Jan-Dec)",
-        "total_crimes": 1520,
-        "detection_rate": 26.5,
-        "federation": {
-            "murder_manslaughter": {"total": 23, "detected": 12, "rate": 52.0},
-            "shooting_intent": {"total": 8, "detected": 3, "rate": 38.0},
-            "attempted_murder": {"total": 12, "detected": 3, "rate": 25.0},
-            "bodily_harm": {"total": 198, "detected": 118, "rate": 60.0},
-            "sex_crimes": {"total": 72, "detected": 12, "rate": 17.0},
-            "break_ins": {"total": 215, "detected": 32, "rate": 15.0},
-            "larcenies": {"total": 570, "detected": 108, "rate": 19.0},
-            "robberies": {"total": 48, "detected": 8, "rate": 17.0},
-            "firearms_offences": {"total": 25, "detected": 23, "rate": 92.0},
-            "drug_crimes": {"total": 35, "detected": 35, "rate": 100.0},
-            "malicious_damage": {"total": 290, "detected": 72, "rate": 25.0},
-            "other_crimes": {"total": 24, "detected": 12, "rate": 50.0}
-        },
-        "st_kitts": {"crimes": 1310, "detection_rate": 26.8},
-        "nevis": {"crimes": 210, "detection_rate": 24.8}
-    },
-    "2017_ANNUAL": {
-        "period": "2017 Full Year (Jan-Dec)",
-        "total_crimes": 1480,
-        "detection_rate": 25.2,
-        "federation": {
-            "murder_manslaughter": {"total": 23, "detected": 11, "rate": 48.0},
-            "shooting_intent": {"total": 7, "detected": 2, "rate": 29.0},
-            "attempted_murder": {"total": 11, "detected": 2, "rate": 18.0},
-            "bodily_harm": {"total": 195, "detected": 110, "rate": 56.0},
-            "sex_crimes": {"total": 70, "detected": 10, "rate": 14.0},
-            "break_ins": {"total": 210, "detected": 28, "rate": 13.0},
-            "larcenies": {"total": 548, "detected": 98, "rate": 18.0},
-            "robberies": {"total": 50, "detected": 8, "rate": 16.0},
-            "firearms_offences": {"total": 24, "detected": 22, "rate": 92.0},
-            "drug_crimes": {"total": 33, "detected": 33, "rate": 100.0},
-            "malicious_damage": {"total": 285, "detected": 65, "rate": 23.0},
-            "other_crimes": {"total": 24, "detected": 12, "rate": 50.0}
-        },
-        "st_kitts": {"crimes": 1280, "detection_rate": 25.5},
-        "nevis": {"crimes": 200, "detection_rate": 23.5}
-    },
-    "2016_ANNUAL": {
-        "period": "2016 Full Year (Jan-Dec)",
-        "total_crimes": 1550,
-        "detection_rate": 24.8,
-        "federation": {
-            "murder_manslaughter": {"total": 32, "detected": 15, "rate": 47.0},
-            "shooting_intent": {"total": 9, "detected": 3, "rate": 33.0},
-            "attempted_murder": {"total": 14, "detected": 3, "rate": 21.0},
-            "bodily_harm": {"total": 205, "detected": 105, "rate": 51.0},
-            "sex_crimes": {"total": 75, "detected": 11, "rate": 15.0},
-            "break_ins": {"total": 225, "detected": 29, "rate": 13.0},
-            "larcenies": {"total": 560, "detected": 95, "rate": 17.0},
-            "robberies": {"total": 52, "detected": 8, "rate": 15.0},
-            "firearms_offences": {"total": 28, "detected": 25, "rate": 89.0},
-            "drug_crimes": {"total": 36, "detected": 36, "rate": 100.0},
-            "malicious_damage": {"total": 290, "detected": 60, "rate": 21.0},
-            "other_crimes": {"total": 24, "detected": 10, "rate": 42.0}
-        },
-        "st_kitts": {"crimes": 1340, "detection_rate": 25.0},
-        "nevis": {"crimes": 210, "detection_rate": 23.0}
-    },
     "homicide_trends": {
         "period": "2015-2024 Homicide Analysis",
         "annual_totals": {
@@ -1013,8 +887,8 @@ except Exception as e:
 
 # Page configuration
 st.set_page_config(
-    page_title="SECURO - St. Kitts & Nevis Crime AI Assistant",
-    page_icon="🔒",
+    page_title="SECURO - Enhanced AI Assistant & Crime Intelligence System",
+    page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -1079,126 +953,31 @@ def ensure_valid_selected_periods():
 # Ensure valid periods after loading stats
 ensure_valid_selected_periods()
 
-# CSS styling
+# Enhanced CSS styling matching HTML design
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
-   
+    @import url('https://fonts.googleapis.com/css2?family=Segoe+UI:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+    
+    /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
+    .stDeployButton {display: none;}
     
-    .stMultiSelect {
-        background: transparent !important;
-    }
-    
-    .stMultiSelect > div > div {
-        background-color: rgba(0, 0, 0, 0.8) !important;
-        border: 1px solid rgba(68, 255, 68, 0.3) !important;
-        border-radius: 8px !important;
-        color: #ffffff !important;
-    }
-    
-    .stMultiSelect > div > div > div {
-        color: #ffffff !important;
-    }
-    
-    .stMultiSelect > div > div[data-baseweb="select"] > div {
-        background-color: rgba(0, 0, 0, 0.9) !important;
-        border: 1px solid rgba(68, 255, 68, 0.3) !important;
-        color: #ffffff !important;
-    }
-    
-    .stMultiSelect > div > div[data-baseweb="select"] ul {
-        background-color: rgba(0, 0, 0, 0.95) !important;
-        border: 1px solid rgba(68, 255, 68, 0.3) !important;
-        border-radius: 8px !important;
-    }
-    
-    .stMultiSelect > div > div[data-baseweb="select"] ul li {
-        background-color: rgba(0, 0, 0, 0.95) !important;
-        color: #ffffff !important;
-    }
-    
-    .stMultiSelect > div > div[data-baseweb="select"] ul li:hover {
-        background-color: rgba(68, 255, 68, 0.2) !important;
-        color: #44ff44 !important;
-    }
-    
-    .stMultiSelect span[data-baseweb="tag"] {
-        background-color: rgba(68, 255, 68, 0.2) !important;
-        border: 1px solid #44ff44 !important;
-        color: #44ff44 !important;
-    }
-    
-    .element-container {
-        background: transparent !important;
-    }
-    
-    .stButton > button {
-        background: linear-gradient(135deg, #44ff44, #33cc33) !important;
-        border: none !important;
-        box-shadow: none !important;
-        color: #000 !important;
-    }
-    
-    .chat-history-item {
-        background: rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(68, 255, 68, 0.3);
-        border-radius: 8px;
-        padding: 10px;
-        margin: 5px 0;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    
-    .chat-history-item:hover {
-        background: rgba(68, 255, 68, 0.1);
-        border-color: #44ff44;
-    }
-    
-    .active-chat {
-        border-color: #44ff44 !important;
-        background: rgba(68, 255, 68, 0.15) !important;
-    }
-    
-    @keyframes moveGradient {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    
-    @keyframes pulse {
-        0% { opacity: 1; }
-        50% { opacity: 0.5; }
-        100% { opacity: 1; }
-    }
-    
-    @keyframes shimmer {
-        0% { left: -100%; }
-        100% { left: 100%; }
-    }
-    
-    @keyframes fadeInUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-    
+    /* Root styling */
     .stApp {
-        background: linear-gradient(135deg, #0a0a0a 0%, #000000 50%, #0a0a0a 100%);
-        font-family: 'JetBrains Mono', monospace;
+        background: #1a1a1a;
+        color: #ffffff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     
+    /* Header styling to match HTML */
     .main-header {
-        text-align: center;
-        margin-bottom: 30px;
-        padding: 20px;
-        background: linear-gradient(-45deg, rgba(0, 0, 0, 0.9), rgba(68, 255, 68, 0.1), rgba(0, 0, 0, 0.9), rgba(34, 139, 34, 0.1));
-        background-size: 400% 400%;
-        animation: moveGradient 4s ease infinite;
-        border-radius: 15px;
-        border: 1px solid rgba(68, 255, 68, 0.3);
-        backdrop-filter: blur(10px);
+        background: #0d1117;
+        padding: 15px 0;
+        border-bottom: 1px solid #21262d;
+        margin-bottom: 20px;
+        border-radius: 12px;
         position: relative;
         overflow: hidden;
     }
@@ -1210,247 +989,517 @@ st.markdown("""
         left: -100%;
         width: 100%;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(68, 255, 68, 0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
         animation: shimmer 3s linear infinite;
     }
-
-    .main-header h1 {
-        font-size: 3rem;
-        color: #44ff44;
-        text-shadow: 0 0 20px rgba(68, 255, 68, 0.5);
-        margin-bottom: 10px;
+    
+    @keyframes shimmer {
+        0% { left: -100%; }
+        100% { left: 100%; }
+    }
+    
+    .main-header .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
         position: relative;
         z-index: 2;
-        font-weight: 700;
-        font-family: 'JetBrains Mono', monospace;
     }
-
+    
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .logo-icon {
+        width: 40px;
+        height: 40px;
+        background: #00ff41;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #000;
+        font-size: 20px;
+        font-weight: bold;
+    }
+    
+    .logo-text h1 {
+        color: #00ff41 !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+    
+    .logo-text p {
+        color: #8b949e !important;
+        font-size: 12px !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0 !important;
+    }
+    
+    .header-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 14px;
+        color: #8b949e;
+    }
+    
+    .status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .status-dot {
+        width: 8px;
+        height: 8px;
+        background: #00ff41;
+        border-radius: 50%;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+    
+    /* Navigation styling */
+    .nav-container {
+        background: #161b22;
+        padding: 10px 0;
+        border-bottom: 1px solid #21262d;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+    
+    /* Button styling to match HTML */
+    .stButton > button {
+        background: #21262d !important;
+        border: 1px solid #30363d !important;
+        color: #f0f6fc !important;
+        padding: 12px 20px !important;
+        border-radius: 8px !important;
+        transition: all 0.3s ease !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+    
+    .stButton > button:hover {
+        background: #00ff41 !important;
+        color: #000 !important;
+        border-color: #00ff41 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 5px 15px rgba(0, 255, 65, 0.3) !important;
+    }
+    
+    .stButton > button:focus {
+        background: #00ff41 !important;
+        color: #000 !important;
+        border-color: #00ff41 !important;
+        box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.2) !important;
+    }
+    
+    /* Content area styling */
     .content-area {
         background: rgba(0, 0, 0, 0.9);
         border-radius: 15px;
-        border: 1px solid rgba(68, 255, 68, 0.3);
+        border: 1px solid rgba(0, 255, 65, 0.3);
         padding: 30px;
-        min-height: 600px;
+        min-height: 400px;
     }
-
-    .stat-card {
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(68, 255, 68, 0.1));
-        color: #ffffff;
-        padding: 25px;
-        border-radius: 10px;
+    
+    /* Welcome section styling */
+    .welcome-section {
         text-align: center;
-        border: 1px solid rgba(68, 255, 68, 0.3);
-        transition: all 0.3s ease;
+        margin-bottom: 50px;
+        padding: 40px 20px;
+        background: linear-gradient(-45deg, rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.05), rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.05));
+        background-size: 400% 400%;
+        animation: moveGradient 4s ease infinite;
+        border-radius: 15px;
+        border: 1px solid rgba(0, 255, 65, 0.3);
+        position: relative;
+        overflow: hidden;
     }
-
-    .stat-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(68, 255, 68, 0.2);
+    
+    .welcome-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
+        animation: shimmer 3s linear infinite;
     }
-
-    .stat-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-        color: #44ff44;
-        text-shadow: 0 0 10px rgba(68, 255, 68, 0.3);
+    
+    @keyframes moveGradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
-
-    .stat-label {
-        font-size: 1.1rem;
-        opacity: 0.9;
-        color: #ffffff;
+    
+    .welcome-title {
+        font-size: 3rem !important;
+        color: #00ff41 !important;
+        margin-bottom: 15px !important;
+        font-weight: 700 !important;
+        text-shadow: 0 0 20px rgba(0, 255, 65, 0.5) !important;
+        position: relative;
+        z-index: 2;
     }
-
-    .emergency-card {
-        background: rgba(0, 0, 0, 0.8);
-        border: 2px solid rgba(231, 76, 60, 0.5);
-        border-radius: 10px;
-        padding: 20px;
-        text-align: center;
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-        color: #ffffff !important;
+    
+    .welcome-subtitle {
+        font-size: 1.2rem !important;
+        color: #8b949e !important;
+        margin-bottom: 10px !important;
+        position: relative;
+        z-index: 2;
     }
-
-    .emergency-card:hover {
-        border-color: #e74c3c;
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.2);
+    
+    .welcome-description {
+        font-size: 1rem !important;
+        color: #c9d1d9 !important;
+        max-width: 800px;
+        margin: 0 auto !important;
+        line-height: 1.6 !important;
+        position: relative;
+        z-index: 2;
     }
-
-    .emergency-card h3 {
-        color: #e74c3c !important;
-        margin-bottom: 15px;
-    }
-
-    .emergency-card p, .emergency-card span, .emergency-card div {
-        color: #ffffff !important;
-    }
-
-    .phone-number {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #44ff44 !important;
-        margin: 10px 0;
-    }
-
-    .feature-card, .feature-card * {
-        color: #ffffff !important;
-    }
-
-    .feature-card h3 {
-        color: #44ff44 !important;
-    }
-
+    
+    /* Feature cards styling */
     .feature-card {
-        background: rgba(0, 0, 0, 0.8);
-        border-radius: 10px;
-        padding: 25px;
+        background: #21262d;
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 30px;
         text-align: center;
-        border: 1px solid rgba(68, 255, 68, 0.3);
         transition: all 0.3s ease;
         margin-bottom: 20px;
+        position: relative;
+        overflow: hidden;
     }
-
+    
     .feature-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 20px rgba(68, 255, 68, 0.2);
-        border-color: #44ff44;
+        border-color: #00ff41;
+        box-shadow: 0 10px 30px rgba(0, 255, 65, 0.1);
     }
-
+    
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.05), transparent);
+        transition: left 0.5s;
+    }
+    
+    .feature-card:hover::before {
+        left: 100%;
+    }
+    
     .feature-icon {
         font-size: 3rem;
-        margin-bottom: 15px;
-        color: #44ff44;
+        color: #00ff41;
+        margin-bottom: 20px;
     }
-
+    
+    .feature-card h3 {
+        color: #00ff41 !important;
+        font-size: 1.5rem !important;
+        margin-bottom: 15px !important;
+        position: relative;
+        z-index: 2;
+    }
+    
+    .feature-card p {
+        color: #8b949e !important;
+        line-height: 1.6 !important;
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Statistics cards */
+    .stat-card {
+        background: linear-gradient(135deg, #21262d, #0d1117);
+        border: 1px solid #30363d;
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+    
+    .stat-card:hover {
+        border-color: #00ff41;
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2);
+    }
+    
+    .stat-number {
+        font-size: 2.5rem !important;
+        font-weight: bold !important;
+        margin-bottom: 10px !important;
+        color: #00ff41 !important;
+        text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+    }
+    
+    .stat-label {
+        color: #8b949e !important;
+        font-size: 1rem !important;
+    }
+    
+    /* Emergency cards */
+    .emergency-card {
+        background: rgba(0, 0, 0, 0.8);
+        border: 2px solid rgba(255, 107, 107, 0.5);
+        border-radius: 12px;
+        padding: 25px;
+        text-align: center;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+    }
+    
+    .emergency-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+        border-color: #ff6b6b;
+    }
+    
+    .emergency-card h3 {
+        color: #ff6b6b !important;
+        margin-bottom: 15px !important;
+    }
+    
+    .phone-number {
+        font-size: 1.8rem !important;
+        font-weight: bold !important;
+        color: #00ff41 !important;
+        margin: 15px 0 !important;
+    }
+    
+    /* Chat messages */
     .chat-message {
         margin-bottom: 20px;
         animation: fadeInUp 0.5s ease;
         clear: both;
     }
-
+    
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
     .user-message {
         text-align: right;
     }
-
+    
     .bot-message {
         text-align: left;
     }
-
+    
     .message-content {
         display: inline-block;
         padding: 15px 20px;
         border-radius: 15px;
         max-width: 80%;
         position: relative;
-        font-family: 'JetBrains Mono', monospace;
         word-wrap: break-word;
         white-space: pre-wrap;
     }
-
+    
     .user-message .message-content {
-        background: linear-gradient(135deg, #44ff44, #33cc33);
+        background: linear-gradient(135deg, #00ff41, #00cc34);
         color: #000000 !important;
         border-bottom-right-radius: 5px;
     }
-
+    
     .bot-message .message-content {
         background: rgba(0, 0, 0, 0.9) !important;
         color: #ffffff !important;
-        border: 1px solid rgba(68, 255, 68, 0.3);
+        border: 1px solid rgba(0, 255, 65, 0.3);
         border-bottom-left-radius: 5px;
     }
-
+    
     .message-time {
         font-size: 0.7rem;
         color: #888 !important;
         margin-top: 5px;
-        font-family: 'JetBrains Mono', monospace;
-    }
-
-    .stButton button {
-        background: linear-gradient(135deg, #44ff44, #33cc33) !important;
-        border: none !important;
-        border-radius: 25px !important;
-        color: #000 !important;
-        font-family: 'JetBrains Mono', monospace !important;
-        font-weight: 500 !important;
-        transition: all 0.3s ease !important;
-    }
-
-    .stButton button:hover {
-        transform: scale(1.05) !important;
-        box-shadow: 0 0 20px rgba(68, 255, 68, 0.4) !important;
-    }
-
-    .stTextInput input {
-        background: rgba(0, 0, 0, 0.8) !important;
-        border: 1px solid rgba(68, 255, 68, 0.3) !important;
-        border-radius: 25px !important;
-        color: #ffffff !important;
-        font-family: 'JetBrains Mono', monospace !important;
-    }
-
-    .stTextInput input:focus {
-        border-color: #44ff44 !important;
-        box-shadow: 0 0 20px rgba(68, 255, 68, 0.2) !important;
-    }
-
-    .status-bar {
-        background: rgba(0, 0, 0, 0.9);
-        padding: 15px;
-        border-radius: 25px;
-        margin-top: 30px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border: 1px solid rgba(68, 255, 68, 0.2);
-        font-family: 'JetBrains Mono', monospace;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-
-    .status-item {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        color: #ffffff;
-        font-size: 0.9rem;
-    }
-
-    .status-dot {
-        width: 8px;
-        height: 8px;
-        background: #44ff44;
-        border-radius: 50%;
-        animation: pulse 2s infinite;
-    }
-
-    h1, h2, h3, h4, h5, h6 {
-        color: #44ff44 !important;
     }
     
-    p, span, div {
+    /* Input styling */
+    .stTextInput input {
+        background: rgba(0, 0, 0, 0.8) !important;
+        border: 1px solid rgba(0, 255, 65, 0.3) !important;
+        border-radius: 25px !important;
+        color: #ffffff !important;
+        padding: 12px 20px !important;
+    }
+    
+    .stTextInput input:focus {
+        border-color: #00ff41 !important;
+        box-shadow: 0 0 20px rgba(0, 255, 65, 0.2) !important;
+    }
+    
+    /* Multiselect styling */
+    .stMultiSelect > div > div {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        border: 1px solid rgba(0, 255, 65, 0.3) !important;
+        border-radius: 8px !important;
         color: #ffffff !important;
     }
-
+    
+    .stMultiSelect > div > div[data-baseweb="select"] > div {
+        background-color: rgba(0, 0, 0, 0.9) !important;
+        border: 1px solid rgba(0, 255, 65, 0.3) !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul {
+        background-color: rgba(0, 0, 0, 0.95) !important;
+        border: 1px solid rgba(0, 255, 65, 0.3) !important;
+        border-radius: 8px !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul li {
+        background-color: rgba(0, 0, 0, 0.95) !important;
+        color: #ffffff !important;
+    }
+    
+    .stMultiSelect > div > div[data-baseweb="select"] ul li:hover {
+        background-color: rgba(0, 255, 65, 0.2) !important;
+        color: #00ff41 !important;
+    }
+    
+    .stMultiSelect span[data-baseweb="tag"] {
+        background-color: rgba(0, 255, 65, 0.2) !important;
+        border: 1px solid #00ff41 !important;
+        color: #00ff41 !important;
+    }
+    
+    /* Section titles */
+    .section-title {
+        color: #00ff41 !important;
+        font-size: 2rem !important;
+        margin-bottom: 30px !important;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    /* General text styling */
+    h1, h2, h3, h4, h5, h6 {
+        color: #00ff41 !important;
+    }
+    
+    p, span, div, li {
+        color: #ffffff !important;
+    }
+    
+    /* Sidebar styling */
+    .stSidebar {
+        background: #0d1117 !important;
+    }
+    
+    .stSidebar .stMarkdown {
+        color: #ffffff !important;
+    }
+    
+    /* Success/Info/Warning styling */
+    .stSuccess {
+        background: rgba(0, 255, 65, 0.1) !important;
+        border: 1px solid rgba(0, 255, 65, 0.3) !important;
+        color: #ffffff !important;
+    }
+    
+    .stInfo {
+        background: rgba(0, 123, 255, 0.1) !important;
+        border: 1px solid rgba(0, 123, 255, 0.3) !important;
+        color: #ffffff !important;
+    }
+    
+    .stWarning {
+        background: rgba(255, 193, 7, 0.1) !important;
+        border: 1px solid rgba(255, 193, 7, 0.3) !important;
+        color: #ffffff !important;
+    }
+    
+    .stError {
+        background: rgba(255, 107, 107, 0.1) !important;
+        border: 1px solid rgba(255, 107, 107, 0.3) !important;
+        color: #ffffff !important;
+    }
+    
+    /* Footer styling */
+    .footer {
+        background: #0d1117;
+        border-top: 1px solid #21262d;
+        padding: 30px 0;
+        margin-top: 50px;
+        text-align: center;
+        color: #8b949e;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+    
+    /* Chat history styling */
+    .chat-history-item {
+        background: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(0, 255, 65, 0.3);
+        border-radius: 8px;
+        padding: 10px;
+        margin: 5px 0;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .chat-history-item:hover {
+        background: rgba(0, 255, 65, 0.1);
+        border-color: #00ff41;
+    }
+    
+    .active-chat {
+        border-color: #00ff41 !important;
+        background: rgba(0, 255, 65, 0.15) !important;
+    }
+    
+    /* Responsive design */
     @media (max-width: 768px) {
-        .main-header h1 {
-            font-size: 2rem;
+        .welcome-title {
+            font-size: 2rem !important;
         }
         
-        .content-area {
-            padding: 20px;
+        .main-header .header-content {
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .header-info {
+            flex-wrap: wrap;
+            justify-content: center;
         }
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Enhanced Sidebar
+# Enhanced Sidebar matching HTML design
 with st.sidebar:
-    st.markdown("### 🤖 AI Configuration")
+    st.markdown("""
+    <div style="background: #21262d; border-radius: 12px; padding: 20px; border: 1px solid #30363d; margin-bottom: 20px;">
+        <h3 style="color: #00ff41; margin-bottom: 15px;">🤖 AI Configuration</h3>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Show current status
     st.write(f"**Status:** {st.session_state.get('ai_status', 'Unknown')}")
@@ -1459,21 +1508,29 @@ with st.sidebar:
     
     # Status indicators
     if st.session_state.get('ai_enabled', False):
-        st.success("AI Assistant Active")
-        st.write("**Enhanced Capabilities:**")
-        st.write("• Statistical knowledge integration")
-        st.write("• Conversation memory")
-        st.write("• Context-aware responses")
-        st.write("• Crime data analysis")
-        st.write("• Professional assistance")
+        st.success("🔮 AI Assistant Active")
+        st.markdown("""
+        <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); border-radius: 8px; padding: 15px; margin: 10px 0;">
+            <strong style="color: #00ff41;">Enhanced Capabilities:</strong><br>
+            • Statistical knowledge integration<br>
+            • Conversation memory<br>
+            • Context-aware responses<br>
+            • Crime data analysis<br>
+            • Professional assistance
+        </div>
+        """, unsafe_allow_html=True)
         
-        st.write("**Statistical Coverage:**")
-        st.write("• 2022-2025 complete annual data")
-        st.write("• 2015-2024 homicide analysis")
-        st.write("• MacroTrends international data")
-        st.write("• Quarterly & half-yearly reports")
-        st.write("• Detection rate analysis")
-        st.write("• Global comparison charts")
+        st.markdown("""
+        <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); border-radius: 8px; padding: 15px; margin: 10px 0;">
+            <strong style="color: #00ff41;">Statistical Coverage:</strong><br>
+            • 2022-2025 complete annual data<br>
+            • 2015-2024 homicide analysis<br>
+            • MacroTrends international data<br>
+            • Quarterly & half-yearly reports<br>
+            • Detection rate analysis<br>
+            • Global comparison charts
+        </div>
+        """, unsafe_allow_html=True)
         
         st.info("✅ AI with Statistical Knowledge")
         st.info("💾 Conversation Memory Enabled")
@@ -1483,70 +1540,94 @@ with st.sidebar:
         st.write("• Verify internet connection")
     
     st.success("📊 Statistics Database")
-    st.write("**Available:**")
-    st.write("• 2022-2025 complete annual data")
-    st.write("• 2015-2024 homicide analysis")
-    st.write("• Real PDF source integration")
-    st.write("• 13 crime hotspots mapped")
-    st.write("• Enhanced analytics")
+    st.markdown("""
+    <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); border-radius: 8px; padding: 15px; margin: 10px 0;">
+        <strong style="color: #00ff41;">Available:</strong><br>
+        • 2022-2025 complete annual data<br>
+        • 2015-2024 homicide analysis<br>
+        • Real PDF source integration<br>
+        • 13 crime hotspots mapped<br>
+        • Enhanced analytics
+    </div>
+    """, unsafe_allow_html=True)
 
-# Main Header
+# Enhanced Main Header matching HTML design
 current_time = get_stkitts_time()
 current_date = get_stkitts_date()
 
 st.markdown(f"""
 <div class="main-header">
-    <h1>🔒 SECURO</h1>
-    <div style="color: #888; text-transform: uppercase; letter-spacing: 2px; position: relative; z-index: 2;">Enhanced AI Assistant & Crime Intelligence System</div>
-    <div style="color: #44ff44; margin-top: 5px; position: relative; z-index: 2;">🇰🇳 Royal St. Christopher & Nevis Police Force</div>
-    <div style="color: #888; margin-top: 8px; font-size: 0.8rem; position: relative; z-index: 2;">📅 {current_date} | 🕒 {current_time} (AST)</div>
+    <div class="header-content">
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+            <div class="logo-text">
+                <h1>SECURO</h1>
+                <p>Enhanced AI Assistant & Crime Intelligence System</p>
+            </div>
+        </div>
+        <div class="header-info">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>Royal St. Christopher & Nevis Police Force</span>
+            </div>
+            <div class="status-indicator">
+                <span>📅 {current_date} | 🕒 {current_time} (AST)</span>
+            </div>
+        </div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Navigation Bar
+# Enhanced Navigation Bar
+st.markdown('<div class="nav-container">', unsafe_allow_html=True)
 col1, col2, col3, col4, col5, col6 = st.columns(6)
 
 with col1:
-    if st.button("🏠 Home", key="nav_home", help="Welcome to SECURO", use_container_width=True):
+    if st.button("🏠 Home", key="nav_home", help="Welcome to SECURO"):
         st.session_state.current_page = 'welcome'
         st.rerun()
 
 with col2:
-    if st.button("ℹ️ About SECURO", key="nav_about", help="About SECURO System", use_container_width=True):
+    if st.button("ℹ️ About SECURO", key="nav_about", help="About SECURO System"):
         st.session_state.current_page = 'about'
         st.rerun()
 
 with col3:
-    if st.button("🗺️ Crime Hotspots", key="nav_map", help="Interactive Crime Map", use_container_width=True):
+    if st.button("🗺️ Crime Hotspots", key="nav_map", help="Interactive Crime Map"):
         st.session_state.current_page = 'map'
         st.rerun()
 
 with col4:
-    if st.button("📊 Statistics & Analytics", key="nav_stats", help="Crime Data Analysis", use_container_width=True):
+    if st.button("📊 Statistics & Analytics", key="nav_stats", help="Crime Data Analysis"):
         st.session_state.current_page = 'statistics'
         st.rerun()
 
 with col5:
-    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts"):
         st.session_state.current_page = 'emergency'
         st.rerun()
 
 with col6:
-    if st.button("💬 AI Assistant", key="nav_chat", help="Chat with Enhanced SECURO AI", use_container_width=True):
+    if st.button("💬 AI Assistant", key="nav_chat", help="Chat with Enhanced SECURO AI"):
         st.session_state.current_page = 'chat'
         st.rerun()
 
-# HOME PAGE
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Main content area with enhanced styling
+st.markdown('<div class="content-area">', unsafe_allow_html=True)
+
+# HOME PAGE with enhanced HTML-style design
 if st.session_state.current_page == 'welcome':
     st.markdown("""
-    <div style="text-align: center; margin-bottom: 40px;">
-        <h2 style="color: #44ff44; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 15px rgba(68, 255, 68, 0.5);">Welcome to Enhanced SECURO</h2>
-        <p style="font-size: 1.1rem; line-height: 1.6; margin-bottom: 30px; color: #ffffff;">Your comprehensive AI assistant with statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
-        <p style="font-size: 1rem; line-height: 1.6; color: #ffffff;">AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
+    <div class="welcome-section">
+        <h1 class="welcome-title">Welcome to Enhanced SECURO</h1>
+        <p class="welcome-subtitle">Your comprehensive AI assistant with statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
+        <p class="welcome-description">AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # Enhanced Feature Cards
+    # Enhanced Feature Cards Grid
     col1, col2 = st.columns(2)
     
     with col1:
@@ -1583,84 +1664,94 @@ if st.session_state.current_page == 'welcome':
         </div>
         """, unsafe_allow_html=True)
 
-# ABOUT PAGE (Updated)
+# ABOUT PAGE (Enhanced with HTML styling)
 elif st.session_state.current_page == 'about':
     st.markdown("""
-    <h2 style="color: #44ff44; margin-bottom: 20px; text-align: center;">About Enhanced SECURO</h2>
+    <h2 class="section-title">
+        <span>ℹ️</span>
+        About Enhanced SECURO
+    </h2>
     
-    <p style="color: #ffffff;"><strong style="color: #44ff44;">SECURO</strong> is an enhanced comprehensive crime analysis system with statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
+    <div class="feature-card">
+        <p><strong style="color: #00ff41;">SECURO</strong> is an enhanced comprehensive crime analysis system with statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
+        
+        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">🧠 Enhanced AI Capabilities</h3>
+        <ul style="list-style: none; color: #c9d1d9; line-height: 2; padding: 0;">
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Conversation Memory - Maintains context across entire chat sessions</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Statistical Knowledge Integration - Real access to 2023-2025 crime data</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Context-Aware Responses - Understands conversation flow and history</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Multi-Chat Management - Multiple conversation sessions with history</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Statistical Query Processing - Answers questions with actual crime data</span>
+            </li>
+        </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">🧠 Enhanced AI Capabilities</h3>
-    <ul style="list-style: none; padding: 0; color: #ffffff;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Conversation Memory - Maintains context across entire chat sessions</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Statistical Knowledge Integration - Real access to 2023-2025 crime data</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Context-Aware Responses - Understands conversation flow and history</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Multi-Chat Management - Multiple conversation sessions with history</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Statistical Query Processing - Answers questions with actual crime data</span>
-        </li>
-    </ul>
+        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">📊 Integrated Statistical Database</h3>
+        <ul style="list-style: none; color: #c9d1d9; line-height: 2; padding: 0;">
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Real PDF Integration - Data sourced from official police statistical reports</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>2022-2025 Crime Data - Complete annual statistics plus quarterly analysis</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Detection Rate Analysis - Performance metrics and trend identification</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Geographical Breakdown - St. Kitts vs. Nevis crime distribution</span>
+            </li>
+        </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">📊 Integrated Statistical Database</h3>
-    <ul style="list-style: none; padding: 0; color: #ffffff;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Real PDF Integration - Data sourced from official police statistical reports</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">2022-2025 Crime Data - Complete annual statistics plus quarterly analysis</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Detection Rate Analysis - Performance metrics and trend identification</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Geographical Breakdown - St. Kitts vs. Nevis crime distribution</span>
-        </li>
-    </ul>
+        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">💬 Chat Management Features</h3>
+        <ul style="list-style: none; color: #c9d1d9; line-height: 2; padding: 0;">
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>New Chat Sessions - Start fresh conversations anytime</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Chat History - Access and resume previous conversations</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Context Preservation - AI remembers entire conversation context</span>
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #00ff41; font-weight: bold;">✓</span>
+                <span>Session Management - Switch between multiple chat sessions seamlessly</span>
+            </li>
+        </ul>
 
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">💬 Chat Management Features</h3>
-    <ul style="list-style: none; padding: 0; color: #ffffff;">
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">New Chat Sessions - Start fresh conversations anytime</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Chat History - Access and resume previous conversations</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Context Preservation - AI remembers entire conversation context</span>
-        </li>
-        <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
-            <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">Session Management - Switch between multiple chat sessions seamlessly</span>
-        </li>
-    </ul>
-
-    <h3 style="color: #44ff44; margin: 20px 0 10px 0;">⚖️ Professional Standards</h3>
-    <p style="color: #ffffff;">Enhanced SECURO maintains professional communication standards appropriate for law enforcement operations. The AI assistant now provides statistically-informed assistance while preserving conversation context for more effective police support.</p>
+        <h3 style="color: #00ff41; margin: 30px 0 20px 0;">⚖️ Professional Standards</h3>
+        <p>Enhanced SECURO maintains professional communication standards appropriate for law enforcement operations. The AI assistant now provides statistically-informed assistance while preserving conversation context for more effective police support.</p>
+    </div>
     """, unsafe_allow_html=True)
 
-# CRIME HOTSPOTS PAGE (Same as before)
+# CRIME HOTSPOTS PAGE (Enhanced with HTML styling)
 elif st.session_state.current_page == 'map':
-    st.markdown('<h2 style="color: #44ff44;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h2>', unsafe_allow_html=True)
+    st.markdown("""
+    <h2 class="section-title">
+        <span>🗺️</span>
+        Crime Hotspot Map - St. Kitts & Nevis
+    </h2>
+    """, unsafe_allow_html=True)
     
     try:
         with st.spinner("🗺️ Loading interactive crime hotspot map..."):
@@ -1682,225 +1773,267 @@ elif st.session_state.current_page == 'map':
         st.error(f"❌ Map Error: {str(e)}")
         st.info("💡 Note: Make sure folium and streamlit-folium are installed")
     
-    # Hotspot Analysis Summary
-    st.markdown('<h3 style="color: #44ff44;">📍 Hotspot Analysis Summary</h3>', unsafe_allow_html=True)
+    # Hotspot Analysis Summary with enhanced styling
+    st.markdown("""
+    <h3 class="section-title">
+        <span>📍</span>
+        Hotspot Analysis Summary
+    </h3>
+    """, unsafe_allow_html=True)
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
         st.markdown("""
-        <div style="background: rgba(231, 76, 60, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #e74c3c;">
-            <strong style="color: #e74c3c;">High Risk Areas (3)</strong><br>
-            <span style="color: #ffffff; font-size: 0.9rem;">Basseterre Central, Molineux, Tabernacle<br>Total: 109 crimes</span>
+        <div style="background: rgba(231, 76, 60, 0.1); padding: 20px; border-radius: 12px; border-left: 4px solid #e74c3c; margin-bottom: 15px; border: 1px solid rgba(231, 76, 60, 0.3);">
+            <h4 style="color: #e74c3c; margin-bottom: 10px;">High Risk Areas (3)</h4>
+            <p style="color: #c9d1d9;">Basseterre Central, Molineux, Tabernacle</p>
+            <p style="color: #8b949e; font-size: 0.9rem;">Total: 109 crimes</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div style="background: rgba(243, 156, 18, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12;">
-            <strong style="color: #f39c12;">Medium Risk Areas (6)</strong><br>
-            <span style="color: #ffffff; font-size: 0.9rem;">Cayon, Newton Ground, Old Road, etc.<br>Total: 133 crimes</span>
+        <div style="background: rgba(243, 156, 18, 0.1); padding: 20px; border-radius: 12px; border-left: 4px solid #f39c12; margin-bottom: 15px; border: 1px solid rgba(243, 156, 18, 0.3);">
+            <h4 style="color: #f39c12; margin-bottom: 10px;">Medium Risk Areas (6)</h4>
+            <p style="color: #c9d1d9;">Cayon, Newton Ground, Old Road, etc.</p>
+            <p style="color: #8b949e; font-size: 0.9rem;">Total: 133 crimes</p>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
         st.markdown("""
-        <div style="background: rgba(39, 174, 96, 0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #27ae60;">
-            <strong style="color: #27ae60;">Low Risk Areas (4)</strong><br>
-            <span style="color: #ffffff; font-size: 0.9rem;">Sandy Point, Dieppe Bay, etc.<br>Total: 60 crimes</span>
+        <div style="background: rgba(39, 174, 96, 0.1); padding: 20px; border-radius: 12px; border-left: 4px solid #27ae60; margin-bottom: 15px; border: 1px solid rgba(39, 174, 96, 0.3);">
+            <h4 style="color: #27ae60; margin-bottom: 10px;">Low Risk Areas (4)</h4>
+            <p style="color: #c9d1d9;">Sandy Point, Dieppe Bay, etc.</p>
+            <p style="color: #8b949e; font-size: 0.9rem;">Total: 60 crimes</p>
         </div>
         """, unsafe_allow_html=True)
 
-# STATISTICS & ANALYTICS PAGE (Updated)
+# STATISTICS & ANALYTICS PAGE (Enhanced with HTML styling)
 elif st.session_state.current_page == 'statistics':
-    st.markdown('<h2 style="color: #44ff44;">📊 Crime Statistics & Analytics</h2>', unsafe_allow_html=True)
+    st.markdown("""
+    <h2 class="section-title">
+        <span>📊</span>
+        Crime Statistics & Analytics
+    </h2>
+    """, unsafe_allow_html=True)
     
-    st.info("📊 **Enhanced Statistics System** - Data is now integrated with the AI assistant for comprehensive statistical analysis.")
+    st.markdown("""
+    <div class="feature-card" style="margin-bottom: 30px;">
+        <p style="color: #00ff41; text-align: center; font-size: 1.1rem;">📊 **Enhanced Statistics System** - Data is now integrated with the AI assistant for comprehensive statistical analysis.</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Year/Period Selection Dropdown
-    st.markdown('<h3 style="color: #44ff44;">📅 Select Time Periods for Analysis</h3>', unsafe_allow_html=True)
+    st.markdown("""
+    <h3 class="section-title">
+        <span>📅</span>
+        Select Time Periods for Analysis
+    </h3>
+    """, unsafe_allow_html=True)
     
-    with st.container():
-        st.markdown("""
-        <div style="background: rgba(68, 255, 68, 0.05); padding: 20px; border-radius: 10px; margin: 20px 0; border: 1px solid rgba(68, 255, 68, 0.2);">
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Create ordered list of periods
-        available_periods = list(st.session_state.crime_stats.keys())
-        
-        # Sort periods chronologically
-        def sort_key(period):
-            if '_ANNUAL' in period:
-                return (int(period.split('_')[0]), 12)  # Annual reports at end of year
-            elif '_H1' in period:
-                return (int(period.split('_')[0]), 6)   # H1 reports mid-year
-            elif '_Q1' in period:
-                return (int(period.split('_')[0]), 3)   # Q1 reports
-            elif '_Q2' in period:
-                return (int(period.split('_')[0]), 6)   # Q2 reports
-            elif '_Q3' in period:
-                return (int(period.split('_')[0]), 9)   # Q3 reports
-            elif '_Q4' in period:
-                return (int(period.split('_')[0]), 12)  # Q4 reports
-            else:
-                return (9999, 0)  # Unknown format at end
-        
-        # Sort periods
-        sorted_periods = sorted(available_periods, key=sort_key)
-        
-        period_labels = {key: data["period"] for key, data in st.session_state.crime_stats.items()}
-        
-        # Set better default selections (recent years)
-        default_selections = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
-        valid_defaults = [p for p in default_selections if p in sorted_periods]
-        
-        if not valid_defaults:
-            valid_defaults = sorted_periods[-3:] if len(sorted_periods) >= 3 else sorted_periods
-        
-        selected_periods = st.multiselect(
-            "📊 Choose time periods to analyze (2016-2025):",
-            options=sorted_periods,
-            default=valid_defaults,
-            format_func=lambda x: period_labels.get(x, x),
-            help="Select one or more time periods to compare statistics and trends. Data available from 2016 to 2025.",
-            key="period_selector"
-        )
+    # Create ordered list of periods
+    available_periods = list(st.session_state.crime_stats.keys())
+    
+    # Sort periods chronologically
+    def sort_key(period):
+        if '_ANNUAL' in period:
+            return (int(period.split('_')[0]), 12)  # Annual reports at end of year
+        elif '_H1' in period:
+            return (int(period.split('_')[0]), 6)   # H1 reports mid-year
+        elif '_Q1' in period:
+            return (int(period.split('_')[0]), 3)   # Q1 reports
+        elif '_Q2' in period:
+            return (int(period.split('_')[0]), 6)   # Q2 reports
+        elif '_Q3' in period:
+            return (int(period.split('_')[0]), 9)   # Q3 reports
+        elif '_Q4' in period:
+            return (int(period.split('_')[0]), 12)  # Q4 reports
+        else:
+            return (9999, 0)  # Unknown format at end
+    
+    # Sort periods
+    sorted_periods = sorted(available_periods, key=sort_key)
+    
+    period_labels = {key: data["period"] for key, data in st.session_state.crime_stats.items()}
+    
+    # Set better default selections (recent years)
+    default_selections = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+    valid_defaults = [p for p in default_selections if p in sorted_periods]
+    
+    if not valid_defaults:
+        valid_defaults = sorted_periods[-3:] if len(sorted_periods) >= 3 else sorted_periods
+    
+    selected_periods = st.multiselect(
+        "📊 Choose time periods to analyze (2016-2025):",
+        options=sorted_periods,
+        default=valid_defaults,
+        format_func=lambda x: period_labels.get(x, x),
+        help="Select one or more time periods to compare statistics and trends. Data available from 2016 to 2025.",
+        key="period_selector"
+    )
     
     if not selected_periods:
         st.warning("Please select at least one time period to view statistics.")
-        st.stop()
-    
-    st.session_state.selected_periods = selected_periods
-    
-    # Display stats for selected periods
-    if len(selected_periods) == 1:
-        # Single period detailed view
-        period_key = selected_periods[0]
-        period_data = st.session_state.crime_stats[period_key]
+    else:
+        st.session_state.selected_periods = selected_periods
         
-        st.markdown(f'<h3 style="color: #44ff44;">📈 {period_data["period"]} Overview</h3>', unsafe_allow_html=True)
+        # Display stats for selected periods with enhanced cards
+        if len(selected_periods) == 1:
+            # Single period detailed view
+            period_key = selected_periods[0]
+            period_data = st.session_state.crime_stats[period_key]
+            
+            st.markdown(f"""
+            <h3 class="section-title">
+                <span>📈</span>
+                {period_data["period"]} Overview
+            </h3>
+            """, unsafe_allow_html=True)
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.markdown(f"""
+                <div class="stat-card">
+                    <div class="stat-number">{period_data['total_crimes']}</div>
+                    <div class="stat-label">Total Crimes</div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col2:
+                detection_rate = period_data.get('detection_rate', 'N/A')
+                st.markdown(f"""
+                <div class="stat-card">
+                    <div class="stat-number">{detection_rate}{'%' if detection_rate != 'N/A' else ''}</div>
+                    <div class="stat-label">Detection Rate</div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col3:
+                st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 'N/A')
+                st.markdown(f"""
+                <div class="stat-card">
+                    <div class="stat-number">{st_kitts_crimes}</div>
+                    <div class="stat-label">St. Kitts Crimes</div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col4:
+                nevis_crimes = period_data.get('nevis', {}).get('crimes', 'N/A')
+                st.markdown(f"""
+                <div class="stat-card">
+                    <div class="stat-number">{nevis_crimes}</div>
+                    <div class="stat-label">Nevis Crimes</div>
+                </div>
+                """, unsafe_allow_html=True)
+        
+        else:
+            # Multiple periods comparison view
+            st.markdown("""
+            <h3 class="section-title">
+                <span>📈</span>
+                Multi-Period Comparison
+            </h3>
+            """, unsafe_allow_html=True)
+            
+            # Create comparison table
+            comparison_data = []
+            for period_key in selected_periods:
+                period_data = st.session_state.crime_stats[period_key]
+                comparison_data.append({
+                    "Period": period_data["period"],
+                    "Total Crimes": period_data["total_crimes"],
+                    "Detection Rate": f"{period_data.get('detection_rate', 'N/A')}{'%' if period_data.get('detection_rate') else ''}",
+                    "St. Kitts": period_data.get('st_kitts', {}).get('crimes', 'N/A'),
+                    "Nevis": period_data.get('nevis', {}).get('crimes', 'N/A')
+                })
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df, use_container_width=True)
+        
+        # Enhanced Chart Controls
+        st.markdown("""
+        <h3 class="section-title">
+            <span>📈</span>
+            Interactive Analytics
+        </h3>
+        """, unsafe_allow_html=True)
         
         col1, col2, col3, col4 = st.columns(4)
         
         with col1:
-            st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-number">{period_data['total_crimes']}</div>
-                <div class="stat-label">Total Crimes</div>
-            </div>
-            """, unsafe_allow_html=True)
+            if st.button("📈 Crime Trends", key="chart_trends_new"):
+                if len(selected_periods) > 1:
+                    fig = create_historical_crime_charts("crime_trends", selected_periods, st.session_state.crime_stats)
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Select multiple periods to view trends.")
         
         with col2:
-            detection_rate = period_data.get('detection_rate', 'N/A')
-            st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-number">{detection_rate}{'%' if detection_rate != 'N/A' else ''}</div>
-                <div class="stat-label">Detection Rate</div>
-            </div>
-            """, unsafe_allow_html=True)
+            if st.button("🎯 Detection Comparison", key="chart_detection_new"):
+                if len(selected_periods) > 1:
+                    fig = create_historical_crime_charts("detection_comparison", selected_periods, st.session_state.crime_stats)
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                else:
+                    st.info("Select multiple periods to compare detection rates.")
         
         with col3:
-            st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 'N/A')
-            st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-number">{st_kitts_crimes}</div>
-                <div class="stat-label">St. Kitts Crimes</div>
-            </div>
-            """, unsafe_allow_html=True)
+            if st.button("🔍 Crime Breakdown", key="chart_breakdown_new"):
+                fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, st.session_state.crime_stats)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
         
         with col4:
-            nevis_crimes = period_data.get('nevis', {}).get('crimes', 'N/A')
-            st.markdown(f"""
-            <div class="stat-card">
-                <div class="stat-number">{nevis_crimes}</div>
-                <div class="stat-label">Nevis Crimes</div>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    else:
-        # Multiple periods comparison view
-        st.markdown('<h3 style="color: #44ff44;">📈 Multi-Period Comparison</h3>', unsafe_allow_html=True)
-        
-        # Create comparison table
-        comparison_data = []
-        for period_key in selected_periods:
-            period_data = st.session_state.crime_stats[period_key]
-            comparison_data.append({
-                "Period": period_data["period"],
-                "Total Crimes": period_data["total_crimes"],
-                "Detection Rate": f"{period_data.get('detection_rate', 'N/A')}{'%' if period_data.get('detection_rate') else ''}",
-                "St. Kitts": period_data.get('st_kitts', {}).get('crimes', 'N/A'),
-                "Nevis": period_data.get('nevis', {}).get('crimes', 'N/A')
-            })
-        
-        df = pd.DataFrame(comparison_data)
-        st.dataframe(df, use_container_width=True)
-    
-    # Enhanced Chart Controls
-    st.markdown('<h3 style="color: #44ff44;">📈 Interactive Analytics</h3>', unsafe_allow_html=True)
-    
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("📈 Crime Trends", key="chart_trends_new"):
-            if len(selected_periods) > 1:
-                fig = create_historical_crime_charts("crime_trends", selected_periods, st.session_state.crime_stats)
+            if st.button("🌍 International Context", key="chart_international_new"):
+                fig = create_macrotrends_comparison_charts("international_context")
                 if fig:
                     st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("Select multiple periods to view trends.")
-    
-    with col2:
-        if st.button("🎯 Detection Comparison", key="chart_detection_new"):
-            if len(selected_periods) > 1:
-                fig = create_historical_crime_charts("detection_comparison", selected_periods, st.session_state.crime_stats)
+        
+        # **NEW: MacroTrends Comparison Section**
+        st.markdown("""
+        <h3 class="section-title">
+            <span>🌍</span>
+            International Comparison Charts (MacroTrends Data)
+        </h3>
+        """, unsafe_allow_html=True)
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if st.button("📊 Historical Homicide Rates", key="macro_homicide_trends"):
+                fig = create_macrotrends_comparison_charts("homicide_trends")
                 if fig:
                     st.plotly_chart(fig, use_container_width=True)
-            else:
-                st.info("Select multiple periods to compare detection rates.")
-    
-    with col3:
-        if st.button("🔍 Crime Breakdown", key="chart_breakdown_new"):
-            fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, st.session_state.crime_stats)
-            if fig:
-                st.plotly_chart(fig, use_container_width=True)
-    
-    with col4:
-        if st.button("🌍 International Context", key="chart_international_new"):
-            fig = create_macrotrends_comparison_charts("international_context")
-            if fig:
-                st.plotly_chart(fig, use_container_width=True)
-    
-    # **NEW: MacroTrends Comparison Section**
-    st.markdown('<h3 style="color: #44ff44;">🌍 International Comparison Charts (MacroTrends Data)</h3>', unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        if st.button("📊 Historical Homicide Rates", key="macro_homicide_trends"):
-            fig = create_macrotrends_comparison_charts("homicide_trends")
-            if fig:
-                st.plotly_chart(fig, use_container_width=True)
-    
-    with col2:
-        if st.button("🌐 Global Comparison", key="macro_global_comparison"):
-            fig = create_macrotrends_comparison_charts("international_context")
-            if fig:
-                st.plotly_chart(fig, use_container_width=True)
-    
-    with col3:
-        if st.button("📈 Recent Totals", key="macro_recent_totals"):
-            fig = create_macrotrends_comparison_charts("recent_crime_totals")
-            if fig:
-                st.plotly_chart(fig, use_container_width=True)
-    
-    st.info("📊 **MacroTrends Integration**: These charts provide international context and historical perspective using global crime database comparisons.")
+        
+        with col2:
+            if st.button("🌐 Global Comparison", key="macro_global_comparison"):
+                fig = create_macrotrends_comparison_charts("international_context")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        with col3:
+            if st.button("📈 Recent Totals", key="macro_recent_totals"):
+                fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+            <p style="color: #00ff41; text-align: center;">📊 **MacroTrends Integration**: These charts provide international context and historical perspective using global crime database comparisons.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-# EMERGENCY CONTACTS PAGE (Same as before)
+# EMERGENCY CONTACTS PAGE (Enhanced with HTML styling)
 elif st.session_state.current_page == 'emergency':
     st.markdown("""
-    <h2 style="color: #e74c3c; margin-bottom: 30px; text-align: center;">🚨 Emergency Contacts</h2>
+    <h2 class="section-title">
+        <span>🚨</span>
+        Emergency Contacts
+    </h2>
     """, unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4)
@@ -1923,30 +2056,47 @@ elif st.session_state.current_page == 'emergency':
             <div class="emergency-card">
                 <h3>{title}</h3>
                 <div class="phone-number">{number}</div>
-                <p style="color: #ffffff;">{description}</p>
+                <p>{description}</p>
             </div>
             """, unsafe_allow_html=True)
     
-    # Emergency Guidelines
+    # Emergency Guidelines with enhanced styling
     st.markdown("""
-    <div style="background: rgba(255, 243, 205, 0.1); border: 1px solid rgba(255, 234, 167, 0.3); padding: 20px; border-radius: 10px; margin-top: 30px;">
-        <h3 style="color: #f39c12; margin-bottom: 15px;">⚠️ Important Emergency Guidelines</h3>
-        <ul style="color: #ffffff; line-height: 1.6; list-style: none; padding: 0;">
-            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
-                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+    <div style="background: linear-gradient(135deg, rgba(45, 27, 14, 0.6), rgba(33, 38, 45, 0.8)); 
+                border: 1px solid rgba(255, 211, 61, 0.4); 
+                padding: 25px; 
+                border-radius: 12px; 
+                margin-top: 30px;
+                position: relative;
+                overflow: hidden;">
+        <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; 
+                    background: linear-gradient(90deg, transparent, rgba(255, 211, 61, 0.05), transparent);
+                    animation: shimmer 3s linear infinite;"></div>
+        <h3 style="color: #ffd93d; margin-bottom: 15px; position: relative; z-index: 2;">⚠️ Important Emergency Guidelines</h3>
+        <ul style="color: #c9d1d9; line-height: 1.8; list-style: none; padding: 0; position: relative; z-index: 2;">
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #ffd93d; font-weight: bold;">•</span>
                 <strong>For life-threatening emergencies, always call 911 first</strong>
             </li>
-            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
-                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #ffd93d; font-weight: bold;">•</span>
                 When calling, provide your exact location and nature of emergency
             </li>
-            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
-                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #ffd93d; font-weight: bold;">•</span>
                 Stay on the line until instructed to hang up
             </li>
-            <li style="padding: 4px 0; padding-left: 20px; position: relative;">
-                <span style="position: absolute; left: 0; color: #f39c12;">•</span>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #ffd93d; font-weight: bold;">•</span>
                 Keep these numbers easily accessible at all times
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #ffd93d; font-weight: bold;">•</span>
+                Follow dispatcher instructions carefully
+            </li>
+            <li style="padding: 8px 0; padding-left: 25px; position: relative;">
+                <span style="position: absolute; left: 0; color: #ffd93d; font-weight: bold;">•</span>
+                Provide first aid only if trained to do so
             </li>
         </ul>
     </div>
@@ -1954,40 +2104,72 @@ elif st.session_state.current_page == 'emergency':
 
 # **ENHANCED AI ASSISTANT CHAT PAGE WITH MEMORY & STATISTICS**
 elif st.session_state.current_page == 'chat':
-    st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Enhanced AI Assistant</h2>', unsafe_allow_html=True)
+    st.markdown("""
+    <h2 class="section-title">
+        <span>💬</span>
+        Enhanced AI Assistant
+    </h2>
+    """, unsafe_allow_html=True)
     
-    # Chat Management Controls
+    # Chat Management Controls with enhanced styling
+    st.markdown("""
+    <div style="background: #21262d; border: 1px solid #30363d; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+        <h3 style="color: #00ff41; margin-bottom: 15px;">🤖 Chat Management</h3>
+    </div>
+    """, unsafe_allow_html=True)
+    
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("➕ New Chat", key="new_chat", help="Start a new conversation", use_container_width=True):
+        if st.button("➕ New Chat", key="new_chat", help="Start a new conversation"):
             create_new_chat()
             st.rerun()
     
     with col2:
-        if st.button("📚 Chat History", key="show_history", help="View chat history", use_container_width=True):
+        if st.button("📚 Chat History", key="show_history", help="View chat history"):
             st.session_state.show_chat_history = not st.session_state.get('show_chat_history', False)
             st.rerun()
     
     with col3:
         current_chat = get_current_chat()
-        st.write(f"**Current:** {current_chat['name']}")
+        st.markdown(f"""
+        <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
+                    border-radius: 8px; padding: 10px; text-align: center;">
+            <strong style="color: #00ff41;">Current:</strong><br>
+            <span style="color: #c9d1d9; font-size: 0.9rem;">{current_chat['name']}</span>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col4:
         total_chats = len(st.session_state.chat_sessions)
-        st.write(f"**Total Chats:** {total_chats}")
+        st.markdown(f"""
+        <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
+                    border-radius: 8px; padding: 10px; text-align: center;">
+            <strong style="color: #00ff41;">Total Chats:</strong><br>
+            <span style="color: #c9d1d9; font-size: 1.2rem; font-weight: bold;">{total_chats}</span>
+        </div>
+        """, unsafe_allow_html=True)
     
     # Chat History Sidebar
     if st.session_state.get('show_chat_history', False):
-        st.markdown('<h3 style="color: #44ff44;">📚 Chat History</h3>', unsafe_allow_html=True)
+        st.markdown("""
+        <h3 class="section-title">
+            <span>📚</span>
+            Chat History & Session Management
+        </h3>
+        """, unsafe_allow_html=True)
         
         if st.session_state.chat_sessions:
             for chat_id, chat_data in st.session_state.chat_sessions.items():
                 is_active = chat_id == st.session_state.current_chat_id
                 active_class = "active-chat" if is_active else ""
                 
-                # Chat history item
-                if st.button(f"💬 {chat_data['name']}", key=f"chat_{chat_id}", help=f"Switch to {chat_data['name']} - Created: {chat_data['created_at']}", use_container_width=True):
+                # Chat history item with enhanced styling
+                chat_display = f"💬 {chat_data['name']}"
+                if is_active:
+                    chat_display += " (Active)"
+                
+                if st.button(chat_display, key=f"chat_{chat_id}", help=f"Switch to {chat_data['name']} - Created: {chat_data['created_at']}"):
                     switch_to_chat(chat_id)
                     st.session_state.show_chat_history = False
                     st.rerun()
@@ -1996,16 +2178,41 @@ elif st.session_state.current_page == 'chat':
                 if chat_data['messages']:
                     last_msg = chat_data['messages'][-1]['content'][:50] + "..." if len(chat_data['messages'][-1]['content']) > 50 else chat_data['messages'][-1]['content']
                     st.caption(f"Last: {last_msg}")
+                    st.caption(f"Last Activity: {chat_data['last_activity']} AST")
+                
+                st.markdown("---")
         else:
             st.info("No chat history yet. Start a conversation!")
-        
-        st.markdown("---")
     
-    # Enhanced Status Display (Simplified)
+    # Enhanced Status Display
     if st.session_state.get('ai_enabled', False):
-        st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness")
+        st.markdown("""
+        <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
+                    border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center;">
+            <h4 style="color: #00ff41; margin: 0;">✅ Enhanced AI Ready</h4>
+            <p style="color: #c9d1d9; margin: 5px 0 0 0;">Statistical Knowledge • Conversation Memory • Context Awareness</p>
+        </div>
+        """, unsafe_allow_html=True)
     else:
-        st.error("❌ AI Offline: Check your Google AI API key")
+        st.markdown("""
+        <div style="background: rgba(255, 107, 107, 0.1); border: 1px solid rgba(255, 107, 107, 0.3); 
+                    border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center;">
+            <h4 style="color: #ff6b6b; margin: 0;">❌ AI Offline</h4>
+            <p style="color: #c9d1d9; margin: 5px 0 0 0;">Check your Google AI API key</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Chat Interface with enhanced styling
+    st.markdown("""
+    <div style="background: #21262d; border: 1px solid #30363d; border-radius: 12px; margin: 20px 0;">
+        <div style="background: #0d1117; border-bottom: 1px solid #30363d; padding: 20px; border-radius: 12px 12px 0 0;">
+            <h3 style="color: #00ff41; margin: 0;">🤖 Enhanced AI Assistant</h3>
+            <p style="color: #8b949e; margin: 5px 0 0 0; font-size: 14px;">
+                AI with conversation memory and statistical knowledge integration
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Get current chat and display messages
     current_chat = get_current_chat()
@@ -2021,7 +2228,8 @@ elif st.session_state.current_page == 'chat':
         messages.append(welcome_msg)
         current_chat['messages'] = messages
     
-    # Display chat messages
+    # Display chat messages with enhanced styling
+    st.markdown('<div style="min-height: 400px; padding: 20px;">', unsafe_allow_html=True)
     for message in messages:
         if message["role"] == "user":
             clean_content = str(message["content"]).strip()
@@ -2042,8 +2250,15 @@ elif st.session_state.current_page == 'chat':
                 <div class="message-time">SECURO • {message["timestamp"]} AST</div>
             </div>
             """, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    # Enhanced Chat input
+    # Enhanced Chat input with styling
+    st.markdown("""
+    <div style="background: #21262d; border-top: 1px solid #30363d; padding: 20px; 
+                border-radius: 0 0 12px 12px; margin-bottom: 20px;">
+    </div>
+    """, unsafe_allow_html=True)
+    
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input(
             "💬 Message Enhanced AI Assistant:",
@@ -2052,7 +2267,7 @@ elif st.session_state.current_page == 'chat':
             key="chat_input"
         )
         
-        submitted = st.form_submit_button("Send", type="primary")
+        submitted = st.form_submit_button("🚀 Send Message", type="primary")
         
         if submitted and user_input and user_input.strip():
             current_time = get_stkitts_time()
@@ -2129,7 +2344,7 @@ elif st.session_state.current_page == 'chat':
                 col1, col2, col3 = st.columns(3)
                 
                 with col1:
-                    if st.form_submit_button("📈 Historical Homicide Trends", use_container_width=True):
+                    if st.button("📈 Historical Homicide Trends", key=f"macro_hist_{int(time.time())}", use_container_width=True):
                         fig = create_macrotrends_comparison_charts("homicide_trends")
                         if fig:
                             st.plotly_chart(fig, use_container_width=True)
@@ -2150,47 +2365,64 @@ elif st.session_state.current_page == 'chat':
             
             st.rerun()
 
-# Enhanced Status bar
+# Close main content area
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Enhanced Status bar matching HTML design
 current_time = get_stkitts_time()
 
 st.markdown(f"""
-<div class="status-bar">
-    <div class="status-item">
-        <div class="status-dot"></div>
+<div style="background: rgba(0, 0, 0, 0.9); padding: 15px; border-radius: 25px; margin-top: 30px; 
+            display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(0, 255, 65, 0.2); 
+            flex-wrap: wrap; gap: 10px;">
+    <div style="display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 0.9rem;">
+        <div style="width: 8px; height: 8px; background: #00ff41; border-radius: 50%; animation: pulse 2s infinite;"></div>
         <span>Enhanced AI {"Active" if st.session_state.get('ai_enabled', False) else "Offline"}</span>
     </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
+    <div style="display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 0.9rem;">
+        <div style="width: 8px; height: 8px; background: #00ff41; border-radius: 50%; animation: pulse 2s infinite;"></div>
         <span>MacroTrends Integration: Active</span>
     </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
+    <div style="display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 0.9rem;">
+        <div style="width: 8px; height: 8px; background: #00ff41; border-radius: 50%; animation: pulse 2s infinite;"></div>
         <span>Conversation Memory: Enabled</span>
     </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
+    <div style="display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 0.9rem;">
+        <div style="width: 8px; height: 8px; background: #00ff41; border-radius: 50%; animation: pulse 2s infinite;"></div>
         <span>Chat Sessions: {len(st.session_state.chat_sessions)}</span>
     </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span>{current_time} AST</span>
+    <div style="display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 0.9rem;">
+        <div style="width: 8px; height: 8px; background: #00ff41; border-radius: 50%; animation: pulse 2s infinite;"></div>
+        <span>🕒 {current_time} AST</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Enhanced Footer
+# Enhanced Footer matching HTML design
 st.markdown(f"""
-<div style="text-align: center; color: #666; font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; padding: 20px; margin-top: 20px; border-top: 1px solid rgba(68, 255, 68, 0.2);">
-    📊 <span style="color: #44ff44;">Data Source:</span> Royal St. Christopher & Nevis Police Force (RSCNPF) • Statistical Integration Active<br>
-    📞 <span style="color: #44ff44;">Local Intelligence Office:</span> <a href="tel:+18694652241" style="color: #44ff44; text-decoration: none;">869-465-2241</a> Ext. 4238/4239 | 
-    📧 <a href="mailto:liosk@police.kn" style="color: #44ff44; text-decoration: none;">liosk@police.kn</a><br>
-    🔄 <span style="color: #44ff44;">Last Updated:</span> {get_stkitts_date()} {get_stkitts_time()} AST | <span style="color: #44ff44;">Enhanced AI Intelligence</span><br>
-    🤖 <span style="color: #44ff44;">AI System:</span> Statistical Knowledge • Conversation Memory • Context Awareness • Multi-Chat Support<br>
-    🌍 <span style="color: #44ff44;">Multi-language Support</span> | 🔒 <span style="color: #44ff44;">Secure Law Enforcement Platform</span><br>
-    <br>
-    <div style="background: rgba(68, 255, 68, 0.1); padding: 10px; border-radius: 5px; margin-top: 10px;">
-        <span style="color: #44ff44; font-weight: bold;">🧠 Enhanced AI Assistant Platform</span><br>
-        <span style="color: #ffffff;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</span>
+<div class="footer">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 20px;">
+        <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 20px; flex-wrap: wrap;">
+            <a href="#" style="color: #00ff41; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a>
+            <a href="#" style="color: #00ff41; text-decoration: none; transition: color 0.3s ease;">Terms of Service</a>
+            <a href="#" style="color: #00ff41; text-decoration: none; transition: color 0.3s ease;">Contact Support</a>
+            <a href="#" style="color: #00ff41; text-decoration: none; transition: color 0.3s ease;">System Status</a>
+            <a href="#" style="color: #00ff41; text-decoration: none; transition: color 0.3s ease;">Documentation</a>
+        </div>
+        <div style="text-align: center; color: #8b949e; font-size: 14px;">
+            <p style="margin: 5px 0;">&copy; 2025 SECURO - Enhanced AI Assistant & Crime Intelligence System</p>
+            <p style="margin: 5px 0;">Royal St. Christopher and Nevis Police Force | Version 2.1.0</p>
+            <p style="margin: 5px 0;">📊 <span style="color: #00ff41;">Data Source:</span> Royal St. Christopher & Nevis Police Force (RSCNPF) • Statistical Integration Active</p>
+            <p style="margin: 5px 0;">📞 <span style="color: #00ff41;">Local Intelligence Office:</span> <a href="tel:+18694652241" style="color: #00ff41; text-decoration: none;">869-465-2241</a> Ext. 4238/4239 | 
+            📧 <a href="mailto:liosk@police.kn" style="color: #00ff41; text-decoration: none;">liosk@police.kn</a></p>
+            <p style="margin: 5px 0;">🔄 <span style="color: #00ff41;">Last Updated:</span> {get_stkitts_date()} {get_stkitts_time()} AST | <span style="color: #00ff41;">Enhanced AI Intelligence</span></p>
+            <p style="margin: 5px 0;">🤖 <span style="color: #00ff41;">AI System:</span> Statistical Knowledge • Conversation Memory • Context Awareness • Multi-Chat Support</p>
+            <p style="margin: 5px 0;">🌍 <span style="color: #00ff41;">Multi-language Support</span> | 🔒 <span style="color: #00ff41;">Secure Law Enforcement Platform</span></p>
+        </div>
+        <div style="background: rgba(0, 255, 65, 0.1); padding: 15px; border-radius: 10px; margin-top: 20px; text-align: center;">
+            <span style="color: #00ff41; font-weight: bold; font-size: 1.1rem;">🧠 Enhanced AI Assistant Platform</span><br>
+            <span style="color: #c9d1d9; margin-top: 5px; display: block;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</span>
+        </div>
     </div>
 </div>
 """, unsafe_allow_html=True)
