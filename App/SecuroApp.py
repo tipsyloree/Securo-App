@@ -858,7 +858,7 @@ with st.sidebar:
     
     # Status indicators
     if st.session_state.get('ai_enabled', False):
-        st.success("🤖 Pure AI Assistant Active")
+        st.success("AI Assistant Active")
         st.write("**Completely API-Dependent:**")
         st.write("• No built-in knowledge base")
         st.write("• Powered by Google AI API")
@@ -1299,16 +1299,16 @@ elif st.session_state.current_page == 'chat':
     st.markdown('<h2 style="color: #44ff44; text-align: center;">💬 Pure API-Dependent AI Assistant</h2>', unsafe_allow_html=True)
     
     # Updated Status Display
-    st.markdown('<h3 style="color: #44ff44;">🤖 Pure AI Assistant System</h3>', unsafe_allow_html=True)
+    st.markdown('<h3 style="color: #44ff44;">🤖 AI Assistant System</h3>', unsafe_allow_html=True)
     
     ai_status = st.session_state.get('ai_status', 'AI Status Unknown')
     if st.session_state.get('ai_enabled', False):
-        st.success(f"✅ Pure AI Ready: General purpose assistant + context-aware responses | {ai_status}")
+        st.success(f"✅ AI Ready: General purpose assistant + context-aware responses | {ai_status}")
     else:
         st.error(f"❌ AI Offline: Check your Google AI API key | {ai_status}")
 
     # Updated Intelligence Summary
-    st.info(f"🤖 **Pure AI Capabilities:** General purpose assistant • No built-in knowledge • 100% API-dependent • Context-aware responses • Professional communication")
+    st.info(f"🤖 **AI Capabilities:** General purpose assistant • No built-in knowledge • 100% API-dependent • Context-aware responses • Professional communication")
     
     # Response Type Information
     st.markdown("""
@@ -1325,7 +1325,7 @@ elif st.session_state.current_page == 'chat':
     if not st.session_state.messages:
         st.session_state.messages.append({
             "role": "assistant",
-            "content": "🔒 **Pure AI Assistant System Online!**\n\nHi! I'm SECURO, your AI assistant for the Royal St. Christopher & Nevis Police Force.\n\n🤖 **What I am:**\n• **Pure AI Assistant** - Completely API-dependent with no built-in knowledge\n• **General Purpose** - Can help with any questions or tasks\n• **Professional** - Tailored for law enforcement operations\n• **Context-Aware** - Adapts responses to your needs\n• **Flexible** - No pre-programmed limitations or specific focus areas\n\n**🎯 Key Features:**\n• **100% API-dependent** - Powered entirely by Google AI\n• **No built-in knowledge base** - Pure AI-generated responses\n• **Context-aware responses** - Concise by default, detailed on request\n• **Professional communication** - Appropriate for police operations\n\n💬 **How to use me:**\n• Ask any question naturally\n• Say \"detailed\" or \"explain\" for comprehensive answers\n• I'll keep responses concise otherwise\n• I can help with various police-related tasks and general inquiries\n\n📊 **Need statistics?** Visit the Statistics & Analytics section - it's completely separate from this AI.\n\nWhat can I help you with today?",
+            "content": "🔒 **AI Assistant System Online!**\n\nHi! I'm SECURO, your AI assistant for the Royal St. Christopher & Nevis Police Force.",
             "timestamp": get_stkitts_time()
         })
     
