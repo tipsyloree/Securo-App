@@ -218,9 +218,11 @@ def add_message_to_chat(role, content):
 
 def create_crime_hotspot_map():
     """Create an interactive crime hotspot map for St. Kitts and Nevis"""
+    # Center the map on St. Kitts and Nevis
     center_lat = 17.25
     center_lon = -62.7
     
+    # Create the base map
     m = folium.Map(
         location=[center_lat, center_lon],
         zoom_start=11,
@@ -228,9 +230,25 @@ def create_crime_hotspot_map():
         attr='Crime Hotspot Analysis - SECURO'
     )
     
-    risk_colors = {'High': '#ff4444', 'Medium': '#ffaa44', 'Low': '#44ff44'}
+    # Add Google Satellite layer as an option
+    folium.TileLayer(
+        tiles='https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
+        attr='Google Satellite',
+        name='Satellite View',
+        overlay=False,
+        control=True
+    ).add_to(m)
     
+    # Color mapping for risk levels
+    risk_colors = {
+        'High': '#ff4444',
+        'Medium': '#ffaa44', 
+        'Low': '#44ff44'
+    }
+    
+    # Add crime hotspots to the map
     for location, data in CRIME_HOTSPOTS.items():
+        # Create popup content
         popup_content = f"""
         <div style="font-family: Arial, sans-serif; min-width: 200px;">
             <h4 style="color: {risk_colors[data['risk']]}; margin: 0; text-align: center;">
@@ -245,11 +263,14 @@ def create_crime_hotspot_map():
             <ul style="margin: 4px 0; padding-left: 20px;">
                 {''.join([f'<li>{crime_type}</li>' for crime_type in data['types']])}
             </ul>
+            <small style="color: #666;">📍 Lat: {data['lat']:.4f}, Lon: {data['lon']:.4f}</small>
         </div>
         """
         
+        # Calculate marker size based on crime count
         marker_size = max(10, min(30, data['crimes'] * 0.8))
         
+        # Add marker to map
         folium.CircleMarker(
             location=[data['lat'], data['lon']],
             radius=marker_size,
@@ -260,6 +281,46 @@ def create_crime_hotspot_map():
             fillOpacity=0.7,
             weight=2
         ).add_to(m)
+        
+        # Add text label for major hotspots
+        if data['crimes'] > 25:
+            folium.Marker(
+                location=[data['lat'] + 0.01, data['lon']],
+                icon=folium.DivIcon(
+                    html=f"""<div style="font-size: 10px; font-weight: bold; 
+                             color: white; text-shadow: 1px 1px 2px black;">
+                             {location}</div>""",
+                    icon_size=(100, 20),
+                    icon_anchor=(50, 10)
+                )
+            ).add_to(m)
+    
+    # Add a legend
+    legend_html = f"""
+    <div style="position: fixed; 
+                top: 10px; right: 10px; width: 180px; height: 140px; 
+                background-color: rgba(0, 0, 0, 0.8); 
+                border: 2px solid rgba(68, 255, 68, 0.5);
+                border-radius: 10px; z-index:9999; 
+                font-size: 12px; font-family: Arial;
+                padding: 10px; color: white;">
+    <h4 style="margin: 0 0 10px 0; color: #44ff44;">🗺️ Crime Risk Legend</h4>
+    <div style="margin: 5px 0;">
+        <span style="color: {risk_colors['High']};">●</span> High Risk (25+ crimes)
+    </div>
+    <div style="margin: 5px 0;">
+        <span style="color: {risk_colors['Medium']};">●</span> Medium Risk (15-24 crimes)  
+    </div>
+    <div style="margin: 5px 0;">
+        <span style="color: {risk_colors['Low']};">●</span> Low Risk (<15 crimes)
+    </div>
+    <small style="color: #888;">Marker size = Crime frequency</small>
+    </div>
+    """
+    m.get_root().html.add_child(folium.Element(legend_html))
+    
+    # Add layer control
+    folium.LayerControl().add_to(m)
     
     return m
 
@@ -311,9 +372,9 @@ st.markdown("""
     /* Main header */
     .main-header {
         background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-        padding: 20px 0;
+        padding: 15px 0;
         border-bottom: 1px solid #21262d;
-        margin-bottom: 0;
+        margin-bottom: 10px;
         position: sticky;
         top: 0;
         z-index: 1000;
@@ -445,15 +506,27 @@ st.markdown("""
     .page-container {
         max-width: 1400px;
         margin: 0 auto;
-        padding: 40px 30px;
-        min-height: calc(100vh - 200px);
+        padding: 20px 30px;
+        min-height: auto;
     }
     
     /* Welcome section */
     .welcome-hero {
         text-align: center;
-        padding: 60px 20px;
-        margin-bottom: 50px;
+        padding: 40px 20px;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 255, 65, 0.03) 50%, rgba(0, 0, 0, 0.8) 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(0, 255, 65, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Welcome section */
+    .welcome-hero {
+        text-align: center;
+        padding: 30px 20px;
+        margin: 20px 0;
         background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 255, 65, 0.03) 50%, rgba(0, 0, 0, 0.8) 100%);
         border-radius: 20px;
         border: 1px solid rgba(0, 255, 65, 0.2);
@@ -473,26 +546,26 @@ st.markdown("""
     }
     
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 2.8rem;
         font-weight: 700;
         color: #ffffff;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         text-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
         position: relative;
         z-index: 2;
     }
     
     .hero-subtitle {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         color: #c9d1d9;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
         font-weight: 400;
         position: relative;
         z-index: 2;
     }
     
     .hero-description {
-        font-size: 1.1rem;
+        font-size: 1rem;
         color: #8b949e;
         max-width: 800px;
         margin: 0 auto;
@@ -505,15 +578,15 @@ st.markdown("""
     .features-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 25px;
-        margin-top: 50px;
+        gap: 20px;
+        margin-top: 30px;
     }
     
     .feature-card {
         background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
         border: 1px solid #30363d;
         border-radius: 16px;
-        padding: 35px;
+        padding: 25px;
         text-align: center;
         transition: all 0.4s ease;
         position: relative;
@@ -544,8 +617,8 @@ st.markdown("""
     }
     
     .feature-icon {
-        font-size: 3.5rem;
-        margin-bottom: 25px;
+        font-size: 2.8rem;
+        margin-bottom: 20px;
         color: #00ff41;
         text-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
     }
@@ -1084,36 +1157,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Navigation
-st.markdown(f"""
-<div class="nav-container">
-    <div class="nav-tabs">
-        <div class="nav-tab {'active' if st.session_state.current_page == 'home' else ''}" onclick="setPage('home')">
-            🏠 Home
-        </div>
-        <div class="nav-tab {'active' if st.session_state.current_page == 'about' else ''}" onclick="setPage('about')">
-            ℹ️ About SECURO
-        </div>
-        <div class="nav-tab {'active' if st.session_state.current_page == 'hotspots' else ''}" onclick="setPage('hotspots')">
-            🗺️ Crime Hotspots
-        </div>
-        <div class="nav-tab {'active' if st.session_state.current_page == 'analytics' else ''}" onclick="setPage('analytics')">
-            📊 Statistics & Analytics
-        </div>
-        <div class="nav-tab {'active' if st.session_state.current_page == 'chat' else ''}" onclick="setPage('chat')">
-            💬 AI Assistant
-        </div>
-        <div class="nav-tab {'active' if st.session_state.current_page == 'history' else ''}" onclick="setPage('history')">
-            💾 Chat History
-        </div>
-        <div class="nav-tab {'active' if st.session_state.current_page == 'emergency' else ''}" onclick="setPage('emergency')">
-            🚨 Emergency
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# Navigation buttons (actual functionality)
+# Navigation buttons (single row, no CSS duplication)
 col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
 with col1:
@@ -1151,8 +1195,7 @@ with col7:
         st.session_state.current_page = 'emergency'
         st.rerun()
 
-# Main content
-st.markdown('<div class="page-container">', unsafe_allow_html=True)
+# Main content (removed large container causing blank space)
 
 # HOME PAGE
 if st.session_state.current_page == 'home':
@@ -1561,7 +1604,7 @@ elif st.session_state.current_page == 'emergency':
             </div>
             """, unsafe_allow_html=True)
     
-    st.markdown('</div>', unsafe_allow_html=True)
+    # End of content pages
     
     # Emergency Guidelines
     st.markdown("""
