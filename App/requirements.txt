@@ -8,3 +8,4 @@ pytz
 requests
 folium
 streamlit_folium
+PyPDF2
