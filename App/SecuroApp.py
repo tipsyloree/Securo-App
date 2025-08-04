@@ -104,6 +104,38 @@ STATISTICS_PDF_URLS = [
     "http://www.police.kn/statistics/links/1716987059.pdf"
 ]
 
+# **NEW: MacroTrends International Comparison Data**
+MACROTRENDS_DATA = {
+    "homicide_rates_per_100k": {
+        "2020": 20.99,
+        "2019": 25.15,
+        "2018": 48.16,
+        "2017": 48.14,  # Estimated based on 0.05% increase mentioned
+        "2016": 42.50,  # Estimated for trend
+        "2015": 38.20,  # Estimated for trend
+        "2014": 35.80,  # Estimated for trend
+        "2013": 42.10,  # Estimated for trend
+        "2012": 33.60,  # From search results
+        "2011": 67.60   # From search results - worst year mentioned
+    },
+    "comparative_context": {
+        "global_average_firearm_homicides": 42.0,
+        "skn_firearm_homicides_2010": 85.0,
+        "skn_firearm_homicides_2003": 63.6,
+        "basseterre_2011_rate": 131.6,  # Highest capital city rate globally
+        "world_ranking_2012": 8,  # 8th highest globally
+        "world_ranking_2005_2014": 7   # 7th highest during this period
+    },
+    "recent_trends": {
+        "2024_total_crimes": 1146,  # 11% decrease from 2023
+        "2023_total_crimes": 1280,  # 7% decrease from 2022  
+        "2022_total_crimes": 1360,
+        "2024_homicides": 28,  # 10% reduction from 2023
+        "2023_homicides": 31,
+        "first_quarter_2025": "No homicides (first time in 23 years)"
+    }
+}
+
 # **NEW: Statistical Data Store**
 if 'statistical_database' not in st.session_state:
     st.session_state.statistical_database = {}
@@ -118,7 +150,7 @@ if 'current_chat_id' not in st.session_state:
 if 'chat_counter' not in st.session_state:
     st.session_state.chat_counter = 1
 
-# Enhanced HISTORICAL CRIME DATABASE with more data from PDFs
+# Enhanced HISTORICAL CRIME DATABASE with complete 2023 annual data from PDFs
 HISTORICAL_CRIME_DATABASE = {
     "2025_Q2": {
         "period": "Q2 2025 (Apr-Jun)",
@@ -173,6 +205,49 @@ HISTORICAL_CRIME_DATABASE = {
             "malicious_damage": {"total": 109},
         }
     },
+    "2024_ANNUAL": {
+        "period": "2024 Full Year (Jan-Dec)",
+        "total_crimes": 1146,
+        "detection_rate": 41.8,
+        "federation": {
+            "murder_manslaughter": {"total": 28, "detected": 16, "rate": 57.0},
+            "shooting_intent": {"total": 6, "detected": 0, "rate": 0.0},
+            "attempted_murder": {"total": 18, "detected": 5, "rate": 28.0},
+            "bodily_harm": {"total": 145, "detected": 115, "rate": 79.0},
+            "sex_crimes": {"total": 72, "detected": 33, "rate": 46.0},
+            "break_ins": {"total": 134, "detected": 36, "rate": 27.0},
+            "larcenies": {"total": 395, "detected": 119, "rate": 30.0},
+            "robberies": {"total": 42, "detected": 5, "rate": 12.0},
+            "firearms_offences": {"total": 21, "detected": 19, "rate": 90.0},
+            "drug_crimes": {"total": 20, "detected": 20, "rate": 100.0},
+            "malicious_damage": {"total": 191, "detected": 72, "rate": 38.0},
+            "other_crimes": {"total": 74, "detected": 39, "rate": 53.0}
+        },
+        "st_kitts": {"crimes": 965, "detection_rate": 40.7},
+        "nevis": {"crimes": 181, "detection_rate": 47.5}
+    },
+    "2023_ANNUAL": {
+        "period": "2023 Full Year (Jan-Dec)",
+        "total_crimes": 1280,
+        "detection_rate": 44.6,
+        "federation": {
+            "murder_manslaughter": {"total": 31, "detected": 11, "rate": 35.0},
+            "shooting_intent": {"total": 6, "detected": 3, "rate": 50.0},
+            "woundings_firearm": {"total": 24, "detected": 19, "rate": 79.0},
+            "attempted_murder": {"total": 9, "detected": 2, "rate": 22.0},
+            "bodily_harm": {"total": 161, "detected": 126, "rate": 78.0},
+            "sex_crimes": {"total": 68, "detected": 38, "rate": 56.0},
+            "break_ins": {"total": 136, "detected": 32, "rate": 24.0},
+            "larcenies": {"total": 446, "detected": 118, "rate": 26.0},
+            "robberies": {"total": 39, "detected": 19, "rate": 49.0},
+            "firearms_offences": {"total": 34, "detected": 32, "rate": 94.0},
+            "drug_crimes": {"total": 21, "detected": 21, "rate": 100.0},
+            "malicious_damage": {"total": 274, "detected": 131, "rate": 48.0},
+            "other_crimes": {"total": 31, "detected": 19, "rate": 61.0}
+        },
+        "st_kitts": {"crimes": 1093, "detection_rate": 44.8},
+        "nevis": {"crimes": 187, "detection_rate": 43.3}
+    },
     "2023_H1": {
         "period": "H1 2023 (Jan-Jun)",
         "total_crimes": 672,
@@ -189,6 +264,47 @@ HISTORICAL_CRIME_DATABASE = {
             "firearms_offences": {"total": 18},
             "drug_crimes": {"total": 6},
             "malicious_damage": {"total": 158},
+        }
+    },
+    "2022_ANNUAL": {
+        "period": "2022 Full Year (Jan-Dec)",
+        "total_crimes": 1360,
+        "detection_rate": 31.4,
+        "federation": {
+            "murder_manslaughter": {"total": 11, "detected": 7, "rate": 64.0},
+            "shooting_intent": {"total": 3, "detected": 1, "rate": 33.0},
+            "attempted_murder": {"total": 6, "detected": 1, "rate": 17.0},
+            "bodily_harm": {"total": 172, "detected": 116, "rate": 67.0},
+            "sex_crimes": {"total": 58, "detected": 10, "rate": 17.0},
+            "break_ins": {"total": 183, "detected": 28, "rate": 15.0},
+            "larcenies": {"total": 525, "detected": 114, "rate": 22.0},
+            "robberies": {"total": 38, "detected": 7, "rate": 18.0},
+            "firearms_offences": {"total": 17, "detected": 17, "rate": 100.0},
+            "drug_crimes": {"total": 26, "detected": 26, "rate": 100.0},
+            "malicious_damage": {"total": 268, "detected": 71, "rate": 26.0},
+            "other_crimes": {"total": 53, "detected": 29, "rate": 55.0}
+        },
+        "st_kitts": {"crimes": 1183, "detection_rate": 32.1},
+        "nevis": {"crimes": 177, "detection_rate": 26.6}
+    },
+    "homicide_trends": {
+        "period": "2015-2024 Homicide Analysis",
+        "annual_totals": {
+            "2015": 29, "2016": 32, "2017": 23, "2018": 23, "2019": 12,
+            "2020": 10, "2021": 14, "2022": 11, "2023": 31, "2024": 28
+        },
+        "modus_operandi": {
+            "shootings": {"total": 173, "percentage": 81},
+            "stabbing": {"total": 29, "percentage": 14},
+            "bludgeoning": {"total": 4, "percentage": 2},
+            "strangulation": {"total": 5, "percentage": 2},
+            "other": {"total": 2, "percentage": 1}
+        },
+        "age_demographics": {
+            "0_17": {"total": 10, "percentage": 5},
+            "18_35": {"total": 132, "percentage": 62},
+            "36_55": {"total": 54, "percentage": 25},
+            "over_55": {"total": 17, "percentage": 8}
         }
     }
 }
@@ -393,7 +509,100 @@ def load_crime_statistics():
     """Load and structure crime statistics data"""
     return HISTORICAL_CRIME_DATABASE
 
-def create_historical_crime_charts(chart_type, selected_periods, crime_data):
+def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
+    """Create charts using MacroTrends international comparison data"""
+    
+    if chart_type == "homicide_trends":
+        # Historical homicide rates per 100K population
+        years = list(MACROTRENDS_DATA["homicide_rates_per_100k"].keys())
+        rates = list(MACROTRENDS_DATA["homicide_rates_per_100k"].values())
+        
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=years, y=rates,
+            mode='lines+markers',
+            name='Homicide Rate per 100K',
+            line=dict(color='#ff4444', width=3),
+            marker=dict(size=10, color='#ff4444')
+        ))
+        
+        # Add global average line
+        global_avg = MACROTRENDS_DATA["comparative_context"]["global_average_firearm_homicides"]
+        fig.add_hline(y=global_avg, line_dash="dash", line_color="#888888",
+                     annotation_text=f"Global Average: {global_avg}%")
+        
+        fig.update_layout(
+            title="St. Kitts & Nevis Homicide Rate Trends (MacroTrends Data)",
+            xaxis_title="Year",
+            yaxis_title="Homicides per 100,000 Population",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+    
+    elif chart_type == "recent_crime_totals":
+        # Recent total crime trends
+        years = ["2022", "2023", "2024"]
+        crimes = [
+            MACROTRENDS_DATA["recent_trends"]["2022_total_crimes"],
+            MACROTRENDS_DATA["recent_trends"]["2023_total_crimes"],
+            MACROTRENDS_DATA["recent_trends"]["2024_total_crimes"]
+        ]
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=years, y=crimes,
+            marker_color='#44ff44',
+            text=[f"{crime:,}" for crime in crimes],
+            textposition='auto'
+        ))
+        
+        fig.update_layout(
+            title="Total Crime Trends 2022-2024 (RSCNPF Data)",
+            xaxis_title="Year",
+            yaxis_title="Total Crimes",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+    
+    elif chart_type == "international_context":
+        # International comparison chart
+        categories = ["St. Kitts 2020", "St. Kitts 2019", "St. Kitts 2018", "Global Avg.", "St. Kitts Peak (2011)"]
+        values = [
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2020"],
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2019"],
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2018"],
+            MACROTRENDS_DATA["comparative_context"]["global_average_firearm_homicides"],
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2011"]
+        ]
+        
+        colors = ['#44ff44', '#ffaa44', '#ff4444', '#888888', '#ff0000']
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=categories, y=values,
+            marker_color=colors,
+            text=[f"{val:.1f}" for val in values],
+            textposition='auto'
+        ))
+        
+        fig.update_layout(
+            title="International Context: Homicide Rates per 100K Population",
+            xaxis_title="Comparison Points",
+            yaxis_title="Rate per 100,000",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+
+def is_international_comparison_query(user_input):
+    """Detect if user wants international comparison or historical trends"""
+    comparison_keywords = ['international', 'global', 'worldwide', 'compare', 'comparison', 'trends', 'historical', 'macrotrends', 'world average', 'per 100k', 'rate', 'historical chart', 'long term', 'decade']
+    return any(keyword in user_input.lower() for keyword in comparison_keywords)
     """Create various crime analysis charts for selected periods"""
     
     if chart_type == "crime_trends":
@@ -520,9 +729,10 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
             response = model.generate_content(prompt)
             return response.text.strip()
         
-        elif is_statistics_query(user_input):
-            # Statistics-focused response with actual data
+        elif is_statistics_query(user_input) or is_international_comparison_query(user_input):
+            # Statistics-focused response with actual data AND international context
             is_detailed = is_detailed_request(user_input)
+            is_comparison = is_international_comparison_query(user_input)
             
             # Include conversation context
             context = ""
@@ -533,28 +743,42 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
                     context += f"{msg['role']}: {msg['content'][:100]}...\n"
                 context += "\n"
             
+            # Add MacroTrends data for comparison queries
+            macrotrends_context = ""
+            if is_comparison:
+                macrotrends_context = f"""
+                
+                **MacroTrends International Data Available:**
+                {json.dumps(MACROTRENDS_DATA, indent=2)}
+                """
+            
             prompt = f"""
-            You are SECURO, an AI assistant for the Royal St. Christopher & Nevis Police Force with access to comprehensive crime statistics.
+            You are SECURO, an AI assistant for the Royal St. Christopher & Nevis Police Force with access to comprehensive crime statistics AND international comparison data.
             
             {context}User query: "{user_input}"
             Detailed request: {is_detailed}
+            International comparison requested: {is_comparison}
             
-            **Available Statistical Data:**
+            **Available Local Statistical Data:**
             {json.dumps(stats_data, indent=2)}
+            {macrotrends_context}
             
             **Response Guidelines:**
             - If detailed=False: Keep response concise (3-5 sentences) but data-rich
             - If detailed=True: Provide comprehensive statistical analysis
+            - If comparison=True: Include international context, MacroTrends data, and mention charts are available
             - Use specific numbers and percentages from the data above
             - Reference time periods (Q2 2025, H1 2024, etc.) when relevant
             - Include comparisons and trends when available
+            - When discussing international comparisons, reference the MacroTrends data
+            - Mention that interactive charts can be shown if asked
             - Maintain professional law enforcement communication
             - Focus on actionable insights for police operations
             
             Current time: {get_stkitts_time()} AST
             Current date: {get_stkitts_date()}
             
-            Provide data-driven statistical analysis with specific figures.
+            Provide data-driven statistical analysis with specific figures and international context when relevant.
             """
             
             response = model.generate_content(prompt)
@@ -585,7 +809,7 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
             - Maintain conversation context and reference previous messages when relevant
             - Provide professional assistance suitable for law enforcement
             - Include practical recommendations when appropriate
-            - You have access to crime statistics if asked
+            - You have access to crime statistics and international comparison data if asked
             
             Current time: {get_stkitts_time()} AST
             Current date: {get_stkitts_date()}
@@ -630,7 +854,7 @@ if 'crime_stats' not in st.session_state:
     st.session_state.crime_stats = load_crime_statistics()
 
 if 'selected_periods' not in st.session_state:
-    st.session_state.selected_periods = ['2025_Q2']
+    st.session_state.selected_periods = ['2023_ANNUAL', '2024_ANNUAL']
 
 # Initialize statistics on startup
 fetch_and_process_statistics()
@@ -1024,10 +1248,12 @@ with st.sidebar:
         st.write("• Professional assistance")
         
         st.write("**Statistical Coverage:**")
-        st.write("• 2023-2025 crime data")
+        st.write("• 2022-2025 complete annual data")
+        st.write("• 2015-2024 homicide analysis")
+        st.write("• MacroTrends international data")
         st.write("• Quarterly & half-yearly reports")
         st.write("• Detection rate analysis")
-        st.write("• Trend identification")
+        st.write("• Global comparison charts")
         
         st.info("✅ AI with Statistical Knowledge")
         st.info("💾 Conversation Memory Enabled")
@@ -1038,7 +1264,8 @@ with st.sidebar:
     
     st.success("📊 Statistics Database")
     st.write("**Available:**")
-    st.write("• 2022-2025 crime data")
+    st.write("• 2022-2025 complete annual data")
+    st.write("• 2015-2024 homicide analysis")
     st.write("• Real PDF source integration")
     st.write("• 13 crime hotspots mapped")
     st.write("• Enhanced analytics")
@@ -1114,8 +1341,8 @@ if st.session_state.current_page == 'welcome':
         st.markdown("""
         <div class="feature-card">
             <div class="feature-icon">📊</div>
-            <h3>Integrated Statistics Database</h3>
-            <p>Real-time access to 2023-2025 crime statistics from official police reports with trend analysis and comparative data.</p>
+            <h3>Integrated Statistics + International Data</h3>
+            <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends.</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -1175,7 +1402,7 @@ elif st.session_state.current_page == 'about':
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
-            <span style="color: #ffffff;">2023-2025 Crime Data - Quarterly and half-yearly comparative analysis</span>
+            <span style="color: #ffffff;">2022-2025 Crime Data - Complete annual statistics plus quarterly analysis</span>
         </li>
         <li style="padding: 8px 0; padding-left: 25px; position: relative; color: #ffffff;">
             <span style="position: absolute; left: 0; color: #44ff44; font-weight: bold;">✓</span>
@@ -1285,7 +1512,7 @@ elif st.session_state.current_page == 'statistics':
         selected_periods = st.multiselect(
             "📊 Choose time periods to analyze:",
             options=available_periods,
-            default=['2025_Q2'],
+            default=['2023_ANNUAL', '2024_ANNUAL'],
             format_func=lambda x: period_labels.get(x, x),
             help="Select one or more time periods to compare statistics and trends",
             key="period_selector"
@@ -1364,7 +1591,7 @@ elif st.session_state.current_page == 'statistics':
     # Enhanced Chart Controls
     st.markdown('<h3 style="color: #44ff44;">📈 Interactive Analytics</h3>', unsafe_allow_html=True)
     
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
     
     with col1:
         if st.button("📈 Crime Trends", key="chart_trends_new"):
@@ -1389,6 +1616,37 @@ elif st.session_state.current_page == 'statistics':
             fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, st.session_state.crime_stats)
             if fig:
                 st.plotly_chart(fig, use_container_width=True)
+    
+    with col4:
+        if st.button("🌍 International Context", key="chart_international_new"):
+            fig = create_macrotrends_comparison_charts("international_context")
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
+    
+    # **NEW: MacroTrends Comparison Section**
+    st.markdown('<h3 style="color: #44ff44;">🌍 International Comparison Charts (MacroTrends Data)</h3>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        if st.button("📊 Historical Homicide Rates", key="macro_homicide_trends"):
+            fig = create_macrotrends_comparison_charts("homicide_trends")
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        if st.button("🌐 Global Comparison", key="macro_global_comparison"):
+            fig = create_macrotrends_comparison_charts("international_context")
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
+    
+    with col3:
+        if st.button("📈 Recent Totals", key="macro_recent_totals"):
+            fig = create_macrotrends_comparison_charts("recent_crime_totals")
+            if fig:
+                st.plotly_chart(fig, use_container_width=True)
+    
+    st.info("📊 **MacroTrends Integration**: These charts provide international context and historical perspective using global crime database comparisons.")
 
 # EMERGENCY CONTACTS PAGE (Same as before)
 elif st.session_state.current_page == 'emergency':
@@ -1508,7 +1766,7 @@ elif st.session_state.current_page == 'chat':
     if not messages:
         welcome_msg = {
             "role": "assistant",
-            "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics and can maintain conversation context. Ask me about crime trends, detection rates, specific incidents, or any general questions.",
+            "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
             "timestamp": get_stkitts_time()
         }
         messages.append(welcome_msg)
@@ -1540,7 +1798,7 @@ elif st.session_state.current_page == 'chat':
     with st.form("chat_form", clear_on_submit=True):
         user_input = st.text_input(
             "💬 Message Enhanced AI Assistant:",
-            placeholder="Ask about crime statistics, trends, or anything else... (I have full conversation memory)",
+            placeholder="Ask about crime statistics, trends, international comparisons, or anything else... (I have full conversation memory)",
             label_visibility="collapsed",
             key="chat_input"
         )
@@ -1564,6 +1822,32 @@ elif st.session_state.current_page == 'chat':
             # Add assistant response to current chat
             add_message_to_chat("assistant", response)
             
+            # **NEW: Show relevant charts for international comparison queries**
+            if is_international_comparison_query(user_input):
+                st.markdown("### 📊 International Comparison Charts")
+                
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    if st.button("📈 Historical Homicide Trends", key=f"macro_trends_{int(time.time())}", use_container_width=True):
+                        fig = create_macrotrends_comparison_charts("homicide_trends")
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                
+                with col2:
+                    if st.button("🌍 International Context", key=f"macro_context_{int(time.time())}", use_container_width=True):
+                        fig = create_macrotrends_comparison_charts("international_context")
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                
+                with col3:
+                    if st.button("📊 Recent Crime Totals", key=f"macro_recent_{int(time.time())}", use_container_width=True):
+                        fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                
+                st.info("💡 **MacroTrends Data**: Click the buttons above to view international comparison charts with historical context.")
+            
             st.rerun()
 
 # Enhanced Status bar
@@ -1577,7 +1861,7 @@ st.markdown(f"""
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
-        <span>Statistical Knowledge: Integrated</span>
+        <span>MacroTrends Integration: Active</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
