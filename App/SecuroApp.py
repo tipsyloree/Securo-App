@@ -979,18 +979,6 @@ st.markdown("""
         margin-bottom: 20px;
         border-radius: 12px;
         position: relative;
-        overflow: hidden;
-    }
-    
-    .main-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
-        animation: shimmer 3s linear infinite;
     }
     
     @keyframes shimmer {
@@ -1113,7 +1101,7 @@ st.markdown("""
         border-radius: 15px;
         border: 1px solid rgba(0, 255, 65, 0.3);
         padding: 30px;
-        min-height: 400px;
+        min-height: 200px;
     }
     
     /* Welcome section styling */
@@ -1121,24 +1109,10 @@ st.markdown("""
         text-align: center;
         margin-bottom: 50px;
         padding: 40px 20px;
-        background: linear-gradient(-45deg, rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.05), rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.05));
-        background-size: 400% 400%;
-        animation: moveGradient 4s ease infinite;
+        background: rgba(0, 0, 0, 0.9);
         border-radius: 15px;
         border: 1px solid rgba(0, 255, 65, 0.3);
         position: relative;
-        overflow: hidden;
-    }
-    
-    .welcome-section::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.1), transparent);
-        animation: shimmer 3s linear infinite;
     }
     
     @keyframes moveGradient {
@@ -1185,28 +1159,12 @@ st.markdown("""
         transition: all 0.3s ease;
         margin-bottom: 20px;
         position: relative;
-        overflow: hidden;
     }
     
     .feature-card:hover {
         transform: translateY(-5px);
         border-color: #00ff41;
         box-shadow: 0 10px 30px rgba(0, 255, 65, 0.1);
-    }
-    
-    .feature-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.05), transparent);
-        transition: left 0.5s;
-    }
-    
-    .feature-card:hover::before {
-        left: 100%;
     }
     
     .feature-icon {
@@ -2229,7 +2187,7 @@ elif st.session_state.current_page == 'chat':
         current_chat['messages'] = messages
     
     # Display chat messages with enhanced styling
-    st.markdown('<div style="min-height: 400px; padding: 20px;">', unsafe_allow_html=True)
+    st.markdown('<div style="padding: 20px;">', unsafe_allow_html=True)
     for message in messages:
         if message["role"] == "user":
             clean_content = str(message["content"]).strip()
