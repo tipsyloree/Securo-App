@@ -375,11 +375,12 @@ def fetch_and_process_statistics():
     if st.session_state.statistical_database:
         return st.session_state.statistical_database
     
-    # For now, use the enhanced database (in real implementation, would fetch PDFs)
+    # Use the enhanced database with complete data
     st.session_state.statistical_database = HISTORICAL_CRIME_DATABASE.copy()
     
-    # Add some sample processed data from the PDF structure we saw
+    # Add MacroTrends and processed data from the PDF structure we saw
     st.session_state.statistical_database.update({
+        "macrotrends_data": MACROTRENDS_DATA,
         "recent_trends": {
             "murder_trend": "75% decrease from 2024 to 2025 H1",
             "drug_crimes_trend": "463% increase in drug crimes 2024-2025",
@@ -854,10 +855,36 @@ if 'crime_stats' not in st.session_state:
     st.session_state.crime_stats = load_crime_statistics()
 
 if 'selected_periods' not in st.session_state:
-    st.session_state.selected_periods = ['2023_ANNUAL', '2024_ANNUAL']
+    st.session_state.selected_periods = ['2025_Q2']
 
 # Initialize statistics on startup
 fetch_and_process_statistics()
+
+# **NEW: Fix for multiselect default values**
+def ensure_valid_selected_periods():
+    """Ensure selected_periods contains valid keys from the database"""
+    available_periods = list(st.session_state.crime_stats.keys())
+    current_selections = st.session_state.get('selected_periods', [])
+    
+    # Filter out invalid selections
+    valid_selections = [period for period in current_selections if period in available_periods]
+    
+    # If no valid selections, use safe defaults
+    if not valid_selections:
+        preferred_defaults = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+        for default in preferred_defaults:
+            if default in available_periods:
+                valid_selections.append(default)
+                break
+        
+        # If still no valid selections, use first available
+        if not valid_selections and available_periods:
+            valid_selections = [available_periods[0]]
+    
+    st.session_state.selected_periods = valid_selections
+
+# Ensure valid periods after loading stats
+ensure_valid_selected_periods()
 
 # CSS styling
 st.markdown("""
@@ -1509,10 +1536,13 @@ elif st.session_state.current_page == 'statistics':
         available_periods = list(st.session_state.crime_stats.keys())
         period_labels = {key: data["period"] for key, data in st.session_state.crime_stats.items()}
         
+        # Ensure we have valid defaults
+        ensure_valid_selected_periods()
+        
         selected_periods = st.multiselect(
             "📊 Choose time periods to analyze:",
             options=available_periods,
-            default=['2023_ANNUAL', '2024_ANNUAL'],
+            default=st.session_state.selected_periods,
             format_func=lambda x: period_labels.get(x, x),
             help="Select one or more time periods to compare statistics and trends",
             key="period_selector"
