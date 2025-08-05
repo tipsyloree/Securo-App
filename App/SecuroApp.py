@@ -660,7 +660,8 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
             - If detailed=False: Keep response concise (3-5 sentences) but data-rich
             - If detailed=True: Provide comprehensive statistical analysis
             - If comparison=True: Include international context, MacroTrends data
-            - If chart requested: Acknowledge that you're displaying the requested chart below your response
+            - If chart requested: Say "I'll display the requested chart below" and provide data analysis
+            - NEVER mention limitations about displaying charts - you CAN display interactive charts
             - Use specific numbers and percentages from the data above
             - Reference time periods (Q2 2025, H1 2024, etc.) when relevant
             - Include comparisons and trends when available
@@ -1752,57 +1753,94 @@ elif st.session_state.current_page == 'chat':
                 # Add assistant response to current chat
                 add_message_to_chat("assistant", response)
                 
-                # Display the requested chart if any
+                # Store chart type in session state to persist after rerun
                 if chart_type:
-                    st.markdown("### 📊 Requested Chart")
-                    
-                    if chart_type == "international":
-                        # Show international comparison charts
-                        col1, col2, col3 = st.columns(3)
-                        
-                        with col1:
-                            fig = create_macrotrends_comparison_charts("homicide_trends")
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                        
-                        with col2:
-                            fig = create_macrotrends_comparison_charts("international_context")
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                        
-                        with col3:
-                            fig = create_macrotrends_comparison_charts("recent_crime_totals")
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                    
-                    elif chart_type == "trends":
-                        # Show crime trends
-                        selected_periods = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
-                        available_periods = [p for p in selected_periods if p in HISTORICAL_CRIME_DATABASE]
-                        fig = create_historical_crime_charts("crime_trends", available_periods, HISTORICAL_CRIME_DATABASE)
-                        if fig:
-                            st.plotly_chart(fig, use_container_width=True)
-                    
-                    elif chart_type == "detection":
-                        # Show detection rates
-                        selected_periods = ['2023_ANNUAL', '2024_ANNUAL']
-                        fig = create_historical_crime_charts("detection_comparison", selected_periods, HISTORICAL_CRIME_DATABASE)
-                        if fig:
-                            st.plotly_chart(fig, use_container_width=True)
-                    
-                    elif chart_type == "breakdown":
-                        # Show crime type breakdown
-                        selected_periods = ['2024_ANNUAL']
-                        fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, HISTORICAL_CRIME_DATABASE)
-                        if fig:
-                            st.plotly_chart(fig, use_container_width=True)
-                    
-                    elif chart_type == "homicide":
-                        # Show homicide trends
-                        fig = create_macrotrends_comparison_charts("homicide_trends")
-                        if fig:
-                            st.plotly_chart(fig, use_container_width=True)
+                    st.session_state.show_chart = chart_type
                 
+                st.rerun()
+        
+        # Display charts after the rerun (so they persist)
+        if st.session_state.get('show_chart'):
+            st.markdown("### 📊 Requested Chart")
+            chart_type = st.session_state.show_chart
+            
+            if chart_type == "international":
+                # Show international comparison charts
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    fig = create_macrotrends_comparison_charts("homicide_trends")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                with col2:
+                    fig = create_macrotrends_comparison_charts("international_context")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                with col3:
+                    fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "trends":
+                # Show crime trends - St. Kitts specific data
+                st_kitts_data = []
+                periods = []
+                
+                # Extract St. Kitts data from the database
+                for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
+                    if period_key in HISTORICAL_CRIME_DATABASE:
+                        period_data = HISTORICAL_CRIME_DATABASE[period_key]
+                        periods.append(period_data["period"])
+                        st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 0)
+                        st_kitts_data.append(st_kitts_crimes)
+                
+                # Create bar chart for St. Kitts crime trends
+                fig = go.Figure()
+                fig.add_trace(go.Bar(
+                    x=periods,
+                    y=st_kitts_data,
+                    marker_color='#00ff41',
+                    text=[f"{crimes}" for crimes in st_kitts_data],
+                    textposition='auto',
+                    name='St. Kitts Crimes'
+                ))
+                
+                fig.update_layout(
+                    title="St. Kitts Crime Trends - Recent Years",
+                    xaxis_title="Time Period",
+                    yaxis_title="Number of Crimes",
+                    template="plotly_dark",
+                    height=500,
+                    showlegend=False
+                )
+                
+                st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "detection":
+                # Show detection rates
+                selected_periods = ['2023_ANNUAL', '2024_ANNUAL']
+                fig = create_historical_crime_charts("detection_comparison", selected_periods, HISTORICAL_CRIME_DATABASE)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "breakdown":
+                # Show crime type breakdown
+                selected_periods = ['2024_ANNUAL']
+                fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, HISTORICAL_CRIME_DATABASE)
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "homicide":
+                # Show homicide trends
+                fig = create_macrotrends_comparison_charts("homicide_trends")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+            
+            # Add button to clear the chart
+            if st.button("🗑️ Clear Chart", key="clear_chart"):
+                st.session_state.show_chart = None
                 st.rerun()
 
 # CHAT HISTORY PAGE
