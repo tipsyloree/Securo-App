@@ -1514,6 +1514,7 @@ elif st.session_state.current_page == 'hotspots':
         """, unsafe_allow_html=True)
 
 # ANALYTICS PAGE  
+# ANALYTICS PAGE  
 elif st.session_state.current_page == 'analytics':
     st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">📊 Statistics & Analytics</h1>', unsafe_allow_html=True)
     
@@ -1590,6 +1591,25 @@ elif st.session_state.current_page == 'analytics':
             with col4:
                 nevis_crimes = period_data.get('nevis', {}).get('crimes', 'N/A')
                 st.metric("Nevis Crimes", nevis_crimes)
+            
+            # Show detailed crime breakdown for single period
+            st.markdown('<h3>🔍 Crime Type Breakdown</h3>', unsafe_allow_html=True)
+            
+            if 'federation' in period_data:
+                crime_data = []
+                for crime_type, details in period_data['federation'].items():
+                    if isinstance(details, dict) and 'total' in details:
+                        crime_name = crime_type.replace('_', ' ').title()
+                        crime_data.append({
+                            'Crime Type': crime_name,
+                            'Total Cases': details['total'],
+                            'Detected': details.get('detected', 'N/A'),
+                            'Detection Rate': f"{details.get('rate', 0)}%" if details.get('rate') else 'N/A'
+                        })
+                
+                if crime_data:
+                    df = pd.DataFrame(crime_data)
+                    st.dataframe(df, use_container_width=True)
         
         else:
             # Multiple periods comparison view
@@ -1609,209 +1629,100 @@ elif st.session_state.current_page == 'analytics':
             
             df = pd.DataFrame(comparison_data)
             st.dataframe(df, use_container_width=True)
-        
-        # Enhanced Chart Controls
-        st.markdown('<h3>📈 Interactive Analytics</h3>', unsafe_allow_html=True)
-        
-        col1, col2, col3, col4 = st.columns(4)
-        
-        with col1:
-            if st.button("📈 Crime Trends", key="chart_trends_new", use_container_width=True):
-                if len(selected_periods) > 1:
-                    fig = create_historical_crime_charts("crime_trends", selected_periods, HISTORICAL_CRIME_DATABASE)
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-                else:
-                    st.info("Select multiple periods to view trends.")
-        
-        with col2:
-            if st.button("🎯 Detection Comparison", key="chart_detection_new", use_container_width=True):
-                if len(selected_periods) > 1:
-                    fig = create_historical_crime_charts("detection_comparison", selected_periods, HISTORICAL_CRIME_DATABASE)
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-                else:
-                    st.info("Select multiple periods to compare detection rates.")
-        
-        with col3:
-            if st.button("🔍 Crime Breakdown", key="chart_breakdown_new", use_container_width=True):
-                fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, HISTORICAL_CRIME_DATABASE)
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-        
-        with col4:
-            if st.button("🌍 International Context", key="chart_international_new", use_container_width=True):
-                fig = create_macrotrends_comparison_charts("international_context")
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-        
-        # MacroTrends Comparison Section
-        st.markdown('<h3>🌍 International Comparison Charts (MacroTrends Data)</h3>', unsafe_allow_html=True)
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            if st.button("📊 Historical Homicide Rates", key="macro_homicide_trends", use_container_width=True):
-                fig = create_macrotrends_comparison_charts("homicide_trends")
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-        
-        with col2:
-            if st.button("🌐 Global Comparison", key="macro_global_comparison", use_container_width=True):
-                fig = create_macrotrends_comparison_charts("international_context")
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-        
-        with col3:
-            if st.button("📈 Recent Totals", key="macro_recent_totals", use_container_width=True):
-                fig = create_macrotrends_comparison_charts("recent_crime_totals")
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-        
-        st.info("📊 **MacroTrends Integration**: These charts provide international context and historical perspective using global crime database comparisons.")
+            
+            # Simple trend analysis
+            st.markdown('<h3>📊 Trend Analysis</h3>', unsafe_allow_html=True)
+            
+            # Calculate trends
+            total_crimes = [data["total_crimes"] for data in [HISTORICAL_CRIME_DATABASE[p] for p in selected_periods]]
+            periods = [HISTORICAL_CRIME_DATABASE[p]["period"] for p in selected_periods]
+            
+            if len(total_crimes) > 1:
+                trend = "increasing" if total_crimes[-1] > total_crimes[0] else "decreasing"
+                change = total_crimes[-1] - total_crimes[0]
+                percent_change = (change / total_crimes[0]) * 100 if total_crimes[0] != 0 else 0
+                
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.metric("Overall Trend", trend.title(), f"{change:+d} crimes")
+                with col2:
+                    st.metric("Percentage Change", f"{percent_change:+.1f}%")
+                with col3:
+                    avg_crimes = sum(total_crimes) / len(total_crimes)
+                    st.metric("Average Crimes", f"{avg_crimes:.0f}")
     
-    # Analytics tabs
-    tabs = ['Crime Trends', 'Crime Methods', 'District Analysis', 'Detection Rates']
+    # MacroTrends Data Summary
+    st.markdown('<h3>🌍 International Context (MacroTrends Data)</h3>', unsafe_allow_html=True)
     
-    st.markdown('<h3>📊 Quick Analytics</h3>', unsafe_allow_html=True)
-    tab_cols = st.columns(4)
-    for i, tab in enumerate(tabs):
-        with tab_cols[i]:
-            if st.button(tab, key=f"tab_{tab}", use_container_width=True):
-                st.session_state.current_analytics_tab = tab
-                st.session_state.show_loading = True
-                st.rerun()
+    col1, col2, col3 = st.columns(3)
     
-    # Show loading screen
-    if st.session_state.get('show_loading', False):
-        st.markdown(f"""
-        <div class="loading-screen">
-            <div class="chat-logo">
-                😊
-            </div>
-            <div class="loading-text">Generating Detailed Analysis...</div>
-            <div class="loading-subtitle">This may take a moment as the AI cross-references data.</div>
-            <div class="progress-bar">
-                <div class="progress-fill"></div>
-            </div>
+    with col1:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #00ff41; margin-bottom: 15px;">📊 Historical Homicide Rates</h4>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2020:</strong> 20.99 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2019:</strong> 25.15 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2018:</strong> 48.16 per 100k</p>
+            <p style="color: #8b949e; font-size: 12px;">Significant improvement in recent years</p>
         </div>
         """, unsafe_allow_html=True)
-        
-        # Simulate loading time
-        time.sleep(2)
-        st.session_state.show_loading = False
-        st.rerun()
     
-    # Display content based on selected tab
-    current_tab = st.session_state.get('current_analytics_tab', 'Crime Trends')
-    
-    if current_tab == 'Crime Trends':
-        st.markdown('<h2>📈 Crime Trends Insights</h2>', unsafe_allow_html=True)
-        st.markdown('<h3 style="color: #8b949e;">Q2 2025 Regional Crime Trends Analysis</h3>', unsafe_allow_html=True)
-        
+    with col2:
         st.markdown("""
-        Overall, the second quarter of 2025 in our region indicates a **marginal increase** in reported criminal incidents compared to the previous quarter. This modest rise is primarily driven by specific categories within property crimes.
-        
-        **Key observations from the Q2 2025 data:**
-        
-        • Property Crime continues to be the most prevalent category. Burglaries show a slight decrease, likely due to enhanced community vigilance programs. However, **vehicle thefts** have seen a significant 18% increase across the region, particularly concentrated in the suburban areas.
-        
-        • Shoplifting and general theft incidents remain consistent with previous quarters, with no notable shifts in volume or method.
-        
-        • Violent Crime statistics remain **stable** overall. Assaults and domestic disturbances show no significant deviation from historical averages.
-        
-        • Robberies, while lower in volume than property crimes, have seen a minor 5% uptick, primarily street-level incidents in commercial districts during evening hours.
-        
-        • Drug-related offenses show a slight increase in arrests, which may indicate **proactive enforcement efforts** rather than a surge in usage.
-        
-        • Detection rates for property crimes, particularly burglaries, have improved slightly, reflecting success in evidence collection and community cooperation. Vehicle theft detection rates, however, remain challenging.
-        
-        • A concerning trend is the increase in **cyber-enabled fraud reports**, although these are still a small percentage of overall crime. This area requires increased public awareness and specialized investigative resources.
-        
-        This analysis suggests a need for targeted interventions focusing on vehicle theft prevention and continued vigilance in commercial areas. Further localized reports can provide more granular data for specific precincts or neighborhoods.
-        """)
+        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #00ff41; margin-bottom: 15px;">🌐 Global Comparison</h4>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Global Avg:</strong> 42.0 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>SKN 2010:</strong> 85.0 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>World Ranking (2012):</strong> 8th</p>
+            <p style="color: #8b949e; font-size: 12px;">Above global average but improving</p>
+        </div>
+        """, unsafe_allow_html=True)
     
-    elif current_tab == 'District Analysis':
-        st.markdown('<h2>🏘️ District Analysis Insights</h2>', unsafe_allow_html=True)
-        st.markdown('<h3 style="color: #8b949e;">District Q2 2025 Crime Analysis</h3>', unsafe_allow_html=True)
-        
+    with col3:
         st.markdown("""
-        This report provides a comprehensive analysis of crime data for the district during Quarter 2 (April 1 - June 30), 2025. The aim is to identify key trends, high-incidence areas, and support data-driven deployment strategies.
-        
-        **Key Findings:**
-        
-        • Overall crime incidents decreased by 5% compared to Q1 2025, but show a **2% increase** compared to Q2 2024.
-        
-        • Property crimes remain the **most prevalent** category, accounting for 65% of all reported incidents.
-        
-        • Violent crimes saw a slight reduction, primarily in non-fatal assault cases.
-        
-        • Clearance rates for **serious violent crimes** improved by 3 percentage points.
-        
-        **Specific Crime Trends:**
-        
-        • **Residential Burglaries:** A notable 15% increase was observed, particularly during weekday daytime hours (10:00 AM - 3:00 PM). This suggests a pattern targeting unoccupied homes.
-        
-        • **Vehicle Thefts:** Remained stable, with a slight shift towards commercial parking lots during evening hours.
-        
-        • **Retail Theft:** Increased by 8%, with a concentration in the downtown commercial zone. Organized retail crime appears to be a contributing factor.
-        
-        • **Assaults (Non-Fatal):** Decreased by 7%, largely due to targeted patrols in high-risk areas identified in Q1.
-        
-        • **Narcotics Offenses:** A 10% increase in arrests was noted, indicating **proactive enforcement efforts** by specialized units.
-        
-        **Geographical Hotspots:**
-        
-        • **Sector 3B (Commercial District):** Continued high incidence of retail theft and minor property damage.
-        
-        • **Sector 5A (Residential West):** Experienced a surge in residential burglaries. Analysis indicates a clustering of incidents around specific arterial roads.
-        
-        • **Sector 1C (Downtown Core):** Remained a primary location for public order offenses and a **moderate level** of violent crime, despite the overall decrease.
-        
-        **Operational Recommendations:**
-        
-        • **Targeted Patrols:** Increase visibility and patrols in Sector 5A during weekday daytime hours to deter residential burglaries.
-        
-        • **Business Engagement:** Collaborate with businesses in Sector 3B to implement enhanced security measures and surveillance for retail theft prevention.
-        
-        • **Data-Driven Deployment:** Utilize predictive models to anticipate peak times and locations for specific crime types, optimizing resource allocation.
-        
-        • **Community Outreach:** Strengthen community watch programs in affected residential areas and promote reporting of suspicious activities.
-        
-        • **Follow-Up Analysis:** Conduct a focused study on the impact of narcotics enforcement to evaluate long-term effects on related crimes.
-        """)
+        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #00ff41; margin-bottom: 15px;">📈 Recent Progress</h4>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2024:</strong> 1,146 total crimes</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2023:</strong> 1,280 total crimes</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Q1 2025:</strong> No homicides</p>
+            <p style="color: #8b949e; font-size: 12px;">First time in 23 years</p>
+        </div>
+        """, unsafe_allow_html=True)
     
-    # Analytics Questions
-    st.markdown('<h2>🤔 Analytics Questions</h2>', unsafe_allow_html=True)
+    # Analytics insights
+    st.markdown('<h3>📊 Key Insights</h3>', unsafe_allow_html=True)
     
-    questions = [
-        ("🔍", "What are the homicide trends for the past 10 years?"),
-        ("📊", "Predict crime rates for 2026"),
-        ("🌍", "Which district has the highest crime rate?"),
-        ("🔄", "How have drug crimes changed recently?"),
-        ("📈", "Show me a chart of crime detection rates"),
-        ("🎯", "What's the most common crime method?"),
-        ("📅", "Are there seasonal crime patterns?"),
-        ("⚠️", "What are the biggest crime concerns?"),
-        ("⚡", "How effective is police performance?"),
-        ("🎯", "Where should police focus resources?")
-    ]
+    tab1, tab2, tab3 = st.columns(3)
     
-    for i in range(0, len(questions), 2):
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            if i < len(questions):
-                icon, question = questions[i]
-                if st.button(f"{icon} {question}", key=f"q_{i}", use_container_width=True):
-                    st.info(f"Processing: {question}")
-        
-        with col2:
-            if i + 1 < len(questions):
-                icon, question = questions[i + 1]
-                if st.button(f"{icon} {question}", key=f"q_{i+1}", use_container_width=True):
-                    st.info(f"Processing: {question}")
-
+    with tab1:
+        if st.button("🔍 Crime Trends Analysis", use_container_width=True):
+            st.markdown("""
+            **Crime Trends Analysis:**
+            - Overall crime decreased from 1,280 (2023) to 1,146 (2024)
+            - Detection rates have improved across most categories
+            - Drug crimes maintain 100% detection rate
+            - Violent crimes show declining trend
+            """)
+    
+    with tab2:
+        if st.button("📈 Detection Performance", use_container_width=True):
+            st.markdown("""
+            **Detection Performance:**
+            - 2024 overall detection rate: 41.8%
+            - Best: Drug crimes (100%), Firearms (90%)
+            - Challenging: Robberies (12%), Break-ins (27%)
+            - Nevis consistently outperforms St. Kitts
+            """)
+    
+    with tab3:
+        if st.button("🌍 International Context", use_container_width=True):
+            st.markdown("""
+            **International Context:**
+            - Homicide rates significantly decreased since 2018
+            - 2020 rate (20.99) well below 2018 peak (48.16)
+            - Q1 2025 achieved zero homicides milestone
+            - Progress toward international safety standards
+            """)
 # AI ASSISTANT PAGE
 elif st.session_state.current_page == 'chat':
     # Show welcome screen only if chat is not active
