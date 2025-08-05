@@ -2225,7 +2225,7 @@ st.markdown(f"""
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)%); border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center;">
+""", (unsafe_allow_html=True)%); border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center;">
             <div style="color: #00ff41; font-size: 2rem; margin-bottom: 15px;">🔒</div>
             <h4 style="color: #00ff41;">SECURO AI Avatar</h4>
             <button style="background: #00ff41; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; margin-top: 10px;">📥 Download</button>
