@@ -219,7 +219,7 @@ def add_message_to_chat(role, content):
         chat_name = content[:30] + "..." if len(content) > 30 else content
         current_chat['name'] = chat_name
 
-# **NEW: Statistical Data Processing Functions**
+# Statistical Data Processing Functions
 def fetch_and_process_statistics():
     """Fetch and process statistics from PDF URLs"""
     if st.session_state.statistical_database:
@@ -741,9 +741,6 @@ st.set_page_config(
 if 'current_page' not in st.session_state:
     st.session_state.current_page = 'home'
 
-if 'show_loading' not in st.session_state:
-    st.session_state.show_loading = False
-
 if 'crime_stats' not in st.session_state:
     st.session_state.crime_stats = HISTORICAL_CRIME_DATABASE
 
@@ -756,7 +753,7 @@ if 'chat_active' not in st.session_state:
 # Initialize statistics on startup
 fetch_and_process_statistics()
 
-# Professional CSS styling matching the screenshots
+# Professional CSS styling
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -864,57 +861,6 @@ st.markdown("""
         50% { opacity: 0.6; transform: scale(1.1); }
     }
     
-    /* Navigation */
-    .nav-container {
-        background: linear-gradient(135deg, #161b22 0%, #21262d 100%);
-        padding: 0;
-        border-bottom: 1px solid #30363d;
-        margin-bottom: 0;
-    }
-    
-    .nav-tabs {
-        max-width: 1400px;
-        margin: 0 auto;
-        display: flex;
-        gap: 0;
-        padding: 0 30px;
-    }
-    
-    .nav-tab {
-        background: transparent;
-        border: none;
-        color: #8b949e;
-        padding: 16px 24px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        font-weight: 500;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        border-bottom: 3px solid transparent;
-        position: relative;
-    }
-    
-    .nav-tab:hover {
-        color: #00ff41;
-        background: rgba(0, 255, 65, 0.05);
-    }
-    
-    .nav-tab.active {
-        color: #00ff41;
-        border-bottom-color: #00ff41;
-        background: rgba(0, 255, 65, 0.1);
-    }
-    
-    /* Page content */
-    .page-container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 20px 30px;
-        min-height: auto;
-    }
-    
     /* Welcome section */
     .welcome-hero {
         text-align: center;
@@ -975,14 +921,7 @@ st.markdown("""
         z-index: 2;
     }
     
-    /* Feature cards grid */
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-        margin-top: 30px;
-    }
-    
+    /* Feature cards */
     .feature-card {
         background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
         border: 1px solid #30363d;
@@ -992,6 +931,7 @@ st.markdown("""
         transition: all 0.4s ease;
         position: relative;
         overflow: hidden;
+        margin-bottom: 20px;
     }
     
     .feature-card::before {
@@ -1037,114 +977,7 @@ st.markdown("""
         font-size: 14px !important;
     }
     
-    /* Loading screen */
-    .loading-screen {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 80px 20px;
-        background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
-        border-radius: 20px;
-        border: 1px solid #30363d;
-        margin: 40px 0;
-    }
-    
-    .loading-icon {
-        width: 80px;
-        height: 80px;
-        border: 4px solid rgba(0, 255, 65, 0.2);
-        border-top: 4px solid #00ff41;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin-bottom: 30px;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .loading-text {
-        color: #00ff41;
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
-    
-    .loading-subtitle {
-        color: #8b949e;
-        font-size: 14px;
-        text-align: center;
-        max-width: 400px;
-    }
-    
-    .progress-bar {
-        width: 300px;
-        height: 4px;
-        background: rgba(0, 255, 65, 0.2);
-        border-radius: 2px;
-        margin-top: 20px;
-        overflow: hidden;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #00ff41, #00cc34);
-        width: 0%;
-        animation: progress 3s ease-in-out infinite;
-    }
-    
-    @keyframes progress {
-        0% { width: 0%; }
-        50% { width: 70%; }
-        100% { width: 100%; }
-    }
-    
-    /* Analytics tabs */
-    .analytics-tabs {
-        display: flex;
-        gap: 0;
-        margin-bottom: 30px;
-        background: #21262d;
-        border-radius: 12px;
-        padding: 4px;
-        border: 1px solid #30363d;
-    }
-    
-    .analytics-tab {
-        background: transparent;
-        border: none;
-        color: #8b949e;
-        padding: 12px 20px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-size: 14px;
-        font-weight: 500;
-        border-radius: 8px;
-        flex: 1;
-        text-align: center;
-    }
-    
-    .analytics-tab:hover {
-        color: #00ff41;
-        background: rgba(0, 255, 65, 0.1);
-    }
-    
-    .analytics-tab.active {
-        color: #000;
-        background: #00ff41;
-        font-weight: 600;
-    }
-    
     /* Emergency cards */
-    .emergency-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 20px;
-        margin-bottom: 40px;
-    }
-    
     .emergency-card {
         background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
         border: 1px solid #30363d;
@@ -1154,6 +987,7 @@ st.markdown("""
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        margin-bottom: 20px;
     }
     
     .emergency-card::before {
@@ -1333,25 +1167,6 @@ st.markdown("""
         margin-bottom: 30px;
     }
     
-    .start-button {
-        background: linear-gradient(135deg, #00ff41, #00cc34);
-        border: none;
-        color: #000;
-        padding: 15px 30px;
-        border-radius: 25px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    .start-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px rgba(0, 255, 65, 0.3);
-    }
-    
     /* Empty state */
     .empty-state {
         text-align: center;
@@ -1390,56 +1205,6 @@ st.markdown("""
         line-height: 1.5;
     }
     
-    /* Footer */
-    .main-footer {
-        background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-        border-top: 1px solid #21262d;
-        padding: 40px 0 20px;
-        margin-top: 60px;
-    }
-    
-    .footer-content {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 30px;
-    }
-    
-    .footer-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 30px;
-        margin-bottom: 30px;
-    }
-    
-    .footer-section h4 {
-        color: #00ff41 !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        margin-bottom: 15px !important;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    .footer-section p, .footer-section li {
-        color: #8b949e !important;
-        font-size: 13px !important;
-        line-height: 1.6 !important;
-        margin-bottom: 8px !important;
-    }
-    
-    .footer-section ul {
-        list-style: none !important;
-        padding: 0 !important;
-    }
-    
-    .footer-bottom {
-        border-top: 1px solid #21262d;
-        padding: 20px 0;
-        text-align: center;
-        color: #6e7681;
-        font-size: 12px;
-    }
-    
     /* Status bar */
     .status-bar {
         background: rgba(0, 0, 0, 0.9);
@@ -1453,45 +1218,8 @@ st.markdown("""
         font-size: 13px;
     }
     
-    .status-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: #8b949e;
-    }
-    
     .status-active {
         color: #00ff41;
-    }
-    
-    /* Responsive design */
-    @media (max-width: 768px) {
-        .header-content {
-            flex-direction: column;
-            gap: 20px;
-            padding: 0 20px;
-        }
-        
-        .nav-tabs {
-            flex-wrap: wrap;
-            padding: 0 20px;
-        }
-        
-        .page-container {
-            padding: 20px;
-        }
-        
-        .hero-title {
-            font-size: 2.5rem;
-        }
-        
-        .features-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .emergency-grid {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        }
     }
     
     /* Buttons */
@@ -1537,54 +1265,6 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    .stMultiSelect > div > div[data-baseweb="select"] > div {
-        background-color: rgba(0, 0, 0, 0.8) !important;
-        border: 1px solid #30363d !important;
-        color: #ffffff !important;
-    }
-    
-    .stMultiSelect > div > div[data-baseweb="select"] ul {
-        background-color: rgba(0, 0, 0, 0.95) !important;
-        border: 1px solid #30363d !important;
-        border-radius: 8px !important;
-    }
-    
-    .stMultiSelect > div > div[data-baseweb="select"] ul li {
-        background-color: rgba(0, 0, 0, 0.95) !important;
-        color: #ffffff !important;
-    }
-    
-    .stMultiSelect > div > div[data-baseweb="select"] ul li:hover {
-        background-color: rgba(0, 255, 65, 0.2) !important;
-        color: #00ff41 !important;
-    }
-    
-    .stMultiSelect span[data-baseweb="tag"] {
-        background-color: rgba(0, 255, 65, 0.2) !important;
-        border: 1px solid #00ff41 !important;
-        color: #00ff41 !important;
-    }
-    
-    /* Metrics styling */
-    .stMetric {
-        background: linear-gradient(135deg, #21262d 0%, #161b22 100%) !important;
-        border: 1px solid #30363d !important;
-        border-radius: 12px !important;
-        padding: 15px !important;
-    }
-    
-    .stMetric [data-testid="metric-container"] {
-        background: transparent !important;
-    }
-    
-    .stMetric [data-testid="metric-container"] > div {
-        color: #00ff41 !important;
-    }
-    
-    .stMetric [data-testid="metric-container"] > div > div {
-        color: #ffffff !important;
-    }
-    
     /* Fix text colors */
     h1, h2, h3, h4, h5, h6 {
         color: #ffffff !important;
@@ -1594,8 +1274,16 @@ st.markdown("""
         color: #c9d1d9 !important;
     }
     
-    .stMarkdown {
-        color: #c9d1d9 !important;
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        
+        .hero-title {
+            font-size: 2.5rem;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
@@ -1663,7 +1351,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Navigation buttons (single row, no CSS duplication)
+# Navigation buttons
 col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
 with col1:
@@ -1700,8 +1388,6 @@ with col7:
     if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.current_page = 'emergency'
         st.rerun()
-
-# Main content (removed large container causing blank space)
 
 # HOME PAGE
 if st.session_state.current_page == 'home':
@@ -1763,7 +1449,7 @@ elif st.session_state.current_page == 'about':
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 🧠 Securo AI Capabilities")
+        st.markdown("### 🧠 SECURO AI Capabilities")
         capabilities = [
             "Conversation Memory - Maintains context across entire chat sessions",
             "Statistical Knowledge Integration - Real access to 2023-2025 crime data", 
@@ -1815,78 +1501,132 @@ elif st.session_state.current_page == 'about':
         Enhanced SECURO maintains professional communication standards appropriate for law enforcement operations. 
         The AI assistant now provides statistically-informed assistance while preserving conversation context for more effective police support.
         """)
+
+# CRIME HOTSPOTS PAGE
+elif st.session_state.current_page == 'hotspots':
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h1>', unsafe_allow_html=True)
     
-    # Assets & Resources section
-    st.markdown("### 🎯 Assets & Resources")
-    col1, col2 = st.columns(2)
+    try:
+        crime_map = create_crime_hotspot_map()
+        map_data = st_folium(
+            crime_map,
+            width="100%",
+            height=500,
+            returned_objects=["last_object_clicked_tooltip", "last_clicked"],
+            key="crime_hotspot_map"
+        )
+        
+        if map_data['last_object_clicked_tooltip']:
+            clicked_info = map_data['last_object_clicked_tooltip']
+            st.info(f"📍 **Last Clicked Location:** {clicked_info}")
+    
+    except Exception as e:
+        st.error(f"❌ Map Error: {str(e)}")
+    
+    # Hotspot Analysis Summary
+    st.markdown('<h2 style="text-align: center; margin: 40px 0 30px;">📍 Hotspot Analysis Summary</h2>', unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns(3)
     
     with col1:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
-            <h4 style="color: #00ff41; margin-bottom: 15px;">📊 Historical Homicide Rates</h4>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2020:</strong> 20.99 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2019:</strong> 25.15 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2018:</strong> 48.16 per 100k</p>
-            <p style="color: #8b949e; font-size: 12px;">Significant improvement in recent years</p>
+        <div style="background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 68, 68, 0.05) 100%); 
+                    border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
+                    border-left: 4px solid #ff4444;">
+            <h3 style="color: #ff4444; margin-bottom: 15px;">High Risk Areas (3)</h3>
+            <p style="color: #c9d1d9; margin-bottom: 10px;">Basseterre Central, Molineux, Tabernacle</p>
+            <p style="color: #8b949e; font-size: 14px;"><strong>Total: 109 crimes</strong></p>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
-            <h4 style="color: #00ff41; margin-bottom: 15px;">🌐 Global Comparison</h4>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Global Avg:</strong> 42.0 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>SKN 2010:</strong> 85.0 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>World Ranking (2012):</strong> 8th</p>
-            <p style="color: #8b949e; font-size: 12px;">Above global average but improving</p>
+        <div style="background: linear-gradient(135deg, rgba(255, 170, 68, 0.1) 0%, rgba(255, 170, 68, 0.05) 100%); 
+                    border: 1px solid rgba(255, 170, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
+                    border-left: 4px solid #ffaa44;">
+            <h3 style="color: #ffaa44; margin-bottom: 15px;">Medium Risk Areas (6)</h3>
+            <p style="color: #c9d1d9; margin-bottom: 10px;">Cayon, Newton Ground, Old Road, etc.</p>
+            <p style="color: #8b949e; font-size: 14px;"><strong>Total: 133 crimes</strong></p>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
-            <h4 style="color: #00ff41; margin-bottom: 15px;">📈 Recent Progress</h4>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2024:</strong> 1,146 total crimes</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2023:</strong> 1,280 total crimes</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Q1 2025:</strong> No homicides</p>
-            <p style="color: #8b949e; font-size: 12px;">First time in 23 years</p>
+        <div style="background: linear-gradient(135deg, rgba(68, 255, 68, 0.1) 0%, rgba(68, 255, 68, 0.05) 100%); 
+                    border: 1px solid rgba(68, 255, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
+                    border-left: 4px solid #44ff44;">
+            <h3 style="color: #44ff44; margin-bottom: 15px;">Low Risk Areas (4)</h3>
+            <p style="color: #c9d1d9; margin-bottom: 10px;">Sandy Point, Dieppe Bay, etc.</p>
+            <p style="color: #8b949e; font-size: 14px;"><strong>Total: 60 crimes</strong></p>
         </div>
         """, unsafe_allow_html=True)
+
+# ANALYTICS PAGE
+elif st.session_state.current_page == 'analytics':
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">📊 Statistics & Analytics</h1>', unsafe_allow_html=True)
     
-    # Analytics insights
-    st.markdown('<h3>📊 Key Insights</h3>', unsafe_allow_html=True)
+    st.info("📊 **Enhanced Statistics System** - Data is now integrated with the AI assistant for comprehensive statistical analysis.")
     
-    tab1, tab2, tab3 = st.columns(3)
+    # Year/Period Selection
+    st.markdown('<h3>📅 Select Time Periods for Analysis</h3>', unsafe_allow_html=True)
     
-    with tab1:
-        if st.button("🔍 Crime Trends Analysis", use_container_width=True):
-            st.markdown("""
-            **Crime Trends Analysis:**
-            - Overall crime decreased from 1,280 (2023) to 1,146 (2024)
-            - Detection rates have improved across most categories
-            - Drug crimes maintain 100% detection rate
-            - Violent crimes show declining trend
-            """)
+    available_periods = list(HISTORICAL_CRIME_DATABASE.keys())
+    period_labels = {key: data["period"] for key, data in HISTORICAL_CRIME_DATABASE.items()}
     
-    with tab2:
-        if st.button("📈 Detection Performance", use_container_width=True):
-            st.markdown("""
-            **Detection Performance:**
-            - 2024 overall detection rate: 41.8%
-            - Best: Drug crimes (100%), Firearms (90%)
-            - Challenging: Robberies (12%), Break-ins (27%)
-            - Nevis consistently outperforms St. Kitts
-            """)
+    selected_periods = st.multiselect(
+        "📊 Choose time periods to analyze:",
+        options=available_periods,
+        default=['2023_ANNUAL', '2024_ANNUAL', '2025_Q2'],
+        format_func=lambda x: period_labels.get(x, x),
+        help="Select one or more time periods to compare statistics and trends.",
+        key="period_selector"
+    )
     
-    with tab3:
-        if st.button("🌍 International Context", use_container_width=True):
-            st.markdown("""
-            **International Context:**
-            - Homicide rates significantly decreased since 2018
-            - 2020 rate (20.99) well below 2018 peak (48.16)
-            - Q1 2025 achieved zero homicides milestone
-            - Progress toward international safety standards
-            """)
+    if not selected_periods:
+        st.warning("Please select at least one time period to view statistics.")
+    else:
+        # Display stats for selected periods
+        if len(selected_periods) == 1:
+            # Single period detailed view
+            period_key = selected_periods[0]
+            period_data = HISTORICAL_CRIME_DATABASE[period_key]
+            
+            st.markdown(f'<h3>📈 {period_data["period"]} Overview</h3>', unsafe_allow_html=True)
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                st.metric("Total Crimes", period_data['total_crimes'])
+            
+            with col2:
+                detection_rate = period_data.get('detection_rate', 'N/A')
+                st.metric("Detection Rate", f"{detection_rate}%" if detection_rate != 'N/A' else 'N/A')
+            
+            with col3:
+                st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 'N/A')
+                st.metric("St. Kitts Crimes", st_kitts_crimes)
+            
+            with col4:
+                nevis_crimes = period_data.get('nevis', {}).get('crimes', 'N/A')
+                st.metric("Nevis Crimes", nevis_crimes)
+        
+        else:
+            # Multiple periods comparison view
+            st.markdown('<h3>📈 Multi-Period Comparison</h3>', unsafe_allow_html=True)
+            
+            comparison_data = []
+            for period_key in selected_periods:
+                period_data = HISTORICAL_CRIME_DATABASE[period_key]
+                comparison_data.append({
+                    "Period": period_data["period"],
+                    "Total Crimes": period_data["total_crimes"],
+                    "Detection Rate": f"{period_data.get('detection_rate', 'N/A')}{'%' if period_data.get('detection_rate') else ''}",
+                    "St. Kitts": period_data.get('st_kitts', {}).get('crimes', 'N/A'),
+                    "Nevis": period_data.get('nevis', {}).get('crimes', 'N/A')
+                })
+            
+            df = pd.DataFrame(comparison_data)
+            st.dataframe(df, use_container_width=True)
 
 # AI ASSISTANT PAGE
 elif st.session_state.current_page == 'chat':
@@ -2037,7 +1777,7 @@ elif st.session_state.current_page == 'chat':
                     
                     elif chart_type == "trends":
                         # Show crime trends
-                        selected_periods = ['2022_ANNUAL', '2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+                        selected_periods = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
                         available_periods = [p for p in selected_periods if p in HISTORICAL_CRIME_DATABASE]
                         fig = create_historical_crime_charts("crime_trends", available_periods, HISTORICAL_CRIME_DATABASE)
                         if fig:
@@ -2063,33 +1803,6 @@ elif st.session_state.current_page == 'chat':
                         if fig:
                             st.plotly_chart(fig, use_container_width=True)
                 
-                # Only show the international comparison buttons if it was an international query
-                # but no specific chart was requested
-                elif is_international_comparison_query(user_input) and not chart_type:
-                    st.markdown("### 📊 International Comparison Charts")
-                    
-                    col1, col2, col3 = st.columns(3)
-                    
-                    with col1:
-                        if st.button("📈 Historical Homicide Trends", key=f"macro_homicide_{int(time.time())}", use_container_width=True):
-                            fig = create_macrotrends_comparison_charts("homicide_trends")
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                    
-                    with col2:
-                        if st.button("🌍 International Context", key=f"macro_context_{int(time.time())}", use_container_width=True):
-                            fig = create_macrotrends_comparison_charts("international_context")
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                    
-                    with col3:
-                        if st.button("📊 Recent Crime Totals", key=f"macro_recent_{int(time.time())}", use_container_width=True):
-                            fig = create_macrotrends_comparison_charts("recent_crime_totals")
-                            if fig:
-                                st.plotly_chart(fig, use_container_width=True)
-                    
-                    st.info("💡 **MacroTrends Data**: Click the buttons above to view international comparison charts with historical context.")
-                
                 st.rerun()
 
 # CHAT HISTORY PAGE
@@ -2107,8 +1820,6 @@ elif st.session_state.current_page == 'history':
         """, unsafe_allow_html=True)
     else:
         for chat_id, chat_data in st.session_state.chat_sessions.items():
-            is_active = chat_id == st.session_state.current_chat_id
-            
             if st.button(f"💬 {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
                 st.session_state.current_chat_id = chat_id
                 st.session_state.current_page = 'chat'
@@ -2126,12 +1837,8 @@ elif st.session_state.current_page == 'emergency':
     st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🚨 Emergency Contacts</h1>', unsafe_allow_html=True)
     
     # Emergency cards grid
-    st.markdown('<div class="emergency-grid">', unsafe_allow_html=True)
-    
+    cols = st.columns(4)
     for i, (service, details) in enumerate(EMERGENCY_CONTACTS.items()):
-        if i % 4 == 0:
-            cols = st.columns(4)
-        
         with cols[i % 4]:
             st.markdown(f"""
             <div class="emergency-card">
@@ -2156,8 +1863,6 @@ elif st.session_state.current_page == 'emergency':
         </ul>
     </div>
     """, unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 # Status Bar
 current_time = get_stkitts_time()
@@ -2190,259 +1895,39 @@ st.markdown(f"""
 
 # Footer
 st.markdown(f"""
-<div class="main-footer">
-    <div class="footer-content">
-        <div class="footer-grid">
-            <div class="footer-section">
-                <h4>Data Source</h4>
-                <p>📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
-                <p>📈 Statistical Integration Active</p>
-                <p>🌍 Multi-language Support</p>
-                <p>🔒 Secure Law Enforcement Platform</p>
+<div style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border-top: 1px solid #21262d; padding: 40px 0 20px; margin-top: 60px;">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 30px;">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
+            <div>
+                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Data Source</h4>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📈 Statistical Integration Active</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌍 Multi-language Support</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔒 Secure Law Enforcement Platform</p>
             </div>
-            <div class="footer-section">
-                <h4>Last Updated</h4>
-                <p>🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
-                <p>🤖 AI System: Enhanced AI Intelligence</p>
-                <p>📊 Enhanced AI Assistant Platform</p>
-                <p>🧠 Enhanced AI Assistant Platform</p>
+            <div>
+                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Last Updated</h4>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🤖 AI System: Enhanced AI Intelligence</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Enhanced AI Assistant Platform</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🧠 Statistical Knowledge Integration</p>
             </div>
-            <div class="footer-section">
-                <h4>Contact Information</h4>
-                <p>📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239</p>
-                <p>📧 lio@police.kn</p>
-                <p>🌐 Multi-Chat Support</p>
-                <p>⚖️ Secure Law Enforcement Platform</p>
+            <div>
+                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Contact Information</h4>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📧 lio@police.kn</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌐 Multi-Chat Support</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">⚖️ Secure Law Enforcement Platform</p>
             </div>
-            <div class="footer-section">
-                <h4>AI System</h4>
-                <p>🧠 Enhanced AI Assistant Platform</p>
-                <p>Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</p>
+            <div>
+                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">AI System</h4>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🧠 Enhanced AI Assistant Platform</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</p>
             </div>
         </div>
-        <div class="footer-bottom">
+        <div style="border-top: 1px solid #21262d; padding: 20px 0; text-align: center; color: #6e7681; font-size: 12px;">
             <p>&copy; 2025 SECURO - Enhanced AI Assistant & Crime Intelligence System | Royal St. Christopher and Nevis Police Force | Version 2.1.0</p>
         </div>
     </div>
 </div>
-""", (unsafe_allow_html=True)%); border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center;">
-            <div style="color: #00ff41; font-size: 2rem; margin-bottom: 15px;">🔒</div>
-            <h4 style="color: #00ff41;">SECURO AI Avatar</h4>
-            <button style="background: #00ff41; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; margin-top: 10px;">📥 Download</button>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center;">
-            <div style="color: #00ff41; font-size: 2rem; margin-bottom: 15px;">👮🏾‍♂️</div>
-            <h4 style="color: #00ff41;">Police Badge Avatar</h4>
-            <button style="background: #00ff41; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; margin-top: 10px;">📥 Download</button>
-        </div>
-        """, unsafe_allow_html=True)
-
-# CRIME HOTSPOTS PAGE
-elif st.session_state.current_page == 'hotspots':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h1>', unsafe_allow_html=True)
-    
-    try:
-        crime_map = create_crime_hotspot_map()
-        map_data = st_folium(
-            crime_map,
-            width="100%",
-            height=500,
-            returned_objects=["last_object_clicked_tooltip", "last_clicked"],
-            key="crime_hotspot_map"
-        )
-        
-        if map_data['last_object_clicked_tooltip']:
-            clicked_info = map_data['last_object_clicked_tooltip']
-            st.info(f"📍 **Last Clicked Location:** {clicked_info}")
-    
-    except Exception as e:
-        st.error(f"❌ Map Error: {str(e)}")
-    
-    # Hotspot Analysis Summary
-    st.markdown('<h2 style="text-align: center; margin: 40px 0 30px;">📍 Hotspot Analysis Summary</h2>', unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 68, 68, 0.05) 100%); 
-                    border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
-                    border-left: 4px solid #ff4444;">
-            <h3 style="color: #ff4444; margin-bottom: 15px;">High Risk Areas (3)</h3>
-            <p style="color: #c9d1d9; margin-bottom: 10px;">Basseterre Central, Molineux, Tabernacle</p>
-            <p style="color: #8b949e; font-size: 14px;"><strong>Total: 109 crimes</strong></p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, rgba(255, 170, 68, 0.1) 0%, rgba(255, 170, 68, 0.05) 100%); 
-                    border: 1px solid rgba(255, 170, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
-                    border-left: 4px solid #ffaa44;">
-            <h3 style="color: #ffaa44; margin-bottom: 15px;">Medium Risk Areas (6)</h3>
-            <p style="color: #c9d1d9; margin-bottom: 10px;">Cayon, Newton Ground, Old Road, etc.</p>
-            <p style="color: #8b949e; font-size: 14px;"><strong>Total: 133 crimes</strong></p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, rgba(68, 255, 68, 0.1) 0%, rgba(68, 255, 68, 0.05) 100%); 
-                    border: 1px solid rgba(68, 255, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
-                    border-left: 4px solid #44ff44;">
-            <h3 style="color: #44ff44; margin-bottom: 15px;">Low Risk Areas (4)</h3>
-            <p style="color: #c9d1d9; margin-bottom: 10px;">Sandy Point, Dieppe Bay, etc.</p>
-            <p style="color: #8b949e; font-size: 14px;"><strong>Total: 60 crimes</strong></p>
-        </div>
-        """, unsafe_allow_html=True)
-
-# ANALYTICS PAGE  
-# ANALYTICS PAGE  
-elif st.session_state.current_page == 'analytics':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">📊 Statistics & Analytics</h1>', unsafe_allow_html=True)
-    
-    st.info("📊 **Enhanced Statistics System** - Data is now integrated with the AI assistant for comprehensive statistical analysis.")
-    
-    # Year/Period Selection Dropdown
-    st.markdown('<h3>📅 Select Time Periods for Analysis</h3>', unsafe_allow_html=True)
-    
-    # Create ordered list of periods
-    available_periods = list(HISTORICAL_CRIME_DATABASE.keys())
-    
-    # Sort periods chronologically
-    def sort_key(period):
-        if '_ANNUAL' in period:
-            return (int(period.split('_')[0]), 12)
-        elif '_H1' in period:
-            return (int(period.split('_')[0]), 6)
-        elif '_Q1' in period:
-            return (int(period.split('_')[0]), 3)
-        elif '_Q2' in period:
-            return (int(period.split('_')[0]), 6)
-        elif '_Q3' in period:
-            return (int(period.split('_')[0]), 9)
-        elif '_Q4' in period:
-            return (int(period.split('_')[0]), 12)
-        else:
-            return (9999, 0)
-    
-    # Sort periods
-    sorted_periods = sorted(available_periods, key=sort_key)
-    
-    period_labels = {key: data["period"] for key, data in HISTORICAL_CRIME_DATABASE.items()}
-    
-    # Set better default selections
-    default_selections = ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
-    valid_defaults = [p for p in default_selections if p in sorted_periods]
-    
-    if not valid_defaults:
-        valid_defaults = sorted_periods[-3:] if len(sorted_periods) >= 3 else sorted_periods
-    
-    selected_periods = st.multiselect(
-        "📊 Choose time periods to analyze:",
-        options=sorted_periods,
-        default=valid_defaults,
-        format_func=lambda x: period_labels.get(x, x),
-        help="Select one or more time periods to compare statistics and trends.",
-        key="period_selector"
-    )
-    
-    if not selected_periods:
-        st.warning("Please select at least one time period to view statistics.")
-    else:
-        # Display stats for selected periods
-        if len(selected_periods) == 1:
-            # Single period detailed view
-            period_key = selected_periods[0]
-            period_data = HISTORICAL_CRIME_DATABASE[period_key]
-            
-            st.markdown(f'<h3>📈 {period_data["period"]} Overview</h3>', unsafe_allow_html=True)
-            
-            col1, col2, col3, col4 = st.columns(4)
-            
-            with col1:
-                st.metric("Total Crimes", period_data['total_crimes'])
-            
-            with col2:
-                detection_rate = period_data.get('detection_rate', 'N/A')
-                st.metric("Detection Rate", f"{detection_rate}%" if detection_rate != 'N/A' else 'N/A')
-            
-            with col3:
-                st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 'N/A')
-                st.metric("St. Kitts Crimes", st_kitts_crimes)
-            
-            with col4:
-                nevis_crimes = period_data.get('nevis', {}).get('crimes', 'N/A')
-                st.metric("Nevis Crimes", nevis_crimes)
-            
-            # Show detailed crime breakdown for single period
-            st.markdown('<h3>🔍 Crime Type Breakdown</h3>', unsafe_allow_html=True)
-            
-            if 'federation' in period_data:
-                crime_data = []
-                for crime_type, details in period_data['federation'].items():
-                    if isinstance(details, dict) and 'total' in details:
-                        crime_name = crime_type.replace('_', ' ').title()
-                        crime_data.append({
-                            'Crime Type': crime_name,
-                            'Total Cases': details['total'],
-                            'Detected': details.get('detected', 'N/A'),
-                            'Detection Rate': f"{details.get('rate', 0)}%" if details.get('rate') else 'N/A'
-                        })
-                
-                if crime_data:
-                    df = pd.DataFrame(crime_data)
-                    st.dataframe(df, use_container_width=True)
-        
-        else:
-            # Multiple periods comparison view
-            st.markdown('<h3>📈 Multi-Period Comparison</h3>', unsafe_allow_html=True)
-            
-            # Create comparison table
-            comparison_data = []
-            for period_key in selected_periods:
-                period_data = HISTORICAL_CRIME_DATABASE[period_key]
-                comparison_data.append({
-                    "Period": period_data["period"],
-                    "Total Crimes": period_data["total_crimes"],
-                    "Detection Rate": f"{period_data.get('detection_rate', 'N/A')}{'%' if period_data.get('detection_rate') else ''}",
-                    "St. Kitts": period_data.get('st_kitts', {}).get('crimes', 'N/A'),
-                    "Nevis": period_data.get('nevis', {}).get('crimes', 'N/A')
-                })
-            
-            df = pd.DataFrame(comparison_data)
-            st.dataframe(df, use_container_width=True)
-            
-            # Simple trend analysis
-            st.markdown('<h3>📊 Trend Analysis</h3>', unsafe_allow_html=True)
-            
-            # Calculate trends
-            total_crimes = [data["total_crimes"] for data in [HISTORICAL_CRIME_DATABASE[p] for p in selected_periods]]
-            periods = [HISTORICAL_CRIME_DATABASE[p]["period"] for p in selected_periods]
-            
-            if len(total_crimes) > 1:
-                trend = "increasing" if total_crimes[-1] > total_crimes[0] else "decreasing"
-                change = total_crimes[-1] - total_crimes[0]
-                percent_change = (change / total_crimes[0]) * 100 if total_crimes[0] != 0 else 0
-                
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.metric("Overall Trend", trend.title(), f"{change:+d} crimes")
-                with col2:
-                    st.metric("Percentage Change", f"{percent_change:+.1f}%")
-                with col3:
-                    avg_crimes = sum(total_crimes) / len(total_crimes)
-                    st.metric("Average Crimes", f"{avg_crimes:.0f}")
-    
-    # MacroTrends Data Summary
-    st.markdown('<h3>🌍 International Context (MacroTrends Data)</h3>', unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100
+""", unsafe_allow_html=True)
