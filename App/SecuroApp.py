@@ -1439,7 +1439,7 @@ if st.session_state.current_page == 'home':
 
 # ABOUT PAGE
 elif st.session_state.current_page == 'about':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">About Enhanced SECURO</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">About SECURO AI</h1>', unsafe_allow_html=True)
     
     st.markdown("""
     <div class="feature-card" style="margin-bottom: 40px;">
