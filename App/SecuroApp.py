@@ -1396,7 +1396,7 @@ if st.session_state.current_page == 'home':
     <div class="welcome-hero">
         <h1 class="hero-title">Welcome to SECURO AI </h1>
         <p class="hero-subtitle">Your comprehensive AI assistant with statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
-        <p class="hero-description">AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
+        <p class="hero-description">                AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
     </div>
     """, unsafe_allow_html=True)
     
