@@ -180,6 +180,9 @@ if 'chat_counter' not in st.session_state:
 if 'current_analytics_tab' not in st.session_state:
     st.session_state.current_analytics_tab = 'Crime Trends'
 
+if 'statistical_database' not in st.session_state:
+    st.session_state.statistical_database = {}
+
 def create_new_chat():
     """Create a new chat session"""
     chat_id = f"chat_{st.session_state.chat_counter}_{int(time.time())}"
@@ -215,6 +218,33 @@ def add_message_to_chat(role, content):
     if role == "user" and len(current_chat['messages']) <= 2:
         chat_name = content[:30] + "..." if len(content) > 30 else content
         current_chat['name'] = chat_name
+
+# **NEW: Statistical Data Processing Functions**
+def fetch_and_process_statistics():
+    """Fetch and process statistics from PDF URLs"""
+    if st.session_state.statistical_database:
+        return st.session_state.statistical_database
+    
+    # Use the enhanced database with complete data
+    st.session_state.statistical_database = HISTORICAL_CRIME_DATABASE.copy()
+    
+    # Add MacroTrends and processed data from the PDF structure we saw
+    st.session_state.statistical_database.update({
+        "macrotrends_data": MACROTRENDS_DATA,
+        "recent_trends": {
+            "murder_trend": "75% decrease from 2024 to 2025 H1",
+            "drug_crimes_trend": "463% increase in drug crimes 2024-2025",
+            "detection_improvement": "Detection rates vary by crime type",
+            "larceny_concern": "Larcenies remain highest volume crime"
+        },
+        "geographical_breakdown": {
+            "st_kitts_districts_ab": "Higher crime volume but lower detection rate",
+            "nevis_district_c": "Lower crime volume but higher detection rate",
+            "federation_wide": "Overall crime trends showing mixed results"
+        }
+    })
+    
+    return st.session_state.statistical_database
 
 def create_crime_hotspot_map():
     """Create an interactive crime hotspot map for St. Kitts and Nevis"""
@@ -324,6 +354,369 @@ def create_crime_hotspot_map():
     
     return m
 
+def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
+    """Create charts using MacroTrends international comparison data"""
+    
+    if chart_type == "homicide_trends":
+        # Historical homicide rates per 100K population
+        years = list(MACROTRENDS_DATA["homicide_rates_per_100k"].keys())
+        rates = list(MACROTRENDS_DATA["homicide_rates_per_100k"].values())
+        
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=years, y=rates,
+            mode='lines+markers',
+            name='Homicide Rate per 100K',
+            line=dict(color='#ff4444', width=3),
+            marker=dict(size=10, color='#ff4444')
+        ))
+        
+        # Add global average line
+        global_avg = MACROTRENDS_DATA["comparative_context"]["global_average_firearm_homicides"]
+        fig.add_hline(y=global_avg, line_dash="dash", line_color="#888888",
+                     annotation_text=f"Global Average: {global_avg}%")
+        
+        fig.update_layout(
+            title="St. Kitts & Nevis Homicide Rate Trends (MacroTrends Data)",
+            xaxis_title="Year",
+            yaxis_title="Homicides per 100,000 Population",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+    
+    elif chart_type == "recent_crime_totals":
+        # Recent total crime trends
+        years = ["2022", "2023", "2024"]
+        crimes = [
+            MACROTRENDS_DATA["recent_trends"]["2022_total_crimes"],
+            MACROTRENDS_DATA["recent_trends"]["2023_total_crimes"],
+            MACROTRENDS_DATA["recent_trends"]["2024_total_crimes"]
+        ]
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=years, y=crimes,
+            marker_color='#44ff44',
+            text=[f"{crime:,}" for crime in crimes],
+            textposition='auto'
+        ))
+        
+        fig.update_layout(
+            title="Total Crime Trends 2022-2024 (RSCNPF Data)",
+            xaxis_title="Year",
+            yaxis_title="Total Crimes",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+    
+    elif chart_type == "international_context":
+        # International comparison chart
+        categories = ["St. Kitts 2020", "St. Kitts 2019", "St. Kitts 2018", "Global Avg.", "St. Kitts Peak (2011)"]
+        values = [
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2020"],
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2019"],
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2018"],
+            MACROTRENDS_DATA["comparative_context"]["global_average_firearm_homicides"],
+            MACROTRENDS_DATA["homicide_rates_per_100k"]["2011"]
+        ]
+        
+        colors = ['#44ff44', '#ffaa44', '#ff4444', '#888888', '#ff0000']
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=categories, y=values,
+            marker_color=colors,
+            text=[f"{val:.1f}" for val in values],
+            textposition='auto'
+        ))
+        
+        fig.update_layout(
+            title="International Context: Homicide Rates per 100K Population",
+            xaxis_title="Comparison Points",
+            yaxis_title="Rate per 100,000",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+
+def create_historical_crime_charts(chart_type, selected_periods, crime_data):
+    """Create various crime analysis charts for selected periods"""
+    
+    if chart_type == "crime_trends":
+        # Crime trends across selected periods
+        periods = []
+        total_crimes = []
+        
+        for period_key in selected_periods:
+            if period_key in crime_data:
+                periods.append(crime_data[period_key]["period"])
+                total_crimes.append(crime_data[period_key]["total_crimes"])
+        
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=periods, y=total_crimes,
+            mode='lines+markers',
+            name='Total Crimes',
+            line=dict(color='#44ff44', width=3),
+            marker=dict(size=8)
+        ))
+        
+        fig.update_layout(
+            title="Crime Trends - Selected Periods",
+            xaxis_title="Time Period",
+            yaxis_title="Total Crimes",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+    
+    elif chart_type == "detection_comparison":
+        # Detection rate comparison
+        periods = []
+        detection_rates = []
+        
+        for period_key in selected_periods:
+            if period_key in crime_data and "detection_rate" in crime_data[period_key]:
+                periods.append(crime_data[period_key]["period"])
+                detection_rates.append(crime_data[period_key]["detection_rate"])
+        
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=periods, y=detection_rates,
+            marker_color='#44ff44',
+            text=[f"{rate}%" for rate in detection_rates],
+            textposition='auto'
+        ))
+        
+        fig.update_layout(
+            title="Detection Rates - Selected Periods",
+            xaxis_title="Time Period",
+            yaxis_title="Detection Rate (%)",
+            template="plotly_dark",
+            height=500
+        )
+        
+        return fig
+    
+    elif chart_type == "crime_type_breakdown":
+        # Crime type breakdown for latest selected period
+        if selected_periods and selected_periods[-1] in crime_data:
+            latest_data = crime_data[selected_periods[-1]]
+            if "federation" in latest_data:
+                crimes = []
+                counts = []
+                
+                for crime_type, data in latest_data["federation"].items():
+                    if "total" in data:
+                        crimes.append(crime_type.replace('_', ' ').title())
+                        counts.append(data["total"])
+                
+                fig = go.Figure(data=[go.Pie(
+                    labels=crimes,
+                    values=counts,
+                    hole=0.4,
+                    marker_colors=['#44ff44', '#f39c12', '#e74c3c', '#27ae60', '#9b59b6', '#34495e', '#16a085', '#f1c40f']
+                )])
+                
+                fig.update_layout(
+                    title=f"Crime Type Distribution - {latest_data['period']}",
+                    template="plotly_dark",
+                    height=500
+                )
+                
+                return fig
+
+def is_international_comparison_query(user_input):
+    """Detect if user wants international comparison or historical trends"""
+    comparison_keywords = ['international', 'global', 'worldwide', 'compare', 'comparison', 'trends', 'historical', 'macrotrends', 'world average', 'per 100k', 'rate', 'historical chart', 'long term', 'decade']
+    return any(keyword in user_input.lower() for keyword in comparison_keywords)
+
+def is_casual_greeting(user_input):
+    """Detect if user input is a casual greeting"""
+    casual_words = ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'how are you', 'what\'s up', 'sup']
+    return any(word in user_input.lower().strip() for word in casual_words) and len(user_input.strip()) < 25
+
+def is_detailed_request(user_input):
+    """Detect if user wants detailed information"""
+    detail_keywords = ['detailed', 'detail', 'explain', 'comprehensive', 'thorough', 'in depth', 'breakdown', 'elaborate', 'more information', 'tell me more']
+    return any(keyword in user_input.lower() for keyword in detail_keywords)
+
+def is_statistics_query(user_input):
+    """Detect if user is asking about statistics"""
+    stats_keywords = ['statistics', 'stats', 'data', 'crime rate', 'trends', 'numbers', 'figures', 'analysis', 'murder', 'robbery', 'larceny', 'detection rate', 'quarterly', 'annual', 'breakdown', 'comparison']
+    return any(keyword in user_input.lower() for keyword in stats_keywords)
+
+def generate_enhanced_smart_response(user_input, conversation_history=None, language='en'):
+    """Generate AI responses with statistical knowledge and conversation memory"""
+    
+    if not st.session_state.get('ai_enabled', False):
+        return "🔧 AI system offline. Please check your API key configuration.", None
+    
+    try:
+        # Load statistical data
+        stats_data = fetch_and_process_statistics()
+        
+        # Check if user wants a chart
+        chart_keywords = ['chart', 'graph', 'plot', 'visualize', 'show me', 'display', 'trends', 'comparison']
+        wants_chart = any(keyword in user_input.lower() for keyword in chart_keywords)
+        chart_to_show = None
+        
+        # Check if this is the first interaction after a greeting
+        has_greeted_before = False
+        if conversation_history:
+            for msg in conversation_history:
+                if msg['role'] == 'assistant' and any(greeting in msg['content'].lower() for greeting in ['good morning', 'good afternoon', 'good evening', 'hello', 'hi']):
+                    has_greeted_before = True
+                    break
+        
+        # Handle different query types
+        if is_casual_greeting(user_input) and not has_greeted_before:
+            # Simple greeting response - only if we haven't greeted before
+            prompt = f"""
+            You are SECURO, an AI assistant for St. Kitts & Nevis Police.
+            
+            User said: "{user_input}"
+            
+            Respond with a brief, friendly greeting (2-3 sentences max). Mention you're ready to help with questions about crime statistics or general assistance.
+            Include the appropriate time-based greeting (good morning/afternoon/evening) based on the current time.
+            """
+            
+            response = model.generate_content(prompt)
+            return response.text.strip(), None
+        
+        elif is_casual_greeting(user_input) and has_greeted_before:
+            # Don't repeat greeting, just acknowledge
+            prompt = f"""
+            You are SECURO, an AI assistant for St. Kitts & Nevis Police.
+            
+            User said: "{user_input}"
+            The user has already been greeted earlier in this conversation.
+            
+            Respond with a brief acknowledgment WITHOUT repeating any greeting. Just ask how you can help or what they'd like to know about.
+            Keep it to 1-2 sentences.
+            """
+            
+            response = model.generate_content(prompt)
+            return response.text.strip(), None
+        
+        elif is_statistics_query(user_input) or is_international_comparison_query(user_input) or wants_chart:
+            # Statistics-focused response with actual data AND chart generation
+            is_detailed = is_detailed_request(user_input)
+            is_comparison = is_international_comparison_query(user_input)
+            
+            # Determine which chart to show
+            if wants_chart:
+                if 'international' in user_input.lower() or 'global' in user_input.lower() or 'world' in user_input.lower():
+                    chart_to_show = "international"
+                elif 'trend' in user_input.lower() or 'over time' in user_input.lower() or 'years' in user_input.lower():
+                    chart_to_show = "trends"
+                elif 'detection' in user_input.lower():
+                    chart_to_show = "detection"
+                elif 'breakdown' in user_input.lower() or 'types' in user_input.lower():
+                    chart_to_show = "breakdown"
+                elif 'manslaughter' in user_input.lower() or 'murder' in user_input.lower() or 'homicide' in user_input.lower():
+                    chart_to_show = "homicide"
+                else:
+                    chart_to_show = "trends"  # Default to trends
+            
+            # Include conversation context
+            context = ""
+            if conversation_history and len(conversation_history) > 1:
+                recent_messages = conversation_history[-4:]  # Last 4 messages for context
+                context = "Recent conversation context:\n"
+                for msg in recent_messages:
+                    context += f"{msg['role']}: {msg['content'][:100]}...\n"
+                context += "\n"
+            
+            # Add MacroTrends data for comparison queries
+            macrotrends_context = ""
+            if is_comparison:
+                macrotrends_context = f"""
+                
+                **MacroTrends International Data Available:**
+                {json.dumps(MACROTRENDS_DATA, indent=2)}
+                """
+            
+            prompt = f"""
+            You are SECURO, an AI assistant for the Royal St. Christopher & Nevis Police Force with access to comprehensive crime statistics AND international comparison data.
+            
+            {context}User query: "{user_input}"
+            Detailed request: {is_detailed}
+            International comparison requested: {is_comparison}
+            Chart requested: {wants_chart}
+            
+            **Available Local Statistical Data:**
+            {json.dumps(stats_data, indent=2)}
+            {macrotrends_context}
+            
+            **Response Guidelines:**
+            - NEVER say "Good morning", "Good afternoon", or "Good evening" in your response unless the user just greeted you for the first time
+            - If detailed=False: Keep response concise (3-5 sentences) but data-rich
+            - If detailed=True: Provide comprehensive statistical analysis
+            - If comparison=True: Include international context, MacroTrends data
+            - If chart requested: Acknowledge that you're displaying the requested chart below your response
+            - Use specific numbers and percentages from the data above
+            - Reference time periods (Q2 2025, H1 2024, etc.) when relevant
+            - Include comparisons and trends when available
+            - When discussing international comparisons, reference the MacroTrends data
+            - Maintain professional law enforcement communication
+            - Focus on actionable insights for police operations
+            
+            Current time: {get_stkitts_time()} AST
+            Current date: {get_stkitts_date()}
+            
+            Provide data-driven statistical analysis with specific figures and international context when relevant.
+            """
+            
+            response = model.generate_content(prompt)
+            return response.text.strip(), chart_to_show
+            
+        else:
+            # General query with conversation context
+            is_detailed = is_detailed_request(user_input)
+            
+            # Include conversation context
+            context = ""
+            if conversation_history and len(conversation_history) > 1:
+                recent_messages = conversation_history[-6:]  # Last 6 messages for context
+                context = "Conversation history for context:\n"
+                for msg in recent_messages:
+                    context += f"{msg['role']}: {msg['content'][:150]}...\n"
+                context += "\n"
+            
+            prompt = f"""
+            You are SECURO, an AI assistant for the Royal St. Christopher & Nevis Police Force.
+            
+            {context}Current user query: "{user_input}"
+            Detailed request: {is_detailed}
+            
+            **Response Guidelines:**
+            - NEVER say "Good morning", "Good afternoon", or "Good evening" in your response unless the user just greeted you for the first time
+            - If detailed=False: Keep response concise (3-5 sentences)
+            - If detailed=True: Provide thorough explanation
+            - Maintain conversation context and reference previous messages when relevant
+            - Provide professional assistance suitable for law enforcement
+            - Include practical recommendations when appropriate
+            - You have access to crime statistics and can generate charts if asked
+            
+            Current time: {get_stkitts_time()} AST
+            Current date: {get_stkitts_date()}
+            
+            Provide helpful, context-aware assistance.
+            """
+            
+            response = model.generate_content(prompt)
+            return response.text.strip(), None
+            
+    except Exception as e:
+        return f"🚨 AI analysis error: {str(e)}\n\nI'm still here to help! Please try rephrasing your question or check your internet connection.", None
+
 # Initialize AI model
 try:
     GOOGLE_API_KEY = "AIzaSyBn1AUXxPtPMu9eRnosECSSQG_2e5bArR8"
@@ -359,6 +752,9 @@ if 'selected_periods' not in st.session_state:
 
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
+
+# Initialize statistics on startup
+fetch_and_process_statistics()
 
 # Professional CSS styling matching the screenshots
 st.markdown("""
@@ -517,18 +913,6 @@ st.markdown("""
         margin: 0 auto;
         padding: 20px 30px;
         min-height: auto;
-    }
-    
-    /* Welcome section */
-    .welcome-hero {
-        text-align: center;
-        padding: 40px 20px;
-        margin-bottom: 30px;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 255, 65, 0.03) 50%, rgba(0, 0, 0, 0.8) 100%);
-        border-radius: 20px;
-        border: 1px solid rgba(0, 255, 65, 0.2);
-        position: relative;
-        overflow: hidden;
     }
     
     /* Welcome section */
@@ -1438,7 +1822,410 @@ elif st.session_state.current_page == 'about':
     
     with col1:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center;">
+        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #00ff41; margin-bottom: 15px;">📊 Historical Homicide Rates</h4>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2020:</strong> 20.99 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2019:</strong> 25.15 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2018:</strong> 48.16 per 100k</p>
+            <p style="color: #8b949e; font-size: 12px;">Significant improvement in recent years</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #00ff41; margin-bottom: 15px;">🌐 Global Comparison</h4>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Global Avg:</strong> 42.0 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>SKN 2010:</strong> 85.0 per 100k</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>World Ranking (2012):</strong> 8th</p>
+            <p style="color: #8b949e; font-size: 12px;">Above global average but improving</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #00ff41; margin-bottom: 15px;">📈 Recent Progress</h4>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2024:</strong> 1,146 total crimes</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2023:</strong> 1,280 total crimes</p>
+            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Q1 2025:</strong> No homicides</p>
+            <p style="color: #8b949e; font-size: 12px;">First time in 23 years</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Analytics insights
+    st.markdown('<h3>📊 Key Insights</h3>', unsafe_allow_html=True)
+    
+    tab1, tab2, tab3 = st.columns(3)
+    
+    with tab1:
+        if st.button("🔍 Crime Trends Analysis", use_container_width=True):
+            st.markdown("""
+            **Crime Trends Analysis:**
+            - Overall crime decreased from 1,280 (2023) to 1,146 (2024)
+            - Detection rates have improved across most categories
+            - Drug crimes maintain 100% detection rate
+            - Violent crimes show declining trend
+            """)
+    
+    with tab2:
+        if st.button("📈 Detection Performance", use_container_width=True):
+            st.markdown("""
+            **Detection Performance:**
+            - 2024 overall detection rate: 41.8%
+            - Best: Drug crimes (100%), Firearms (90%)
+            - Challenging: Robberies (12%), Break-ins (27%)
+            - Nevis consistently outperforms St. Kitts
+            """)
+    
+    with tab3:
+        if st.button("🌍 International Context", use_container_width=True):
+            st.markdown("""
+            **International Context:**
+            - Homicide rates significantly decreased since 2018
+            - 2020 rate (20.99) well below 2018 peak (48.16)
+            - Q1 2025 achieved zero homicides milestone
+            - Progress toward international safety standards
+            """)
+
+# AI ASSISTANT PAGE
+elif st.session_state.current_page == 'chat':
+    # Show welcome screen only if chat is not active
+    if not st.session_state.get('chat_active', False):
+        st.markdown("""
+        <div class="chat-welcome">
+            <div class="chat-logo">
+                🔒
+            </div>
+            <h1 class="chat-title">SECURO</h1>
+            <p class="chat-subtitle">AI Assistant</p>
+            <p style="color: #8b949e; max-width: 600px; margin: 0 auto 30px;">
+                Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having just loaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and find out more about my capabilities.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Working start conversation button
+        if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+            # Create new chat session and activate chat
+            create_new_chat()
+            st.session_state.chat_active = True
+            st.success("✅ New chat session created! You can now start chatting with SECURO AI.")
+            st.rerun()
+    
+    else:
+        # Chat is active - show chat interface
+        st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant</h2>', unsafe_allow_html=True)
+        
+        # Chat management controls
+        col1, col2, col3 = st.columns([2, 6, 2])
+        
+        with col1:
+            if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
+                create_new_chat()
+                st.rerun()
+        
+        with col2:
+            current_chat = get_current_chat()
+            st.markdown(f"""
+            <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
+                        border-radius: 8px; padding: 10px; text-align: center;">
+                <strong style="color: #00ff41;">Current Session:</strong>
+                <span style="color: #c9d1d9;">{current_chat['name']}</span>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col3:
+            if st.button("🔙 Back to Welcome", key="back_welcome", use_container_width=True):
+                st.session_state.chat_active = False
+                st.rerun()
+        
+        # Enhanced Status Display
+        if st.session_state.get('ai_enabled', False):
+            st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness")
+        else:
+            st.error("❌ AI Offline: Check your Google AI API key")
+        
+        # Get current chat and display messages
+        current_chat = get_current_chat()
+        messages = current_chat['messages']
+        
+        # Initialize with welcome message if no messages
+        if not messages:
+            welcome_msg = {
+                "role": "assistant",
+                "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
+                "timestamp": get_stkitts_time()
+            }
+            messages.append(welcome_msg)
+            current_chat['messages'] = messages
+        
+        # Display chat messages
+        st.markdown("### 💬 Conversation")
+        for message in messages:
+            if message["role"] == "user":
+                clean_content = str(message["content"]).strip()
+                st.markdown(f"""
+                <div class="chat-message user-message">
+                    <div class="message-content">{clean_content}</div>
+                    <div class="message-time">You • {message["timestamp"]} AST</div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                clean_content = str(message["content"]).strip()
+                clean_content = re.sub(r'<[^>]+>', '', clean_content)
+                clean_content = clean_content.replace('```', '')
+               
+                st.markdown(f"""
+                <div class="chat-message bot-message">
+                    <div class="message-content">{clean_content}</div>
+                    <div class="message-time">SECURO • {message["timestamp"]} AST</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Enhanced Chat input
+        st.markdown("---")
+        with st.form("chat_form", clear_on_submit=True):
+            user_input = st.text_input(
+                "💬 Message Enhanced AI Assistant:",
+                placeholder="Ask about crime statistics, trends, international comparisons, or request charts... (I have full conversation memory)",
+                label_visibility="collapsed",
+                key="chat_input"
+            )
+            
+            submitted = st.form_submit_button("Send", type="primary")
+            
+            if submitted and user_input and user_input.strip():
+                current_time = get_stkitts_time()
+                
+                # Add user message to current chat
+                add_message_to_chat("user", user_input)
+                
+                # Generate response with conversation history and statistics
+                with st.spinner("🤖 Generating enhanced AI response with statistical knowledge..."):
+                    response, chart_type = generate_enhanced_smart_response(
+                        user_input, 
+                        conversation_history=current_chat['messages'],
+                        language='en'
+                    )
+                
+                # Add assistant response to current chat
+                add_message_to_chat("assistant", response)
+                
+                # Display the requested chart if any
+                if chart_type:
+                    st.markdown("### 📊 Requested Chart")
+                    
+                    if chart_type == "international":
+                        # Show international comparison charts
+                        col1, col2, col3 = st.columns(3)
+                        
+                        with col1:
+                            fig = create_macrotrends_comparison_charts("homicide_trends")
+                            if fig:
+                                st.plotly_chart(fig, use_container_width=True)
+                        
+                        with col2:
+                            fig = create_macrotrends_comparison_charts("international_context")
+                            if fig:
+                                st.plotly_chart(fig, use_container_width=True)
+                        
+                        with col3:
+                            fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                            if fig:
+                                st.plotly_chart(fig, use_container_width=True)
+                    
+                    elif chart_type == "trends":
+                        # Show crime trends
+                        selected_periods = ['2022_ANNUAL', '2023_ANNUAL', '2024_ANNUAL', '2025_Q2']
+                        available_periods = [p for p in selected_periods if p in HISTORICAL_CRIME_DATABASE]
+                        fig = create_historical_crime_charts("crime_trends", available_periods, HISTORICAL_CRIME_DATABASE)
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                    
+                    elif chart_type == "detection":
+                        # Show detection rates
+                        selected_periods = ['2023_ANNUAL', '2024_ANNUAL']
+                        fig = create_historical_crime_charts("detection_comparison", selected_periods, HISTORICAL_CRIME_DATABASE)
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                    
+                    elif chart_type == "breakdown":
+                        # Show crime type breakdown
+                        selected_periods = ['2024_ANNUAL']
+                        fig = create_historical_crime_charts("crime_type_breakdown", selected_periods, HISTORICAL_CRIME_DATABASE)
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                    
+                    elif chart_type == "homicide":
+                        # Show homicide trends
+                        fig = create_macrotrends_comparison_charts("homicide_trends")
+                        if fig:
+                            st.plotly_chart(fig, use_container_width=True)
+                
+                # Only show the international comparison buttons if it was an international query
+                # but no specific chart was requested
+                elif is_international_comparison_query(user_input) and not chart_type:
+                    st.markdown("### 📊 International Comparison Charts")
+                    
+                    col1, col2, col3 = st.columns(3)
+                    
+                    with col1:
+                        if st.button("📈 Historical Homicide Trends", key=f"macro_homicide_{int(time.time())}", use_container_width=True):
+                            fig = create_macrotrends_comparison_charts("homicide_trends")
+                            if fig:
+                                st.plotly_chart(fig, use_container_width=True)
+                    
+                    with col2:
+                        if st.button("🌍 International Context", key=f"macro_context_{int(time.time())}", use_container_width=True):
+                            fig = create_macrotrends_comparison_charts("international_context")
+                            if fig:
+                                st.plotly_chart(fig, use_container_width=True)
+                    
+                    with col3:
+                        if st.button("📊 Recent Crime Totals", key=f"macro_recent_{int(time.time())}", use_container_width=True):
+                            fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                            if fig:
+                                st.plotly_chart(fig, use_container_width=True)
+                    
+                    st.info("💡 **MacroTrends Data**: Click the buttons above to view international comparison charts with historical context.")
+                
+                st.rerun()
+
+# CHAT HISTORY PAGE
+elif st.session_state.current_page == 'history':
+    st.markdown('<h1 style="text-align: center; margin-bottom: 20px;">💾 Chat History Archive</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; color: #8b949e; margin-bottom: 40px;">Review and continue any of your past conversations with SECURO. All chat context is preserved.</p>', unsafe_allow_html=True)
+    
+    if not st.session_state.chat_sessions:
+        st.markdown("""
+        <div class="empty-state">
+            <div class="empty-icon">💬</div>
+            <h2 class="empty-title">No Chat History Found</h2>
+            <p class="empty-subtitle">Start a conversation in the AI Assistant tab to create your first chat session.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        for chat_id, chat_data in st.session_state.chat_sessions.items():
+            is_active = chat_id == st.session_state.current_chat_id
+            
+            if st.button(f"💬 {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
+                st.session_state.current_chat_id = chat_id
+                st.session_state.current_page = 'chat'
+                st.session_state.chat_active = True
+                st.rerun()
+            
+            st.caption(f"Created: {chat_data['created_at']} AST | Last Activity: {chat_data['last_activity']} AST")
+            if chat_data['messages']:
+                last_msg = chat_data['messages'][-1]['content'][:100] + "..." if len(chat_data['messages'][-1]['content']) > 100 else chat_data['messages'][-1]['content']
+                st.caption(f"Last message: {last_msg}")
+            st.markdown("---")
+
+# EMERGENCY CONTACTS PAGE
+elif st.session_state.current_page == 'emergency':
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🚨 Emergency Contacts</h1>', unsafe_allow_html=True)
+    
+    # Emergency cards grid
+    st.markdown('<div class="emergency-grid">', unsafe_allow_html=True)
+    
+    for i, (service, details) in enumerate(EMERGENCY_CONTACTS.items()):
+        if i % 4 == 0:
+            cols = st.columns(4)
+        
+        with cols[i % 4]:
+            st.markdown(f"""
+            <div class="emergency-card">
+                <div class="emergency-icon">{details['icon']}</div>
+                <h3>{service}</h3>
+                <div class="emergency-number">{details['number']}</div>
+                <p>{details['description']}</p>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    # Emergency Guidelines
+    st.markdown("""
+    <div class="guidelines-box">
+        <h3 class="guidelines-title">⚠️ Important Emergency Guidelines</h3>
+        <ul class="guidelines-list">
+            <li>For life-threatening emergencies, always call <strong>911</strong> first.</li>
+            <li>When calling, provide your exact location and the nature of the emergency.</li>
+            <li>Stay on the line until instructed to hang up.</li>
+            <li>Keep these numbers easily accessible at all times.</li>
+            <li>Follow dispatcher instructions carefully.</li>
+            <li>Provide first aid only if trained to do so.</li>
+        </ul>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Status Bar
+current_time = get_stkitts_time()
+total_chats = len(st.session_state.chat_sessions)
+
+st.markdown(f"""
+<div class="status-bar">
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span class="status-active">Enhanced AI Active</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span class="status-active">MacroTrends Integration: Active</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span class="status-active">Conversation Memory: Enabled</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>Chat Sessions: {total_chats}</span>
+    </div>
+    <div class="status-item">
+        <div class="status-dot"></div>
+        <span>🕒 {current_time} AST</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# Footer
+st.markdown(f"""
+<div class="main-footer">
+    <div class="footer-content">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h4>Data Source</h4>
+                <p>📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
+                <p>📈 Statistical Integration Active</p>
+                <p>🌍 Multi-language Support</p>
+                <p>🔒 Secure Law Enforcement Platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>Last Updated</h4>
+                <p>🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
+                <p>🤖 AI System: Enhanced AI Intelligence</p>
+                <p>📊 Enhanced AI Assistant Platform</p>
+                <p>🧠 Enhanced AI Assistant Platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Information</h4>
+                <p>📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239</p>
+                <p>📧 lio@police.kn</p>
+                <p>🌐 Multi-Chat Support</p>
+                <p>⚖️ Secure Law Enforcement Platform</p>
+            </div>
+            <div class="footer-section">
+                <h4>AI System</h4>
+                <p>🧠 Enhanced AI Assistant Platform</p>
+                <p>Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 SECURO - Enhanced AI Assistant & Crime Intelligence System | Royal St. Christopher and Nevis Police Force | Version 2.1.0</p>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)%); border: 1px solid #30363d; border-radius: 12px; padding: 20px; text-align: center;">
             <div style="color: #00ff41; font-size: 2rem; margin-bottom: 15px;">🔒</div>
             <h4 style="color: #00ff41;">SECURO AI Avatar</h4>
             <button style="background: #00ff41; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-size: 12px; margin-top: 10px;">📥 Download</button>
@@ -1658,318 +2445,4 @@ elif st.session_state.current_page == 'analytics':
     
     with col1:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
-            <h4 style="color: #00ff41; margin-bottom: 15px;">📊 Historical Homicide Rates</h4>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2020:</strong> 20.99 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2019:</strong> 25.15 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2018:</strong> 48.16 per 100k</p>
-            <p style="color: #8b949e; font-size: 12px;">Significant improvement in recent years</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
-            <h4 style="color: #00ff41; margin-bottom: 15px;">🌐 Global Comparison</h4>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Global Avg:</strong> 42.0 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>SKN 2010:</strong> 85.0 per 100k</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>World Ranking (2012):</strong> 8th</p>
-            <p style="color: #8b949e; font-size: 12px;">Above global average but improving</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border: 1px solid #30363d; border-radius: 12px; padding: 20px;">
-            <h4 style="color: #00ff41; margin-bottom: 15px;">📈 Recent Progress</h4>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2024:</strong> 1,146 total crimes</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>2023:</strong> 1,280 total crimes</p>
-            <p style="color: #c9d1d9; margin-bottom: 10px;"><strong>Q1 2025:</strong> No homicides</p>
-            <p style="color: #8b949e; font-size: 12px;">First time in 23 years</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Analytics insights
-    st.markdown('<h3>📊 Key Insights</h3>', unsafe_allow_html=True)
-    
-    tab1, tab2, tab3 = st.columns(3)
-    
-    with tab1:
-        if st.button("🔍 Crime Trends Analysis", use_container_width=True):
-            st.markdown("""
-            **Crime Trends Analysis:**
-            - Overall crime decreased from 1,280 (2023) to 1,146 (2024)
-            - Detection rates have improved across most categories
-            - Drug crimes maintain 100% detection rate
-            - Violent crimes show declining trend
-            """)
-    
-    with tab2:
-        if st.button("📈 Detection Performance", use_container_width=True):
-            st.markdown("""
-            **Detection Performance:**
-            - 2024 overall detection rate: 41.8%
-            - Best: Drug crimes (100%), Firearms (90%)
-            - Challenging: Robberies (12%), Break-ins (27%)
-            - Nevis consistently outperforms St. Kitts
-            """)
-    
-    with tab3:
-        if st.button("🌍 International Context", use_container_width=True):
-            st.markdown("""
-            **International Context:**
-            - Homicide rates significantly decreased since 2018
-            - 2020 rate (20.99) well below 2018 peak (48.16)
-            - Q1 2025 achieved zero homicides milestone
-            - Progress toward international safety standards
-            """)
-# AI ASSISTANT PAGE
-elif st.session_state.current_page == 'chat':
-    # Show welcome screen only if chat is not active
-    if not st.session_state.get('chat_active', False):
-        st.markdown("""
-        <div class="chat-welcome">
-            <div class="chat-logo">
-                🔒
-            </div>
-            <h1 class="chat-title">SECURO</h1>
-            <p class="chat-subtitle">AI Assistant</p>
-            <p style="color: #8b949e; max-width: 600px; margin: 0 auto 30px;">
-                Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having justloaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and find out more about my capabilities.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Working start conversation button
-        if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
-            # Create new chat session and activate chat
-            create_new_chat()
-            st.session_state.chat_active = True
-            st.success("✅ New chat session created! You can now start chatting with SECURO AI.")
-            st.rerun()
-    
-    else:
-        # Chat is active - show chat interface
-        st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant</h2>', unsafe_allow_html=True)
-        
-        # Chat management controls
-        col1, col2, col3 = st.columns([2, 6, 2])
-        
-        with col1:
-            if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
-                create_new_chat()
-                st.rerun()
-        
-        with col2:
-            current_chat = get_current_chat()
-            st.markdown(f"""
-            <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
-                        border-radius: 8px; padding: 10px; text-align: center;">
-                <strong style="color: #00ff41;">Current Session:</strong>
-                <span style="color: #c9d1d9;">{current_chat['name']}</span>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col3:
-            if st.button("🔙 Back to Welcome", key="back_welcome", use_container_width=True):
-                st.session_state.chat_active = False
-                st.rerun()
-        
-        # Get current chat and display messages
-        current_chat = get_current_chat()
-        messages = current_chat['messages']
-        
-        # Initialize with welcome message if no messages
-        if not messages:
-            welcome_msg = {
-                "role": "assistant",
-                "content": "🔒 SECURO AI System Online!",
-                "timestamp": get_stkitts_time()
-            }
-            messages.append(welcome_msg)
-            current_chat['messages'] = messages
-        
-        # Display chat messages
-        st.markdown("### 💬 Conversation")
-        for message in messages:
-            if message["role"] == "user":
-                clean_content = str(message["content"]).strip()
-                st.markdown(f"""
-                <div class="chat-message user-message">
-                    <div class="message-content">{clean_content}</div>
-                    <div class="message-time">You • {message["timestamp"]} AST</div>
-                </div>
-                """, unsafe_allow_html=True)
-            else:
-                clean_content = str(message["content"]).strip()
-                clean_content = re.sub(r'<[^>]+>', '', clean_content)
-                clean_content = clean_content.replace('```', '')
-               
-                st.markdown(f"""
-                <div class="chat-message bot-message">
-                    <div class="message-content">{clean_content}</div>
-                    <div class="message-time">SECURO • {message["timestamp"]} AST</div>
-                </div>
-                """, unsafe_allow_html=True)
-
-        # Chat input (always show when chat is active)
-        st.markdown("---")
-        with st.form("chat_form", clear_on_submit=True):
-            user_input = st.text_input(
-                "💬 Message AI Assistant:",
-                placeholder="Ask about crime statistics, trends, international comparisons, or request charts...",
-                label_visibility="collapsed",
-                key="chat_input"
-            )
-            
-            submitted = st.form_submit_button("Send", type="primary")
-            
-            if submitted and user_input and user_input.strip():
-                current_time = get_stkitts_time()
-                
-                # Add user message to current chat
-                add_message_to_chat("user", user_input)
-                
-                # Simple response (since we don't have the full AI function)
-                response = f"Thank you for your message: '{user_input}'. This is a demonstration response. In the full version, I would provide statistical analysis and crime intelligence based on your query using the integrated database."
-                
-                # Add assistant response to current chat
-                add_message_to_chat("assistant", response)
-                
-                st.rerun()
-
-# CHAT HISTORY PAGE
-elif st.session_state.current_page == 'history':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 20px;">💾 Chat History Archive</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; color: #8b949e; margin-bottom: 40px;">Review and continue any of your past conversations with SECURO. All chat context is preserved.</p>', unsafe_allow_html=True)
-    
-    if not st.session_state.chat_sessions:
-        st.markdown("""
-        <div class="empty-state">
-            <div class="empty-icon">💬</div>
-            <h2 class="empty-title">No Chat History Found</h2>
-            <p class="empty-subtitle">Start a conversation in the AI Assistant tab to create your first chat session.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        for chat_id, chat_data in st.session_state.chat_sessions.items():
-            is_active = chat_id == st.session_state.current_chat_id
-            
-            if st.button(f"💬 {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
-                st.session_state.current_chat_id = chat_id
-                st.session_state.current_page = 'chat'
-                st.rerun()
-            
-            st.caption(f"Created: {chat_data['created_at']} AST | Last Activity: {chat_data['last_activity']} AST")
-            if chat_data['messages']:
-                last_msg = chat_data['messages'][-1]['content'][:100] + "..." if len(chat_data['messages'][-1]['content']) > 100 else chat_data['messages'][-1]['content']
-                st.caption(f"Last message: {last_msg}")
-            st.markdown("---")
-
-# EMERGENCY CONTACTS PAGE
-elif st.session_state.current_page == 'emergency':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🚨 Emergency Contacts</h1>', unsafe_allow_html=True)
-    
-    # Emergency cards grid
-    st.markdown('<div class="emergency-grid">', unsafe_allow_html=True)
-    
-    for i, (service, details) in enumerate(EMERGENCY_CONTACTS.items()):
-        if i % 4 == 0:
-            cols = st.columns(4)
-        
-        with cols[i % 4]:
-            st.markdown(f"""
-            <div class="emergency-card">
-                <div class="emergency-icon">{details['icon']}</div>
-                <h3>{service}</h3>
-                <div class="emergency-number">{details['number']}</div>
-                <p>{details['description']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    # End of content pages
-    
-    # Emergency Guidelines
-    st.markdown("""
-    <div class="guidelines-box">
-        <h3 class="guidelines-title">⚠️ Important Emergency Guidelines</h3>
-        <ul class="guidelines-list">
-            <li>For life-threatening emergencies, always call <strong>911</strong> first.</li>
-            <li>When calling, provide your exact location and the nature of the emergency.</li>
-            <li>Stay on the line until instructed to hang up.</li>
-            <li>Keep these numbers easily accessible at all times.</li>
-            <li>Follow dispatcher instructions carefully.</li>
-            <li>Provide first aid only if trained to do so.</li>
-        </ul>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True)
-
-# Status Bar
-current_time = get_stkitts_time()
-total_chats = len(st.session_state.chat_sessions)
-
-st.markdown(f"""
-<div class="status-bar">
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span class="status-active">Enhanced AI Active</span>
-    </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span class="status-active">MacroTrends Integration: Active</span>
-    </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span class="status-active">Conversation Memory: Enabled</span>
-    </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span>Chat Sessions: {total_chats}</span>
-    </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span>🕒 {current_time} AST</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-# Footer
-st.markdown(f"""
-<div class="main-footer">
-    <div class="footer-content">
-        <div class="footer-grid">
-            <div class="footer-section">
-                <h4>Data Source</h4>
-                <p>📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
-                <p>📈 Statistical Integration Active</p>
-                <p>🌍 Multi-language Support</p>
-                <p>🔒 Secure Law Enforcement Platform</p>
-            </div>
-            <div class="footer-section">
-                <h4>Last Updated</h4>
-                <p>🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
-                <p>🤖 AI System: Enhanced AI Intelligence</p>
-                <p>📊 Enhanced AI Assistant Platform</p>
-                <p>🧠 Enhanced AI Assistant Platform</p>
-            </div>
-            <div class="footer-section">
-                <h4>Contact Information</h4>
-                <p>📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239</p>
-                <p>📧 lio@police.kn</p>
-                <p>🌐 Multi-Chat Support</p>
-                <p>⚖️ Secure Law Enforcement Platform</p>
-            </div>
-            <div class="footer-section">
-                <h4>AI System</h4>
-                <p>🧠 Enhanced AI Assistant Platform</p>
-                <p>Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 SECURO - Enhanced AI Assistant & Crime Intelligence System | Royal St. Christopher and Nevis Police Force | Version 2.1.0</p>
-        </div>
-    </div>
-</div>
-""", unsafe_allow_html=True)
+        <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100
