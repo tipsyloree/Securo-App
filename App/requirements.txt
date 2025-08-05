@@ -9,3 +9,6 @@ requests
 folium
 streamlit_folium
 PyPDF2
+json
+uuid
+tempfile
