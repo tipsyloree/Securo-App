@@ -1392,9 +1392,8 @@ with col7:
 
 # HOME PAGE
 if st.session_state.current_page == 'home':
-    # Replace lines 1397-1401 with this centered version:
-st.markdown("""
-<div class="welcome-hero" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    st.markdown("""
+    <div class="welcome-hero" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
     <h1 class="hero-title" style="text-align: center; margin: 0 auto;">Welcome to SECURO AI</h1>
     <p class="hero-subtitle" style="text-align: center; margin: 15px auto; max-width: 900px;">Your comprehensive AI assistant with statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
     <p class="hero-description" style="text-align: center; margin: 10px auto; max-width: 800px;">AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
