@@ -1244,6 +1244,15 @@ st.markdown("""
         box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2) !important;
     }
     
+    /* Make emojis monochrome and professional */
+    .stButton > button {
+        filter: grayscale(1) brightness(0.8) !important;
+    }
+    
+    .stButton > button:hover {
+        filter: grayscale(0) brightness(1) !important;
+    }
+    
     /* Text inputs */
     .stTextInput input {
         background: rgba(0, 0, 0, 0.6) !important;
@@ -1356,37 +1365,37 @@ st.markdown(f"""
 col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
 with col1:
-    if st.button("🏠 Home", key="nav_home", help="Home", use_container_width=True):
+    if st.button("⌂ Home", key="nav_home", help="Home", use_container_width=True):
         st.session_state.current_page = 'home'
         st.rerun()
 
 with col2:
-    if st.button("ℹ️ About", key="nav_about", help="About SECURO System", use_container_width=True):
+    if st.button("ⓘ About SECURO", key="nav_about", help="About SECURO System", use_container_width=True):
         st.session_state.current_page = 'about'
         st.rerun()
 
 with col3:
-    if st.button("🗺️ Hotspots", key="nav_map", help="Crime Hotspots", use_container_width=True):
+    if st.button("⊡ Crime Hotspots", key="nav_map", help="Crime Hotspots", use_container_width=True):
         st.session_state.current_page = 'hotspots'
         st.rerun()
 
 with col4:
-    if st.button("📊 Analytics", key="nav_stats", help="Statistics & Analytics", use_container_width=True):
+    if st.button("▤ Statistics & Analytics", key="nav_stats", help="Statistics & Analytics", use_container_width=True):
         st.session_state.current_page = 'analytics'
         st.rerun()
 
 with col5:
-    if st.button("💬 AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
+    if st.button("◉ AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
         st.session_state.current_page = 'chat'
         st.rerun()
 
 with col6:
-    if st.button("💾 History", key="nav_history", help="Chat History", use_container_width=True):
+    if st.button("☰ Chat History", key="nav_history", help="Chat History", use_container_width=True):
         st.session_state.current_page = 'history'
         st.rerun()
 
 with col7:
-    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button("⚠ Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.current_page = 'emergency'
         st.rerun()
 
