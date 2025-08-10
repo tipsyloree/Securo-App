@@ -1336,13 +1336,13 @@ st.markdown(f"""
             <div class="shield-icon">🔒</div>
             <div class="logo-text">
                 <h1>SECURO</h1>
-                <p>Enhanced AI Assistant & Crime Intelligence System</p>
+                <p>Royal St. Christopher & Nevis Police Force</p>
             </div>
         </div>
         <div class="status-info">
             <div class="status-item">
                 <div class="status-dot"></div>
-                <span>Royal St. Christopher & Nevis Police Force</span>
+                <span>Enhanced AI Assistant & Crime Intelligence System</span>
             </div>
             <div class="status-item">
                 <span>📅 {current_date} | 🕒 {current_time} (AST)</span>
@@ -1938,13 +1938,6 @@ st.markdown(f"""
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
             <div>
                 <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Data Source</h4>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📈 Statistical Integration Active</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌍 Multi-language Support</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔒 Secure Law Enforcement Platform</p>
-            </div>
-            <div>
-                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Last Updated</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🤖 AI System: Enhanced AI Intelligence</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Enhanced AI Assistant Platform</p>
@@ -1968,4 +1961,11 @@ st.markdown(f"""
         </div>
     </div>
 </div>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True) 8px;">📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📈 Statistical Integration Active</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌍 Multi-language Support</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔒 Secure Law Enforcement Platform</p>
+            </div>
+            <div>
+                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Last Updated</h4>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom:
