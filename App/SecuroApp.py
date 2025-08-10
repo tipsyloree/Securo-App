@@ -1333,16 +1333,17 @@ st.markdown(f"""
 <div class="main-header">
     <div class="header-content">
         <div class="logo-section">
-            <div class="shield-icon">🔒</div>
             <div class="logo-text">
-                <h1>SECURO</h1>
-                <p>Royal St. Christopher & Nevis Police Force</p>
+                <h1 style="color: #ffffff !important; font-size: 24px !important;">Royal St. Christopher & Nevis Police Force</h1>
             </div>
         </div>
         <div class="status-info">
             <div class="status-item">
-                <div class="status-dot"></div>
-                <span>Enhanced AI Assistant & Crime Intelligence System</span>
+                <div class="shield-icon">🔒</div>
+                <div style="margin-left: 10px;">
+                    <div style="color: #00ff41; font-weight: 700; font-size: 18px; letter-spacing: 1px;">SECURO</div>
+                    <div style="color: #8b949e; font-size: 11px;">Enhanced AI Assistant & Crime Intelligence System</div>
+                </div>
             </div>
             <div class="status-item">
                 <span>📅 {current_date} | 🕒 {current_time} (AST)</span>
