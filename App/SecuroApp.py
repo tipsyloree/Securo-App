@@ -1223,34 +1223,34 @@ st.markdown("""
         color: #00ff41;
     }
     
-    /* Buttons */
+    /* Buttons - Match screenshot exactly */
     .stButton > button {
         background: transparent !important;
         border: 1px solid #30363d !important;
         color: #8b949e !important;
-        padding: 12px 24px !important;
-        border-radius: 8px !important;
+        padding: 10px 20px !important;
+        border-radius: 25px !important;
         transition: all 0.3s ease !important;
         font-size: 14px !important;
         font-weight: 500 !important;
         width: 100% !important;
+        height: 45px !important;
     }
     
     .stButton > button:hover {
         background: rgba(0, 255, 65, 0.1) !important;
         border-color: #00ff41 !important;
         color: #00ff41 !important;
-        transform: translateY(-2px) !important;
-        box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 2px 10px rgba(0, 255, 65, 0.2) !important;
     }
     
-    /* Make emojis monochrome and professional */
-    .stButton > button {
-        filter: grayscale(1) brightness(0.8) !important;
-    }
-    
-    .stButton > button:hover {
-        filter: grayscale(0) brightness(1) !important;
+    /* Active/selected button styling */
+    .stButton > button:focus {
+        background: #00ff41 !important;
+        border-color: #00ff41 !important;
+        color: #000000 !important;
+        box-shadow: 0 2px 15px rgba(0, 255, 65, 0.4) !important;
     }
     
     /* Text inputs */
@@ -1365,7 +1365,7 @@ st.markdown(f"""
 col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
 
 with col1:
-    if st.button("⌂ Home", key="nav_home", help="Home", use_container_width=True):
+    if st.button("🏠 Home", key="nav_home", help="Home", use_container_width=True):
         st.session_state.current_page = 'home'
         st.rerun()
 
@@ -1375,27 +1375,27 @@ with col2:
         st.rerun()
 
 with col3:
-    if st.button("⊡ Crime Hotspots", key="nav_map", help="Crime Hotspots", use_container_width=True):
+    if st.button("🗺️ Crime Hotspots", key="nav_map", help="Crime Hotspots", use_container_width=True):
         st.session_state.current_page = 'hotspots'
         st.rerun()
 
 with col4:
-    if st.button("▤ Statistics & Analytics", key="nav_stats", help="Statistics & Analytics", use_container_width=True):
+    if st.button("📊 Statistics & Analytics", key="nav_stats", help="Statistics & Analytics", use_container_width=True):
         st.session_state.current_page = 'analytics'
         st.rerun()
 
 with col5:
-    if st.button("◉ AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
+    if st.button("🤖 AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
         st.session_state.current_page = 'chat'
         st.rerun()
 
 with col6:
-    if st.button("☰ Chat History", key="nav_history", help="Chat History", use_container_width=True):
+    if st.button("💬 Chat History", key="nav_history", help="Chat History", use_container_width=True):
         st.session_state.current_page = 'history'
         st.rerun()
 
 with col7:
-    if st.button("⚠ Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button("👥 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.current_page = 'emergency'
         st.rerun()
 
@@ -1403,7 +1403,7 @@ with col7:
 if st.session_state.current_page == 'home':
     st.markdown("""
     <div class="welcome-hero" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <h1 class="hero-title" style="text-align: center; margin: 0 auto;">Welcome to SECURO AI</h1>
+    <h1 class="hero-title" style="text-align: center; margin: 0 auto;">Welcome to Enhanced SECURO</h1>
     <p class="hero-subtitle" style="text-align: center; margin: 15px auto; max-width: 900px;">Your comprehensive AI assistant with statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
     <p class="hero-description" style="text-align: center; margin: 10px auto; max-width: 800px;">AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
 </div>
