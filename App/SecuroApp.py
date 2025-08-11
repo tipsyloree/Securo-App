@@ -449,105 +449,8 @@ def voice_input_component():
 
 def emergency_call_interface():
     """Create emergency call interface with working voice"""
-    call_html = """
-    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                border: 2px solid #ef4444; border-radius: 16px; padding: 24px; 
-                text-align: center; margin: 20px 0; animation: callGlow 2s infinite;">
-        
-        <div style="width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%; 
-                    background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
-                    align-items: center; justify-content: center; font-size: 3rem; 
-                    animation: callPulse 1.5s infinite;">
-            🚔
-        </div>
-        
-        <h2 style="color: #ffffff; margin-bottom: 8px;">📞 SECURO Emergency Call Active</h2>
-        <p style="color: #ef4444; font-size: 16px; font-weight: 600; margin-bottom: 16px;">
-            🔴 LIVE CONNECTION - Emergency Response System
-        </p>
-        
-        <div style="margin-bottom: 20px;">
-            <button onclick="startEmergencyCall()" 
-                    style="background: #10b981; border: none; color: white; padding: 10px 20px; 
-                           border-radius: 6px; margin: 5px; cursor: pointer; font-size: 14px;">
-                🎤 Speak to SECURO
-            </button>
-            
-            <button onclick="securoRespond()" 
-                    style="background: #3b82f6; border: none; color: white; padding: 10px 20px; 
-                           border-radius: 6px; margin: 5px; cursor: pointer; font-size: 14px;">
-                🔊 SECURO Respond
-            </button>
-        </div>
-        
-        <p style="color: #94a3b8; font-size: 14px; margin: 0;">
-            Emergency AI Response • Voice Recognition Active • Statistical Database Connected
-        </p>
-    </div>
-    
-    <script>
-    function startEmergencyCall() {
-        if (!recognition) {
-            alert('Voice recognition not available. Please use the text input below.');
-            return;
-        }
-        
-        // Announce call start
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance('SECURO Emergency Response System connected. Please state your inquiry.');
-            utterance.rate = 0.8;
-            utterance.pitch = 0.9;
-            window.speechSynthesis.speak(utterance);
-        }
-        
-        // Start listening after announcement
-        setTimeout(() => {
-            toggleVoiceInput();
-        }, 3000);
-    }
-    
-    function securoRespond() {
-        if ('speechSynthesis' in window) {
-            const responses = [
-                'SECURO AI Emergency Response System standing by. How may I assist law enforcement today?',
-                'Emergency protocol activated. Please provide details of your inquiry or situation.',
-                'This is SECURO AI. All crime databases are online and ready for your inquiry.',
-                'Emergency Response System connected. I have access to all statistical data and can provide immediate analysis.'
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            
-            const utterance = new SpeechSynthesisUtterance(randomResponse);
-            utterance.rate = 0.8;
-            utterance.pitch = 0.9;
-            utterance.volume = 0.9;
-            
-            window.speechSynthesis.speak(utterance);
-        } else {
-            alert('Text-to-speech not supported in this browser.');
-        }
-    }
-    </script>
-    
-    <style>
-    @keyframes callGlow {
-        0%, 100% { 
-            border-color: #ef4444;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-        }
-        50% { 
-            border-color: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-        }
-    }
-    
-    @keyframes callPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-    </style>
-    """
-    return call_html
+    # REMOVED - Call feature not needed
+    pass
     """Create a new chat session"""
     chat_id = f"chat_{st.session_state.chat_counter}_{int(time.time())}"
     st.session_state.chat_sessions[chat_id] = {
@@ -1852,7 +1755,7 @@ with st.sidebar:
             - Context-aware responses
             - Crime data analysis
             - Professional assistance
-            - 🎤 **Voice Controls (NEW!)**
+            - 🎤 **Voice Features (Speech & TTS)**
             
             **Statistical Coverage:**
             - 2022-2025 complete annual data
@@ -1868,35 +1771,35 @@ with st.sidebar:
         st.markdown("---")
         
         # Voice Control Panel
-        st.markdown("### 🎤 Voice Controls")
+        st.markdown("### 🎤 Voice Features")
         
         st.markdown("""
         <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                     border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-            <h4 style="color: #10b981; margin-bottom: 12px; font-size: 14px;">🎙️ Voice Features Available</h4>
+            <h4 style="color: #10b981; margin-bottom: 12px; font-size: 14px;">🎙️ Available Voice Features</h4>
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <div style="color: #94a3b8; font-size: 12px;">🎤 Voice Input - Speak your questions</div>
-                <div style="color: #94a3b8; font-size: 12px;">🔊 Text-to-Speech - AI responses spoken</div>
-                <div style="color: #94a3b8; font-size: 12px;">📞 Call SECURO - Emergency voice mode</div>
-                <div style="color: #94a3b8; font-size: 12px;">🎧 Auto-Speak - Automatic TTS</div>
+                <div style="color: #94a3b8; font-size: 12px;">🔊 Text-to-Speech - AI responses spoken aloud</div>
+                <div style="color: #94a3b8; font-size: 12px;">🎧 Auto-Speak - Automatic TTS for responses</div>
+                <div style="color: #94a3b8; font-size: 12px;">🎯 Individual Message Speech - Click speak on any message</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        **🚔 Emergency Voice Protocol:**
-        - Click "Call SECURO" for voice emergency mode
-        - Use voice input for hands-free operation
-        - Auto-speak provides immediate audio feedback
-        - Professional police dispatch experience
+        **🚔 Voice Features:**
+        - Click "🎤 Voice Input" to speak your questions
+        - Toggle "Auto-Speak" for automatic response reading
+        - Use individual "🔊 Speak" buttons on messages
+        - Professional police-grade voice quality
         """)
         
         st.markdown("---")
         
         st.markdown("### 📊 Quick Stats")
         st.markdown(f"🗨️ Active Chat Sessions: {len(st.session_state.chat_sessions)}")
-        st.markdown(f"🎤 Voice Status: {'Enabled' if st.session_state.get('voice_enabled', True) else 'Disabled'}")
-        st.markdown(f"📞 Call Mode: {'Active' if st.session_state.get('voice_call_active', False) else 'Standby'}")
+        st.markdown(f"🎤 Voice Features: Enabled")
+        st.markdown(f"🔊 TTS Status: Ready")
 
 # Main Content Area
 if not st.session_state.sidebar_view:
@@ -1950,33 +1853,27 @@ if not st.session_state.sidebar_view:
             </div>
             """, unsafe_allow_html=True)
             
-            # Center the start button and call option
-            col1, col2, col3 = st.columns([1, 1, 1])
-            with col1:
-                if st.button("🚀 Start Chat", key="start_chat", use_container_width=True):
+            # Center the start button
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
                     create_new_chat()
                     st.session_state.chat_active = True
                     st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
                     st.rerun()
             
-            with col2:
-                if st.button("📞 Call SECURO", key="call_welcome", use_container_width=True):
-                    st.session_state.voice_call_active = True
-                    create_new_chat()
-                    st.session_state.chat_active = True
-                    # Auto-announce call connection
-                    st.session_state.last_response = "SECURO Emergency Response System connected. How can I assist you with your law enforcement inquiry?"
-                    st.success("📞 Voice call initiated! SECURO Emergency Response System connected!")
-                    st.rerun()
-            
-            with col3:
-                st.markdown("""
-                <div style="text-align: center; padding: 8px; background: rgba(16, 185, 129, 0.1); 
+            # Voice status indicator
+            st.markdown("""
+            <div style="text-align: center; margin-top: 20px;">
+                <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
                             border: 1px solid #10b981; border-radius: 8px;">
-                    <div style="color: #10b981; font-size: 12px; font-weight: 600;">🎤 VOICE READY</div>
-                    <div style="color: #94a3b8; font-size: 10px;">Speech Recognition Active</div>
+                    <div style="color: #10b981; font-size: 14px; font-weight: 600;">🎤 VOICE FEATURES AVAILABLE</div>
+                    <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
+                        Speech Recognition • Text-to-Speech • Auto-Speak
+                    </div>
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
         
         else:
             # Chat interface with working voice controls
@@ -1987,7 +1884,7 @@ if not st.session_state.sidebar_view:
                         <h3>🤖 SECURO AI Assistant</h3>
                         <div class="ai-status">
                             <span style="color: #10b981;">🟢</span>
-                            Online with Statistical Knowledge & Voice Capabilities
+                            Online with Statistical Knowledge & Voice Features
                         </div>
                     </div>
                 </div>
@@ -1997,7 +1894,7 @@ if not st.session_state.sidebar_view:
             st.components.v1.html(voice_input_component(), height=80)
             
             # Chat controls
-            col1, col2, col3 = st.columns([1, 1, 1])
+            col1, col2 = st.columns([1, 1])
             with col1:
                 if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
                     create_new_chat()
@@ -2008,25 +1905,11 @@ if not st.session_state.sidebar_view:
                     st.session_state.chat_active = False
                     st.rerun()
             
-            with col3:
-                if st.button("📞 Call SECURO", key="call_securo", use_container_width=True):
-                    st.session_state.voice_call_active = not st.session_state.voice_call_active
-                    st.rerun()
-            
             st.markdown("</div>", unsafe_allow_html=True)
-            
-            # Voice Call Interface
-            if st.session_state.voice_call_active:
-                st.components.v1.html(emergency_call_interface(), height=400)
-                
-                # End call button
-                if st.button("📞 End Call", key="end_call", use_container_width=True):
-                    st.session_state.voice_call_active = False
-                    st.rerun()
             
             # Current chat info
             current_chat = get_current_chat()
-            st.info(f"**Current Session:** {current_chat['name']} | 🎤 Voice Controls Active")
+            st.info(f"**Current Session:** {current_chat['name']} | 🎤 Voice Features Active")
             
             # Display messages
             messages = current_chat['messages']
@@ -2251,10 +2134,9 @@ if not st.session_state.sidebar_view:
             </div>
             """, unsafe_allow_html=True)
 
-# Modern Status Bar with Voice Status
+# Modern Status Bar with Voice Features
 current_time = get_stkitts_time()
 total_chats = len(st.session_state.chat_sessions)
-voice_status = "Active" if st.session_state.get('voice_call_active', False) else "Ready"
 
 st.markdown(f"""
 <div class="status-bar">
@@ -2273,7 +2155,7 @@ st.markdown(f"""
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>🎤 Voice Controls: {voice_status}</span>
+            <span>🎤 Voice Features: Ready</span>
         </div>
         <div class="status-indicator">
             <div class="status-dot"></div>
