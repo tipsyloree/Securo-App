@@ -1151,13 +1151,134 @@ st.markdown("""
         }
     }
     
-    /* Text colors */
-    h1, h2, h3, h4, h5, h6 {
-        color: #ffffff !important;
+    /* Voice controls */
+    .voice-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 12px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        margin-bottom: 16px;
     }
     
-    p, span, div, li {
-        color: #cbd5e1 !important;
+    .voice-button {
+        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
+        border: none !important;
+        color: white !important;
+        padding: 8px 12px !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        min-width: 80px !important;
+    }
+    
+    .voice-button:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    .voice-button.active {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        animation: voice-pulse 1.5s infinite !important;
+    }
+    
+    @keyframes voice-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+    
+    .call-securo-button {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        border: none !important;
+        color: white !important;
+        padding: 12px 24px !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+        animation: call-button-pulse 2s infinite !important;
+    }
+    
+    @keyframes call-button-pulse {
+        0%, 100% { 
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+        }
+        50% { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        }
+    }
+    
+    .call-securo-button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4) !important;
+    }
+    
+    .voice-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+    
+    .voice-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        animation: voice-blink 1s infinite;
+    }
+    
+    @keyframes voice-blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
+    
+    .call-interface {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 2px solid #ef4444;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        margin: 20px 0;
+        animation: call-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes call-glow {
+        0%, 100% { 
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+        50% { 
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+    }
+    
+    .call-avatar {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #3b82f6, #ef4444);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        animation: call-avatar-pulse 1.5s infinite;
+    }
+    
+    @keyframes call-avatar-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
     }
     
     /* Custom scrollbar */
@@ -1177,7 +1298,202 @@ st.markdown("""
     ::-webkit-scrollbar-thumb:hover {
         background: #64748b;
     }
+    
+    /* Text colors */
+    h1, h2, h3, h4, h5, h6 {
+        color: #ffffff !important;
+    }
+    
+    p, span, div, li {
+        color: #cbd5e1 !important;
+    }
 </style>
+
+<script>
+// Voice functionality
+let speechSynthesis = window.speechSynthesis;
+let speechRecognition = null;
+let isListening = false;
+let autoSpeak = false;
+
+// Initialize speech recognition
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    speechRecognition = new SpeechRecognition();
+    speechRecognition.continuous = false;
+    speechRecognition.interimResults = false;
+    speechRecognition.lang = 'en-US';
+    
+    speechRecognition.onstart = function() {
+        isListening = true;
+        updateVoiceButtons();
+    };
+    
+    speechRecognition.onend = function() {
+        isListening = false;
+        updateVoiceButtons();
+    };
+    
+    speechRecognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        const chatInput = document.querySelector('input[data-testid="textInput"]');
+        if (chatInput) {
+            chatInput.value = transcript;
+            chatInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    };
+    
+    speechRecognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        isListening = false;
+        updateVoiceButtons();
+    };
+}
+
+// Text-to-speech function
+function speakText(text) {
+    if (!speechSynthesis) return;
+    
+    // Clean text for speech
+    const cleanText = text
+        .replace(/🚔|🚨|📊|💬|🤖|🟢|✅|❌|📈|📉|🔍|⚠️|💾|🧠|📅|🕒|🗺️|🏠|ℹ️|📊|💾|🚨/g, '')
+        .replace(/\*\*/g, '')
+        .replace(/###|##|#/g, '')
+        .replace(/•/g, '')
+        .replace(/\n+/g, '. ')
+        .trim();
+    
+    if (cleanText.length === 0) return;
+    
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 0.8;
+    
+    // Try to use a more professional voice
+    const voices = speechSynthesis.getVoices();
+    const preferredVoice = voices.find(voice => 
+        voice.name.includes('Microsoft') || 
+        voice.name.includes('Google') || 
+        voice.name.includes('Alex') ||
+        voice.name.includes('Daniel')
+    );
+    
+    if (preferredVoice) {
+        utterance.voice = preferredVoice;
+    }
+    
+    speechSynthesis.speak(utterance);
+}
+
+// Voice control functions
+function toggleVoiceInput() {
+    if (!speechRecognition) {
+        alert('Speech recognition not supported in this browser.');
+        return;
+    }
+    
+    if (isListening) {
+        speechRecognition.stop();
+    } else {
+        speechRecognition.start();
+    }
+}
+
+function toggleAutoSpeak() {
+    autoSpeak = !autoSpeak;
+    updateVoiceButtons();
+    
+    // Save preference
+    if (typeof(Storage) !== "undefined") {
+        localStorage.setItem('securo_auto_speak', autoSpeak);
+    }
+}
+
+function updateVoiceButtons() {
+    const voiceInputBtn = document.getElementById('voice-input-btn');
+    const autoSpeakBtn = document.getElementById('auto-speak-btn');
+    
+    if (voiceInputBtn) {
+        voiceInputBtn.className = isListening ? 'voice-button active' : 'voice-button';
+        voiceInputBtn.innerHTML = isListening ? '🔴 Listening...' : '🎤 Voice Input';
+    }
+    
+    if (autoSpeakBtn) {
+        autoSpeakBtn.className = autoSpeak ? 'voice-button active' : 'voice-button';
+        autoSpeakBtn.innerHTML = autoSpeak ? '🔊 Auto-Speak ON' : '🔇 Auto-Speak OFF';
+    }
+}
+
+// Auto-speak new assistant messages
+function observeNewMessages() {
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && autoSpeak) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        const assistantMessages = node.querySelectorAll('.message.assistant .message-bubble');
+                        assistantMessages.forEach(function(messageElement) {
+                            const text = messageElement.textContent;
+                            if (text && text.length > 0) {
+                                setTimeout(() => speakText(text), 500);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    });
+    
+    // Start observing
+    const chatContainer = document.body;
+    observer.observe(chatContainer, {
+        childList: true,
+        subtree: true
+    });
+}
+
+// Load preferences on page load
+window.addEventListener('load', function() {
+    if (typeof(Storage) !== "undefined") {
+        const savedAutoSpeak = localStorage.getItem('securo_auto_speak');
+        if (savedAutoSpeak === 'true') {
+            autoSpeak = true;
+        }
+    }
+    
+    updateVoiceButtons();
+    observeNewMessages();
+    
+    // Load voices
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = function() {
+            // Voices loaded
+        };
+    }
+});
+
+// Emergency call simulation
+function startVoiceCall() {
+    const callInterface = document.getElementById('call-interface');
+    if (callInterface) {
+        callInterface.style.display = 'block';
+        
+        // Simulate call connection
+        setTimeout(() => {
+            speakText("SECURO AI Emergency Response System connected. How can I assist you with your law enforcement inquiry?");
+        }, 1000);
+    }
+}
+
+function endVoiceCall() {
+    const callInterface = document.getElementById('call-interface');
+    if (callInterface) {
+        callInterface.style.display = 'none';
+    }
+    speechSynthesis.cancel();
+}
+</script>
 """, unsafe_allow_html=True)
 
 # Modern Header Bar
@@ -1367,6 +1683,7 @@ with st.sidebar:
             - Context-aware responses
             - Crime data analysis
             - Professional assistance
+            - 🎤 **Voice Controls (NEW!)**
             
             **Statistical Coverage:**
             - 2022-2025 complete annual data
@@ -1378,6 +1695,39 @@ with st.sidebar:
         else:
             st.error("⚠️ AI Offline")
             st.write("Please check your API key configuration")
+        
+        st.markdown("---")
+        
+        # Voice Control Panel
+        st.markdown("### 🎤 Voice Controls")
+        
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                    border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
+            <h4 style="color: #10b981; margin-bottom: 12px; font-size: 14px;">🎙️ Voice Features Available</h4>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="color: #94a3b8; font-size: 12px;">🎤 Voice Input - Speak your questions</div>
+                <div style="color: #94a3b8; font-size: 12px;">🔊 Text-to-Speech - AI responses spoken</div>
+                <div style="color: #94a3b8; font-size: 12px;">📞 Call SECURO - Emergency voice mode</div>
+                <div style="color: #94a3b8; font-size: 12px;">🎧 Auto-Speak - Automatic TTS</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        **🚔 Emergency Voice Protocol:**
+        - Click "Call SECURO" for voice emergency mode
+        - Use voice input for hands-free operation
+        - Auto-speak provides immediate audio feedback
+        - Professional police dispatch experience
+        """)
+        
+        st.markdown("---")
+        
+        st.markdown("### 📊 Quick Stats")
+        st.markdown(f"🗨️ Active Chat Sessions: {len(st.session_state.chat_sessions)}")
+        st.markdown(f"🎤 Voice Status: {'Enabled' if st.session_state.get('voice_enabled', True) else 'Disabled'}")
+        st.markdown(f"📞 Call Mode: {'Active' if st.session_state.get('voice_call_active', False) else 'Standby'}")
 
 # Main Content Area
 if not st.session_state.sidebar_view:
@@ -1431,17 +1781,34 @@ if not st.session_state.sidebar_view:
             </div>
             """, unsafe_allow_html=True)
             
-            # Center the start button
-            col1, col2, col3 = st.columns([1, 2, 1])
-            with col2:
-                if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+            # Center the start button and call option
+            col1, col2, col3 = st.columns([1, 1, 1])
+            with col1:
+                if st.button("🚀 Start Chat", key="start_chat", use_container_width=True):
                     create_new_chat()
                     st.session_state.chat_active = True
                     st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
                     st.rerun()
+            
+            with col2:
+                if st.button("📞 Call SECURO", key="call_welcome", use_container_width=True):
+                    st.session_state.voice_call_active = True
+                    create_new_chat()
+                    st.session_state.chat_active = True
+                    st.success("📞 Voice call initiated! SECURO Emergency Response System connected!")
+                    st.rerun()
+            
+            with col3:
+                st.markdown("""
+                <div style="text-align: center; padding: 8px; background: rgba(16, 185, 129, 0.1); 
+                            border: 1px solid #10b981; border-radius: 8px;">
+                    <div style="color: #10b981; font-size: 12px; font-weight: 600;">🎤 VOICE READY</div>
+                    <div style="color: #94a3b8; font-size: 10px;">Speech Recognition Active</div>
+                </div>
+                """, unsafe_allow_html=True)
         
         else:
-            # Chat interface
+            # Chat interface with voice controls
             st.markdown("""
             <div class="chat-container">
                 <div class="chat-header">
@@ -1449,14 +1816,30 @@ if not st.session_state.sidebar_view:
                         <h3>🤖 SECURO AI Assistant</h3>
                         <div class="ai-status">
                             <span style="color: #10b981;">🟢</span>
-                            Online with Statistical Knowledge
+                            Online with Statistical Knowledge & Voice Capabilities
                         </div>
                     </div>
                     <div style="display: flex; gap: 8px;">
             """, unsafe_allow_html=True)
             
+            # Voice controls
+            st.markdown("""
+            <div class="voice-controls">
+                <button id="voice-input-btn" class="voice-button" onclick="toggleVoiceInput()">
+                    🎤 Voice Input
+                </button>
+                <button id="auto-speak-btn" class="voice-button" onclick="toggleAutoSpeak()">
+                    🔇 Auto-Speak OFF
+                </button>
+                <div class="voice-status">
+                    <div class="voice-indicator"></div>
+                    <span>Voice Ready</span>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            
             # Chat controls
-            col1, col2 = st.columns([1, 1])
+            col1, col2, col3 = st.columns([1, 1, 1])
             with col1:
                 if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
                     create_new_chat()
@@ -1467,11 +1850,45 @@ if not st.session_state.sidebar_view:
                     st.session_state.chat_active = False
                     st.rerun()
             
+            with col3:
+                if st.button("📞 Call SECURO", key="call_securo", use_container_width=True):
+                    st.session_state.voice_call_active = not st.session_state.voice_call_active
+                    st.rerun()
+            
             st.markdown("</div></div>", unsafe_allow_html=True)
+            
+            # Voice Call Interface
+            if st.session_state.voice_call_active:
+                st.markdown("""
+                <div id="call-interface" class="call-interface">
+                    <div class="call-avatar">🚔</div>
+                    <h2 style="color: #ffffff; margin-bottom: 8px;">📞 SECURO Voice Call Active</h2>
+                    <p style="color: #ef4444; font-size: 16px; font-weight: 600; margin-bottom: 16px;">
+                        🔴 LIVE CONNECTION - Emergency Response System
+                    </p>
+                    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 20px;">
+                        <button class="voice-button" onclick="toggleVoiceInput()" style="background: #10b981 !important;">
+                            🎤 Speak to SECURO
+                        </button>
+                        <button class="voice-button" onclick="speakText('SECURO AI standing by for your emergency or intelligence inquiry. How may I assist law enforcement today?')" 
+                                style="background: #3b82f6 !important;">
+                            🔊 SECURO Respond
+                        </button>
+                    </div>
+                    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 0;">
+                        Emergency AI Response • Voice Recognition Active • Statistical Database Connected
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # End call button
+                if st.button("📞 End Call", key="end_call", use_container_width=True):
+                    st.session_state.voice_call_active = False
+                    st.rerun()
             
             # Current chat info
             current_chat = get_current_chat()
-            st.info(f"**Current Session:** {current_chat['name']}")
+            st.info(f"**Current Session:** {current_chat['name']} | 🎤 Voice Controls Active")
             
             # Display messages
             messages = current_chat['messages']
@@ -1504,28 +1921,56 @@ if not st.session_state.sidebar_view:
                     clean_content = re.sub(r'<[^>]+>', '', clean_content)
                     clean_content = clean_content.replace('```', '')
                     
+                    # Create unique ID for each message for voice controls
+                    message_id = f"msg_{hash(message['content']) % 10000}"
+                    
                     st.markdown(f"""
                     <div class="message assistant">
                         <div>
-                            <div class="message-bubble">{clean_content}</div>
-                            <div class="message-time">SECURO • {message["timestamp"]} AST</div>
+                            <div class="message-bubble" id="{message_id}">{clean_content}</div>
+                            <div class="message-time">
+                                SECURO • {message["timestamp"]} AST
+                                <button class="voice-button" onclick="speakText(document.getElementById('{message_id}').textContent)" 
+                                        style="margin-left: 8px; padding: 2px 6px; font-size: 10px;">
+                                    🔊 Speak
+                                </button>
+                            </div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
             
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # Chat input
+            # Chat input with voice controls
             st.markdown("---")
             with st.form("chat_form", clear_on_submit=True):
-                user_input = st.text_input(
-                    "💬 Message Enhanced AI Assistant:",
-                    placeholder="Ask about crime statistics, trends, international comparisons, or request charts...",
-                    label_visibility="collapsed",
-                    key="chat_input"
-                )
+                col1, col2 = st.columns([6, 1])
                 
-                submitted = st.form_submit_button("Send", type="primary")
+                with col1:
+                    user_input = st.text_input(
+                        "💬 Message Enhanced AI Assistant:",
+                        placeholder="Type or speak your question about crime statistics, trends, or analysis... 🎤",
+                        label_visibility="collapsed",
+                        key="chat_input"
+                    )
+                
+                with col2:
+                    st.markdown("""
+                    <button type="button" class="voice-button" onclick="toggleVoiceInput()" 
+                            style="width: 100%; margin-top: 8px; padding: 8px;">
+                        🎤
+                    </button>
+                    """, unsafe_allow_html=True)
+                
+                col1, col2 = st.columns([4, 1])
+                with col1:
+                    submitted = st.form_submit_button("Send", type="primary")
+                with col2:
+                    st.markdown("""
+                    <div style="text-align: center; padding: 4px; font-size: 10px; color: #94a3b8;">
+                        Voice Ready 🎤
+                    </div>
+                    """, unsafe_allow_html=True)
                 
                 if submitted and user_input and user_input.strip():
                     current_time = get_stkitts_time()
@@ -1548,7 +1993,24 @@ if not st.session_state.sidebar_view:
                     if chart_type:
                         st.session_state.show_chart = chart_type
                     
+                    # Store the response for potential auto-speak
+                    st.session_state.last_response = response
+                    
                     st.rerun()
+            
+            # Auto-speak the last response if enabled
+            if st.session_state.get('last_response') and st.session_state.get('auto_speak', False):
+                st.markdown(f"""
+                <script>
+                    setTimeout(function() {{
+                        if (autoSpeak) {{
+                            speakText(`{st.session_state.last_response.replace('`', '').replace("'", "").replace('"', '')[:500]}...`);
+                        }}
+                    }}, 1000);
+                </script>
+                """, unsafe_allow_html=True)
+                # Clear the response to avoid re-speaking
+                st.session_state.last_response = None
             
             # Display charts after the rerun (so they persist)
             if st.session_state.get('show_chart'):
@@ -1679,9 +2141,10 @@ if not st.session_state.sidebar_view:
             </div>
             """, unsafe_allow_html=True)
 
-# Modern Status Bar
+# Modern Status Bar with Voice Status
 current_time = get_stkitts_time()
 total_chats = len(st.session_state.chat_sessions)
+voice_status = "Active" if st.session_state.get('voice_call_active', False) else "Ready"
 
 st.markdown(f"""
 <div class="status-bar">
@@ -1697,6 +2160,10 @@ st.markdown(f"""
         <div class="status-indicator active">
             <div class="status-dot"></div>
             <span>Conversation Memory: Enabled</span>
+        </div>
+        <div class="status-indicator active">
+            <div class="status-dot"></div>
+            <span>🎤 Voice Controls: {voice_status}</span>
         </div>
         <div class="status-indicator">
             <div class="status-dot"></div>
