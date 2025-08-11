@@ -1696,7 +1696,7 @@ if not st.session_state.sidebar_view:
                 <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI</p>
                 <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
                     Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
-                    international data, and conversation memory. Ready to assist with authentic police emergency styling! 
+                    international data, and conversation memory! 
                 </p>
                 <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
                     <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
@@ -1744,7 +1744,7 @@ if not st.session_state.sidebar_view:
                         border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <div>
-                        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🤖 SECURO AI Assistant</h3>
+                        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🤖 SECURO AI </h3>
                         <div style="color: #10b981; font-size: 14px; margin-top: 4px;">
                             <span style="color: #10b981;">🟢</span>
                             Online with Statistical Knowledge & TTS Features
