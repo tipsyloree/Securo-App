@@ -1526,8 +1526,8 @@ with col1:
         st.rerun()
 
 with col2:
-    if st.button("💬 AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
-        st.session_state.current_page = 'chat'
+    if st.button("ℹ️ About", key="nav_about", help="About SECURO System", use_container_width=True):
+        st.session_state.current_page = 'about'
         st.rerun()
 
 with col3:
@@ -1541,8 +1541,8 @@ with col4:
         st.rerun()
 
 with col5:
-    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
-        st.session_state.current_page = 'emergency'
+    if st.button("💬 AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
+        st.session_state.current_page = 'chat'
         st.rerun()
 
 with col6:
@@ -1551,8 +1551,8 @@ with col6:
         st.rerun()
 
 with col7:
-    if st.button("ℹ️ About", key="nav_about", help="About SECURO System", use_container_width=True):
-        st.session_state.current_page = 'about'
+    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+        st.session_state.current_page = 'emergency'
         st.rerun()
 
 # HOME PAGE
@@ -1565,423 +1565,42 @@ if st.session_state.current_page == 'home':
 </div>
 """, unsafe_allow_html=True)
     
-    # Slideshow Feature Cards
-    st.markdown("""
-    <div class="slideshow-container">
-        <div class="slide-wrapper">
-            <div class="slide active">
-                <div class="slide-content">
-                    <div class="slide-icon">🧠</div>
-                    <div class="slide-text">
-                        <h3>Enhanced AI with Memory</h3>
-                        <p>Statistical knowledge & conversation context</p>
-                    </div>
-                </div>
-            </div>
-            <div class="slide">
-                <div class="slide-content">
-                    <div class="slide-icon">📊</div>
-                    <div class="slide-text">
-                        <h3>Crime Statistics + International Data</h3>
-                        <p>Real-time local & global crime analysis</p>
-                    </div>
-                </div>
-            </div>
-            <div class="slide">
-                <div class="slide-content">
-                    <div class="slide-icon">💾</div>
-                    <div class="slide-text">
-                        <h3>Multi-Chat Sessions</h3>
-                        <p>Chat history & context preservation</p>
-                    </div>
-                </div>
-            </div>
-            <div class="slide">
-                <div class="slide-content">
-                    <div class="slide-icon">📈</div>
-                    <div class="slide-text">
-                        <h3>Advanced Analytics</h3>
-                        <p>Detection rates & trend analysis</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Slide Indicators -->
-        <div class="slide-indicators">
-            <div class="indicator active"></div>
-            <div class="indicator"></div>
-            <div class="indicator"></div>
-            <div class="indicator"></div>
-        </div>
-    </div>
+    # Feature cards
+    col1, col2 = st.columns(2)
     
-    <style>
-    .slideshow-container {{
-        position: relative;
-        max-width: 100%;
-        margin: 40px auto;
-        height: 100px;
-        overflow: hidden;
-        border-radius: 15px;
-        border: 1px solid #30363d;
-        background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
-    }}
-    
-    .slide-wrapper {{
-        display: flex;
-        height: 100%;
-        animation: slideshow 20s infinite;
-    }}
-    
-    .slide {{
-        min-width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 15px 40px;
-        opacity: 0;
-        transform: translateX(0);
-        transition: opacity 1s ease-in-out;
-    }}
-    
-    .slide.active {{
-        opacity: 1;
-    }}
-    
-    .slide-content {{
-        text-align: center;
-        max-width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-    }}
-    
-    .slide-icon {{
-        font-size: 2rem;
-        color: #1e90ff;
-        text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
-        animation: slide-icon-siren 3s ease-in-out infinite;
-        flex-shrink: 0;
-    }}
-    
-    @keyframes slide-icon-siren {{
-        0%, 100% {{ 
-            color: #1e90ff;
-            text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
-        }}
-        50% {{ 
-            color: #ff4444;
-            text-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
-        }}
-    }}
-    
-    .slide-text {{
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-    }}
-    
-    .slide-content h3 {{
-        color: #1e90ff !important;
-        font-size: 1.1rem !important;
-        margin: 0 0 5px 0 !important;
-        font-weight: 600 !important;
-        animation: slide-title-siren 4s ease-in-out infinite;
-        line-height: 1.2 !important;
-    }}
-    
-    @keyframes slide-title-siren {{
-        0%, 100% {{ color: #1e90ff !important; }}
-        50% {{ color: #ff4444 !important; }}
-    }}
-    
-    .slide-content p {{
-        color: #c9d1d9 !important;
-        font-size: 0.85rem !important;
-        line-height: 1.3 !important;
-        margin: 0 !important;
-    }}
-    
-    @keyframes slideshow {{
-        0%, 20% {{ transform: translateX(0%); }}
-        25%, 45% {{ transform: translateX(-100%); }}
-        50%, 70% {{ transform: translateX(-200%); }}
-        75%, 95% {{ transform: translateX(-300%); }}
-        100% {{ transform: translateX(0%); }}
-    }}
-    
-    .slide-indicators {{
-        position: absolute;
-        bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 6px;
-    }}
-    
-    .indicator {{
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transition: all 0.3s ease;
-        animation: indicator-siren 5s infinite;
-    }}
-    
-    @keyframes indicator-siren {{
-        0%, 25% {{ 
-            background: #1e90ff;
-            box-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
-        }}
-        25.1%, 50% {{ 
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: none;
-        }}
-        50.1%, 75% {{ 
-            background: #ff4444;
-            box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
-        }}
-        75.1%, 100% {{ 
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: none;
-        }}
-    }}
-    
-    .indicator.active {{
-        background: #1e90ff;
-        box-shadow: 0 0 12px rgba(30, 144, 255, 0.7);
-    }}
-    </style>
-    """, unsafe_allow_html=True)
-    
-    <style>
-    .slideshow-container {
-        position: relative;
-        max-width: 100%;
-        margin: 40px auto;
-        height: 100px;
-        overflow: hidden;
-        border-radius: 15px;
-        border: 1px solid #30363d;
-        background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
-    }
-    
-    .slide-wrapper {
-        display: flex;
-        height: 100%;
-        animation: slideshow 20s infinite;
-    }
-    
-    .slide {
-        min-width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 15px 40px;
-        opacity: 0;
-        transform: translateX(0);
-        transition: opacity 1s ease-in-out;
-    }
-    
-    .slide.active {
-        opacity: 1;
-    }
-    
-    .slide-content {
-        text-align: center;
-        max-width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-    }
-    
-    .slide-icon {
-        font-size: 2rem;
-        color: #1e90ff;
-        text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
-        animation: slide-icon-siren 3s ease-in-out infinite;
-        flex-shrink: 0;
-    }
-    
-    @keyframes slide-icon-siren {
-        0%, 100% { 
-            color: #1e90ff;
-            text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
-        }
-        50% { 
-            color: #ff4444;
-            text-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
-        }
-    }
-    
-    .slide-text {
-        display: flex;
-        flex-direction: column;
-        text-align: left;
-    }
-    
-    .slide-content h3 {
-        color: #1e90ff !important;
-        font-size: 1.1rem !important;
-        margin: 0 0 5px 0 !important;
-        font-weight: 600 !important;
-        animation: slide-title-siren 4s ease-in-out infinite;
-        line-height: 1.2 !important;
-    }
-    
-    @keyframes slide-title-siren {
-        0%, 100% { color: #1e90ff !important; }
-        50% { color: #ff4444 !important; }
-    }
-    
-    .slide-content p {
-        color: #c9d1d9 !important;
-        font-size: 0.85rem !important;
-        line-height: 1.3 !important;
-        margin: 0 !important;
-    }
-    
-    @keyframes slideshow {
-        0%, 20% { transform: translateX(0%); }
-        25%, 45% { transform: translateX(-100%); }
-        50%, 70% { transform: translateX(-200%); }
-        75%, 95% { transform: translateX(-300%); }
-        100% { transform: translateX(0%); }
-    }
-    
-    .slide-indicators {
-        position: absolute;
-        bottom: 8px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 6px;
-    }
-    
-    .indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transition: all 0.3s ease;
-        animation: indicator-siren 5s infinite;
-    }
-    
-    @keyframes indicator-siren {
-        0%, 25% { 
-            background: #1e90ff;
-            box-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
-        }
-        25.1%, 50% { 
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: none;
-        }
-        50.1%, 75% { 
-            background: #ff4444;
-            box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
-        }
-        75.1%, 100% { 
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: none;
-        }
-    }
-    
-    .indicator.active {
-        background: #1e90ff;
-        box-shadow: 0 0 12px rgba(30, 144, 255, 0.7);
-    }
-    </style>
-    """, unsafe_allow_html=True)
-    
-    # Action Buttons
-    st.markdown("<br><br>", unsafe_allow_html=True)
-    
-    col1, col2, col3 = st.columns([1, 2, 1])
-    
-    with col2:
+    with col1:
         st.markdown("""
-        <div style="text-align: center;">
-            <h2 style="color: #ffffff; margin-bottom: 30px; font-size: 1.8rem;">🚨 Quick Actions</h2>
+        <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>Enhanced AI with Police Siren Colors</h3>
+            <p>Conversation memory, statistical knowledge integration, and context-aware responses powered by real crime data from police PDFs - now with emergency blue & red siren effects! 🚔</p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Start AI Chat Button
-        if st.button("💬 Start AI Assistant Chat", key="start_ai_chat", use_container_width=True):
-            st.session_state.current_page = 'chat'
-            st.session_state.chat_active = True
-            if not st.session_state.current_chat_id:
-                create_new_chat()
-            st.rerun()
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>Integrated Statistics + International Data</h3>
+            <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends - all styled with police emergency colors.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">💾</div>
+            <h3>Conversation Management</h3>
+            <p>Multiple chat sessions with memory, chat history, and context preservation across conversations for continuous assistance - with animated police siren styling!</p>
+        </div>
+        """, unsafe_allow_html=True)
         
-        st.markdown("<br>", unsafe_allow_html=True)
-        
-        # Open Crime Map Button  
-        if st.button("🗺️ Open Crime Hotspot Map", key="open_crime_map", use_container_width=True):
-            st.session_state.current_page = 'hotspots'
-            st.rerun()
-    
-    # Enhanced Action Button Styling
-    st.markdown("""
-    <style>
-    .stButton > button {
-        background: linear-gradient(135deg, #1e90ff 0%, #0066cc 100%) !important;
-        border: 2px solid #1e90ff !important;
-        color: #ffffff !important;
-        padding: 20px 40px !important;
-        border-radius: 15px !important;
-        font-size: 1.2rem !important;
-        font-weight: 600 !important;
-        width: 100% !important;
-        transition: all 0.4s ease !important;
-        box-shadow: 0 8px 25px rgba(30, 144, 255, 0.3) !important;
-        text-transform: uppercase !important;
-        letter-spacing: 1px !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .stButton > button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s ease;
-    }
-    
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%) !important;
-        border-color: #ff4444 !important;
-        transform: translateY(-5px) scale(1.02) !important;
-        box-shadow: 0 15px 35px rgba(255, 68, 68, 0.4) !important;
-        animation: button-siren-glow 1s ease-in-out infinite !important;
-    }
-    
-    .stButton > button:hover::before {
-        left: 100%;
-    }
-    
-    @keyframes button-siren-glow {
-        0%, 100% { 
-            box-shadow: 0 15px 35px rgba(30, 144, 255, 0.4) !important;
-        }
-        50% { 
-            box-shadow: 0 15px 35px rgba(255, 68, 68, 0.4) !important;
-        }
-    }
-    
-    .stButton > button:active {
-        transform: translateY(-2px) scale(0.98) !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3>Statistical Analysis</h3>
+            <p>Advanced crime data analysis with detection rates, trend identification, and actionable insights for police operations - enhanced with emergency response aesthetics.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ABOUT PAGE
 elif st.session_state.current_page == 'about':
@@ -2496,30 +2115,30 @@ st.markdown(f"""
     <div style="max-width: 1400px; margin: 0 auto; padding: 0 30px;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Data Source</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Data Source</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📈 Statistical Integration Active</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌍 Multi-language Support</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚔 Police Siren Color Theme</p>
             </div>
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Last Updated</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Last Updated</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🤖 AI System: Enhanced AI Intelligence</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Enhanced AI Assistant Platform</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚨 Emergency Response Styling</p>
             </div>
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Contact Information</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Contact Information</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📧 lio@police.kn</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌐 Multi-Chat Support</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">⚖️ Secure Law Enforcement Platform</p>
             </div>
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">AI System</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">AI System</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚔 Enhanced AI Assistant with Police Siren Colors</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance • emergency blue & red styling</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance • Emergency blue & red styling</p>
             </div>
         </div>
         <div style="border-top: 1px solid #21262d; padding: 20px 0; text-align: center; color: #6e7681; font-size: 12px;">
@@ -2527,4 +2146,11 @@ st.markdown(f"""
         </div>
     </div>
 </div>
+
+<style>
+@keyframes footer-title-siren {
+    0%, 100% { color: #1e90ff; }
+    50% { color: #ff4444; }
+}
+</style>
 """, unsafe_allow_html=True)
