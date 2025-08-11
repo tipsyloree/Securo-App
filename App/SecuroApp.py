@@ -733,7 +733,7 @@ except Exception as e:
 # Page configuration
 st.set_page_config(
     page_title="SECURO - Enhanced AI Assistant & Crime Intelligence System",
-    page_icon="https://i.postimg.cc/jdtG76G8/PH-PR-2.png",
+    page_icon="🚔",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -1526,8 +1526,8 @@ with col1:
         st.rerun()
 
 with col2:
-    if st.button("ℹ️ About", key="nav_about", help="About SECURO System", use_container_width=True):
-        st.session_state.current_page = 'about'
+    if st.button("💬 AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
+        st.session_state.current_page = 'chat'
         st.rerun()
 
 with col3:
@@ -1541,8 +1541,8 @@ with col4:
         st.rerun()
 
 with col5:
-    if st.button("💬 AI Assistant", key="nav_chat", help="AI Chat", use_container_width=True):
-        st.session_state.current_page = 'chat'
+    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+        st.session_state.current_page = 'emergency'
         st.rerun()
 
 with col6:
@@ -1551,8 +1551,8 @@ with col6:
         st.rerun()
 
 with col7:
-    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
-        st.session_state.current_page = 'emergency'
+    if st.button("ℹ️ About", key="nav_about", help="About SECURO System", use_container_width=True):
+        st.session_state.current_page = 'about'
         st.rerun()
 
 # HOME PAGE
@@ -1662,7 +1662,7 @@ elif st.session_state.current_page == 'about':
             with col_text:
                 st.markdown(f"**{feature.split(' - ')[0]}** - {feature.split(' - ')[1]}")
         
-        st.markdown("### 🔒 Police Siren Design")
+        st.markdown("### 🚔 Police Siren Design")
         st.markdown("""
         Enhanced SECURO now features authentic police car siren colors with alternating blue and red animations throughout the interface. 
         The AI assistant provides statistically-informed assistance while preserving conversation context for more effective police support - 
@@ -1802,7 +1802,7 @@ elif st.session_state.current_page == 'chat':
         st.markdown("""
         <div class="chat-welcome">
             <div class="chat-logo">
-                🔒
+                🚔
             </div>
             <h1 class="chat-title">SECURO</h1>
             <p class="chat-subtitle">AI Assistant with Police Siren Colors</p>
@@ -1822,7 +1822,7 @@ elif st.session_state.current_page == 'chat':
     
     else:
         # Chat is active - show chat interface
-        st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant 🔒</h2>', unsafe_allow_html=True)
+        st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant 🚔</h2>', unsafe_allow_html=True)
         
         # Chat management controls
         col1, col2, col3 = st.columns([2, 6, 2])
@@ -1873,7 +1873,7 @@ elif st.session_state.current_page == 'chat':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! 🚨",
+                "content": "🚔 Enhanced SECURO AI System Online with Police Siren Colors!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! 🚨",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
