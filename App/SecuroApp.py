@@ -1690,13 +1690,13 @@ if not st.session_state.sidebar_view:
                 <div style="width: 100px; height: 100px; margin-bottom: 24px; border-radius: 50%; 
                            background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
                            align-items: center; justify-content: center; font-size: 2.5rem; animation: logo-pulse 2s infinite;">
-                    🚔
+                    👮🏾‍♂️
                 </div>
                 <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI Assistant</h1>
                 <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI with Police Siren Colors</p>
                 <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
                     Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
-                    international data, and conversation memory. Ready to assist with authentic police emergency styling! 🚨
+                    international data, and conversation memory. Ready to assist with authentic police emergency styling! 
                 </p>
                 <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
                     <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
@@ -1777,7 +1777,7 @@ if not st.session_state.sidebar_view:
             if not messages:
                 welcome_msg = {
                     "role": "assistant",
-                    "content": "👮🏾‍♂️ Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! 🚨",
+                    "content": "👮🏾‍♂️ Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! ",
                     "timestamp": get_stkitts_time()
                 }
                 messages.append(welcome_msg)
