@@ -1449,7 +1449,7 @@ st.markdown(f"""
             <span>Royal St. Christopher & Nevis Police Force</span>
         </div>
         <div class="status-item">
-            <span>📅 {current_date} | 🕒 {current_time} AST</span>
+            <span> {current_date} |  {current_time} AST</span>
         </div>
     </div>
 </div>
@@ -1718,7 +1718,7 @@ if not st.session_state.sidebar_view:
             # Center the start button
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
-                if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+                if st.button(" Start Conversation", key="start_chat", use_container_width=True):
                     create_new_chat_session()
                     st.session_state.chat_active = True
                     st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
@@ -1777,7 +1777,7 @@ if not st.session_state.sidebar_view:
             if not messages:
                 welcome_msg = {
                     "role": "assistant",
-                    "content": "🚔 Enhanced SECURO AI System Online with Police Siren Colors!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! 🚨",
+                    "content": "👮🏾‍♂️ Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! 🚨",
                     "timestamp": get_stkitts_time()
                 }
                 messages.append(welcome_msg)
