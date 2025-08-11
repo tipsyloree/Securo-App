@@ -2115,30 +2115,30 @@ st.markdown(f"""
     <div style="max-width: 1400px; margin: 0 auto; padding: 0 30px;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Data Source</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Data Source</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📈 Statistical Integration Active</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌍 Multi-language Support</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚔 Police Siren Color Theme</p>
             </div>
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Last Updated</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Last Updated</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🤖 AI System: Enhanced AI Intelligence</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Enhanced AI Assistant Platform</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚨 Emergency Response Styling</p>
             </div>
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Contact Information</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Contact Information</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📧 lio@police.kn</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌐 Multi-Chat Support</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">⚖️ Secure Law Enforcement Platform</p>
             </div>
             <div>
-                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">AI System</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">AI System</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚔 Enhanced AI Assistant with Police Siren Colors</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance • Emergency blue & red styling</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance • emergency blue & red styling</p>
             </div>
         </div>
         <div style="border-top: 1px solid #21262d; padding: 20px 0; text-align: center; color: #6e7681; font-size: 12px;">
@@ -2146,11 +2146,4 @@ st.markdown(f"""
         </div>
     </div>
 </div>
-
-<style>
-@keyframes footer-title-siren {
-    0%, 100% { color: #1e90ff; }
-    50% { color: #ff4444; }
-}
-</style>
 """, unsafe_allow_html=True)
