@@ -23,6 +23,7 @@ import uuid
 from datetime import datetime as dt
 import PyPDF2
 import tempfile
+import base64
 warnings.filterwarnings('ignore')
 
 # Language detection and translation support
@@ -192,7 +193,361 @@ if 'sidebar_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
-def create_new_chat():
+def text_to_speech_component(text, message_id="tts"):
+    """Create a working text-to-speech component"""
+    # Clean text for speech
+    clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
+    clean_text = clean_text.replace("🟢", "").replace("✅", "").replace("❌", "").replace("📈", "").replace("📉", "")
+    clean_text = clean_text.replace("🔍", "").replace("⚠️", "").replace("💾", "").replace("🧠", "").replace("📅", "")
+    clean_text = clean_text.replace("🕒", "").replace("🗺️", "").replace("🏠", "").replace("ℹ️", "").replace("📊", "")
+    clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
+    clean_text = clean_text.replace("•", "").replace("\n", ". ").strip()
+    
+    # Limit text length for speech
+    if len(clean_text) > 500:
+        clean_text = clean_text[:500] + "..."
+    
+    # Create HTML with working speech synthesis
+    speech_html = f"""
+    <div style="display: inline;">
+        <button onclick="speakText_{message_id}()" 
+                style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
+                       padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 8px;">
+            🔊 Speak
+        </button>
+    </div>
+    
+    <script>
+    function speakText_{message_id}() {{
+        if ('speechSynthesis' in window) {{
+            // Cancel any ongoing speech
+            window.speechSynthesis.cancel();
+            
+            const utterance = new SpeechSynthesisUtterance(`{clean_text}`);
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            utterance.volume = 0.8;
+            
+            // Try to get a professional voice
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(voice => 
+                voice.name.includes('Microsoft') || 
+                voice.name.includes('Google') || 
+                voice.name.includes('Daniel') ||
+                voice.name.includes('Alex')
+            );
+            
+            if (preferredVoice) {{
+                utterance.voice = preferredVoice;
+            }}
+            
+            window.speechSynthesis.speak(utterance);
+        }} else {{
+            alert('Text-to-speech not supported in this browser.');
+        }}
+    }}
+    
+    // Load voices when available
+    if ('speechSynthesis' in window) {{
+        window.speechSynthesis.onvoiceschanged = function() {{
+            // Voices loaded
+        }};
+    }}
+    </script>
+    """
+    return speech_html
+
+def auto_speak_response(text):
+    """Auto-speak functionality for new responses"""
+    clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
+    clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
+    clean_text = clean_text.replace("•", "").replace("\n", ". ").strip()
+    
+    if len(clean_text) > 300:
+        clean_text = clean_text[:300] + "..."
+    
+    auto_speak_html = f"""
+    <script>
+    if (localStorage.getItem('securo_auto_speak') === 'true') {{
+        setTimeout(function() {{
+            if ('speechSynthesis' in window) {{
+                const utterance = new SpeechSynthesisUtterance(`{clean_text}`);
+                utterance.rate = 0.9;
+                utterance.pitch = 1.0;
+                utterance.volume = 0.8;
+                
+                const voices = window.speechSynthesis.getVoices();
+                const preferredVoice = voices.find(voice => 
+                    voice.name.includes('Microsoft') || 
+                    voice.name.includes('Google') || 
+                    voice.name.includes('Daniel')
+                );
+                
+                if (preferredVoice) {{
+                    utterance.voice = preferredVoice;
+                }}
+                
+                window.speechSynthesis.speak(utterance);
+            }}
+        }}, 1500);
+    }}
+    </script>
+    """
+    return auto_speak_html
+
+def voice_input_component():
+    """Create working voice input component"""
+    voice_html = """
+    <div style="margin: 10px 0;">
+        <button id="voiceInputBtn" onclick="toggleVoiceInput()" 
+                style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
+                       padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; margin-right: 10px;">
+            🎤 Voice Input
+        </button>
+        
+        <button id="autoSpeakBtn" onclick="toggleAutoSpeak()" 
+                style="background: linear-gradient(135deg, #64748b, #475569); border: none; color: white; 
+                       padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; margin-right: 10px;">
+            🔇 Auto-Speak OFF
+        </button>
+        
+        <span id="voiceStatus" style="color: #94a3b8; font-size: 12px;">Voice Ready</span>
+    </div>
+    
+    <script>
+    let recognition = null;
+    let isListening = false;
+    let autoSpeak = localStorage.getItem('securo_auto_speak') === 'true';
+    
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        
+        recognition.onstart = function() {
+            isListening = true;
+            updateVoiceButtons();
+        };
+        
+        recognition.onend = function() {
+            isListening = false;
+            updateVoiceButtons();
+        };
+        
+        recognition.onresult = function(event) {
+            const transcript = event.results[0][0].transcript;
+            
+            // Find the text input and set its value
+            const textInputs = document.querySelectorAll('input[type="text"]');
+            let chatInput = null;
+            
+            for (let input of textInputs) {
+                if (input.placeholder && input.placeholder.includes('Message')) {
+                    chatInput = input;
+                    break;
+                }
+            }
+            
+            if (chatInput) {
+                chatInput.value = transcript;
+                chatInput.focus();
+                
+                // Trigger input event
+                const event = new Event('input', { bubbles: true });
+                chatInput.dispatchEvent(event);
+                
+                // Also trigger change event
+                const changeEvent = new Event('change', { bubbles: true });
+                chatInput.dispatchEvent(changeEvent);
+            }
+        };
+        
+        recognition.onerror = function(event) {
+            console.error('Speech recognition error:', event.error);
+            isListening = false;
+            updateVoiceButtons();
+            
+            if (event.error === 'not-allowed') {
+                alert('Microphone access denied. Please allow microphone access and try again.');
+            }
+        };
+    }
+    
+    function toggleVoiceInput() {
+        if (!recognition) {
+            alert('Speech recognition not supported in this browser. Please use Chrome, Edge, or Safari.');
+            return;
+        }
+        
+        if (isListening) {
+            recognition.stop();
+        } else {
+            recognition.start();
+        }
+    }
+    
+    function toggleAutoSpeak() {
+        autoSpeak = !autoSpeak;
+        localStorage.setItem('securo_auto_speak', autoSpeak);
+        updateVoiceButtons();
+    }
+    
+    function updateVoiceButtons() {
+        const voiceBtn = document.getElementById('voiceInputBtn');
+        const autoBtn = document.getElementById('autoSpeakBtn');
+        const status = document.getElementById('voiceStatus');
+        
+        if (voiceBtn) {
+            if (isListening) {
+                voiceBtn.innerHTML = '🔴 Listening...';
+                voiceBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+                voiceBtn.style.animation = 'pulse 1s infinite';
+            } else {
+                voiceBtn.innerHTML = '🎤 Voice Input';
+                voiceBtn.style.background = 'linear-gradient(135deg, #3b82f6, #ef4444)';
+                voiceBtn.style.animation = 'none';
+            }
+        }
+        
+        if (autoBtn) {
+            if (autoSpeak) {
+                autoBtn.innerHTML = '🔊 Auto-Speak ON';
+                autoBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+            } else {
+                autoBtn.innerHTML = '🔇 Auto-Speak OFF';
+                autoBtn.style.background = 'linear-gradient(135deg, #64748b, #475569)';
+            }
+        }
+        
+        if (status) {
+            if (isListening) {
+                status.innerHTML = '🔴 Listening...';
+                status.style.color = '#ef4444';
+            } else {
+                status.innerHTML = 'Voice Ready';
+                status.style.color = '#94a3b8';
+            }
+        }
+    }
+    
+    // Initialize buttons on load
+    updateVoiceButtons();
+    </script>
+    
+    <style>
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    </style>
+    """
+    return voice_html
+
+def emergency_call_interface():
+    """Create emergency call interface with working voice"""
+    call_html = """
+    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                border: 2px solid #ef4444; border-radius: 16px; padding: 24px; 
+                text-align: center; margin: 20px 0; animation: callGlow 2s infinite;">
+        
+        <div style="width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%; 
+                    background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
+                    align-items: center; justify-content: center; font-size: 3rem; 
+                    animation: callPulse 1.5s infinite;">
+            🚔
+        </div>
+        
+        <h2 style="color: #ffffff; margin-bottom: 8px;">📞 SECURO Emergency Call Active</h2>
+        <p style="color: #ef4444; font-size: 16px; font-weight: 600; margin-bottom: 16px;">
+            🔴 LIVE CONNECTION - Emergency Response System
+        </p>
+        
+        <div style="margin-bottom: 20px;">
+            <button onclick="startEmergencyCall()" 
+                    style="background: #10b981; border: none; color: white; padding: 10px 20px; 
+                           border-radius: 6px; margin: 5px; cursor: pointer; font-size: 14px;">
+                🎤 Speak to SECURO
+            </button>
+            
+            <button onclick="securoRespond()" 
+                    style="background: #3b82f6; border: none; color: white; padding: 10px 20px; 
+                           border-radius: 6px; margin: 5px; cursor: pointer; font-size: 14px;">
+                🔊 SECURO Respond
+            </button>
+        </div>
+        
+        <p style="color: #94a3b8; font-size: 14px; margin: 0;">
+            Emergency AI Response • Voice Recognition Active • Statistical Database Connected
+        </p>
+    </div>
+    
+    <script>
+    function startEmergencyCall() {
+        if (!recognition) {
+            alert('Voice recognition not available. Please use the text input below.');
+            return;
+        }
+        
+        // Announce call start
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance('SECURO Emergency Response System connected. Please state your inquiry.');
+            utterance.rate = 0.8;
+            utterance.pitch = 0.9;
+            window.speechSynthesis.speak(utterance);
+        }
+        
+        // Start listening after announcement
+        setTimeout(() => {
+            toggleVoiceInput();
+        }, 3000);
+    }
+    
+    function securoRespond() {
+        if ('speechSynthesis' in window) {
+            const responses = [
+                'SECURO AI Emergency Response System standing by. How may I assist law enforcement today?',
+                'Emergency protocol activated. Please provide details of your inquiry or situation.',
+                'This is SECURO AI. All crime databases are online and ready for your inquiry.',
+                'Emergency Response System connected. I have access to all statistical data and can provide immediate analysis.'
+            ];
+            
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            const utterance = new SpeechSynthesisUtterance(randomResponse);
+            utterance.rate = 0.8;
+            utterance.pitch = 0.9;
+            utterance.volume = 0.9;
+            
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert('Text-to-speech not supported in this browser.');
+        }
+    }
+    </script>
+    
+    <style>
+    @keyframes callGlow {
+        0%, 100% { 
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+        50% { 
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+    }
+    
+    @keyframes callPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    </style>
+    """
+    return call_html
     """Create a new chat session"""
     chat_id = f"chat_{st.session_state.chat_counter}_{int(time.time())}"
     st.session_state.chat_sessions[chat_id] = {
@@ -1308,192 +1663,6 @@ st.markdown("""
         color: #cbd5e1 !important;
     }
 </style>
-
-<script>
-// Voice functionality
-let speechSynthesis = window.speechSynthesis;
-let speechRecognition = null;
-let isListening = false;
-let autoSpeak = false;
-
-// Initialize speech recognition
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    speechRecognition = new SpeechRecognition();
-    speechRecognition.continuous = false;
-    speechRecognition.interimResults = false;
-    speechRecognition.lang = 'en-US';
-    
-    speechRecognition.onstart = function() {
-        isListening = true;
-        updateVoiceButtons();
-    };
-    
-    speechRecognition.onend = function() {
-        isListening = false;
-        updateVoiceButtons();
-    };
-    
-    speechRecognition.onresult = function(event) {
-        const transcript = event.results[0][0].transcript;
-        const chatInput = document.querySelector('input[data-testid="textInput"]');
-        if (chatInput) {
-            chatInput.value = transcript;
-            chatInput.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-    };
-    
-    speechRecognition.onerror = function(event) {
-        console.error('Speech recognition error:', event.error);
-        isListening = false;
-        updateVoiceButtons();
-    };
-}
-
-// Text-to-speech function
-function speakText(text) {
-    if (!speechSynthesis) return;
-    
-    // Clean text for speech
-    const cleanText = text
-        .replace(/🚔|🚨|📊|💬|🤖|🟢|✅|❌|📈|📉|🔍|⚠️|💾|🧠|📅|🕒|🗺️|🏠|ℹ️|📊|💾|🚨/g, '')
-        .replace(/\*\*/g, '')
-        .replace(/###|##|#/g, '')
-        .replace(/•/g, '')
-        .replace(/\n+/g, '. ')
-        .trim();
-    
-    if (cleanText.length === 0) return;
-    
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.9;
-    utterance.pitch = 1.0;
-    utterance.volume = 0.8;
-    
-    // Try to use a more professional voice
-    const voices = speechSynthesis.getVoices();
-    const preferredVoice = voices.find(voice => 
-        voice.name.includes('Microsoft') || 
-        voice.name.includes('Google') || 
-        voice.name.includes('Alex') ||
-        voice.name.includes('Daniel')
-    );
-    
-    if (preferredVoice) {
-        utterance.voice = preferredVoice;
-    }
-    
-    speechSynthesis.speak(utterance);
-}
-
-// Voice control functions
-function toggleVoiceInput() {
-    if (!speechRecognition) {
-        alert('Speech recognition not supported in this browser.');
-        return;
-    }
-    
-    if (isListening) {
-        speechRecognition.stop();
-    } else {
-        speechRecognition.start();
-    }
-}
-
-function toggleAutoSpeak() {
-    autoSpeak = !autoSpeak;
-    updateVoiceButtons();
-    
-    // Save preference
-    if (typeof(Storage) !== "undefined") {
-        localStorage.setItem('securo_auto_speak', autoSpeak);
-    }
-}
-
-function updateVoiceButtons() {
-    const voiceInputBtn = document.getElementById('voice-input-btn');
-    const autoSpeakBtn = document.getElementById('auto-speak-btn');
-    
-    if (voiceInputBtn) {
-        voiceInputBtn.className = isListening ? 'voice-button active' : 'voice-button';
-        voiceInputBtn.innerHTML = isListening ? '🔴 Listening...' : '🎤 Voice Input';
-    }
-    
-    if (autoSpeakBtn) {
-        autoSpeakBtn.className = autoSpeak ? 'voice-button active' : 'voice-button';
-        autoSpeakBtn.innerHTML = autoSpeak ? '🔊 Auto-Speak ON' : '🔇 Auto-Speak OFF';
-    }
-}
-
-// Auto-speak new assistant messages
-function observeNewMessages() {
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.type === 'childList' && autoSpeak) {
-                mutation.addedNodes.forEach(function(node) {
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        const assistantMessages = node.querySelectorAll('.message.assistant .message-bubble');
-                        assistantMessages.forEach(function(messageElement) {
-                            const text = messageElement.textContent;
-                            if (text && text.length > 0) {
-                                setTimeout(() => speakText(text), 500);
-                            }
-                        });
-                    }
-                });
-            }
-        });
-    });
-    
-    // Start observing
-    const chatContainer = document.body;
-    observer.observe(chatContainer, {
-        childList: true,
-        subtree: true
-    });
-}
-
-// Load preferences on page load
-window.addEventListener('load', function() {
-    if (typeof(Storage) !== "undefined") {
-        const savedAutoSpeak = localStorage.getItem('securo_auto_speak');
-        if (savedAutoSpeak === 'true') {
-            autoSpeak = true;
-        }
-    }
-    
-    updateVoiceButtons();
-    observeNewMessages();
-    
-    // Load voices
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-        speechSynthesis.onvoiceschanged = function() {
-            // Voices loaded
-        };
-    }
-});
-
-// Emergency call simulation
-function startVoiceCall() {
-    const callInterface = document.getElementById('call-interface');
-    if (callInterface) {
-        callInterface.style.display = 'block';
-        
-        // Simulate call connection
-        setTimeout(() => {
-            speakText("SECURO AI Emergency Response System connected. How can I assist you with your law enforcement inquiry?");
-        }, 1000);
-    }
-}
-
-function endVoiceCall() {
-    const callInterface = document.getElementById('call-interface');
-    if (callInterface) {
-        callInterface.style.display = 'none';
-    }
-    speechSynthesis.cancel();
-}
-</script>
 """, unsafe_allow_html=True)
 
 # Modern Header Bar
@@ -1795,6 +1964,8 @@ if not st.session_state.sidebar_view:
                     st.session_state.voice_call_active = True
                     create_new_chat()
                     st.session_state.chat_active = True
+                    # Auto-announce call connection
+                    st.session_state.last_response = "SECURO Emergency Response System connected. How can I assist you with your law enforcement inquiry?"
                     st.success("📞 Voice call initiated! SECURO Emergency Response System connected!")
                     st.rerun()
             
@@ -1808,7 +1979,7 @@ if not st.session_state.sidebar_view:
                 """, unsafe_allow_html=True)
         
         else:
-            # Chat interface with voice controls
+            # Chat interface with working voice controls
             st.markdown("""
             <div class="chat-container">
                 <div class="chat-header">
@@ -1819,24 +1990,11 @@ if not st.session_state.sidebar_view:
                             Online with Statistical Knowledge & Voice Capabilities
                         </div>
                     </div>
-                    <div style="display: flex; gap: 8px;">
+                </div>
             """, unsafe_allow_html=True)
             
-            # Voice controls
-            st.markdown("""
-            <div class="voice-controls">
-                <button id="voice-input-btn" class="voice-button" onclick="toggleVoiceInput()">
-                    🎤 Voice Input
-                </button>
-                <button id="auto-speak-btn" class="voice-button" onclick="toggleAutoSpeak()">
-                    🔇 Auto-Speak OFF
-                </button>
-                <div class="voice-status">
-                    <div class="voice-indicator"></div>
-                    <span>Voice Ready</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            # Working voice controls
+            st.components.v1.html(voice_input_component(), height=80)
             
             # Chat controls
             col1, col2, col3 = st.columns([1, 1, 1])
@@ -1855,31 +2013,11 @@ if not st.session_state.sidebar_view:
                     st.session_state.voice_call_active = not st.session_state.voice_call_active
                     st.rerun()
             
-            st.markdown("</div></div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
             
             # Voice Call Interface
             if st.session_state.voice_call_active:
-                st.markdown("""
-                <div id="call-interface" class="call-interface">
-                    <div class="call-avatar">🚔</div>
-                    <h2 style="color: #ffffff; margin-bottom: 8px;">📞 SECURO Voice Call Active</h2>
-                    <p style="color: #ef4444; font-size: 16px; font-weight: 600; margin-bottom: 16px;">
-                        🔴 LIVE CONNECTION - Emergency Response System
-                    </p>
-                    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 20px;">
-                        <button class="voice-button" onclick="toggleVoiceInput()" style="background: #10b981 !important;">
-                            🎤 Speak to SECURO
-                        </button>
-                        <button class="voice-button" onclick="speakText('SECURO AI standing by for your emergency or intelligence inquiry. How may I assist law enforcement today?')" 
-                                style="background: #3b82f6 !important;">
-                            🔊 SECURO Respond
-                        </button>
-                    </div>
-                    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 0;">
-                        Emergency AI Response • Voice Recognition Active • Statistical Database Connected
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
+                st.components.v1.html(emergency_call_interface(), height=400)
                 
                 # End call button
                 if st.button("📞 End Call", key="end_call", use_container_width=True):
@@ -1906,7 +2044,7 @@ if not st.session_state.sidebar_view:
             # Messages container
             st.markdown('<div class="chat-messages">', unsafe_allow_html=True)
             
-            for message in messages:
+            for i, message in enumerate(messages):
                 if message["role"] == "user":
                     st.markdown(f"""
                     <div class="message user">
@@ -1921,56 +2059,36 @@ if not st.session_state.sidebar_view:
                     clean_content = re.sub(r'<[^>]+>', '', clean_content)
                     clean_content = clean_content.replace('```', '')
                     
-                    # Create unique ID for each message for voice controls
-                    message_id = f"msg_{hash(message['content']) % 10000}"
+                    # Create unique message ID for voice
+                    message_id = f"msg_{i}"
                     
                     st.markdown(f"""
                     <div class="message assistant">
                         <div>
-                            <div class="message-bubble" id="{message_id}">{clean_content}</div>
+                            <div class="message-bubble">{clean_content}</div>
                             <div class="message-time">
                                 SECURO • {message["timestamp"]} AST
-                                <button class="voice-button" onclick="speakText(document.getElementById('{message_id}').textContent)" 
-                                        style="margin-left: 8px; padding: 2px 6px; font-size: 10px;">
-                                    🔊 Speak
-                                </button>
                             </div>
                         </div>
                     </div>
                     """, unsafe_allow_html=True)
+                    
+                    # Add working speech button for each message
+                    st.components.v1.html(text_to_speech_component(clean_content, message_id), height=30)
             
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # Chat input with voice controls
+            # Chat input with voice integration
             st.markdown("---")
             with st.form("chat_form", clear_on_submit=True):
-                col1, col2 = st.columns([6, 1])
+                user_input = st.text_input(
+                    "💬 Message Enhanced AI Assistant:",
+                    placeholder="Type your question or use 🎤 Voice Input above for hands-free interaction...",
+                    label_visibility="collapsed",
+                    key="chat_input"
+                )
                 
-                with col1:
-                    user_input = st.text_input(
-                        "💬 Message Enhanced AI Assistant:",
-                        placeholder="Type or speak your question about crime statistics, trends, or analysis... 🎤",
-                        label_visibility="collapsed",
-                        key="chat_input"
-                    )
-                
-                with col2:
-                    st.markdown("""
-                    <button type="button" class="voice-button" onclick="toggleVoiceInput()" 
-                            style="width: 100%; margin-top: 8px; padding: 8px;">
-                        🎤
-                    </button>
-                    """, unsafe_allow_html=True)
-                
-                col1, col2 = st.columns([4, 1])
-                with col1:
-                    submitted = st.form_submit_button("Send", type="primary")
-                with col2:
-                    st.markdown("""
-                    <div style="text-align: center; padding: 4px; font-size: 10px; color: #94a3b8;">
-                        Voice Ready 🎤
-                    </div>
-                    """, unsafe_allow_html=True)
+                submitted = st.form_submit_button("Send", type="primary")
                 
                 if submitted and user_input and user_input.strip():
                     current_time = get_stkitts_time()
@@ -1993,22 +2111,14 @@ if not st.session_state.sidebar_view:
                     if chart_type:
                         st.session_state.show_chart = chart_type
                     
-                    # Store the response for potential auto-speak
+                    # Store the response for auto-speak
                     st.session_state.last_response = response
                     
                     st.rerun()
             
-            # Auto-speak the last response if enabled
-            if st.session_state.get('last_response') and st.session_state.get('auto_speak', False):
-                st.markdown(f"""
-                <script>
-                    setTimeout(function() {{
-                        if (autoSpeak) {{
-                            speakText(`{st.session_state.last_response.replace('`', '').replace("'", "").replace('"', '')[:500]}...`);
-                        }}
-                    }}, 1000);
-                </script>
-                """, unsafe_allow_html=True)
+            # Auto-speak the last response if there is one
+            if st.session_state.get('last_response'):
+                st.components.v1.html(auto_speak_response(st.session_state.last_response), height=50)
                 # Clear the response to avoid re-speaking
                 st.session_state.last_response = None
             
