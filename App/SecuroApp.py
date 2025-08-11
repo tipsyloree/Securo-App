@@ -1565,42 +1565,262 @@ if st.session_state.current_page == 'home':
 </div>
 """, unsafe_allow_html=True)
     
-    # Feature cards
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        <div class="feature-card">
-            <div class="feature-icon">🧠</div>
-            <h3>Enhanced AI with Police Siren Colors</h3>
-            <p>Conversation memory, statistical knowledge integration, and context-aware responses powered by real crime data from police PDFs - now with emergency blue & red siren effects! 🚔</p>
+    # Slideshow Feature Cards
+    st.markdown("""
+    <div class="slideshow-container">
+        <div class="slide-wrapper">
+            <div class="slide active">
+                <div class="slide-content">
+                    <div class="slide-icon">🧠</div>
+                    <h3>Enhanced AI with Police Siren Colors</h3>
+                    <p>Conversation memory, statistical knowledge integration, and context-aware responses powered by real crime data from police PDFs - now with emergency blue & red siren effects! 🚔</p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content">
+                    <div class="slide-icon">📊</div>
+                    <h3>Integrated Statistics + International Data</h3>
+                    <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends - all styled with police emergency colors.</p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content">
+                    <div class="slide-icon">💾</div>
+                    <h3>Conversation Management</h3>
+                    <p>Multiple chat sessions with memory, chat history, and context preservation across conversations for continuous assistance - with animated police siren styling!</p>
+                </div>
+            </div>
+            <div class="slide">
+                <div class="slide-content">
+                    <div class="slide-icon">📈</div>
+                    <h3>Statistical Analysis</h3>
+                    <p>Advanced crime data analysis with detection rates, trend identification, and actionable insights for police operations - enhanced with emergency response aesthetics.</p>
+                </div>
+            </div>
         </div>
-        """, unsafe_allow_html=True)
         
-        st.markdown("""
-        <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <h3>Integrated Statistics + International Data</h3>
-            <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends - all styled with police emergency colors.</p>
+        <!-- Slide Indicators -->
+        <div class="slide-indicators">
+            <div class="indicator active"></div>
+            <div class="indicator"></div>
+            <div class="indicator"></div>
+            <div class="indicator"></div>
         </div>
-        """, unsafe_allow_html=True)
+    </div>
+    
+    <style>
+    .slideshow-container {
+        position: relative;
+        max-width: 100%;
+        margin: 40px auto;
+        height: 300px;
+        overflow: hidden;
+        border-radius: 20px;
+        border: 1px solid #30363d;
+        background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
+    }
+    
+    .slide-wrapper {
+        display: flex;
+        height: 100%;
+        animation: slideshow 20s infinite;
+    }
+    
+    .slide {
+        min-width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        opacity: 0;
+        transform: translateX(0);
+        transition: opacity 1s ease-in-out;
+    }
+    
+    .slide.active {
+        opacity: 1;
+    }
+    
+    .slide-content {
+        text-align: center;
+        max-width: 800px;
+    }
+    
+    .slide-icon {
+        font-size: 4rem;
+        margin-bottom: 20px;
+        color: #1e90ff;
+        text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        animation: slide-icon-siren 3s ease-in-out infinite;
+    }
+    
+    @keyframes slide-icon-siren {
+        0%, 100% { 
+            color: #1e90ff;
+            text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        }
+        50% { 
+            color: #ff4444;
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+        }
+    }
+    
+    .slide-content h3 {
+        color: #1e90ff !important;
+        font-size: 2rem !important;
+        margin-bottom: 20px !important;
+        font-weight: 600 !important;
+        animation: slide-title-siren 4s ease-in-out infinite;
+    }
+    
+    @keyframes slide-title-siren {
+        0%, 100% { color: #1e90ff !important; }
+        50% { color: #ff4444 !important; }
+    }
+    
+    .slide-content p {
+        color: #c9d1d9 !important;
+        font-size: 1.1rem !important;
+        line-height: 1.6 !important;
+    }
+    
+    @keyframes slideshow {
+        0%, 20% { transform: translateX(0%); }
+        25%, 45% { transform: translateX(-100%); }
+        50%, 70% { transform: translateX(-200%); }
+        75%, 95% { transform: translateX(-300%); }
+        100% { transform: translateX(0%); }
+    }
+    
+    .slide-indicators {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+    }
+    
+    .indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        animation: indicator-siren 5s infinite;
+    }
+    
+    @keyframes indicator-siren {
+        0%, 25% { 
+            background: #1e90ff;
+            box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+        }
+        25.1%, 50% { 
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+        }
+        50.1%, 75% { 
+            background: #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+        }
+        75.1%, 100% { 
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+        }
+    }
+    
+    .indicator.active {
+        background: #1e90ff;
+        box-shadow: 0 0 15px rgba(30, 144, 255, 0.7);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Action Buttons
+    st.markdown("<br><br>", unsafe_allow_html=True)
+    
+    col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
         st.markdown("""
-        <div class="feature-card">
-            <div class="feature-icon">💾</div>
-            <h3>Conversation Management</h3>
-            <p>Multiple chat sessions with memory, chat history, and context preservation across conversations for continuous assistance - with animated police siren styling!</p>
+        <div style="text-align: center;">
+            <h2 style="color: #ffffff; margin-bottom: 30px; font-size: 1.8rem;">🚨 Quick Actions</h2>
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("""
-        <div class="feature-card">
-            <div class="feature-icon">📈</div>
-            <h3>Statistical Analysis</h3>
-            <p>Advanced crime data analysis with detection rates, trend identification, and actionable insights for police operations - enhanced with emergency response aesthetics.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # Start AI Chat Button
+        if st.button("💬 Start AI Assistant Chat", key="start_ai_chat", use_container_width=True):
+            st.session_state.current_page = 'chat'
+            st.session_state.chat_active = True
+            if not st.session_state.current_chat_id:
+                create_new_chat()
+            st.rerun()
+        
+        st.markdown("<br>", unsafe_allow_html=True)
+        
+        # Open Crime Map Button  
+        if st.button("🗺️ Open Crime Hotspot Map", key="open_crime_map", use_container_width=True):
+            st.session_state.current_page = 'hotspots'
+            st.rerun()
+    
+    # Enhanced Action Button Styling
+    st.markdown("""
+    <style>
+    .stButton > button {
+        background: linear-gradient(135deg, #1e90ff 0%, #0066cc 100%) !important;
+        border: 2px solid #1e90ff !important;
+        color: #ffffff !important;
+        padding: 20px 40px !important;
+        border-radius: 15px !important;
+        font-size: 1.2rem !important;
+        font-weight: 600 !important;
+        width: 100% !important;
+        transition: all 0.4s ease !important;
+        box-shadow: 0 8px 25px rgba(30, 144, 255, 0.3) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    .stButton > button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%) !important;
+        border-color: #ff4444 !important;
+        transform: translateY(-5px) scale(1.02) !important;
+        box-shadow: 0 15px 35px rgba(255, 68, 68, 0.4) !important;
+        animation: button-siren-glow 1s ease-in-out infinite !important;
+    }
+    
+    .stButton > button:hover::before {
+        left: 100%;
+    }
+    
+    @keyframes button-siren-glow {
+        0%, 100% { 
+            box-shadow: 0 15px 35px rgba(30, 144, 255, 0.4) !important;
+        }
+        50% { 
+            box-shadow: 0 15px 35px rgba(255, 68, 68, 0.4) !important;
+        }
+    }
+    
+    .stButton > button:active {
+        transform: translateY(-2px) scale(0.98) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # ABOUT PAGE
 elif st.session_state.current_page == 'about':
