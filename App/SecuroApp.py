@@ -169,38 +169,26 @@ def get_stkitts_date():
 
 # Voice Interface Components
 def create_voice_interface():
-    """Create voice interface with speech recognition and text-to-speech"""
+    """Create simplified voice interface with speech recognition and text-to-speech"""
     st.markdown("""
-    <div id="voice-interface" style="display: none;">
-        <div id="voice-controls" style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); 
-                                      border: 1px solid #30363d; border-radius: 16px; padding: 25px; 
-                                      margin: 20px 0; text-align: center;">
-            <h3 style="color: #00ff41; margin-bottom: 20px;">🎙️ Voice Controls</h3>
-            <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
-                <button id="start-listening" onclick="startListening()" 
-                        style="background: #00ff41; color: #000; border: none; padding: 12px 24px; 
-                               border-radius: 8px; font-weight: 600; cursor: pointer;">
-                    🎤 Start Listening
-                </button>
-                <button id="stop-listening" onclick="stopListening()" disabled
-                        style="background: #ff4444; color: #fff; border: none; padding: 12px 24px; 
-                               border-radius: 8px; font-weight: 600; cursor: pointer;">
-                    🛑 Stop Listening
-                </button>
-                <button id="toggle-tts" onclick="toggleTTS()" 
-                        style="background: #ffc107; color: #000; border: none; padding: 12px 24px; 
-                               border-radius: 8px; font-weight: 600; cursor: pointer;">
-                    🔊 TTS: ON
-                </button>
-            </div>
-            <div id="voice-status" style="color: #8b949e; font-size: 14px; margin-bottom: 10px;">
-                Voice recognition ready. Click "Start Listening" to begin.
-            </div>
-            <div id="voice-transcript" style="background: rgba(0,0,0,0.5); border: 1px solid #30363d; 
-                                             border-radius: 8px; padding: 15px; margin-top: 15px; 
-                                             color: #c9d1d9; min-height: 50px; text-align: left;">
-                <em>Voice transcript will appear here...</em>
-            </div>
+    <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); 
+                border: 1px solid #30363d; border-radius: 16px; padding: 20px; 
+                margin: 15px 0; text-align: center;">
+        <h4 style="color: #00ff41; margin-bottom: 15px;">🎙️ Voice Assistant</h4>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
+            <button id="voice-listen-btn" onclick="toggleListening()" 
+                    style="background: #00ff41; color: #000; border: none; padding: 10px 20px; 
+                           border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                🎤 Click to Speak
+            </button>
+            <button id="voice-speak-btn" onclick="speakLastResponse()" 
+                    style="background: #3b82f6; color: #fff; border: none; padding: 10px 20px; 
+                           border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                🔊 Repeat Response
+            </button>
+        </div>
+        <div id="voice-status" style="color: #8b949e; font-size: 13px;">
+            Ready for voice input
         </div>
     </div>
 
@@ -208,184 +196,220 @@ def create_voice_interface():
         let recognition = null;
         let isListening = false;
         let ttsEnabled = true;
+        let lastBotResponse = '';
 
-        // Initialize speech recognition
+        // Initialize speech recognition immediately
         function initSpeechRecognition() {
             if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                recognition = new SpeechRecognition();
-                
-                recognition.continuous = false;
-                recognition.interimResults = true;
-                recognition.lang = 'en-US';
-                
-                recognition.onstart = function() {
-                    isListening = true;
-                    updateVoiceStatus('🎤 Listening... Speak now!', '#00ff41');
-                    document.getElementById('start-listening').disabled = true;
-                    document.getElementById('stop-listening').disabled = false;
-                };
-                
-                recognition.onresult = function(event) {
-                    let transcript = '';
-                    for (let i = 0; i < event.results.length; i++) {
-                        transcript += event.results[i][0].transcript;
-                    }
-                    document.getElementById('voice-transcript').innerHTML = '<strong>You said:</strong> ' + transcript;
+                try {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    recognition = new SpeechRecognition();
                     
-                    // If final result, send to chat
-                    if (event.results[event.results.length - 1].isFinal) {
-                        sendVoiceMessage(transcript.trim());
-                    }
-                };
-                
-                recognition.onerror = function(event) {
-                    updateVoiceStatus('❌ Error: ' + event.error, '#ff4444');
-                    resetVoiceButtons();
-                };
-                
-                recognition.onend = function() {
-                    isListening = false;
-                    updateVoiceStatus('🎙️ Voice recognition ready. Click "Start Listening" to begin.', '#8b949e');
-                    resetVoiceButtons();
-                };
-                
-                return true;
+                    recognition.continuous = false;
+                    recognition.interimResults = false;
+                    recognition.lang = 'en-US';
+                    recognition.maxAlternatives = 1;
+                    
+                    recognition.onstart = function() {
+                        isListening = true;
+                        updateVoiceStatus('🎤 Listening... Speak now');
+                        const btn = document.getElementById('voice-listen-btn');
+                        if (btn) {
+                            btn.innerHTML = '🛑 Stop Listening';
+                            btn.style.background = '#ff4444';
+                        }
+                    };
+                    
+                    recognition.onresult = function(event) {
+                        if (event.results.length > 0) {
+                            const transcript = event.results[0][0].transcript;
+                            updateVoiceStatus('Processing: "' + transcript + '"');
+                            sendVoiceToChat(transcript);
+                        }
+                    };
+                    
+                    recognition.onerror = function(event) {
+                        console.log('Speech recognition error:', event.error);
+                        updateVoiceStatus('Voice error: ' + event.error + '. Try again.');
+                        resetListenButton();
+                    };
+                    
+                    recognition.onend = function() {
+                        isListening = false;
+                        resetListenButton();
+                        updateVoiceStatus('Ready for voice input');
+                    };
+                    
+                    updateVoiceStatus('Voice system ready');
+                    return true;
+                } catch (e) {
+                    console.error('Speech recognition init error:', e);
+                    updateVoiceStatus('Voice initialization failed');
+                    return false;
+                }
             } else {
-                updateVoiceStatus('❌ Speech recognition not supported in this browser', '#ff4444');
+                updateVoiceStatus('Voice not supported in this browser');
                 return false;
             }
         }
         
-        function startListening() {
-            if (recognition && !isListening) {
-                recognition.start();
-            }
-        }
-        
-        function stopListening() {
-            if (recognition && isListening) {
-                recognition.stop();
-            }
-        }
-        
-        function toggleTTS() {
-            ttsEnabled = !ttsEnabled;
-            const button = document.getElementById('toggle-tts');
-            button.innerHTML = ttsEnabled ? '🔊 TTS: ON' : '🔇 TTS: OFF';
-            button.style.background = ttsEnabled ? '#ffc107' : '#666666';
-            updateVoiceStatus(ttsEnabled ? '🔊 Text-to-speech enabled' : '🔇 Text-to-speech disabled', '#8b949e');
-        }
-        
-        function updateVoiceStatus(message, color) {
-            const status = document.getElementById('voice-status');
-            status.innerHTML = message;
-            status.style.color = color;
-        }
-        
-        function resetVoiceButtons() {
-            document.getElementById('start-listening').disabled = false;
-            document.getElementById('stop-listening').disabled = true;
-        }
-        
-        function sendVoiceMessage(message) {
-            if (message.length > 0) {
-                // Set the chat input value
-                const chatInput = document.querySelector('input[data-testid="stTextInput-root"]');
-                if (chatInput) {
-                    chatInput.value = message;
-                    chatInput.dispatchEvent(new Event('input', { bubbles: true }));
-                    
-                    // Find and click the send button
-                    setTimeout(() => {
-                        const sendButton = document.querySelector('button[kind="primary"]');
-                        if (sendButton && sendButton.textContent.includes('Send')) {
-                            sendButton.click();
-                        }
-                    }, 100);
+        function toggleListening() {
+            if (!recognition) {
+                if (!initSpeechRecognition()) {
+                    return;
                 }
+            }
+            
+            if (isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.error('Recognition start error:', e);
+                    updateVoiceStatus('Could not start voice recognition');
+                }
+            }
+        }
+        
+        function resetListenButton() {
+            const btn = document.getElementById('voice-listen-btn');
+            if (btn) {
+                btn.innerHTML = '🎤 Click to Speak';
+                btn.style.background = '#00ff41';
+            }
+        }
+        
+        function updateVoiceStatus(message) {
+            const status = document.getElementById('voice-status');
+            if (status) {
+                status.innerHTML = message;
+            }
+        }
+        
+        function sendVoiceToChat(transcript) {
+            // Find the text input and set its value
+            const textInputs = document.querySelectorAll('input[type="text"]');
+            let chatInput = null;
+            
+            for (let input of textInputs) {
+                if (input.placeholder && (input.placeholder.includes('Message') || input.placeholder.includes('type'))) {
+                    chatInput = input;
+                    break;
+                }
+            }
+            
+            if (chatInput) {
+                // Set the input value
+                chatInput.value = transcript;
                 
-                updateVoiceStatus('✅ Message sent: "' + message + '"', '#00ff41');
+                // Trigger input event
+                const event = new Event('input', { bubbles: true });
+                chatInput.dispatchEvent(event);
+                
+                // Find and click the send button
+                setTimeout(() => {
+                    const buttons = document.querySelectorAll('button');
+                    for (let button of buttons) {
+                        if (button.textContent.includes('Send')) {
+                            button.click();
+                            updateVoiceStatus('Message sent successfully');
+                            break;
+                        }
+                    }
+                }, 200);
+            } else {
+                updateVoiceStatus('Could not find chat input');
             }
         }
         
         function speakText(text) {
-            if (ttsEnabled && 'speechSynthesis' in window) {
-                // Stop any ongoing speech
-                speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.9;
-                utterance.pitch = 1.0;
-                utterance.volume = 0.8;
-                
-                // Try to use a more professional voice
-                const voices = speechSynthesis.getVoices();
-                const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
-                if (englishVoices.length > 0) {
-                    utterance.voice = englishVoices[0];
-                }
-                
-                utterance.onstart = function() {
-                    updateVoiceStatus('🔊 SECURO is speaking...', '#00ff41');
-                };
-                
-                utterance.onend = function() {
-                    updateVoiceStatus('🎙️ Voice recognition ready. Click "Start Listening" to begin.', '#8b949e');
-                };
-                
-                speechSynthesis.speak(utterance);
-            }
-        }
-        
-        // Initialize when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            initSpeechRecognition();
-            
-            // Load voices for TTS
-            if ('speechSynthesis' in window) {
-                speechSynthesis.onvoiceschanged = function() {
-                    // Voices loaded
-                };
-            }
-        });
-        
-        // Auto-speak new AI responses
-        function observeAIResponses() {
-            const observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'childList') {
-                        mutation.addedNodes.forEach(function(node) {
-                            if (node.nodeType === Node.ELEMENT_NODE) {
-                                // Look for new bot messages
-                                const botMessages = node.querySelectorAll('.bot-message .message-content');
-                                botMessages.forEach(function(msgElement) {
-                                    if (!msgElement.hasAttribute('data-spoken')) {
-                                        msgElement.setAttribute('data-spoken', 'true');
-                                        const text = msgElement.textContent;
-                                        if (text && ttsEnabled) {
-                                            setTimeout(() => speakText(text), 500);
-                                        }
-                                    }
-                                });
-                            }
-                        });
+            if ('speechSynthesis' in window && text) {
+                try {
+                    // Clean the text
+                    let cleanText = text.replace(/[🔒🤖📊📈🎙️💬🚨⚡➕🔥🚢🌡️🏢🚔🏥]/g, '');
+                    cleanText = cleanText.replace(/\n/g, ' ');
+                    cleanText = cleanText.trim();
+                    
+                    if (cleanText.length > 0) {
+                        speechSynthesis.cancel(); // Stop any ongoing speech
+                        
+                        const utterance = new SpeechSynthesisUtterance(cleanText);
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1.0;
+                        utterance.volume = 1.0;
+                        
+                        // Use a good voice if available
+                        const voices = speechSynthesis.getVoices();
+                        const englishVoices = voices.filter(voice => 
+                            voice.lang.startsWith('en') && 
+                            (voice.name.includes('Google') || voice.name.includes('Microsoft'))
+                        );
+                        
+                        if (englishVoices.length > 0) {
+                            utterance.voice = englishVoices[0];
+                        }
+                        
+                        utterance.onstart = function() {
+                            updateVoiceStatus('🔊 SECURO speaking...');
+                        };
+                        
+                        utterance.onend = function() {
+                            updateVoiceStatus('Ready for voice input');
+                        };
+                        
+                        speechSynthesis.speak(utterance);
+                        lastBotResponse = cleanText;
                     }
-                });
-            });
-            
-            observer.observe(document.body, { childList: true, subtree: true });
+                } catch (e) {
+                    console.error('TTS error:', e);
+                    updateVoiceStatus('Speech synthesis error');
+                }
+            }
         }
         
-        // Start observing after a short delay
-        setTimeout(observeAIResponses, 1000);
-        
-        // Global function to enable TTS for specific text (can be called from Python)
-        window.securoBotSpeak = function(text) {
-            if (ttsEnabled) {
+        function speakLastResponse() {
+            // Find the last bot message
+            const botMessages = document.querySelectorAll('.bot-message .message-content');
+            if (botMessages.length > 0) {
+                const lastMessage = botMessages[botMessages.length - 1];
+                const text = lastMessage.textContent || lastMessage.innerText;
                 speakText(text);
+            } else {
+                updateVoiceStatus('No response to repeat');
             }
-        };
+        }
+        
+        // Auto-speak new bot responses
+        function watchForNewResponses() {
+            let lastMessageCount = 0;
+            
+            setInterval(() => {
+                const botMessages = document.querySelectorAll('.bot-message .message-content');
+                if (botMessages.length > lastMessageCount) {
+                    const newMessage = botMessages[botMessages.length - 1];
+                    if (newMessage && !newMessage.hasAttribute('data-spoken')) {
+                        newMessage.setAttribute('data-spoken', 'true');
+                        const text = newMessage.textContent || newMessage.innerText;
+                        setTimeout(() => speakText(text), 1000);
+                    }
+                    lastMessageCount = botMessages.length;
+                }
+            }, 1000);
+        }
+        
+        // Initialize everything
+        setTimeout(() => {
+            initSpeechRecognition();
+            watchForNewResponses();
+            
+            // Load voices
+            if ('speechSynthesis' in window) {
+                speechSynthesis.onvoiceschanged = () => {
+                    console.log('Voices loaded');
+                };
+            }
+        }, 500);
     </script>
     """, unsafe_allow_html=True)
 
@@ -1930,28 +1954,15 @@ elif st.session_state.current_page == 'chat':
                 st.rerun()
     
     else:
-        # Chat is active - show chat interface with voice controls
+        # Chat is active - show chat interface with voice controls if needed
         st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant</h2>', unsafe_allow_html=True)
         
         # Voice interface (only show when voice mode is active)
         if st.session_state.get('voice_mode_active', False):
-            st.markdown('<div id="voice-interface-container"></div>', unsafe_allow_html=True)
             create_voice_interface()
-            
-            # JavaScript to show voice interface when voice mode is active
-            st.markdown("""
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const voiceInterface = document.getElementById('voice-interface');
-                    if (voiceInterface) {
-                        voiceInterface.style.display = 'block';
-                    }
-                });
-            </script>
-            """, unsafe_allow_html=True)
         
         # Chat management controls
-        col1, col2, col3, col4 = st.columns([2, 4, 2, 2])
+        col1, col2, col3 = st.columns([2, 6, 2])
         
         with col1:
             if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
@@ -1970,11 +1981,6 @@ elif st.session_state.current_page == 'chat':
             """, unsafe_allow_html=True)
         
         with col3:
-            if st.button("🎙️ Toggle Voice", key="toggle_voice_mode", use_container_width=True):
-                st.session_state.voice_mode_active = not st.session_state.get('voice_mode_active', False)
-                st.rerun()
-        
-        with col4:
             if st.button("🔙 Back to Welcome", key="back_welcome", use_container_width=True):
                 st.session_state.chat_active = False
                 st.session_state.voice_mode_active = False
@@ -1983,7 +1989,7 @@ elif st.session_state.current_page == 'chat':
         # Enhanced Status Display
         if st.session_state.get('ai_enabled', False):
             if st.session_state.get('voice_mode_active', False):
-                st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness • 🎙️ Voice Interface Active")
+                st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness • Voice Controls Active")
             else:
                 st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness")
         else:
@@ -2027,12 +2033,12 @@ elif st.session_state.current_page == 'chat':
                 </div>
                 """, unsafe_allow_html=True)
 
-        # Enhanced Chat input with voice integration
+        # Enhanced Chat input
         st.markdown("---")
         
         # Voice mode instructions
         if st.session_state.get('voice_mode_active', False):
-            st.info("🎙️ **Voice Mode Active**: Use the voice controls above to speak with SECURO, or type below for text input. SECURO will respond with voice!")
+            st.info("🎙️ **Voice Mode Active**: Use the voice controls above to speak with SECURO, or type below for text input.")
         
         with st.form("chat_form", clear_on_submit=True):
             placeholder_text = "Speak using voice controls above, or type your message here..." if st.session_state.get('voice_mode_active', False) else "Ask about crime statistics, trends, international comparisons, or request charts... (I have full conversation memory)"
@@ -2044,16 +2050,7 @@ elif st.session_state.current_page == 'chat':
                 key="chat_input"
             )
             
-            # Additional voice controls in form
-            if st.session_state.get('voice_mode_active', False):
-                col_send, col_tts = st.columns([3, 1])
-                with col_send:
-                    submitted = st.form_submit_button("Send", type="primary")
-                with col_tts:
-                    tts_button = st.form_submit_button("🔊 Speak Last Response")
-            else:
-                submitted = st.form_submit_button("Send", type="primary")
-                tts_button = False
+            submitted = st.form_submit_button("Send", type="primary")
             
             if submitted and user_input and user_input.strip():
                 current_time = get_stkitts_time()
@@ -2076,37 +2073,7 @@ elif st.session_state.current_page == 'chat':
                 if chart_type:
                     st.session_state.show_chart = chart_type
                 
-                # If voice mode is active, trigger TTS for the response
-                if st.session_state.get('voice_mode_active', False):
-                    st.markdown(f"""
-                    <script>
-                        setTimeout(function() {{
-                            if (typeof window.securoBotSpeak === 'function') {{
-                                window.securoBotSpeak("{response.replace('"', '\\"').replace('\n', ' ')}");
-                            }}
-                        }}, 1000);
-                    </script>
-                    """, unsafe_allow_html=True)
-                
                 st.rerun()
-            
-            # Handle TTS button for last response
-            if tts_button and messages:
-                last_bot_response = None
-                for msg in reversed(messages):
-                    if msg["role"] == "assistant":
-                        last_bot_response = msg["content"]
-                        break
-                
-                if last_bot_response:
-                    st.markdown(f"""
-                    <script>
-                        if (typeof window.securoBotSpeak === 'function') {{
-                            window.securoBotSpeak("{last_bot_response.replace('"', '\\"').replace('\n', ' ')}");
-                        }}
-                    </script>
-                    """, unsafe_allow_html=True)
-                    st.success("🔊 Playing last SECURO response...")
         
         # Display charts after the rerun (so they persist)
         if st.session_state.get('show_chart'):
