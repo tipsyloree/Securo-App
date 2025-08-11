@@ -1397,31 +1397,48 @@ if not st.session_state.sidebar_view:
     # Main content based on current view
     if st.session_state.main_view == 'ai-assistant':
         if not st.session_state.get('chat_active', False):
-            # Chat welcome screen
+            # Chat welcome screen - compact and centered
             st.markdown("""
-            <div style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+            <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; 
+                        min-height: 400px; text-align: center; padding: 40px 20px; 
+                        background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                         border: 1px solid #475569; border-radius: 16px; margin: 20px 0;">
-                <div style="width: 80px; height: 80px; margin: 0 auto 20px; border-radius: 50%; 
+                <div style="width: 100px; height: 100px; margin-bottom: 24px; border-radius: 50%; 
                            background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
-                           align-items: center; justify-content: center; font-size: 2rem; animation: logo-pulse 2s infinite;">
+                           align-items: center; justify-content: center; font-size: 2.5rem; animation: logo-pulse 2s infinite;">
                     🚔
                 </div>
-                <h1 style="color: #ffffff; font-size: 2rem; margin-bottom: 10px;">SECURO AI Assistant</h1>
-                <p style="color: #94a3b8; font-size: 1.1rem; margin-bottom: 20px;">Enhanced AI with Police Siren Colors</p>
-                <p style="color: #64748b; max-width: 600px; margin: 0 auto 30px; line-height: 1.6;">
-                    Welcome! I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals 
-                    with authentic police car siren styling! I have access to comprehensive St. Kitts & Nevis crime statistics, 
-                    international comparison data, and can maintain conversation history. Experience the emergency blue & red 
-                    police aesthetic! 🚨
+                <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI Assistant</h1>
+                <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI with Police Siren Colors</p>
+                <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
+                    Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
+                    international data, and conversation memory. Ready to assist with authentic police emergency styling! 🚨
                 </p>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
+                                padding: 12px 20px; color: #3b82f6; font-size: 14px; font-weight: 500;">
+                        🧠 Statistical Knowledge
+                    </div>
+                    <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; 
+                                padding: 12px 20px; color: #ef4444; font-size: 14px; font-weight: 500;">
+                        💾 Conversation Memory
+                    </div>
+                    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
+                                padding: 12px 20px; color: #10b981; font-size: 14px; font-weight: 500;">
+                        📊 Real-time Data
+                    </div>
+                </div>
             </div>
             """, unsafe_allow_html=True)
             
-            if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
-                create_new_chat()
-                st.session_state.chat_active = True
-                st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
-                st.rerun()
+            # Center the start button
+            col1, col2, col3 = st.columns([1, 2, 1])
+            with col2:
+                if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+                    create_new_chat()
+                    st.session_state.chat_active = True
+                    st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
+                    st.rerun()
         
         else:
             # Chat interface
