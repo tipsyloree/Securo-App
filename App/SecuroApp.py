@@ -296,156 +296,8 @@ def auto_speak_response(text):
     return auto_speak_html
 
 def voice_input_component():
-    """Create working voice input component"""
-    voice_html = """
-    <div style="margin: 10px 0;">
-        <button id="voiceInputBtn" onclick="toggleVoiceInput()" 
-                style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
-                       padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; margin-right: 10px;">
-            🎤 Voice Input
-        </button>
-        
-        <button id="autoSpeakBtn" onclick="toggleAutoSpeak()" 
-                style="background: linear-gradient(135deg, #64748b, #475569); border: none; color: white; 
-                       padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; margin-right: 10px;">
-            🔇 Auto-Speak OFF
-        </button>
-        
-        <span id="voiceStatus" style="color: #94a3b8; font-size: 12px;">Voice Ready</span>
-    </div>
-    
-    <script>
-    let recognition = null;
-    let isListening = false;
-    let autoSpeak = localStorage.getItem('securo_auto_speak') === 'true';
-    
-    // Initialize speech recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = 'en-US';
-        
-        recognition.onstart = function() {
-            isListening = true;
-            updateVoiceButtons();
-        };
-        
-        recognition.onend = function() {
-            isListening = false;
-            updateVoiceButtons();
-        };
-        
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            
-            // Find the text input and set its value
-            const textInputs = document.querySelectorAll('input[type="text"]');
-            let chatInput = null;
-            
-            for (let input of textInputs) {
-                if (input.placeholder && input.placeholder.includes('Message')) {
-                    chatInput = input;
-                    break;
-                }
-            }
-            
-            if (chatInput) {
-                chatInput.value = transcript;
-                chatInput.focus();
-                
-                // Trigger input event
-                const event = new Event('input', { bubbles: true });
-                chatInput.dispatchEvent(event);
-                
-                // Also trigger change event
-                const changeEvent = new Event('change', { bubbles: true });
-                chatInput.dispatchEvent(changeEvent);
-            }
-        };
-        
-        recognition.onerror = function(event) {
-            console.error('Speech recognition error:', event.error);
-            isListening = false;
-            updateVoiceButtons();
-            
-            if (event.error === 'not-allowed') {
-                alert('Microphone access denied. Please allow microphone access and try again.');
-            }
-        };
-    }
-    
-    function toggleVoiceInput() {
-        if (!recognition) {
-            alert('Speech recognition not supported in this browser. Please use Chrome, Edge, or Safari.');
-            return;
-        }
-        
-        if (isListening) {
-            recognition.stop();
-        } else {
-            recognition.start();
-        }
-    }
-    
-    function toggleAutoSpeak() {
-        autoSpeak = !autoSpeak;
-        localStorage.setItem('securo_auto_speak', autoSpeak);
-        updateVoiceButtons();
-    }
-    
-    function updateVoiceButtons() {
-        const voiceBtn = document.getElementById('voiceInputBtn');
-        const autoBtn = document.getElementById('autoSpeakBtn');
-        const status = document.getElementById('voiceStatus');
-        
-        if (voiceBtn) {
-            if (isListening) {
-                voiceBtn.innerHTML = '🔴 Listening...';
-                voiceBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-                voiceBtn.style.animation = 'pulse 1s infinite';
-            } else {
-                voiceBtn.innerHTML = '🎤 Voice Input';
-                voiceBtn.style.background = 'linear-gradient(135deg, #3b82f6, #ef4444)';
-                voiceBtn.style.animation = 'none';
-            }
-        }
-        
-        if (autoBtn) {
-            if (autoSpeak) {
-                autoBtn.innerHTML = '🔊 Auto-Speak ON';
-                autoBtn.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-            } else {
-                autoBtn.innerHTML = '🔇 Auto-Speak OFF';
-                autoBtn.style.background = 'linear-gradient(135deg, #64748b, #475569)';
-            }
-        }
-        
-        if (status) {
-            if (isListening) {
-                status.innerHTML = '🔴 Listening...';
-                status.style.color = '#ef4444';
-            } else {
-                status.innerHTML = 'Voice Ready';
-                status.style.color = '#94a3b8';
-            }
-        }
-    }
-    
-    // Initialize buttons on load
-    updateVoiceButtons();
-    </script>
-    
-    <style>
-    @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
-    }
-    </style>
-    """
-    return voice_html
+    """Voice input component - REMOVED"""
+    return ""
 
 def emergency_call_interface():
     """Create emergency call interface with working voice"""
@@ -1100,13 +952,13 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* Chat interface styling */
+    /* Chat interface styling - compact */
     .chat-container {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border: 1px solid #475569;
         border-radius: 16px;
         overflow: hidden;
-        height: 600px;
+        height: auto; /* Changed from fixed height */
         display: flex;
         flex-direction: column;
     }
@@ -1142,6 +994,8 @@ st.markdown("""
         display: flex;
         flex-direction: column;
         gap: 16px;
+        min-height: 300px; /* Minimum height instead of fixed */
+        max-height: 500px; /* Maximum height to prevent too much growth */
     }
     
     .message {
@@ -1311,29 +1165,7 @@ st.markdown("""
         margin: 8px 0 !important;
     }
     
-    /* Map container */
-    .map-container {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 1px solid #475569;
-        border-radius: 16px;
-        overflow: hidden;
-        height: 600px;
-    }
-    
-    .map-header {
-        background: linear-gradient(135deg, #334155 0%, #475569 100%);
-        padding: 16px 20px;
-        border-bottom: 1px solid #475569;
-    }
-    
-    .map-header h3 {
-        color: #ffffff !important;
-        margin: 0 !important;
-        font-size: 18px !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Metrics styling */
+    /* Metrics styling - compact */
     .metric-card {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border: 1px solid #475569;
@@ -1785,7 +1617,7 @@ with st.sidebar:
             - Context-aware responses
             - Crime data analysis
             - Professional assistance
-            - 🎤 **Voice Features (Speech & TTS)**
+            - 🔊 **Text-to-Speech Features**
             
             **Statistical Coverage:**
             - 2022-2025 complete annual data
@@ -1801,35 +1633,35 @@ with st.sidebar:
         st.markdown("---")
         
         # Voice Control Panel
-        st.markdown("### 🎤 Voice Features")
+        st.markdown("### 🔊 Text-to-Speech")
         
         st.markdown("""
         <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                     border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-            <h4 style="color: #10b981; margin-bottom: 12px; font-size: 14px;">🎙️ Available Voice Features</h4>
+            <h4 style="color: #10b981; margin-bottom: 12px; font-size: 14px;">🎙️ Available TTS Features</h4>
             <div style="display: flex; flex-direction: column; gap: 8px;">
-                <div style="color: #94a3b8; font-size: 12px;">🎤 Voice Input - Speak your questions</div>
                 <div style="color: #94a3b8; font-size: 12px;">🔊 Text-to-Speech - AI responses spoken aloud</div>
                 <div style="color: #94a3b8; font-size: 12px;">🎧 Auto-Speak - Automatic TTS for responses</div>
                 <div style="color: #94a3b8; font-size: 12px;">🎯 Individual Message Speech - Click speak on any message</div>
+                <div style="color: #94a3b8; font-size: 12px;">🎵 Professional Voice Quality</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown("""
-        **🚔 Voice Features:**
-        - Click "🎤 Voice Input" to speak your questions
+        **🚔 TTS Features:**
         - Toggle "Auto-Speak" for automatic response reading
         - Use individual "🔊 Speak" buttons on messages
         - Professional police-grade voice quality
+        - Clean text processing for natural speech
         """)
         
         st.markdown("---")
         
         st.markdown("### 📊 Quick Stats")
         st.markdown(f"🗨️ Active Chat Sessions: {len(st.session_state.chat_sessions)}")
-        st.markdown(f"🎤 Voice Features: Enabled")
         st.markdown(f"🔊 TTS Status: Ready")
+        st.markdown(f"📊 Database: Loaded")
 
 # Main Content Area
 if not st.session_state.sidebar_view:
@@ -1877,7 +1709,7 @@ if not st.session_state.sidebar_view:
                     </div>
                     <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
                                 padding: 12px 20px; color: #10b981; font-size: 14px; font-weight: 500;">
-                        📊 Real-time Data
+                        🔊 Text-to-Speech
                     </div>
                 </div>
             </div>
@@ -1897,33 +1729,32 @@ if not st.session_state.sidebar_view:
             <div style="text-align: center; margin-top: 20px;">
                 <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
                             border: 1px solid #10b981; border-radius: 8px;">
-                    <div style="color: #10b981; font-size: 14px; font-weight: 600;">🎤 VOICE FEATURES AVAILABLE</div>
+                    <div style="color: #10b981; font-size: 14px; font-weight: 600;">🔊 TTS FEATURES AVAILABLE</div>
                     <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
-                        Speech Recognition • Text-to-Speech • Auto-Speak
+                        Text-to-Speech • Auto-Speak • Individual Message Speech
                     </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
         
         else:
-            # Chat interface with working voice controls
+            # Chat interface - compact design
             st.markdown("""
-            <div class="chat-container">
-                <div class="chat-header">
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                        border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                     <div>
-                        <h3>🤖 SECURO AI Assistant</h3>
-                        <div class="ai-status">
+                        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🤖 SECURO AI Assistant</h3>
+                        <div style="color: #10b981; font-size: 14px; margin-top: 4px;">
                             <span style="color: #10b981;">🟢</span>
-                            Online with Statistical Knowledge & Voice Features
+                            Online with Statistical Knowledge & TTS Features
                         </div>
                     </div>
                 </div>
+            </div>
             """, unsafe_allow_html=True)
             
-            # Working voice controls
-            st.components.v1.html(voice_input_component(), height=80)
-            
-            # Chat controls
+            # Chat controls - compact
             col1, col2 = st.columns([1, 1])
             with col1:
                 if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
@@ -1935,11 +1766,9 @@ if not st.session_state.sidebar_view:
                     st.session_state.chat_active = False
                     st.rerun()
             
-            st.markdown("</div>", unsafe_allow_html=True)
-            
-            # Current chat info
+            # Current chat info - compact
             current_chat = get_current_chat()
-            st.info(f"**Current Session:** {current_chat['name']} | 🎤 Voice Features Active")
+            st.info(f"**Current Session:** {current_chat['name']}")
             
             # Display messages
             messages = current_chat['messages']
@@ -1991,12 +1820,12 @@ if not st.session_state.sidebar_view:
             
             st.markdown('</div>', unsafe_allow_html=True)
             
-            # Chat input with voice integration
+            # Chat input - simplified
             st.markdown("---")
             with st.form("chat_form", clear_on_submit=True):
                 user_input = st.text_input(
                     "💬 Message Enhanced AI Assistant:",
-                    placeholder="Type your question or use 🎤 Voice Input above for hands-free interaction...",
+                    placeholder="Type your question about crime statistics, trends, or analysis...",
                     label_visibility="collapsed",
                     key="chat_input"
                 )
@@ -2107,11 +1936,10 @@ if not st.session_state.sidebar_view:
 
     elif st.session_state.main_view == 'hotspots':
         st.markdown("""
-        <div class="map-container">
-            <div class="map-header">
-                <h3>🗺️ Crime Hotspot Map - St. Kitts & Nevis</h3>
-                <p style="color: #94a3b8; font-size: 14px; margin: 0;">Interactive crime analysis with real-time data overlays</p>
-            </div>
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                    border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+            <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h3>
+            <p style="color: #94a3b8; font-size: 14px; margin: 8px 0 0 0;">Interactive crime analysis with real-time data overlays</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -2132,39 +1960,42 @@ if not st.session_state.sidebar_view:
         except Exception as e:
             st.error(f"❌ Map Error: {str(e)}")
         
-        # Hotspot summary metrics
+        # Hotspot summary metrics - compact
         st.markdown("### 📊 Hotspot Summary")
         
         col1, col2, col3 = st.columns(3)
         
         with col1:
             st.markdown("""
-            <div class="metric-card" style="border-left: 4px solid #ef4444;">
-                <div class="metric-value" style="color: #ef4444;">109</div>
-                <div class="metric-label">High Risk Crimes</div>
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                        border-left: 4px solid #ef4444; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="color: #ef4444; font-size: 24px; font-weight: 700; margin-bottom: 4px;">109</div>
+                <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">High Risk Crimes</div>
                 <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">3 Areas</div>
             </div>
             """, unsafe_allow_html=True)
         
         with col2:
             st.markdown("""
-            <div class="metric-card" style="border-left: 4px solid #3b82f6;">
-                <div class="metric-value" style="color: #3b82f6;">133</div>
-                <div class="metric-label">Medium Risk Crimes</div>
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                        border-left: 4px solid #3b82f6; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="color: #3b82f6; font-size: 24px; font-weight: 700; margin-bottom: 4px;">133</div>
+                <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Medium Risk Crimes</div>
                 <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">6 Areas</div>
             </div>
             """, unsafe_allow_html=True)
         
         with col3:
             st.markdown("""
-            <div class="metric-card" style="border-left: 4px solid #2563eb;">
-                <div class="metric-value" style="color: #2563eb;">60</div>
-                <div class="metric-label">Low Risk Crimes</div>
+            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                        border-left: 4px solid #2563eb; border-radius: 8px; padding: 16px; text-align: center;">
+                <div style="color: #2563eb; font-size: 24px; font-weight: 700; margin-bottom: 4px;">60</div>
+                <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Low Risk Crimes</div>
                 <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">4 Areas</div>
             </div>
             """, unsafe_allow_html=True)
 
-# Modern Status Bar with Voice Features
+# Modern Status Bar - simplified
 current_time = get_stkitts_time()
 total_chats = len(st.session_state.chat_sessions)
 
@@ -2185,7 +2016,7 @@ st.markdown(f"""
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>🎤 Voice Features: Ready</span>
+            <span>🔊 TTS Available</span>
         </div>
         <div class="status-indicator">
             <div class="status-dot"></div>
