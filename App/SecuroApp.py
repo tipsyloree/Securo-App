@@ -269,11 +269,11 @@ def create_crime_hotspot_map():
         control=True
     ).add_to(m)
     
-    # Color mapping for risk levels
+    # Color mapping for risk levels (Updated with police colors)
     risk_colors = {
         'High': '#ff4444',
-        'Medium': '#ffaa44', 
-        'Low': '#44ff44'
+        'Medium': '#1e90ff', 
+        'Low': '#0066cc'
     }
     
     # Add crime hotspots to the map
@@ -325,16 +325,16 @@ def create_crime_hotspot_map():
                 )
             ).add_to(m)
     
-    # Add a legend
+    # Add a legend (Updated with police colors)
     legend_html = f"""
     <div style="position: fixed; 
                 top: 10px; right: 10px; width: 180px; height: 140px; 
                 background-color: rgba(0, 0, 0, 0.8); 
-                border: 2px solid rgba(68, 255, 68, 0.5);
+                border: 2px solid rgba(30, 144, 255, 0.5);
                 border-radius: 10px; z-index:9999; 
                 font-size: 12px; font-family: Arial;
                 padding: 10px; color: white;">
-    <h4 style="margin: 0 0 10px 0; color: #44ff44;">🗺️ Crime Risk Legend</h4>
+    <h4 style="margin: 0 0 10px 0; color: #1e90ff;">🗺️ Crime Risk Legend</h4>
     <div style="margin: 5px 0;">
         <span style="color: {risk_colors['High']};">●</span> High Risk (25+ crimes)
     </div>
@@ -398,7 +398,7 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
         fig = go.Figure()
         fig.add_trace(go.Bar(
             x=years, y=crimes,
-            marker_color='#44ff44',
+            marker_color='#1e90ff',
             text=[f"{crime:,}" for crime in crimes],
             textposition='auto'
         ))
@@ -424,7 +424,7 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             MACROTRENDS_DATA["homicide_rates_per_100k"]["2011"]
         ]
         
-        colors = ['#44ff44', '#ffaa44', '#ff4444', '#888888', '#ff0000']
+        colors = ['#1e90ff', '#0066cc', '#ff4444', '#888888', '#ff0000']
         
         fig = go.Figure()
         fig.add_trace(go.Bar(
@@ -462,7 +462,7 @@ def create_historical_crime_charts(chart_type, selected_periods, crime_data):
             x=periods, y=total_crimes,
             mode='lines+markers',
             name='Total Crimes',
-            line=dict(color='#44ff44', width=3),
+            line=dict(color='#1e90ff', width=3),
             marker=dict(size=8)
         ))
         
@@ -489,7 +489,7 @@ def create_historical_crime_charts(chart_type, selected_periods, crime_data):
         fig = go.Figure()
         fig.add_trace(go.Bar(
             x=periods, y=detection_rates,
-            marker_color='#44ff44',
+            marker_color='#1e90ff',
             text=[f"{rate}%" for rate in detection_rates],
             textposition='auto'
         ))
@@ -521,7 +521,7 @@ def create_historical_crime_charts(chart_type, selected_periods, crime_data):
                     labels=crimes,
                     values=counts,
                     hole=0.4,
-                    marker_colors=['#44ff44', '#f39c12', '#e74c3c', '#27ae60', '#9b59b6', '#34495e', '#16a085', '#f1c40f']
+                    marker_colors=['#1e90ff', '#f39c12', '#e74c3c', '#27ae60', '#9b59b6', '#34495e', '#16a085', '#f1c40f']
                 )])
                 
                 fig.update_layout(
@@ -733,7 +733,7 @@ except Exception as e:
 # Page configuration
 st.set_page_config(
     page_title="SECURO - Enhanced AI Assistant & Crime Intelligence System",
-    page_icon="🔒",
+    page_icon="🚔",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
@@ -754,7 +754,7 @@ if 'chat_active' not in st.session_state:
 # Initialize statistics on startup
 fetch_and_process_statistics()
 
-# Professional CSS styling
+# Professional CSS styling with POLICE SIREN COLORS! 🚔
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -799,27 +799,53 @@ st.markdown("""
         gap: 15px;
     }
     
+    /* POLICE SIREN SHIELD - Animated Blue/Red */
     .shield-icon {
         width: 45px;
         height: 45px;
-        background: linear-gradient(135deg, #00ff41, #00cc34);
+        background: linear-gradient(45deg, #1e90ff, #ff4444, #1e90ff, #ff4444);
+        background-size: 400% 400%;
         border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 24px;
         font-weight: bold;
-        color: #000;
-        box-shadow: 0 4px 15px rgba(0, 255, 65, 0.3);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(30, 144, 255, 0.4), 0 0 20px rgba(255, 68, 68, 0.3);
+        animation: siren-pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes siren-pulse {
+        0%, 100% { 
+            background-position: 0% 50%;
+            box-shadow: 0 4px 15px rgba(30, 144, 255, 0.4), 0 0 20px rgba(255, 68, 68, 0.3);
+        }
+        50% { 
+            background-position: 100% 50%;
+            box-shadow: 0 4px 15px rgba(255, 68, 68, 0.4), 0 0 20px rgba(30, 144, 255, 0.3);
+        }
     }
     
     .logo-text h1 {
-        color: #00ff41 !important;
+        color: #1e90ff !important;
         font-size: 28px !important;
         font-weight: 700 !important;
         margin: 0 !important;
         letter-spacing: 2px;
-        text-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+        text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        animation: text-glow 3s ease-in-out infinite alternate;
+    }
+    
+    @keyframes text-glow {
+        from { 
+            color: #1e90ff !important;
+            text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        }
+        to { 
+            color: #ff4444 !important;
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+        }
     }
     
     .logo-text p {
@@ -844,22 +870,24 @@ st.markdown("""
         align-items: center;
         gap: 8px;
         padding: 8px 12px;
-        background: rgba(0, 255, 65, 0.05);
+        background: rgba(30, 144, 255, 0.05);
         border-radius: 20px;
-        border: 1px solid rgba(0, 255, 65, 0.2);
+        border: 1px solid rgba(30, 144, 255, 0.2);
     }
     
+    /* Alternating Blue/Red Status Dots */
     .status-dot {
         width: 8px;
         height: 8px;
-        background: #00ff41;
+        background: linear-gradient(45deg, #1e90ff, #ff4444);
+        background-size: 200% 200%;
         border-radius: 50%;
-        animation: pulse 2s infinite;
+        animation: status-siren 1.5s infinite;
     }
     
-    @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50% { opacity: 0.6; transform: scale(1.1); }
+    @keyframes status-siren {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
     
     /* Welcome section */
@@ -867,18 +895,20 @@ st.markdown("""
         text-align: center;
         padding: 30px 20px;
         margin: 20px 0;
-        background: linear-gradient(-45deg, rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.1), rgba(0, 0, 0, 0.9), rgba(0, 255, 65, 0.05));
+        background: linear-gradient(-45deg, rgba(0, 0, 0, 0.9), rgba(30, 144, 255, 0.1), rgba(255, 68, 68, 0.1), rgba(0, 0, 0, 0.9));
         background-size: 400% 400%;
-        animation: moveGradient 4s ease infinite;
+        animation: siren-gradient 4s ease infinite;
         border-radius: 20px;
-        border: 1px solid rgba(0, 255, 65, 0.2);
+        border: 1px solid rgba(30, 144, 255, 0.3);
         position: relative;
         overflow: hidden;
     }
     
-    @keyframes moveGradient {
+    @keyframes siren-gradient {
         0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
+        25% { background-position: 100% 50%; }
+        50% { background-position: 100% 100%; }
+        75% { background-position: 0% 100%; }
         100% { background-position: 0% 50%; }
     }
     
@@ -889,8 +919,14 @@ st.markdown("""
         left: 0;
         right: 0;
         bottom: 0;
-        background: radial-gradient(circle at center, rgba(0, 255, 65, 0.1) 0%, transparent 70%);
+        background: radial-gradient(circle at center, rgba(30, 144, 255, 0.1) 0%, rgba(255, 68, 68, 0.1) 50%, transparent 70%);
         pointer-events: none;
+        animation: radial-siren 3s ease-in-out infinite;
+    }
+    
+    @keyframes radial-siren {
+        0%, 100% { background: radial-gradient(circle at center, rgba(30, 144, 255, 0.1) 0%, transparent 70%); }
+        50% { background: radial-gradient(circle at center, rgba(255, 68, 68, 0.1) 0%, transparent 70%); }
     }
     
     .hero-title {
@@ -898,9 +934,15 @@ st.markdown("""
         font-weight: 700;
         color: #ffffff;
         margin-bottom: 15px;
-        text-shadow: 0 0 30px rgba(0, 255, 65, 0.3);
+        text-shadow: 0 0 30px rgba(30, 144, 255, 0.3);
         position: relative;
         z-index: 2;
+        animation: title-siren 4s ease-in-out infinite;
+    }
+    
+    @keyframes title-siren {
+        0%, 100% { text-shadow: 0 0 30px rgba(30, 144, 255, 0.3); }
+        50% { text-shadow: 0 0 30px rgba(255, 68, 68, 0.3); }
     }
     
     .hero-subtitle {
@@ -942,7 +984,7 @@ st.markdown("""
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(0, 255, 65, 0.02) 0%, transparent 100%);
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.02) 0%, rgba(255, 68, 68, 0.02) 100%);
         opacity: 0;
         transition: opacity 0.4s ease;
         pointer-events: none;
@@ -950,8 +992,20 @@ st.markdown("""
     
     .feature-card:hover {
         transform: translateY(-8px);
-        border-color: #00ff41;
-        box-shadow: 0 15px 40px rgba(0, 255, 65, 0.15);
+        border-color: #1e90ff;
+        box-shadow: 0 15px 40px rgba(30, 144, 255, 0.15), 0 0 30px rgba(255, 68, 68, 0.1);
+        animation: card-siren-glow 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes card-siren-glow {
+        0%, 100% { 
+            border-color: #1e90ff;
+            box-shadow: 0 15px 40px rgba(30, 144, 255, 0.15), 0 0 30px rgba(255, 68, 68, 0.1);
+        }
+        50% { 
+            border-color: #ff4444;
+            box-shadow: 0 15px 40px rgba(255, 68, 68, 0.15), 0 0 30px rgba(30, 144, 255, 0.1);
+        }
     }
     
     .feature-card:hover::before {
@@ -961,12 +1015,24 @@ st.markdown("""
     .feature-icon {
         font-size: 2.8rem;
         margin-bottom: 20px;
-        color: #00ff41;
-        text-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+        color: #1e90ff;
+        text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        animation: icon-siren 3s ease-in-out infinite;
+    }
+    
+    @keyframes icon-siren {
+        0%, 100% { 
+            color: #1e90ff;
+            text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        }
+        50% { 
+            color: #ff4444;
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+        }
     }
     
     .feature-card h3 {
-        color: #00ff41 !important;
+        color: #1e90ff !important;
         font-size: 1.4rem !important;
         margin-bottom: 15px !important;
         font-weight: 600 !important;
@@ -998,7 +1064,7 @@ st.markdown("""
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(0, 255, 65, 0.02) 0%, transparent 100%);
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.02) 0%, rgba(255, 68, 68, 0.02) 100%);
         opacity: 0;
         transition: opacity 0.3s ease;
         pointer-events: none;
@@ -1006,8 +1072,8 @@ st.markdown("""
     
     .emergency-card:hover {
         transform: translateY(-5px);
-        border-color: #00ff41;
-        box-shadow: 0 10px 25px rgba(0, 255, 65, 0.15);
+        border-color: #1e90ff;
+        box-shadow: 0 10px 25px rgba(30, 144, 255, 0.15);
     }
     
     .emergency-card:hover::before {
@@ -1017,7 +1083,7 @@ st.markdown("""
     .emergency-icon {
         font-size: 2.5rem;
         margin-bottom: 15px;
-        color: #00ff41;
+        color: #1e90ff;
     }
     
     .emergency-card h3 {
@@ -1030,9 +1096,21 @@ st.markdown("""
     .emergency-number {
         font-size: 1.8rem !important;
         font-weight: bold !important;
-        color: #00ff41 !important;
+        color: #1e90ff !important;
         margin: 15px 0 !important;
-        text-shadow: 0 0 10px rgba(0, 255, 65, 0.3);
+        text-shadow: 0 0 10px rgba(30, 144, 255, 0.3);
+        animation: number-siren 2.5s ease-in-out infinite;
+    }
+    
+    @keyframes number-siren {
+        0%, 100% { 
+            color: #1e90ff !important;
+            text-shadow: 0 0 10px rgba(30, 144, 255, 0.3);
+        }
+        50% { 
+            color: #ff4444 !important;
+            text-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+        }
     }
     
     .emergency-card p {
@@ -1111,17 +1189,36 @@ st.markdown("""
         white-space: pre-wrap;
     }
     
+    /* POLICE SIREN USER MESSAGES */
     .user-message .message-content {
-        background: linear-gradient(135deg, #00ff41, #00cc34);
-        color: #000000 !important;
+        background: linear-gradient(135deg, #1e90ff, #0066cc);
+        color: #ffffff !important;
         border-bottom-right-radius: 5px;
+        animation: user-message-pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes user-message-pulse {
+        0%, 100% { 
+            background: linear-gradient(135deg, #1e90ff, #0066cc);
+            box-shadow: 0 0 10px rgba(30, 144, 255, 0.3);
+        }
+        50% { 
+            background: linear-gradient(135deg, #ff4444, #cc0000);
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+        }
     }
     
     .bot-message .message-content {
         background: rgba(0, 0, 0, 0.9) !important;
         color: #ffffff !important;
-        border: 1px solid rgba(0, 255, 65, 0.3);
+        border: 1px solid rgba(30, 144, 255, 0.3);
         border-bottom-left-radius: 5px;
+        animation: bot-border-siren 4s ease-in-out infinite;
+    }
+    
+    @keyframes bot-border-siren {
+        0%, 100% { border-color: rgba(30, 144, 255, 0.3); }
+        50% { border-color: rgba(255, 68, 68, 0.3); }
     }
     
     .message-time {
@@ -1140,19 +1237,35 @@ st.markdown("""
         margin: 40px 0;
     }
     
+    /* POLICE SIREN CHAT LOGO */
     .chat-logo {
         width: 100px;
         height: 100px;
-        border: 4px solid #00ff41;
+        border: 4px solid #1e90ff;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         margin: 0 auto 30px;
         font-size: 3rem;
-        color: #00ff41;
-        background: rgba(0, 255, 65, 0.1);
-        animation: pulse 3s ease-in-out infinite;
+        color: #1e90ff;
+        background: rgba(30, 144, 255, 0.1);
+        animation: chat-logo-siren 2s ease-in-out infinite;
+    }
+    
+    @keyframes chat-logo-siren {
+        0%, 100% { 
+            border-color: #1e90ff;
+            color: #1e90ff;
+            background: rgba(30, 144, 255, 0.1);
+            box-shadow: 0 0 20px rgba(30, 144, 255, 0.3);
+        }
+        50% { 
+            border-color: #ff4444;
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.3);
+        }
     }
     
     .chat-title {
@@ -1220,7 +1333,13 @@ st.markdown("""
     }
     
     .status-active {
-        color: #00ff41;
+        color: #1e90ff;
+        animation: status-text-siren 3s ease-in-out infinite;
+    }
+    
+    @keyframes status-text-siren {
+        0%, 100% { color: #1e90ff; }
+        50% { color: #ff4444; }
     }
     
     /* Buttons */
@@ -1237,11 +1356,25 @@ st.markdown("""
     }
     
     .stButton > button:hover {
-        background: rgba(0, 255, 65, 0.1) !important;
-        border-color: #00ff41 !important;
-        color: #00ff41 !important;
+        background: rgba(30, 144, 255, 0.1) !important;
+        border-color: #1e90ff !important;
+        color: #1e90ff !important;
         transform: translateY(-2px) !important;
-        box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2) !important;
+        box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2) !important;
+        animation: button-hover-siren 1s ease-in-out infinite;
+    }
+    
+    @keyframes button-hover-siren {
+        0%, 100% { 
+            border-color: #1e90ff !important;
+            color: #1e90ff !important;
+            box-shadow: 0 5px 15px rgba(30, 144, 255, 0.2) !important;
+        }
+        50% { 
+            border-color: #ff4444 !important;
+            color: #ff4444 !important;
+            box-shadow: 0 5px 15px rgba(255, 68, 68, 0.2) !important;
+        }
     }
     
     /* Text inputs */
@@ -1254,8 +1387,20 @@ st.markdown("""
     }
     
     .stTextInput input:focus {
-        border-color: #00ff41 !important;
-        box-shadow: 0 0 0 3px rgba(0, 255, 65, 0.1) !important;
+        border-color: #1e90ff !important;
+        box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1) !important;
+        animation: input-focus-siren 2s ease-in-out infinite;
+    }
+    
+    @keyframes input-focus-siren {
+        0%, 100% { 
+            border-color: #1e90ff !important;
+            box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.1) !important;
+        }
+        50% { 
+            border-color: #ff4444 !important;
+            box-shadow: 0 0 0 3px rgba(255, 68, 68, 0.1) !important;
+        }
     }
     
     /* Multiselect styling */
@@ -1293,15 +1438,35 @@ st.markdown("""
 with st.sidebar:
     st.markdown("""
     <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border-radius: 16px; padding: 25px; border: 1px solid #30363d; margin-bottom: 25px;">
-        <h3 style="color: #00ff41; margin-bottom: 20px; text-align: center;">🤖 AI System Status</h3>
+        <h3 style="color: #1e90ff; margin-bottom: 20px; text-align: center; animation: sidebar-title-siren 3s ease-in-out infinite;">🤖 AI System Status</h3>
         <div style="text-align: center;">
-            <div style="width: 60px; height: 60px; border: 3px solid #00ff41; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: #00ff41; background: rgba(0, 255, 65, 0.1);">
+            <div style="width: 60px; height: 60px; border: 3px solid #1e90ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: #1e90ff; background: rgba(30, 144, 255, 0.1); animation: sidebar-icon-siren 2s ease-in-out infinite;">
                 🧠
             </div>
-            <p style="color: #00ff41; font-weight: 600; margin-bottom: 5px;">Enhanced AI Active</p>
+            <p style="color: #1e90ff; font-weight: 600; margin-bottom: 5px;">Enhanced AI Active</p>
             <p style="color: #8b949e; font-size: 12px;">Statistical Knowledge • Memory • Context</p>
         </div>
     </div>
+    
+    <style>
+    @keyframes sidebar-title-siren {
+        0%, 100% { color: #1e90ff; }
+        50% { color: #ff4444; }
+    }
+    
+    @keyframes sidebar-icon-siren {
+        0%, 100% { 
+            border-color: #1e90ff;
+            color: #1e90ff;
+            background: rgba(30, 144, 255, 0.1);
+        }
+        50% { 
+            border-color: #ff4444;
+            color: #ff4444;
+            background: rgba(255, 68, 68, 0.1);
+        }
+    }
+    </style>
     """, unsafe_allow_html=True)
     
     if st.session_state.get('ai_enabled', False):
@@ -1333,7 +1498,7 @@ st.markdown(f"""
 <div class="main-header">
     <div class="header-content">
         <div class="logo-section">
-            <div class="shield-icon">🔒</div>
+            <div class="shield-icon">🚔</div>
             <div class="logo-text">
                 <h1>SECURO</h1>
                 <p>Enhanced AI Assistant & Crime Intelligence System</p>
@@ -1394,9 +1559,9 @@ with col7:
 if st.session_state.current_page == 'home':
     st.markdown("""
     <div class="welcome-hero" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <h1 class="hero-title" style="text-align: center; margin: 0 auto;">Welcome to SECURO AI</h1>
-    <p class="hero-subtitle" style="text-align: center; margin: 15px auto; max-width: 900px;">Your comprehensive AI assistant with statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
-    <p class="hero-description" style="text-align: center; margin: 10px auto; max-width: 800px;">AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
+    <h1 class="hero-title" style="text-align: center; margin: 0 auto;">Welcome to SECURO AI 🚔</h1>
+    <p class="hero-subtitle" style="text-align: center; margin: 15px auto; max-width: 900px;">Your comprehensive AI assistant with POLICE SIREN COLORS, statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
+    <p class="hero-description" style="text-align: center; margin: 10px auto; max-width: 800px;">AI assistant now features conversation memory, statistical integration, enhanced analytics, and emergency blue & red police car siren effects! 🚨</p>
 </div>
 """, unsafe_allow_html=True)
     
@@ -1407,8 +1572,8 @@ if st.session_state.current_page == 'home':
         st.markdown("""
         <div class="feature-card">
             <div class="feature-icon">🧠</div>
-            <h3>Enhanced AI with Memory</h3>
-            <p>Conversation memory, statistical knowledge integration, and context-aware responses powered by real crime data from police PDFs.</p>
+            <h3>Enhanced AI with Police Siren Colors</h3>
+            <p>Conversation memory, statistical knowledge integration, and context-aware responses powered by real crime data from police PDFs - now with emergency blue & red siren effects! 🚔</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1416,7 +1581,7 @@ if st.session_state.current_page == 'home':
         <div class="feature-card">
             <div class="feature-icon">📊</div>
             <h3>Integrated Statistics + International Data</h3>
-            <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends.</p>
+            <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends - all styled with police emergency colors.</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -1425,7 +1590,7 @@ if st.session_state.current_page == 'home':
         <div class="feature-card">
             <div class="feature-icon">💾</div>
             <h3>Conversation Management</h3>
-            <p>Multiple chat sessions with memory, chat history, and context preservation across conversations for continuous assistance.</p>
+            <p>Multiple chat sessions with memory, chat history, and context preservation across conversations for continuous assistance - with animated police siren styling!</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1433,17 +1598,17 @@ if st.session_state.current_page == 'home':
         <div class="feature-card">
             <div class="feature-icon">📈</div>
             <h3>Statistical Analysis</h3>
-            <p>Advanced crime data analysis with detection rates, trend identification, and actionable insights for police operations.</p>
+            <p>Advanced crime data analysis with detection rates, trend identification, and actionable insights for police operations - enhanced with emergency response aesthetics.</p>
         </div>
         """, unsafe_allow_html=True)
 
 # ABOUT PAGE
 elif st.session_state.current_page == 'about':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">About SECURO AI</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">About SECURO AI 🚔</h1>', unsafe_allow_html=True)
     
     st.markdown("""
     <div class="feature-card" style="margin-bottom: 40px;">
-        <p style="text-align: center; font-size: 16px;"><strong style="color: #00ff41;">SECURO</strong> is now an enhanced comprehensive crime analysis system with statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
+        <p style="text-align: center; font-size: 16px;"><strong style="color: #1e90ff;">SECURO</strong> is now an enhanced comprehensive crime analysis system with <strong style="color: #ff4444;">POLICE SIREN COLORS</strong>, statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force. Experience the emergency blue and red styling that matches real police car sirens! 🚨</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1497,15 +1662,16 @@ elif st.session_state.current_page == 'about':
             with col_text:
                 st.markdown(f"**{feature.split(' - ')[0]}** - {feature.split(' - ')[1]}")
         
-        st.markdown("### ⚖️ Professional Standards")
+        st.markdown("### 🚔 Police Siren Design")
         st.markdown("""
-        Enhanced SECURO maintains professional communication standards appropriate for law enforcement operations. 
-        The AI assistant now provides statistically-informed assistance while preserving conversation context for more effective police support.
+        Enhanced SECURO now features authentic police car siren colors with alternating blue and red animations throughout the interface. 
+        The AI assistant provides statistically-informed assistance while preserving conversation context for more effective police support - 
+        all with emergency response styling! 🚨
         """)
 
 # CRIME HOTSPOTS PAGE
 elif st.session_state.current_page == 'hotspots':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis 🚔</h1>', unsafe_allow_html=True)
     
     try:
         crime_map = create_crime_hotspot_map()
@@ -1542,10 +1708,10 @@ elif st.session_state.current_page == 'hotspots':
     
     with col2:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, rgba(255, 170, 68, 0.1) 0%, rgba(255, 170, 68, 0.05) 100%); 
-                    border: 1px solid rgba(255, 170, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
-                    border-left: 4px solid #ffaa44;">
-            <h3 style="color: #ffaa44; margin-bottom: 15px;">Medium Risk Areas (6)</h3>
+        <div style="background: linear-gradient(135deg, rgba(30, 144, 255, 0.1) 0%, rgba(30, 144, 255, 0.05) 100%); 
+                    border: 1px solid rgba(30, 144, 255, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
+                    border-left: 4px solid #1e90ff;">
+            <h3 style="color: #1e90ff; margin-bottom: 15px;">Medium Risk Areas (6)</h3>
             <p style="color: #c9d1d9; margin-bottom: 10px;">Cayon, Newton Ground, Old Road, etc.</p>
             <p style="color: #8b949e; font-size: 14px;"><strong>Total: 133 crimes</strong></p>
         </div>
@@ -1553,10 +1719,10 @@ elif st.session_state.current_page == 'hotspots':
     
     with col3:
         st.markdown("""
-        <div style="background: linear-gradient(135deg, rgba(68, 255, 68, 0.1) 0%, rgba(68, 255, 68, 0.05) 100%); 
-                    border: 1px solid rgba(68, 255, 68, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
-                    border-left: 4px solid #44ff44;">
-            <h3 style="color: #44ff44; margin-bottom: 15px;">Low Risk Areas (4)</h3>
+        <div style="background: linear-gradient(135deg, rgba(0, 102, 204, 0.1) 0%, rgba(0, 102, 204, 0.05) 100%); 
+                    border: 1px solid rgba(0, 102, 204, 0.3); border-radius: 16px; padding: 25px; text-align: center; 
+                    border-left: 4px solid #0066cc;">
+            <h3 style="color: #0066cc; margin-bottom: 15px;">Low Risk Areas (4)</h3>
             <p style="color: #c9d1d9; margin-bottom: 10px;">Sandy Point, Dieppe Bay, etc.</p>
             <p style="color: #8b949e; font-size: 14px;"><strong>Total: 60 crimes</strong></p>
         </div>
@@ -1564,9 +1730,9 @@ elif st.session_state.current_page == 'hotspots':
 
 # ANALYTICS PAGE
 elif st.session_state.current_page == 'analytics':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">📊 Statistics & Analytics</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">📊 Statistics & Analytics 🚔</h1>', unsafe_allow_html=True)
     
-    st.info("📊 **Enhanced Statistics System** - Data is now integrated with the AI assistant for comprehensive statistical analysis.")
+    st.info("📊 **Enhanced Statistics System** - Data is now integrated with the AI assistant for comprehensive statistical analysis, styled with police siren colors! 🚨")
     
     # Year/Period Selection
     st.markdown('<h3>📅 Select Time Periods for Analysis</h3>', unsafe_allow_html=True)
@@ -1636,12 +1802,12 @@ elif st.session_state.current_page == 'chat':
         st.markdown("""
         <div class="chat-welcome">
             <div class="chat-logo">
-                🔒
+                🚔
             </div>
             <h1 class="chat-title">SECURO</h1>
-            <p class="chat-subtitle">AI Assistant</p>
+            <p class="chat-subtitle">AI Assistant with Police Siren Colors</p>
             <p style="color: #8b949e; max-width: 600px; margin: 0 auto 30px;">
-                Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having just loaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and find out more about my capabilities.
+                Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals with authentic police car siren styling! I am Online and ready, having just loaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and experience the emergency blue & red police aesthetic! 🚨
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1651,12 +1817,12 @@ elif st.session_state.current_page == 'chat':
             # Create new chat session and activate chat
             create_new_chat()
             st.session_state.chat_active = True
-            st.success("✅ New chat session created! You can now start chatting with SECURO AI.")
+            st.success("✅ New chat session created! You can now start chatting with SECURO AI with police siren colors!")
             st.rerun()
     
     else:
         # Chat is active - show chat interface
-        st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant</h2>', unsafe_allow_html=True)
+        st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant 🚔</h2>', unsafe_allow_html=True)
         
         # Chat management controls
         col1, col2, col3 = st.columns([2, 6, 2])
@@ -1669,11 +1835,23 @@ elif st.session_state.current_page == 'chat':
         with col2:
             current_chat = get_current_chat()
             st.markdown(f"""
-            <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
-                        border-radius: 8px; padding: 10px; text-align: center;">
-                <strong style="color: #00ff41;">Current Session:</strong>
+            <div style="background: rgba(30, 144, 255, 0.1); border: 1px solid rgba(30, 144, 255, 0.3); 
+                        border-radius: 8px; padding: 10px; text-align: center; animation: session-siren 3s ease-in-out infinite;">
+                <strong style="color: #1e90ff;">Current Session:</strong>
                 <span style="color: #c9d1d9;">{current_chat['name']}</span>
             </div>
+            <style>
+            @keyframes session-siren {{
+                0%, 100% {{ 
+                    background: rgba(30, 144, 255, 0.1);
+                    border-color: rgba(30, 144, 255, 0.3);
+                }}
+                50% {{ 
+                    background: rgba(255, 68, 68, 0.1);
+                    border-color: rgba(255, 68, 68, 0.3);
+                }}
+            }}
+            </style>
             """, unsafe_allow_html=True)
         
         with col3:
@@ -1683,7 +1861,7 @@ elif st.session_state.current_page == 'chat':
         
         # Enhanced Status Display
         if st.session_state.get('ai_enabled', False):
-            st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness")
+            st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness • Police Siren Colors! 🚔")
         else:
             st.error("❌ AI Offline: Check your Google AI API key")
         
@@ -1695,7 +1873,7 @@ elif st.session_state.current_page == 'chat':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
+                "content": "🚔 Enhanced SECURO AI System Online with Police Siren Colors!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! 🚨",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
@@ -1729,7 +1907,7 @@ elif st.session_state.current_page == 'chat':
         with st.form("chat_form", clear_on_submit=True):
             user_input = st.text_input(
                 "💬 Message Enhanced AI Assistant:",
-                placeholder="Ask about crime statistics, trends, international comparisons, or request charts... (I have full conversation memory)",
+                placeholder="Ask about crime statistics, trends, international comparisons, or request charts... (I have full conversation memory and police siren styling!) 🚔",
                 label_visibility="collapsed",
                 key="chat_input"
             )
@@ -1801,7 +1979,7 @@ elif st.session_state.current_page == 'chat':
                 fig.add_trace(go.Bar(
                     x=periods,
                     y=st_kitts_data,
-                    marker_color='#00ff41',
+                    marker_color='#1e90ff',
                     text=[f"{crimes}" for crimes in st_kitts_data],
                     textposition='auto',
                     name='St. Kitts Crimes'
@@ -1845,15 +2023,15 @@ elif st.session_state.current_page == 'chat':
 
 # CHAT HISTORY PAGE
 elif st.session_state.current_page == 'history':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 20px;">💾 Chat History Archive</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; color: #8b949e; margin-bottom: 40px;">Review and continue any of your past conversations with SECURO. All chat context is preserved.</p>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center; margin-bottom: 20px;">💾 Chat History Archive 🚔</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; color: #8b949e; margin-bottom: 40px;">Review and continue any of your past conversations with SECURO. All chat context is preserved with police siren styling! 🚨</p>', unsafe_allow_html=True)
     
     if not st.session_state.chat_sessions:
         st.markdown("""
         <div class="empty-state">
             <div class="empty-icon">💬</div>
             <h2 class="empty-title">No Chat History Found</h2>
-            <p class="empty-subtitle">Start a conversation in the AI Assistant tab to create your first chat session.</p>
+            <p class="empty-subtitle">Start a conversation in the AI Assistant tab to create your first chat session with police siren colors!</p>
         </div>
         """, unsafe_allow_html=True)
     else:
@@ -1872,7 +2050,7 @@ elif st.session_state.current_page == 'history':
 
 # EMERGENCY CONTACTS PAGE
 elif st.session_state.current_page == 'emergency':
-    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🚨 Emergency Contacts</h1>', unsafe_allow_html=True)
+    st.markdown('<h1 style="text-align: center; margin-bottom: 40px;">🚨 Emergency Contacts 🚔</h1>', unsafe_allow_html=True)
     
     # Emergency cards grid
     cols = st.columns(4)
@@ -1890,7 +2068,7 @@ elif st.session_state.current_page == 'emergency':
     # Emergency Guidelines
     st.markdown("""
     <div class="guidelines-box">
-        <h3 class="guidelines-title">⚠️ Important Emergency Guidelines</h3>
+        <h3 class="guidelines-title">⚠️ Important Emergency Guidelines 🚔</h3>
         <ul class="guidelines-list">
             <li>For life-threatening emergencies, always call <strong>911</strong> first.</li>
             <li>When calling, provide your exact location and the nature of the emergency.</li>
@@ -1914,7 +2092,7 @@ st.markdown(f"""
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
-        <span class="status-active">MacroTrends Integration: Active</span>
+        <span class="status-active">Police Siren Colors: Active</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
@@ -1937,35 +2115,42 @@ st.markdown(f"""
     <div style="max-width: 1400px; margin: 0 auto; padding: 0 30px;">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-bottom: 30px;">
             <div>
-                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Data Source</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Data Source</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📈 Statistical Integration Active</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌍 Multi-language Support</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔒 Secure Law Enforcement Platform</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚔 Police Siren Color Theme</p>
             </div>
             <div>
-                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Last Updated</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Last Updated</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🤖 AI System: Enhanced AI Intelligence</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Enhanced AI Assistant Platform</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🧠 Statistical Knowledge Integration</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚨 Emergency Response Styling</p>
             </div>
             <div>
-                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Contact Information</h4>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">Contact Information</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📞 Local Intelligence Office: 869-465-2241 Ext. 4238/4239</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📧 lio@police.kn</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌐 Multi-Chat Support</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">⚖️ Secure Law Enforcement Platform</p>
             </div>
             <div>
-                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">AI System</h4>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🧠 Enhanced AI Assistant Platform</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</p>
+                <h4 style="color: #1e90ff; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; animation: footer-title-siren 3s ease-in-out infinite;">AI System</h4>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🚔 Enhanced AI Assistant with Police Siren Colors</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance • Emergency blue & red styling</p>
             </div>
         </div>
         <div style="border-top: 1px solid #21262d; padding: 20px 0; text-align: center; color: #6e7681; font-size: 12px;">
-            <p>&copy; 2025 SECURO - Enhanced AI Assistant & Crime Intelligence System | Royal St. Christopher and Nevis Police Force | Version 2.1.0</p>
+            <p>&copy; 2025 SECURO - Enhanced AI Assistant & Crime Intelligence System with Police Siren Colors 🚔 | Royal St. Christopher and Nevis Police Force | Version 2.1.0 - Emergency Response Edition 🚨</p>
         </div>
     </div>
 </div>
+
+<style>
+@keyframes footer-title-siren {
+    0%, 100% { color: #1e90ff; }
+    50% { color: #ff4444; }
+}
+</style>
 """, unsafe_allow_html=True)
