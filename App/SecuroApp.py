@@ -167,252 +167,6 @@ def get_stkitts_date():
     skn_time = utc_now.astimezone(SKN_TIMEZONE)
     return skn_time.strftime("%Y-%m-%d")
 
-# Voice Interface Components
-def create_voice_interface():
-    """Create simplified voice interface with speech recognition and text-to-speech"""
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); 
-                border: 1px solid #30363d; border-radius: 16px; padding: 20px; 
-                margin: 15px 0; text-align: center;">
-        <h4 style="color: #00ff41; margin-bottom: 15px;">🎙️ Voice Assistant</h4>
-        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 15px;">
-            <button id="voice-listen-btn" onclick="toggleListening()" 
-                    style="background: #00ff41; color: #000; border: none; padding: 10px 20px; 
-                           border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
-                🎤 Click to Speak
-            </button>
-            <button id="voice-speak-btn" onclick="speakLastResponse()" 
-                    style="background: #3b82f6; color: #fff; border: none; padding: 10px 20px; 
-                           border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 14px;">
-                🔊 Repeat Response
-            </button>
-        </div>
-        <div id="voice-status" style="color: #8b949e; font-size: 13px;">
-            Ready for voice input
-        </div>
-    </div>
-
-    <script>
-        let recognition = null;
-        let isListening = false;
-        let ttsEnabled = true;
-        let lastBotResponse = '';
-
-        // Initialize speech recognition immediately
-        function initSpeechRecognition() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                try {
-                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                    recognition = new SpeechRecognition();
-                    
-                    recognition.continuous = false;
-                    recognition.interimResults = false;
-                    recognition.lang = 'en-US';
-                    recognition.maxAlternatives = 1;
-                    
-                    recognition.onstart = function() {
-                        isListening = true;
-                        updateVoiceStatus('🎤 Listening... Speak now');
-                        const btn = document.getElementById('voice-listen-btn');
-                        if (btn) {
-                            btn.innerHTML = '🛑 Stop Listening';
-                            btn.style.background = '#ff4444';
-                        }
-                    };
-                    
-                    recognition.onresult = function(event) {
-                        if (event.results.length > 0) {
-                            const transcript = event.results[0][0].transcript;
-                            updateVoiceStatus('Processing: "' + transcript + '"');
-                            sendVoiceToChat(transcript);
-                        }
-                    };
-                    
-                    recognition.onerror = function(event) {
-                        console.log('Speech recognition error:', event.error);
-                        updateVoiceStatus('Voice error: ' + event.error + '. Try again.');
-                        resetListenButton();
-                    };
-                    
-                    recognition.onend = function() {
-                        isListening = false;
-                        resetListenButton();
-                        updateVoiceStatus('Ready for voice input');
-                    };
-                    
-                    updateVoiceStatus('Voice system ready');
-                    return true;
-                } catch (e) {
-                    console.error('Speech recognition init error:', e);
-                    updateVoiceStatus('Voice initialization failed');
-                    return false;
-                }
-            } else {
-                updateVoiceStatus('Voice not supported in this browser');
-                return false;
-            }
-        }
-        
-        function toggleListening() {
-            if (!recognition) {
-                if (!initSpeechRecognition()) {
-                    return;
-                }
-            }
-            
-            if (isListening) {
-                recognition.stop();
-            } else {
-                try {
-                    recognition.start();
-                } catch (e) {
-                    console.error('Recognition start error:', e);
-                    updateVoiceStatus('Could not start voice recognition');
-                }
-            }
-        }
-        
-        function resetListenButton() {
-            const btn = document.getElementById('voice-listen-btn');
-            if (btn) {
-                btn.innerHTML = '🎤 Click to Speak';
-                btn.style.background = '#00ff41';
-            }
-        }
-        
-        function updateVoiceStatus(message) {
-            const status = document.getElementById('voice-status');
-            if (status) {
-                status.innerHTML = message;
-            }
-        }
-        
-        function sendVoiceToChat(transcript) {
-            // Find the text input and set its value
-            const textInputs = document.querySelectorAll('input[type="text"]');
-            let chatInput = null;
-            
-            for (let input of textInputs) {
-                if (input.placeholder && (input.placeholder.includes('Message') || input.placeholder.includes('type'))) {
-                    chatInput = input;
-                    break;
-                }
-            }
-            
-            if (chatInput) {
-                // Set the input value
-                chatInput.value = transcript;
-                
-                // Trigger input event
-                const event = new Event('input', { bubbles: true });
-                chatInput.dispatchEvent(event);
-                
-                // Find and click the send button
-                setTimeout(() => {
-                    const buttons = document.querySelectorAll('button');
-                    for (let button of buttons) {
-                        if (button.textContent.includes('Send')) {
-                            button.click();
-                            updateVoiceStatus('Message sent successfully');
-                            break;
-                        }
-                    }
-                }, 200);
-            } else {
-                updateVoiceStatus('Could not find chat input');
-            }
-        }
-        
-        function speakText(text) {
-            if ('speechSynthesis' in window && text) {
-                try {
-                    // Clean the text
-                    let cleanText = text.replace(/[🔒🤖📊📈🎙️💬🚨⚡➕🔥🚢🌡️🏢🚔🏥]/g, '');
-                    cleanText = cleanText.replace(/\n/g, ' ');
-                    cleanText = cleanText.trim();
-                    
-                    if (cleanText.length > 0) {
-                        speechSynthesis.cancel(); // Stop any ongoing speech
-                        
-                        const utterance = new SpeechSynthesisUtterance(cleanText);
-                        utterance.rate = 0.9;
-                        utterance.pitch = 1.0;
-                        utterance.volume = 1.0;
-                        
-                        // Use a good voice if available
-                        const voices = speechSynthesis.getVoices();
-                        const englishVoices = voices.filter(voice => 
-                            voice.lang.startsWith('en') && 
-                            (voice.name.includes('Google') || voice.name.includes('Microsoft'))
-                        );
-                        
-                        if (englishVoices.length > 0) {
-                            utterance.voice = englishVoices[0];
-                        }
-                        
-                        utterance.onstart = function() {
-                            updateVoiceStatus('🔊 SECURO speaking...');
-                        };
-                        
-                        utterance.onend = function() {
-                            updateVoiceStatus('Ready for voice input');
-                        };
-                        
-                        speechSynthesis.speak(utterance);
-                        lastBotResponse = cleanText;
-                    }
-                } catch (e) {
-                    console.error('TTS error:', e);
-                    updateVoiceStatus('Speech synthesis error');
-                }
-            }
-        }
-        
-        function speakLastResponse() {
-            // Find the last bot message
-            const botMessages = document.querySelectorAll('.bot-message .message-content');
-            if (botMessages.length > 0) {
-                const lastMessage = botMessages[botMessages.length - 1];
-                const text = lastMessage.textContent || lastMessage.innerText;
-                speakText(text);
-            } else {
-                updateVoiceStatus('No response to repeat');
-            }
-        }
-        
-        // Auto-speak new bot responses
-        function watchForNewResponses() {
-            let lastMessageCount = 0;
-            
-            setInterval(() => {
-                const botMessages = document.querySelectorAll('.bot-message .message-content');
-                if (botMessages.length > lastMessageCount) {
-                    const newMessage = botMessages[botMessages.length - 1];
-                    if (newMessage && !newMessage.hasAttribute('data-spoken')) {
-                        newMessage.setAttribute('data-spoken', 'true');
-                        const text = newMessage.textContent || newMessage.innerText;
-                        setTimeout(() => speakText(text), 1000);
-                    }
-                    lastMessageCount = botMessages.length;
-                }
-            }, 1000);
-        }
-        
-        // Initialize everything
-        setTimeout(() => {
-            initSpeechRecognition();
-            watchForNewResponses();
-            
-            // Load voices
-            if ('speechSynthesis' in window) {
-                speechSynthesis.onvoiceschanged = () => {
-                    console.log('Voices loaded');
-                };
-            }
-        }, 500);
-    </script>
-    """, unsafe_allow_html=True)
-
 # Chat Management System
 if 'chat_sessions' not in st.session_state:
     st.session_state.chat_sessions = {}
@@ -428,9 +182,6 @@ if 'current_analytics_tab' not in st.session_state:
 
 if 'statistical_database' not in st.session_state:
     st.session_state.statistical_database = {}
-
-if 'voice_mode_active' not in st.session_state:
-    st.session_state.voice_mode_active = False
 
 def create_new_chat():
     """Create a new chat session"""
@@ -981,7 +732,7 @@ except Exception as e:
 
 # Page configuration
 st.set_page_config(
-    page_title="SECURO - Voice-Enabled AI Assistant & Crime Intelligence System",
+    page_title="SECURO - Enhanced AI Assistant & Crime Intelligence System",
     page_icon="🔒",
     layout="wide",
     initial_sidebar_state="collapsed"
@@ -1003,7 +754,7 @@ if 'chat_active' not in st.session_state:
 # Initialize statistics on startup
 fetch_and_process_statistics()
 
-# Professional CSS styling (Enhanced for Voice Interface)
+# Professional CSS styling
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -1538,7 +1289,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Enhanced Sidebar with Voice Status
+# Enhanced Sidebar
 with st.sidebar:
     st.markdown("""
     <div style="background: linear-gradient(135deg, #21262d 0%, #161b22 100%); border-radius: 16px; padding: 25px; border: 1px solid #30363d; margin-bottom: 25px;">
@@ -1553,20 +1304,6 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
-    # Voice System Status
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-radius: 16px; padding: 25px; border: 1px solid #2563eb; margin-bottom: 25px;">
-        <h3 style="color: #3b82f6; margin-bottom: 20px; text-align: center;">🎙️ Voice System</h3>
-        <div style="text-align: center;">
-            <div style="width: 60px; height: 60px; border: 3px solid #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: #3b82f6; background: rgba(59, 130, 246, 0.1);">
-                🎤
-            </div>
-            <p style="color: #3b82f6; font-weight: 600; margin-bottom: 5px;">Voice Interface Ready</p>
-            <p style="color: #8b949e; font-size: 12px;">Speech Recognition • Text-to-Speech</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
     if st.session_state.get('ai_enabled', False):
         st.success("🔮 AI Assistant Online")
         st.markdown("""
@@ -1576,15 +1313,6 @@ with st.sidebar:
         - Context-aware responses
         - Crime data analysis
         - Professional assistance
-        - **🎙️ Voice recognition**
-        - **🔊 Text-to-speech responses**
-        
-        **Voice Features:**
-        - Real-time speech recognition
-        - Natural voice responses
-        - Voice command processing
-        - Hands-free operation
-        - Professional voice synthesis
         
         **Statistical Coverage:**
         - 2022-2025 complete annual data
@@ -1608,16 +1336,13 @@ st.markdown(f"""
             <div class="shield-icon">🔒</div>
             <div class="logo-text">
                 <h1>SECURO</h1>
-                <p>Voice-Enabled AI Assistant & Crime Intelligence System</p>
+                <p>Enhanced AI Assistant & Crime Intelligence System</p>
             </div>
         </div>
         <div class="status-info">
             <div class="status-item">
                 <div class="status-dot"></div>
                 <span>Royal St. Christopher & Nevis Police Force</span>
-            </div>
-            <div class="status-item">
-                <span>🎤 Voice Interface Active</span>
             </div>
             <div class="status-item">
                 <span>📅 {current_date} | 🕒 {current_time} (AST)</span>
@@ -1670,8 +1395,8 @@ if st.session_state.current_page == 'home':
     st.markdown("""
     <div class="welcome-hero" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;">
     <h1 class="hero-title" style="text-align: center; margin: 0 auto;">Welcome to SECURO AI</h1>
-    <p class="hero-subtitle" style="text-align: center; margin: 15px auto; max-width: 900px;">Your comprehensive Voice-Enabled AI assistant with speech recognition, text-to-speech, statistical knowledge, and conversation memory for St. Kitts & Nevis</p>
-    <p class="hero-description" style="text-align: center; margin: 10px auto; max-width: 800px;">Now featuring full voice interaction capabilities - speak to SECURO and hear responses back!</p>
+    <p class="hero-subtitle" style="text-align: center; margin: 15px auto; max-width: 900px;">Your comprehensive AI assistant with statistical knowledge, conversation memory, and crime analysis capabilities for St. Kitts & Nevis</p>
+    <p class="hero-description" style="text-align: center; margin: 10px auto; max-width: 800px;">AI assistant now features conversation memory, statistical integration, and enhanced analytics.</p>
 </div>
 """, unsafe_allow_html=True)
     
@@ -1681,26 +1406,9 @@ if st.session_state.current_page == 'home':
     with col1:
         st.markdown("""
         <div class="feature-card">
-            <div class="feature-icon">🎙️</div>
-            <h3>Voice-Enabled AI Assistant</h3>
-            <p>Complete voice interaction with speech recognition and text-to-speech responses. Speak naturally to SECURO and receive spoken answers for hands-free operation.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="feature-card">
             <div class="feature-icon">🧠</div>
             <h3>Enhanced AI with Memory</h3>
             <p>Conversation memory, statistical knowledge integration, and context-aware responses powered by real crime data from police PDFs.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="feature-card">
-            <div class="feature-icon">🔊</div>
-            <h3>Professional Voice Synthesis</h3>
-            <p>High-quality text-to-speech with professional voice synthesis for clear, natural AI responses suitable for law enforcement environments.</p>
         </div>
         """, unsafe_allow_html=True)
         
@@ -1711,6 +1419,23 @@ if st.session_state.current_page == 'home':
             <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends.</p>
         </div>
         """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">💾</div>
+            <h3>Conversation Management</h3>
+            <p>Multiple chat sessions with memory, chat history, and context preservation across conversations for continuous assistance.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3>Statistical Analysis</h3>
+            <p>Advanced crime data analysis with detection rates, trend identification, and actionable insights for police operations.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ABOUT PAGE
 elif st.session_state.current_page == 'about':
@@ -1718,29 +1443,13 @@ elif st.session_state.current_page == 'about':
     
     st.markdown("""
     <div class="feature-card" style="margin-bottom: 40px;">
-        <p style="text-align: center; font-size: 16px;"><strong style="color: #00ff41;">SECURO</strong> is now a voice-enabled comprehensive crime analysis system with speech recognition, text-to-speech, statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
+        <p style="text-align: center; font-size: 16px;"><strong style="color: #00ff41;">SECURO</strong> is now an enhanced comprehensive crime analysis system with statistical integration, conversation memory, and advanced AI capabilities built specifically for the Royal St. Christopher and Nevis Police Force.</p>
     </div>
     """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("### 🎙️ Voice Interface Features")
-        voice_features = [
-            "Speech Recognition - Real-time voice input processing",
-            "Text-to-Speech - Natural AI voice responses", 
-            "Hands-free Operation - Complete voice control of the system",
-            "Professional Voice Synthesis - Clear, natural speech output",
-            "Voice Command Processing - Understand spoken questions naturally"
-        ]
-        
-        for feature in voice_features:
-            col_check, col_text = st.columns([1, 10])
-            with col_check:
-                st.markdown("✅")
-            with col_text:
-                st.markdown(f"**{feature.split(' - ')[0]}** - {feature.split(' - ')[1]}")
-        
         st.markdown("### 🧠 SECURO AI Capabilities")
         capabilities = [
             "Conversation Memory - Maintains context across entire chat sessions",
@@ -1756,15 +1465,13 @@ elif st.session_state.current_page == 'about':
                 st.markdown("✅")
             with col_text:
                 st.markdown(f"**{cap.split(' - ')[0]}** - {cap.split(' - ')[1]}")
-    
-    with col2:
+        
         st.markdown("### 💬 Chat Management Features")
         chat_features = [
-            "Voice Chat Sessions - Full voice-enabled conversation management",
-            "Chat History - Access and resume previous conversations with voice",
+            "New Chat Sessions - Start fresh conversations anytime",
+            "Chat History - Access and resume previous conversations",
             "Context Preservation - AI remembers entire conversation context", 
-            "Session Management - Switch between multiple chat sessions seamlessly",
-            "Voice-to-Text Integration - Seamless conversion of speech to text"
+            "Session Management - Switch between multiple chat sessions seamlessly"
         ]
         
         for feature in chat_features:
@@ -1773,7 +1480,8 @@ elif st.session_state.current_page == 'about':
                 st.markdown("✅")
             with col_text:
                 st.markdown(f"**{feature.split(' - ')[0]}** - {feature.split(' - ')[1]}")
-        
+    
+    with col2:
         st.markdown("### 📊 Integrated Statistical Database")
         stats_features = [
             "Real PDF Integration - Data sourced from official police statistical reports",
@@ -1788,6 +1496,12 @@ elif st.session_state.current_page == 'about':
                 st.markdown("✅")
             with col_text:
                 st.markdown(f"**{feature.split(' - ')[0]}** - {feature.split(' - ')[1]}")
+        
+        st.markdown("### ⚖️ Professional Standards")
+        st.markdown("""
+        Enhanced SECURO maintains professional communication standards appropriate for law enforcement operations. 
+        The AI assistant now provides statistically-informed assistance while preserving conversation context for more effective police support.
+        """)
 
 # CRIME HOTSPOTS PAGE
 elif st.session_state.current_page == 'hotspots':
@@ -1915,7 +1629,7 @@ elif st.session_state.current_page == 'analytics':
             df = pd.DataFrame(comparison_data)
             st.dataframe(df, use_container_width=True)
 
-# AI ASSISTANT PAGE (Enhanced with Voice Interface)
+# AI ASSISTANT PAGE
 elif st.session_state.current_page == 'chat':
     # Show welcome screen only if chat is not active
     if not st.session_state.get('chat_active', False):
@@ -1925,41 +1639,24 @@ elif st.session_state.current_page == 'chat':
                 🔒
             </div>
             <h1 class="chat-title">SECURO</h1>
-            <p class="chat-subtitle">Voice-Enabled AI Assistant</p>
+            <p class="chat-subtitle">AI Assistant</p>
             <p style="color: #8b949e; max-width: 600px; margin: 0 auto 30px;">
-                Welcome, I am SECURO, a voice-enabled AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having just loaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, conversation memory, AND full voice interaction capabilities. You can speak to me and I will respond with voice!
+                Welcome, I am SECURO, an enhanced AI Assistant & Crime Intelligence system for Law Enforcement Professionals. I am Online and ready, having just loaded the crime intelligence database. You now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain your chat history. Click Start to begin the conversation and find out more about my capabilities.
             </p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Enhanced start conversation buttons
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            if st.button("🚀 Start Text Chat", key="start_text_chat", use_container_width=True):
-                # Create new chat session and activate chat
-                create_new_chat()
-                st.session_state.chat_active = True
-                st.session_state.voice_mode_active = False
-                st.success("✅ Text chat session created! You can now start chatting with SECURO AI.")
-                st.rerun()
-        
-        with col2:
-            if st.button("🎙️ Start Voice Chat", key="start_voice_chat", use_container_width=True):
-                # Create new chat session and activate voice chat
-                create_new_chat()
-                st.session_state.chat_active = True
-                st.session_state.voice_mode_active = True
-                st.success("✅ Voice chat session created! Use the voice controls to speak with SECURO AI.")
-                st.rerun()
+        # Working start conversation button
+        if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+            # Create new chat session and activate chat
+            create_new_chat()
+            st.session_state.chat_active = True
+            st.success("✅ New chat session created! You can now start chatting with SECURO AI.")
+            st.rerun()
     
     else:
-        # Chat is active - show chat interface with voice controls if needed
+        # Chat is active - show chat interface
         st.markdown('<h2 style="text-align: center; margin-bottom: 20px;">💬 SECURO AI Assistant</h2>', unsafe_allow_html=True)
-        
-        # Voice interface (only show when voice mode is active)
-        if st.session_state.get('voice_mode_active', False):
-            create_voice_interface()
         
         # Chat management controls
         col1, col2, col3 = st.columns([2, 6, 2])
@@ -1971,11 +1668,10 @@ elif st.session_state.current_page == 'chat':
         
         with col2:
             current_chat = get_current_chat()
-            mode_text = "🎙️ Voice Mode" if st.session_state.get('voice_mode_active', False) else "💬 Text Mode"
             st.markdown(f"""
             <div style="background: rgba(0, 255, 65, 0.1); border: 1px solid rgba(0, 255, 65, 0.3); 
                         border-radius: 8px; padding: 10px; text-align: center;">
-                <strong style="color: #00ff41;">{mode_text}:</strong>
+                <strong style="color: #00ff41;">Current Session:</strong>
                 <span style="color: #c9d1d9;">{current_chat['name']}</span>
             </div>
             """, unsafe_allow_html=True)
@@ -1983,15 +1679,11 @@ elif st.session_state.current_page == 'chat':
         with col3:
             if st.button("🔙 Back to Welcome", key="back_welcome", use_container_width=True):
                 st.session_state.chat_active = False
-                st.session_state.voice_mode_active = False
                 st.rerun()
         
         # Enhanced Status Display
         if st.session_state.get('ai_enabled', False):
-            if st.session_state.get('voice_mode_active', False):
-                st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness • Voice Controls Active")
-            else:
-                st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness")
+            st.success("✅ Enhanced AI Ready: Statistical Knowledge • Conversation Memory • Context Awareness")
         else:
             st.error("❌ AI Offline: Check your Google AI API key")
         
@@ -2001,10 +1693,9 @@ elif st.session_state.current_page == 'chat':
         
         # Initialize with welcome message if no messages
         if not messages:
-            voice_text = " I'm also equipped with voice recognition and can speak my responses back to you!" if st.session_state.get('voice_mode_active', False) else ""
             welcome_msg = {
                 "role": "assistant",
-                "content": f"🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context.{voice_text} Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
+                "content": "🔒 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
@@ -2035,17 +1726,10 @@ elif st.session_state.current_page == 'chat':
 
         # Enhanced Chat input
         st.markdown("---")
-        
-        # Voice mode instructions
-        if st.session_state.get('voice_mode_active', False):
-            st.info("🎙️ **Voice Mode Active**: Use the voice controls above to speak with SECURO, or type below for text input.")
-        
         with st.form("chat_form", clear_on_submit=True):
-            placeholder_text = "Speak using voice controls above, or type your message here..." if st.session_state.get('voice_mode_active', False) else "Ask about crime statistics, trends, international comparisons, or request charts... (I have full conversation memory)"
-            
             user_input = st.text_input(
                 "💬 Message Enhanced AI Assistant:",
-                placeholder=placeholder_text,
+                placeholder="Ask about crime statistics, trends, international comparisons, or request charts... (I have full conversation memory)",
                 label_visibility="collapsed",
                 key="chat_input"
             )
@@ -2162,35 +1846,23 @@ elif st.session_state.current_page == 'chat':
 # CHAT HISTORY PAGE
 elif st.session_state.current_page == 'history':
     st.markdown('<h1 style="text-align: center; margin-bottom: 20px;">💾 Chat History Archive</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="text-align: center; color: #8b949e; margin-bottom: 40px;">Review and continue any of your past conversations with SECURO. All chat context is preserved and voice mode can be enabled for any session.</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align: center; color: #8b949e; margin-bottom: 40px;">Review and continue any of your past conversations with SECURO. All chat context is preserved.</p>', unsafe_allow_html=True)
     
     if not st.session_state.chat_sessions:
         st.markdown("""
         <div class="empty-state">
             <div class="empty-icon">💬</div>
             <h2 class="empty-title">No Chat History Found</h2>
-            <p class="empty-subtitle">Start a conversation in the AI Assistant tab to create your first chat session. You can choose between text or voice chat.</p>
+            <p class="empty-subtitle">Start a conversation in the AI Assistant tab to create your first chat session.</p>
         </div>
         """, unsafe_allow_html=True)
     else:
         for chat_id, chat_data in st.session_state.chat_sessions.items():
-            col1, col2 = st.columns([4, 1])
-            
-            with col1:
-                if st.button(f"💬 {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
-                    st.session_state.current_chat_id = chat_id
-                    st.session_state.current_page = 'chat'
-                    st.session_state.chat_active = True
-                    st.session_state.voice_mode_active = False  # Start in text mode by default
-                    st.rerun()
-            
-            with col2:
-                if st.button(f"🎙️ Voice", key=f"voice_hist_{chat_id}", use_container_width=True):
-                    st.session_state.current_chat_id = chat_id
-                    st.session_state.current_page = 'chat'
-                    st.session_state.chat_active = True
-                    st.session_state.voice_mode_active = True  # Start in voice mode
-                    st.rerun()
+            if st.button(f"💬 {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
+                st.session_state.current_chat_id = chat_id
+                st.session_state.current_page = 'chat'
+                st.session_state.chat_active = True
+                st.rerun()
             
             st.caption(f"Created: {chat_data['created_at']} AST | Last Activity: {chat_data['last_activity']} AST")
             if chat_data['messages']:
@@ -2230,20 +1902,15 @@ elif st.session_state.current_page == 'emergency':
     </div>
     """, unsafe_allow_html=True)
 
-# Status Bar (Enhanced with Voice Status)
+# Status Bar
 current_time = get_stkitts_time()
 total_chats = len(st.session_state.chat_sessions)
-voice_status = "🎙️ Voice Ready" if st.session_state.get('voice_mode_active', False) else "💬 Text Mode"
 
 st.markdown(f"""
 <div class="status-bar">
     <div class="status-item">
         <div class="status-dot"></div>
         <span class="status-active">Enhanced AI Active</span>
-    </div>
-    <div class="status-item">
-        <div class="status-dot"></div>
-        <span class="status-active">{voice_status}</span>
     </div>
     <div class="status-item">
         <div class="status-dot"></div>
@@ -2264,7 +1931,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Footer (Enhanced with Voice Information)
+# Footer
 st.markdown(f"""
 <div style="background: linear-gradient(135deg, #0d1117 0%, #161b22 100%); border-top: 1px solid #21262d; padding: 40px 0 20px; margin-top: 60px;">
     <div style="max-width: 1400px; margin: 0 auto; padding: 0 30px;">
@@ -2273,15 +1940,15 @@ st.markdown(f"""
                 <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Data Source</h4>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Royal St. Christopher & Nevis Police Force (RSCNPF)</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📈 Statistical Integration Active</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🎙️ Voice Interface Enabled</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🌍 Multi-language Support</p>
                 <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔒 Secure Law Enforcement Platform</p>
             </div>
             <div>
-                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Voice Features</h4>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🎤 Real-time Speech Recognition</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔊 Natural Text-to-Speech</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">👂 Voice Command Processing</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🗣️ Professional Voice Synthesis</p>
+                <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Last Updated</h4>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🔄 {get_stkitts_date()} {get_stkitts_time()} AST</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🤖 AI System: Enhanced AI Intelligence</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">📊 Enhanced AI Assistant Platform</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🧠 Statistical Knowledge Integration</p>
             </div>
             <div>
                 <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">Contact Information</h4>
@@ -2292,12 +1959,12 @@ st.markdown(f"""
             </div>
             <div>
                 <h4 style="color: #00ff41; font-size: 14px; font-weight: 600; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px;">AI System</h4>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🧠 Voice-Enabled AI Assistant Platform</p>
-                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Voice interaction • Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">🧠 Enhanced AI Assistant Platform</p>
+                <p style="color: #8b949e; font-size: 13px; line-height: 1.6; margin-bottom: 8px;">Statistical knowledge integration • Conversation memory • Context awareness • Multi-chat support • Professional law enforcement assistance</p>
             </div>
         </div>
         <div style="border-top: 1px solid #21262d; padding: 20px 0; text-align: center; color: #6e7681; font-size: 12px;">
-            <p>&copy; 2025 SECURO - Voice-Enabled AI Assistant & Crime Intelligence System | Royal St. Christopher and Nevis Police Force | Version 3.0.0 with Voice Interface</p>
+            <p>&copy; 2025 SECURO - Enhanced AI Assistant & Crime Intelligence System | Royal St. Christopher and Nevis Police Force | Version 2.1.0</p>
         </div>
     </div>
 </div>
