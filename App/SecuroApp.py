@@ -1572,29 +1572,29 @@ if st.session_state.current_page == 'home':
             <div class="slide active">
                 <div class="slide-content">
                     <div class="slide-icon">🧠</div>
-                    <h3>Enhanced AI with Police Siren Colors</h3>
-                    <p>Conversation memory, statistical knowledge integration, and context-aware responses powered by real crime data from police PDFs - now with emergency blue & red siren effects! 🚔</p>
+                    <h3>Enhanced AI with Memory</h3>
+                    <p>Statistical knowledge & conversation context</p>
                 </div>
             </div>
             <div class="slide">
                 <div class="slide-content">
                     <div class="slide-icon">📊</div>
-                    <h3>Integrated Statistics + International Data</h3>
-                    <p>Real-time access to local crime statistics PLUS MacroTrends international comparison data with global context and historical trends - all styled with police emergency colors.</p>
+                    <h3>Crime Statistics + International Data</h3>
+                    <p>Real-time local & global crime analysis</p>
                 </div>
             </div>
             <div class="slide">
                 <div class="slide-content">
                     <div class="slide-icon">💾</div>
-                    <h3>Conversation Management</h3>
-                    <p>Multiple chat sessions with memory, chat history, and context preservation across conversations for continuous assistance - with animated police siren styling!</p>
+                    <h3>Multi-Chat Sessions</h3>
+                    <p>Chat history & context preservation</p>
                 </div>
             </div>
             <div class="slide">
                 <div class="slide-content">
                     <div class="slide-icon">📈</div>
-                    <h3>Statistical Analysis</h3>
-                    <p>Advanced crime data analysis with detection rates, trend identification, and actionable insights for police operations - enhanced with emergency response aesthetics.</p>
+                    <h3>Advanced Analytics</h3>
+                    <p>Detection rates & trend analysis</p>
                 </div>
             </div>
         </div>
@@ -1611,9 +1611,9 @@ if st.session_state.current_page == 'home':
     <style>
     .slideshow-container {
         position: relative;
-        max-width: 70%;
+        max-width: 45%;
         margin: 40px auto;
-        height: 220px;
+        height: 180px;
         overflow: hidden;
         border-radius: 15px;
         border: 1px solid #30363d;
@@ -1632,7 +1632,7 @@ if st.session_state.current_page == 'home':
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 40px;
+        padding: 25px;
         opacity: 0;
         transform: translateX(0);
         transition: opacity 1s ease-in-out;
@@ -1644,12 +1644,12 @@ if st.session_state.current_page == 'home':
     
     .slide-content {
         text-align: center;
-        max-width: 800px;
+        max-width: 100%;
     }
     
     .slide-icon {
-        font-size: 4rem;
-        margin-bottom: 20px;
+        font-size: 2.5rem;
+        margin-bottom: 15px;
         color: #1e90ff;
         text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
         animation: slide-icon-siren 3s ease-in-out infinite;
@@ -1668,10 +1668,11 @@ if st.session_state.current_page == 'home':
     
     .slide-content h3 {
         color: #1e90ff !important;
-        font-size: 2rem !important;
-        margin-bottom: 20px !important;
+        font-size: 1.3rem !important;
+        margin-bottom: 12px !important;
         font-weight: 600 !important;
         animation: slide-title-siren 4s ease-in-out infinite;
+        line-height: 1.3 !important;
     }
     
     @keyframes slide-title-siren {
@@ -1681,8 +1682,9 @@ if st.session_state.current_page == 'home':
     
     .slide-content p {
         color: #c9d1d9 !important;
-        font-size: 1.1rem !important;
-        line-height: 1.6 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.4 !important;
+        margin: 0 !important;
     }
     
     @keyframes slideshow {
@@ -1695,16 +1697,16 @@ if st.session_state.current_page == 'home':
     
     .slide-indicators {
         position: absolute;
-        bottom: 20px;
+        bottom: 15px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
-        gap: 10px;
+        gap: 8px;
     }
     
     .indicator {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.3);
         transition: all 0.3s ease;
