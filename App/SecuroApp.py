@@ -1777,7 +1777,7 @@ if not st.session_state.sidebar_view:
             if not messages:
                 welcome_msg = {
                     "role": "assistant",
-                    "content": "👮🏾‍♂️ Enhanced SECURO AI System Online! \n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! Experience the authentic police emergency styling with alternating blue and red effects! ",
+                    "content": "👮🏾‍♂️ Enhanced SECURO AI System Online! \n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! ",
                     "timestamp": get_stkitts_time()
                 }
                 messages.append(welcome_msg)
