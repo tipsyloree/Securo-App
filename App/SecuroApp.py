@@ -469,8 +469,32 @@ def get_current_chat():
     if st.session_state.current_chat_id and st.session_state.current_chat_id in st.session_state.chat_sessions:
         return st.session_state.chat_sessions[st.session_state.current_chat_id]
     else:
-        create_new_chat()
-        return st.session_state.chat_sessions[st.session_state.current_chat_id]
+        # Only create new chat when actually needed, not during initialization
+        if st.session_state.get('chat_active', False):
+            return create_new_chat_session()
+        else:
+            # Return a temporary chat object for display purposes
+            return {
+                'id': 'temp',
+                'name': 'New Chat',
+                'messages': [],
+                'created_at': get_stkitts_time(),
+                'last_activity': get_stkitts_time()
+            }
+
+def create_new_chat_session():
+    """Create a new chat session - renamed to avoid conflicts"""
+    chat_id = f"chat_{st.session_state.chat_counter}_{int(time.time())}"
+    st.session_state.chat_sessions[chat_id] = {
+        'id': chat_id,
+        'name': f"Chat {st.session_state.chat_counter}",
+        'messages': [],
+        'created_at': get_stkitts_time(),
+        'last_activity': get_stkitts_time()
+    }
+    st.session_state.current_chat_id = chat_id
+    st.session_state.chat_counter += 1
+    return st.session_state.chat_sessions[chat_id]
 
 def add_message_to_chat(role, content):
     """Add message to current chat"""
@@ -919,6 +943,12 @@ st.set_page_config(
 
 # Initialize statistics on startup
 fetch_and_process_statistics()
+
+# Initialize chat system only if needed
+if 'chat_sessions' not in st.session_state:
+    st.session_state.chat_sessions = {}
+if 'current_chat_id' not in st.session_state:
+    st.session_state.current_chat_id = None
 
 # Modern React-like CSS styling
 st.markdown("""
@@ -1857,7 +1887,7 @@ if not st.session_state.sidebar_view:
             col1, col2, col3 = st.columns([1, 2, 1])
             with col2:
                 if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
-                    create_new_chat()
+                    create_new_chat_session()
                     st.session_state.chat_active = True
                     st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
                     st.rerun()
@@ -1897,7 +1927,7 @@ if not st.session_state.sidebar_view:
             col1, col2 = st.columns([1, 1])
             with col1:
                 if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
-                    create_new_chat()
+                    create_new_chat_session()
                     st.rerun()
             
             with col2:
