@@ -1572,29 +1572,37 @@ if st.session_state.current_page == 'home':
             <div class="slide active">
                 <div class="slide-content">
                     <div class="slide-icon">🧠</div>
-                    <h3>Enhanced AI with Memory</h3>
-                    <p>Statistical knowledge & conversation context</p>
+                    <div class="slide-text">
+                        <h3>Enhanced AI with Memory</h3>
+                        <p>Statistical knowledge & conversation context</p>
+                    </div>
                 </div>
             </div>
             <div class="slide">
                 <div class="slide-content">
                     <div class="slide-icon">📊</div>
-                    <h3>Crime Statistics + International Data</h3>
-                    <p>Real-time local & global crime analysis</p>
+                    <div class="slide-text">
+                        <h3>Crime Statistics + International Data</h3>
+                        <p>Real-time local & global crime analysis</p>
+                    </div>
                 </div>
             </div>
             <div class="slide">
                 <div class="slide-content">
                     <div class="slide-icon">💾</div>
-                    <h3>Multi-Chat Sessions</h3>
-                    <p>Chat history & context preservation</p>
+                    <div class="slide-text">
+                        <h3>Multi-Chat Sessions</h3>
+                        <p>Chat history & context preservation</p>
+                    </div>
                 </div>
             </div>
             <div class="slide">
                 <div class="slide-content">
                     <div class="slide-icon">📈</div>
-                    <h3>Advanced Analytics</h3>
-                    <p>Detection rates & trend analysis</p>
+                    <div class="slide-text">
+                        <h3>Advanced Analytics</h3>
+                        <p>Detection rates & trend analysis</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1611,9 +1619,9 @@ if st.session_state.current_page == 'home':
     <style>
     .slideshow-container {
         position: relative;
-        max-width: 45%;
+        max-width: 100%;
         margin: 40px auto;
-        height: 180px;
+        height: 100px;
         overflow: hidden;
         border-radius: 15px;
         border: 1px solid #30363d;
@@ -1632,7 +1640,7 @@ if st.session_state.current_page == 'home':
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 25px;
+        padding: 15px 40px;
         opacity: 0;
         transform: translateX(0);
         transition: opacity 1s ease-in-out;
@@ -1645,14 +1653,18 @@ if st.session_state.current_page == 'home':
     .slide-content {
         text-align: center;
         max-width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
     }
     
     .slide-icon {
-        font-size: 2.5rem;
-        margin-bottom: 15px;
+        font-size: 2rem;
         color: #1e90ff;
         text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
         animation: slide-icon-siren 3s ease-in-out infinite;
+        flex-shrink: 0;
     }
     
     @keyframes slide-icon-siren {
@@ -1666,13 +1678,19 @@ if st.session_state.current_page == 'home':
         }
     }
     
+    .slide-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+    
     .slide-content h3 {
         color: #1e90ff !important;
-        font-size: 1.3rem !important;
-        margin-bottom: 12px !important;
+        font-size: 1.1rem !important;
+        margin: 0 0 5px 0 !important;
         font-weight: 600 !important;
         animation: slide-title-siren 4s ease-in-out infinite;
-        line-height: 1.3 !important;
+        line-height: 1.2 !important;
     }
     
     @keyframes slide-title-siren {
@@ -1682,8 +1700,8 @@ if st.session_state.current_page == 'home':
     
     .slide-content p {
         color: #c9d1d9 !important;
-        font-size: 0.9rem !important;
-        line-height: 1.4 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.3 !important;
         margin: 0 !important;
     }
     
@@ -1697,16 +1715,16 @@ if st.session_state.current_page == 'home':
     
     .slide-indicators {
         position: absolute;
-        bottom: 15px;
+        bottom: 8px;
         left: 50%;
         transform: translateX(-50%);
         display: flex;
-        gap: 8px;
+        gap: 6px;
     }
     
     .indicator {
-        width: 10px;
-        height: 10px;
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.3);
         transition: all 0.3s ease;
@@ -1716,7 +1734,7 @@ if st.session_state.current_page == 'home':
     @keyframes indicator-siren {
         0%, 25% { 
             background: #1e90ff;
-            box-shadow: 0 0 10px rgba(30, 144, 255, 0.5);
+            box-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
         }
         25.1%, 50% { 
             background: rgba(255, 255, 255, 0.3);
@@ -1724,7 +1742,7 @@ if st.session_state.current_page == 'home':
         }
         50.1%, 75% { 
             background: #ff4444;
-            box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+            box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
         }
         75.1%, 100% { 
             background: rgba(255, 255, 255, 0.3);
@@ -1734,7 +1752,148 @@ if st.session_state.current_page == 'home':
     
     .indicator.active {
         background: #1e90ff;
-        box-shadow: 0 0 15px rgba(30, 144, 255, 0.7);
+        box-shadow: 0 0 12px rgba(30, 144, 255, 0.7);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    <style>
+    .slideshow-container {
+        position: relative;
+        max-width: 100%;
+        margin: 40px auto;
+        height: 100px;
+        overflow: hidden;
+        border-radius: 15px;
+        border: 1px solid #30363d;
+        background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
+    }
+    
+    .slide-wrapper {
+        display: flex;
+        height: 100%;
+        animation: slideshow 20s infinite;
+    }
+    
+    .slide {
+        min-width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 40px;
+        opacity: 0;
+        transform: translateX(0);
+        transition: opacity 1s ease-in-out;
+    }
+    
+    .slide.active {
+        opacity: 1;
+    }
+    
+    .slide-content {
+        text-align: center;
+        max-width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+    }
+    
+    .slide-icon {
+        font-size: 2rem;
+        color: #1e90ff;
+        text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        animation: slide-icon-siren 3s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+    
+    @keyframes slide-icon-siren {
+        0%, 100% { 
+            color: #1e90ff;
+            text-shadow: 0 0 20px rgba(30, 144, 255, 0.4);
+        }
+        50% { 
+            color: #ff4444;
+            text-shadow: 0 0 20px rgba(255, 68, 68, 0.4);
+        }
+    }
+    
+    .slide-text {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+    }
+    
+    .slide-content h3 {
+        color: #1e90ff !important;
+        font-size: 1.1rem !important;
+        margin: 0 0 5px 0 !important;
+        font-weight: 600 !important;
+        animation: slide-title-siren 4s ease-in-out infinite;
+        line-height: 1.2 !important;
+    }
+    
+    @keyframes slide-title-siren {
+        0%, 100% { color: #1e90ff !important; }
+        50% { color: #ff4444 !important; }
+    }
+    
+    .slide-content p {
+        color: #c9d1d9 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+    }
+    
+    @keyframes slideshow {
+        0%, 20% { transform: translateX(0%); }
+        25%, 45% { transform: translateX(-100%); }
+        50%, 70% { transform: translateX(-200%); }
+        75%, 95% { transform: translateX(-300%); }
+        100% { transform: translateX(0%); }
+    }
+    
+    .slide-indicators {
+        position: absolute;
+        bottom: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 6px;
+    }
+    
+    .indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        animation: indicator-siren 5s infinite;
+    }
+    
+    @keyframes indicator-siren {
+        0%, 25% { 
+            background: #1e90ff;
+            box-shadow: 0 0 8px rgba(30, 144, 255, 0.5);
+        }
+        25.1%, 50% { 
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+        }
+        50.1%, 75% { 
+            background: #ff4444;
+            box-shadow: 0 0 8px rgba(255, 68, 68, 0.5);
+        }
+        75.1%, 100% { 
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: none;
+        }
+    }
+    
+    .indicator.active {
+        background: #1e90ff;
+        box-shadow: 0 0 12px rgba(30, 144, 255, 0.7);
     }
     </style>
     """, unsafe_allow_html=True)
