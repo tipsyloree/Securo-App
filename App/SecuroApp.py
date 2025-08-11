@@ -1611,11 +1611,11 @@ if st.session_state.current_page == 'home':
     <style>
     .slideshow-container {
         position: relative;
-        max-width: 100%;
+        max-width: 70%;
         margin: 40px auto;
-        height: 300px;
+        height: 220px;
         overflow: hidden;
-        border-radius: 20px;
+        border-radius: 15px;
         border: 1px solid #30363d;
         background: linear-gradient(135deg, #21262d 0%, #161b22 100%);
     }
