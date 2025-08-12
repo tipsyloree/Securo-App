@@ -1585,11 +1585,7 @@ if st.session_state.main_view == 'home':
 
 elif st.session_state.main_view == 'about':
     # About SECURO - Main Screen
-    st.markdown("""
-    <div class="main-content-section">
-        <h2 class="section-header">About SECURO</h2>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("## About SECURO")
     
     st.markdown("""
     **SECURO** is an enhanced comprehensive crime analysis system with police siren colors, 
