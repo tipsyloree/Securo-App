@@ -1967,18 +1967,22 @@ elif st.session_state.main_view == 'ai-assistant':
                     <div>
                         <div class="message-bubble">
                             {clean_content}
-                            <div style="margin-top: 8px; text-align: right;">
-                                <button onclick="speakText_{message_id}()" 
-                                        style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
-                                               padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">
-                                    🔊 Speak
-                                </button>
-                            </div>
                         </div>
                         <div class="message-time">
                             SECURO • {message["timestamp"]} AST
                         </div>
                     </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Add speak button using st.components.v1.html
+                speak_button_html = f"""
+                <div style="text-align: right; margin-top: -10px; margin-bottom: 10px;">
+                    <button onclick="speakText_{message_id}()" 
+                            style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
+                                   padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">
+                        🔊 Speak
+                    </button>
                 </div>
                 
                 <script>
@@ -1988,7 +1992,8 @@ elif st.session_state.main_view == 'ai-assistant':
                         window.speechSynthesis.cancel();
                         
                         // Clean text for speech
-                        let textToSpeak = `{clean_content}`.replace(/['"]/g, '').replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\n/g, ' ').trim();
+                        let textToSpeak = `{clean_content.replace('`', "'").replace('"', "'").replace("'", "\\'")}`;
+                        textToSpeak = textToSpeak.replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\\n/g, ' ').trim();
                         
                         const utterance = new SpeechSynthesisUtterance(textToSpeak);
                         utterance.rate = 0.9;
@@ -2014,7 +2019,9 @@ elif st.session_state.main_view == 'ai-assistant':
                     }}
                 }}
                 </script>
-                """, unsafe_allow_html=True)
+                """
+                
+                st.components.v1.html(speak_button_html, height=40)
         
         st.markdown('</div>', unsafe_allow_html=True)
         
