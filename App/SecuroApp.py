@@ -2195,34 +2195,6 @@ elif st.session_state.main_view == 'ai-assistant':
                         """
                         st.components.v1.html(tts_script, height=0)
         
-        # Add a dedicated TTS test section
-        st.markdown("---")
-        st.markdown("**🔊 TTS Test Section:**")
-        col1, col2 = st.columns([1, 3])
-        
-        with col1:
-            if st.button("🔊 Test TTS", key="test_tts_main"):
-                test_script = """
-                <script>
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.cancel();
-                    setTimeout(() => {
-                        const utterance = new SpeechSynthesisUtterance('Hello! This is a test of the text to speech system. If you can hear this, TTS is working correctly.');
-                        utterance.rate = 0.8;
-                        utterance.volume = 0.9;
-                        window.speechSynthesis.speak(utterance);
-                    }, 100);
-                } else {
-                    alert('Text-to-speech is not supported in this browser');
-                }
-                </script>
-                """
-                st.components.v1.html(test_script, height=0)
-                st.success("🔊 TTS test triggered!")
-        
-        with col2:
-            st.write("Click the test button to verify TTS is working")
-        
         # Chat input - simplified
         st.markdown("---")
         with st.form("chat_form", clear_on_submit=True):
