@@ -190,37 +190,237 @@ if 'main_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
-def text_to_speech_component(text, message_id="tts"):
-    """Create a working text-to-speech component (simplified)"""
-    return ""  # Not needed anymore - integrated into message bubbles
+def create_tts_button(message_content, message_id, button_style="inline"):
+    """Create a reliable text-to-speech button with proper text cleaning"""
+    
+    # Clean the content for TTS
+    clean_content = str(message_content).strip()
+    
+    # Remove HTML tags
+    clean_content = re.sub(r'<[^>]+>', '', clean_content)
+    
+    # Remove markdown formatting
+    clean_content = clean_content.replace('**', '').replace('*', '')
+    clean_content = clean_content.replace('###', '').replace('##', '').replace('#', '')
+    clean_content = clean_content.replace('```', '').replace('`', '')
+    
+    # Clean bullet points and special characters
+    clean_content = clean_content.replace('•', '').replace('◦', '').replace('-', '')
+    clean_content = clean_content.replace('\n', ' ').replace('\r', ' ')
+    
+    # Remove extra whitespace
+    clean_content = re.sub(r'\s+', ' ', clean_content).strip()
+    
+    # Escape content for JavaScript (more robust escaping)
+    js_safe_content = clean_content.replace('\\', '\\\\')
+    js_safe_content = js_safe_content.replace("'", "\\'")
+    js_safe_content = js_safe_content.replace('"', '\\"')
+    js_safe_content = js_safe_content.replace('\n', '\\n')
+    js_safe_content = js_safe_content.replace('\r', '\\r')
+    js_safe_content = js_safe_content.replace('\t', ' ')
+    
+    # Limit text length to prevent cutoffs
+    if len(js_safe_content) > 500:
+        js_safe_content = js_safe_content[:500] + "..."
+    
+    # Create the HTML button
+    button_html = f"""
+    <div class="tts-container-{message_id}" style="text-align: right; margin-top: 8px;">
+        <button 
+            onclick="toggleTTS_{message_id}()" 
+            class="tts-button" 
+            id="tts-btn-{message_id}"
+            title="Click to read this message aloud"
+            style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; 
+                   color: #3b82f6; padding: 6px 12px; cursor: pointer; 
+                   font-size: 12px; border-radius: 4px; transition: all 0.2s ease;"
+            onmouseover="this.style.background='rgba(59, 130, 246, 0.2)'"
+            onmouseout="this.style.background='rgba(59, 130, 246, 0.1)'">
+            🔊 Speak
+        </button>
+    </div>
+    
+    <script>
+        (function() {{
+            let isPlaying_{message_id} = false;
+            let currentUtterance_{message_id} = null;
+            
+            window.toggleTTS_{message_id} = function() {{
+                const button = document.getElementById('tts-btn-{message_id}');
+                
+                if (isPlaying_{message_id}) {{
+                    // Stop current speech
+                    if (currentUtterance_{message_id}) {{
+                        window.speechSynthesis.cancel();
+                        currentUtterance_{message_id} = null;
+                    }}
+                    isPlaying_{message_id} = false;
+                    button.innerHTML = '🔊 Speak';
+                    button.title = 'Click to read this message aloud';
+                    return;
+                }}
+                
+                if (!('speechSynthesis' in window)) {{
+                    alert('Text-to-speech is not supported in this browser');
+                    return;
+                }}
+                
+                // Cancel any existing speech
+                window.speechSynthesis.cancel();
+                
+                // Wait a moment for cancel to complete
+                setTimeout(function() {{
+                    const text = '{js_safe_content}';
+                    
+                    if (text.length === 0) {{
+                        alert('No text to read');
+                        return;
+                    }}
+                    
+                    currentUtterance_{message_id} = new SpeechSynthesisUtterance(text);
+                    
+                    // Configure speech settings
+                    currentUtterance_{message_id}.rate = 0.85;
+                    currentUtterance_{message_id}.volume = 0.9;
+                    currentUtterance_{message_id}.pitch = 1.0;
+                    
+                    // Try to use a good voice
+                    const voices = window.speechSynthesis.getVoices();
+                    const englishVoice = voices.find(voice => 
+                        voice.lang.startsWith('en') && 
+                        (voice.name.includes('Google') || voice.name.includes('Microsoft'))
+                    ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
+                    
+                    if (englishVoice) {{
+                        currentUtterance_{message_id}.voice = englishVoice;
+                    }}
+                    
+                    // Event handlers
+                    currentUtterance_{message_id}.onstart = function() {{
+                        isPlaying_{message_id} = true;
+                        button.innerHTML = '⏸️ Stop';
+                        button.title = 'Click to stop reading';
+                    }};
+                    
+                    currentUtterance_{message_id}.onend = function() {{
+                        isPlaying_{message_id} = false;
+                        currentUtterance_{message_id} = null;
+                        button.innerHTML = '🔊 Speak';
+                        button.title = 'Click to read this message aloud';
+                    }};
+                    
+                    currentUtterance_{message_id}.onerror = function(event) {{
+                        console.error('TTS Error:', event);
+                        isPlaying_{message_id} = false;
+                        currentUtterance_{message_id} = null;
+                        button.innerHTML = '🔊 Speak';
+                        button.title = 'Click to read this message aloud';
+                        alert('Speech synthesis error. Please try again.');
+                    }};
+                    
+                    // Start speaking
+                    window.speechSynthesis.speak(currentUtterance_{message_id});
+                }}, 100);
+            }};
+        }})();
+    </script>
+    """
+    
+    return button_html
 
-def auto_speak_response(text):
-    """Auto-speak functionality for new responses - SIMPLIFIED VERSION"""
-    clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
-    clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
-    clean_text = clean_text.replace("•", "").replace("\n", " ").strip()
+def create_auto_speak_toggle():
+    """Create a toggle for auto-speaking new messages"""
+    if 'auto_speak_enabled' not in st.session_state:
+        st.session_state.auto_speak_enabled = False
     
-    if len(clean_text) > 200:
-        clean_text = clean_text[:200] + "..."
+    toggle_text = "🔊 Auto-Speak: ON" if st.session_state.auto_speak_enabled else "🔊 Auto-Speak: OFF"
+    toggle_color = "#10b981" if st.session_state.auto_speak_enabled else "#6b7280"
     
-    # Simple escape for JavaScript
-    clean_text = clean_text.replace("'", "\\'").replace('"', '\\"')
+    toggle_html = f"""
+    <div style="margin: 10px 0; text-align: center;">
+        <button onclick="toggleAutoSpeak()" id="auto-speak-toggle" 
+                style="background: {toggle_color}; border: none; color: white; 
+                       padding: 8px 16px; border-radius: 6px; font-size: 14px; 
+                       cursor: pointer; transition: all 0.2s ease;">
+            {toggle_text}
+        </button>
+    </div>
+    
+    <script>
+        window.autoSpeakEnabled = {str(st.session_state.auto_speak_enabled).lower()};
+        
+        function toggleAutoSpeak() {{
+            window.autoSpeakEnabled = !window.autoSpeakEnabled;
+            const button = document.getElementById('auto-speak-toggle');
+            
+            if (window.autoSpeakEnabled) {{
+                button.innerHTML = '🔊 Auto-Speak: ON';
+                button.style.background = '#10b981';
+            }} else {{
+                button.innerHTML = '🔊 Auto-Speak: OFF';
+                button.style.background = '#6b7280';
+            }}
+        }}
+    </script>
+    """
+    
+    return toggle_html
+
+def auto_speak_new_message(text):
+    """Auto-speak new messages if enabled"""
+    clean_text = str(text).strip()
+    
+    # Clean the text thoroughly
+    clean_text = re.sub(r'<[^>]+>', '', clean_text)
+    clean_text = clean_text.replace('**', '').replace('*', '')
+    clean_text = clean_text.replace('###', '').replace('##', '').replace('#', '')
+    clean_text = clean_text.replace('```', '').replace('`', '')
+    clean_text = clean_text.replace('•', '').replace('◦', '').replace('-', '')
+    clean_text = clean_text.replace('\n', ' ').replace('\r', ' ')
+    clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+    
+    # Limit length for auto-speak
+    if len(clean_text) > 300:
+        clean_text = clean_text[:300] + "..."
+    
+    # Escape for JavaScript
+    js_clean_text = clean_text.replace('\\', '\\\\')
+    js_clean_text = js_clean_text.replace("'", "\\'")
+    js_clean_text = js_clean_text.replace('"', '\\"')
+    js_clean_text = js_clean_text.replace('\n', '\\n')
     
     auto_speak_html = f"""
     <script>
-    setTimeout(function() {{
-        if ('speechSynthesis' in window) {{
-            const text = `{clean_text}`;
-            if (text.length > 0) {{
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.8;
-                utterance.volume = 0.9;
-                window.speechSynthesis.speak(utterance);
+        setTimeout(function() {{
+            if (window.autoSpeakEnabled && 'speechSynthesis' in window) {{
+                const text = '{js_clean_text}';
+                if (text.length > 0) {{
+                    window.speechSynthesis.cancel();
+                    
+                    setTimeout(function() {{
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.rate = 0.85;
+                        utterance.volume = 0.9;
+                        utterance.pitch = 1.0;
+                        
+                        const voices = window.speechSynthesis.getVoices();
+                        const englishVoice = voices.find(voice => 
+                            voice.lang.startsWith('en') && 
+                            (voice.name.includes('Google') || voice.name.includes('Microsoft'))
+                        ) || voices.find(voice => voice.lang.startsWith('en'));
+                        
+                        if (englishVoice) {{
+                            utterance.voice = englishVoice;
+                        }}
+                        
+                        window.speechSynthesis.speak(utterance);
+                    }}, 200);
+                }}
             }}
-        }}
-    }}, 1000);
+        }}, 1000);
     </script>
     """
+    
     return auto_speak_html
 
 def voice_input_component():
@@ -2056,6 +2256,11 @@ elif st.session_state.main_view == 'ai-assistant':
         st.info(f"**Current Session:** {current_chat['name']}")
         
         # Display messages
+        if messages:  # Only show if there are messages
+            auto_speak_toggle_html = create_auto_speak_toggle()
+            st.components.v1.html(auto_speak_toggle_html, height=60)
+        
+        # Display messages
         messages = current_chat['messages']
         
         # Initialize with welcome message if no messages
@@ -2081,23 +2286,17 @@ elif st.session_state.main_view == 'ai-assistant':
                 clean_content = str(message["content"]).strip()
                 clean_content = re.sub(r'<[^>]+>', '', clean_content)
                 clean_content = clean_content.replace('```', '')
-                # Preserve bullet points but fix spacing issues
-                clean_content = re.sub(r'  +', ' ', clean_content)  # Replace multiple spaces with single space (but not single spaces)
-                clean_content = re.sub(r'\n +•', '\n•', clean_content)  # Remove spaces before bullet points
-                clean_content = re.sub(r'• +', '• ', clean_content)  # Ensure single space after bullet points
+                clean_content = re.sub(r'  +', ' ', clean_content)
+                clean_content = re.sub(r'\n +•', '\n•', clean_content)
+                clean_content = re.sub(r'• +', '• ', clean_content)
                 
-                # Clean content for JavaScript (escape quotes and special characters)
-                js_clean_content = clean_content.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'")
+                message_id = f"msg_{i}_{int(time.time())}"
                 
-                # Create unique message ID for voice
-                message_id = f"msg_{i}"
-                
-                # Create the assistant message with speaker button in right corner
+                # Display the message
                 st.markdown(f"""
                 <div class="message assistant">
                     <div class="message-bubble">
                         <div class="message-content">{clean_content}</div>
-                        <span onclick="speakText_{message_id}()" class="speak-button" title="Click to speak this message">🔊</span>
                     </div>
                     <div class="message-time">
                         SECURO • {message["timestamp"]} AST
@@ -2105,30 +2304,9 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add the JavaScript for this specific button - SIMPLIFIED VERSION
-                st.components.v1.html(f"""
-                <script>
-                function speakText_{message_id}() {{
-                    if ('speechSynthesis' in window) {{
-                        window.speechSynthesis.cancel();
-                        
-                        let text = `{js_clean_content}`;
-                        text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
-                        
-                        if (text.length > 0) {{
-                            const utterance = new SpeechSynthesisUtterance(text);
-                            utterance.rate = 0.8;
-                            utterance.volume = 0.9;
-                            window.speechSynthesis.speak(utterance);
-                        }}
-                    }} else {{
-                        alert('Text-to-speech not supported in this browser');
-                    }}
-                }}
-                
-                window.speakText_{message_id} = speakText_{message_id};
-                </script>
-                """, height=0)
+                # Add TTS button below the message
+                tts_button_html = create_tts_button(clean_content, message_id)
+                st.components.v1.html(tts_button_html, height=80)
         
         # Chat input - simplified
         st.markdown("---")
@@ -2170,7 +2348,8 @@ elif st.session_state.main_view == 'ai-assistant':
         
         # Auto-speak the last response if there is one
         if st.session_state.get('last_response'):
-            st.components.v1.html(auto_speak_response(st.session_state.last_response), height=50)
+            auto_speak_html = auto_speak_new_message(st.session_state.last_response)
+            st.components.v1.html(auto_speak_html, height=50)
             # Clear the response to avoid re-speaking
             st.session_state.last_response = None
         
