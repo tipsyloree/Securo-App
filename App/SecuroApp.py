@@ -1543,6 +1543,10 @@ with st.sidebar:
         st.session_state.main_view = 'history'
         st.rerun()
     
+    if st.button(" Crime Map", key="nav_map", help="Crime Hotspots", use_container_width=True):
+        st.session_state.main_view = 'hotspots'
+        st.rerun()
+    
     if st.button(" Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.main_view = 'emergency'
         st.rerun()
@@ -1553,6 +1557,12 @@ with st.sidebar:
     if st.session_state.main_view not in ['ai-assistant', 'hotspots']:
         if st.button("🤖 Back to AI Assistant", key="back_to_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
+            st.rerun()
+    
+    # Quick access to Crime Map from any view
+    if st.session_state.main_view != 'hotspots':
+        if st.button(" View Crime Map", key="quick_map_access", use_container_width=True):
+            st.session_state.main_view = 'hotspots'
             st.rerun()
     
     st.markdown("---")
@@ -1592,9 +1602,9 @@ with st.sidebar:
              QUICK STATS
         </div>
         <div style="color: #e2e8f0; font-size: 14px; line-height: 1.6;">
-            <div> 🟢 Active Chats: <strong>{}</strong></div>
-            <div> 🟢 Database: <strong>Loaded</strong></div>
-            <div> 🟢 API Status: <strong>Online</strong></div>
+            <div>🟢 Active Chats: <strong>{}</strong></div>
+            <div>🟢 Database: <strong>Loaded</strong></div>
+            <div>🟢 API Status: <strong>Online</strong></div>
         </div>
     </div>
     """.format(len(st.session_state.chat_sessions)), unsafe_allow_html=True)
@@ -1644,17 +1654,17 @@ if st.session_state.main_view == 'home':
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("Start AI Chat", key="quick_ai", use_container_width=True):
+        if st.button(" Start AI Chat", key="quick_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("View Crime Map", key="quick_map", use_container_width=True):
+        if st.button(" View Crime Map", key="quick_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button("View Analytics", key="quick_analytics", use_container_width=True):
+        if st.button(" View Analytics", key="quick_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
 
@@ -1726,22 +1736,22 @@ elif st.session_state.main_view == 'about':
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("AI Assistant", key="about_ai", use_container_width=True):
+        if st.button(" Securo AI", key="about_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("Crime Map", key="about_map", use_container_width=True):
+        if st.button(" Crime Map", key="about_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button("Analytics", key="about_analytics", use_container_width=True):
+        if st.button(" Analytics", key="about_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
     
     with col4:
-        if st.button("Emergency Info", key="about_emergency", use_container_width=True):
+        if st.button(" Emergency Info", key="about_emergency", use_container_width=True):
             st.session_state.main_view = 'emergency'
             st.rerun()
 
@@ -2263,11 +2273,11 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.rerun()
 
 elif st.session_state.main_view == 'hotspots':
-    # Crime Hotspots Map - Main Screen
+    # Crime Hotspots Map - Main Screen (from second code)
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                 border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
-        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">Crime Hotspot Map - St. Kitts & Nevis</h3>
+        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h3>
         <p style="color: #94a3b8; font-size: 14px; margin: 8px 0 0 0;">Interactive crime analysis with real-time data overlays</p>
     </div>
     """, unsafe_allow_html=True)
@@ -2284,13 +2294,13 @@ elif st.session_state.main_view == 'hotspots':
         
         if map_data['last_object_clicked_tooltip']:
             clicked_info = map_data['last_object_clicked_tooltip']
-            st.info(f"**Last Clicked Location:** {clicked_info}")
+            st.info(f"📍 **Last Clicked Location:** {clicked_info}")
     
     except Exception as e:
-        st.error(f"Map Error: {str(e)}")
+        st.error(f"❌ Map Error: {str(e)}")
     
     # Hotspot summary metrics - compact
-    st.markdown("### Hotspot Summary")
+    st.markdown("### 📊 Hotspot Summary")
     
     col1, col2, col3 = st.columns(3)
     
@@ -2330,14 +2340,22 @@ else:
     col1, col2, col3 = st.columns([1, 1, 8])
     
     with col1:
-        if st.button("AI Assistant", key="main_ai", use_container_width=True):
+        if st.button("🤖 AI Assistant", key="main_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("Crime Hotspots", key="main_map", use_container_width=True):
+        if st.button("🗺️ Crime Hotspots", key="main_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
+    
+    # Welcome message if no specific view is selected
+    st.markdown("""
+    <div style="text-align: center; padding: 40px 20px;">
+        <h2 style="color: #3b82f6;">Welcome to SECURO</h2>
+        <p style="color: #94a3b8;">Choose an option above to get started</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Modern Status Bar - simplified
 current_time = get_stkitts_time()
