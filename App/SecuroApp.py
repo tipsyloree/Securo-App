@@ -223,19 +223,8 @@ def create_tts_button(message_content, message_id, button_style="inline"):
     if len(js_safe_content) > 500:
         js_safe_content = js_safe_content[:500] + "..."
     
-    # Return just the speaker icon for embedding in message bubble
+    # Create the JavaScript functions only (no HTML button)
     button_html = f"""
-    <span 
-        onclick="toggleTTS_{message_id}()" 
-        class="tts-button-inline" 
-        id="tts-btn-{message_id}"
-        title="Click to read this message aloud"
-        style="cursor: pointer; font-size: 14px; opacity: 0.7; transition: opacity 0.2s ease; margin-left: 8px;"
-        onmouseover="this.style.opacity='1'"
-        onmouseout="this.style.opacity='0.7'">
-        🔊
-    </span>
-    
     <script>
         (function() {{
             let isPlaying_{message_id} = false;
@@ -251,7 +240,7 @@ def create_tts_button(message_content, message_id, button_style="inline"):
                         currentUtterance_{message_id} = null;
                     }}
                     isPlaying_{message_id} = false;
-                    button.innerHTML = '🔊 Speak';
+                    button.innerHTML = '🔊';
                     button.title = 'Click to read this message aloud';
                     return;
                 }}
@@ -294,7 +283,7 @@ def create_tts_button(message_content, message_id, button_style="inline"):
                     // Event handlers
                     currentUtterance_{message_id}.onstart = function() {{
                         isPlaying_{message_id} = true;
-                        button.innerHTML = '⏸️ Stop';
+                        button.innerHTML = '⏸️';
                         button.title = 'Click to stop reading';
                     }};
                     
@@ -329,19 +318,10 @@ def create_auto_speak_toggle():
     if 'auto_speak_enabled' not in st.session_state:
         st.session_state.auto_speak_enabled = False
     
-    toggle_text = "🔊 Auto-Speak: ON" if st.session_state.auto_speak_enabled else "🔊 Auto-Speak: OFF"
+    toggle_text = "🔊 Auto-Speak" if st.session_state.auto_speak_enabled else "🔇 Auto-Speak"
     toggle_color = "#10b981" if st.session_state.auto_speak_enabled else "#6b7280"
     
     toggle_html = f"""
-    <div style="margin: 10px 0; text-align: center;">
-        <button onclick="toggleAutoSpeak()" id="auto-speak-toggle" 
-                style="background: {toggle_color}; border: none; color: white; 
-                       padding: 8px 16px; border-radius: 6px; font-size: 14px; 
-                       cursor: pointer; transition: all 0.2s ease;">
-            {toggle_text}
-        </button>
-    </div>
-    
     <script>
         window.autoSpeakEnabled = {str(st.session_state.auto_speak_enabled).lower()};
         
@@ -350,18 +330,17 @@ def create_auto_speak_toggle():
             const button = document.getElementById('auto-speak-toggle');
             
             if (window.autoSpeakEnabled) {{
-                button.innerHTML = '🔊 Auto-Speak: ON';
-                button.style.background = '#10b981';
+                button.innerHTML = '🔊 Auto-Speak';
+                button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
             }} else {{
-                button.innerHTML = '🔊 Auto-Speak: OFF';
-                button.style.background = '#6b7280';
+                button.innerHTML = '🔇 Auto-Speak';
+                button.style.background = 'linear-gradient(135deg, #6b7280, #4b5563)';
             }}
         }}
     </script>
     """
     
     return toggle_html
-
 def auto_speak_new_message(text):
     """Auto-speak new messages if enabled"""
     clean_text = str(text).strip()
@@ -1191,7 +1170,7 @@ st.markdown("""
         max-width: 100%;
     }
     
-    /* Assistant messages - left side like Instagram */
+    /* Assistant messages - left side like Instagram with TTS button */
     .message.assistant {
         align-self: flex-start;
         margin-right: auto;
@@ -1248,32 +1227,59 @@ st.markdown("""
         color: #9ca3af;
     }
     
-    /* Speaker button styling - positioned in right corner */
-    .speak-button {
+    /* TTS button inside message bubble - right corner */
+    .tts-bubble-button {
         background: none !important;
         border: none !important;
-        padding: 2px !important;
+        padding: 2px 4px !important;
         cursor: pointer !important;
-        font-size: 14px !important;
-        opacity: 0.6 !important;
+        font-size: 16px !important;
+        opacity: 0.7 !important;
         transition: opacity 0.2s ease !important;
         border-radius: 4px !important;
-        position: relative !important;
-        top: -2px !important;
         flex-shrink: 0 !important;
         margin-left: 8px !important;
         align-self: flex-start !important;
+        margin-top: -2px !important;
     }
     
-    .speak-button:hover {
+    .tts-bubble-button:hover {
         opacity: 1 !important;
         background: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    .tts-bubble-button:active {
+        transform: scale(0.95) !important;
     }
     
     .chat-input-area {
         background: linear-gradient(135deg, #334155 0%, #475569 100%);
         border-top: 1px solid #475569;
         padding: 16px 20px;
+    }
+    
+    /* Auto-speak toggle button styling */
+    .auto-speak-toggle-btn {
+        background: linear-gradient(135deg, #6b7280, #4b5563) !important;
+        border: 1px solid #6b7280 !important;
+        color: white !important;
+        padding: 6px 12px !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        margin-left: 8px !important;
+    }
+    
+    .auto-speak-toggle-btn:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 2px 8px rgba(107, 114, 128, 0.3) !important;
+    }
+    
+    .auto-speak-toggle-btn.enabled {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        border-color: #10b981 !important;
     }
     
     /* Input styling */
@@ -1496,136 +1502,6 @@ st.markdown("""
         }
     }
     
-    /* Voice controls */
-    .voice-controls {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        padding: 8px 12px;
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        border-radius: 8px;
-        margin-bottom: 16px;
-    }
-    
-    .voice-button {
-        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
-        border: none !important;
-        color: white !important;
-        padding: 8px 12px !important;
-        border-radius: 6px !important;
-        font-size: 12px !important;
-        font-weight: 500 !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        min-width: 80px !important;
-    }
-    
-    .voice-button:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-    }
-    
-    .voice-button.active {
-        background: linear-gradient(135deg, #10b981, #059669) !important;
-        animation: voice-pulse 1.5s infinite !important;
-    }
-    
-    @keyframes voice-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-        50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-    }
-    
-    .call-securo-button {
-        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-        border: none !important;
-        color: white !important;
-        padding: 12px 24px !important;
-        border-radius: 8px !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
-        animation: call-button-pulse 2s infinite !important;
-    }
-    
-    @keyframes call-button-pulse {
-        0%, 100% { 
-            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
-        }
-        50% { 
-            background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-        }
-    }
-    
-    .call-securo-button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4) !important;
-    }
-    
-    .voice-status {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-        color: #94a3b8;
-    }
-    
-    .voice-indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #10b981;
-        animation: voice-blink 1s infinite;
-    }
-    
-    @keyframes voice-blink {
-        0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0.3; }
-    }
-    
-    .call-interface {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 2px solid #ef4444;
-        border-radius: 16px;
-        padding: 24px;
-        text-align: center;
-        margin: 20px 0;
-        animation: call-glow 2s ease-in-out infinite;
-    }
-    
-    @keyframes call-glow {
-        0%, 100% { 
-            border-color: #ef4444;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-        }
-        50% { 
-            border-color: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-        }
-    }
-    
-    .call-avatar {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 20px;
-        border-radius: 50%;
-        background: linear-gradient(45deg, #3b82f6, #ef4444);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        animation: call-avatar-pulse 1.5s infinite;
-    }
-    
-    @keyframes call-avatar-pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-    
     /* Main content sections styling */
     .main-content-section {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
@@ -1677,31 +1553,6 @@ st.markdown("""
         color: #cbd5e1 !important;
     }
 </style>
-""", unsafe_allow_html=True)
-
-# Modern Header Bar
-current_time = get_stkitts_time()
-current_date = get_stkitts_date()
-
-st.markdown(f"""
-<div class="header-bar">
-    <div class="logo-section">
-        <div class="logo-icon">🚔</div>
-        <div class="logo-text">
-            <h1>SECURO</h1>
-            <p>Modern AI Crime Intelligence System</p>
-        </div>
-    </div>
-    <div class="status-section">
-        <div class="status-item">
-            <div class="status-dot"></div>
-            <span>Royal St. Christopher & Nevis Police Force</span>
-        </div>
-        <div class="status-item">
-            <span> {current_date} |  {current_time} AST</span>
-        </div>
-    </div>
-</div>
 """, unsafe_allow_html=True)
 
 # Sidebar Navigation
@@ -2160,7 +2011,7 @@ elif st.session_state.main_view == 'emergency':
             """, unsafe_allow_html=True)
 
 elif st.session_state.main_view == 'ai-assistant':
-    # AI Assistant interface (existing code)
+    # AI Assistant interface (updated)
     if not st.session_state.get('chat_active', False):
         # Chat welcome screen - compact and centered
         st.markdown("""
@@ -2235,8 +2086,8 @@ elif st.session_state.main_view == 'ai-assistant':
         </div>
         """, unsafe_allow_html=True)
         
-        # Chat controls - compact
-        col1, col2 = st.columns([1, 1])
+        # Chat controls with Auto-Speak toggle - updated layout
+        col1, col2, col3 = st.columns([1, 1, 1])
         with col1:
             if st.button("New Chat", key="new_chat_btn", use_container_width=True):
                 create_new_chat_session()
@@ -2247,15 +2098,20 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.session_state.chat_active = False
                 st.rerun()
         
+        with col3:
+            # Auto-speak toggle button
+            auto_speak_enabled = st.session_state.get('auto_speak_enabled', False)
+            toggle_text = "🔊 Auto-Speak" if auto_speak_enabled else "🔇 Auto-Speak"
+            
+            if st.button(toggle_text, key="auto_speak_toggle_btn", use_container_width=True):
+                st.session_state.auto_speak_enabled = not auto_speak_enabled
+                st.rerun()
+        
         # Current chat info - compact
         current_chat = get_current_chat()
         st.info(f"**Current Session:** {current_chat['name']}")
         
         messages = current_chat['messages']
-        # Display messages
-        if messages:  # Only show if there are messages
-            auto_speak_toggle_html = create_auto_speak_toggle()
-            st.components.v1.html(auto_speak_toggle_html, height=60)
         
         # Initialize with welcome message if no messages
         if not messages:
@@ -2267,7 +2123,12 @@ elif st.session_state.main_view == 'ai-assistant':
             messages.append(welcome_msg)
             current_chat['messages'] = messages
         
-        # Messages container - Instagram style
+        # Add the auto-speak JavaScript if there are messages
+        if messages:
+            auto_speak_html = create_auto_speak_toggle()
+            st.components.v1.html(auto_speak_html, height=0)
+        
+        # Messages container - Instagram style with integrated TTS buttons
         for i, message in enumerate(messages):
             if message["role"] == "user":
                 st.markdown(f"""
@@ -2286,11 +2147,18 @@ elif st.session_state.main_view == 'ai-assistant':
                 
                 message_id = f"msg_{i}_{int(time.time())}"
                 
-                # Display the message
+                # Display the message with integrated TTS button
                 st.markdown(f"""
                 <div class="message assistant">
                     <div class="message-bubble">
                         <div class="message-content">{clean_content}</div>
+                        <button 
+                            onclick="toggleTTS_{message_id}()" 
+                            class="tts-bubble-button" 
+                            id="tts-btn-{message_id}"
+                            title="Click to read this message aloud">
+                            🔊
+                        </button>
                     </div>
                     <div class="message-time">
                         SECURO • {message["timestamp"]} AST
@@ -2298,9 +2166,9 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add TTS button below the message
+                # Add TTS JavaScript functionality
                 tts_button_html = create_tts_button(clean_content, message_id)
-                st.components.v1.html(tts_button_html, height=80)
+                st.components.v1.html(tts_button_html, height=0)
         
         # Chat input - simplified
         st.markdown("---")
@@ -2340,10 +2208,10 @@ elif st.session_state.main_view == 'ai-assistant':
                 
                 st.rerun()
         
-        # Auto-speak the last response if there is one
-        if st.session_state.get('last_response'):
+        # Auto-speak the last response if there is one and auto-speak is enabled
+        if st.session_state.get('last_response') and st.session_state.get('auto_speak_enabled', False):
             auto_speak_html = auto_speak_new_message(st.session_state.last_response)
-            st.components.v1.html(auto_speak_html, height=50)
+            st.components.v1.html(auto_speak_html, height=0)
             # Clear the response to avoid re-speaking
             st.session_state.last_response = None
         
@@ -2416,7 +2284,6 @@ elif st.session_state.main_view == 'ai-assistant':
             if st.button("Clear Chart", key="clear_chart"):
                 st.session_state.show_chart = None
                 st.rerun()
-
 elif st.session_state.main_view == 'hotspots':
     # Crime Hotspots Map - Main Screen (from second code)
     st.markdown("""
