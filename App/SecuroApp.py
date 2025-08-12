@@ -1227,26 +1227,20 @@ st.markdown("""
         color: #9ca3af;
     }
     
-   /* TTS button inside message bubble - right corner */
+    /* TTS button inside message bubble - right corner */
     .tts-bubble-button {
         background: none !important;
         border: none !important;
-        padding: 2px !important;
+        padding: 2px 4px !important;
         cursor: pointer !important;
-        font-size: 14px !important;
+        font-size: 16px !important;
         opacity: 0.7 !important;
         transition: opacity 0.2s ease !important;
-        border-radius: 3px !important;
+        border-radius: 4px !important;
         flex-shrink: 0 !important;
-        margin-left: 6px !important;
+        margin-left: 8px !important;
         align-self: flex-start !important;
-        margin-top: 0px !important;
-        width: 20px !important;
-        height: 20px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        min-width: 20px !important;
+        margin-top: -2px !important;
     }
     
     .tts-bubble-button:hover {
