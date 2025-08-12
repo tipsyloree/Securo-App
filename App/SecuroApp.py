@@ -1522,7 +1522,7 @@ with st.sidebar:
     # Animated navigation header
     st.markdown("""
     <div class="sidebar-nav-header">
-        🚔 Navigation
+         Navigation
     </div>
     """, unsafe_allow_html=True)
     
@@ -1580,7 +1580,7 @@ with st.sidebar:
     if st.session_state.get('ai_enabled', False):
         st.success("🟢 Enhanced AI Online")
         st.markdown("""
-        ** Capabilities:**
+        Capabilities:
         -  Statistical knowledge integration
         -  Conversation memory
         -  Context-aware responses
