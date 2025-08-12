@@ -190,7 +190,7 @@ if 'main_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
-# FINAL IMPROVED TTS FUNCTIONS - HANDLES COMPLEX TEXT BETTER
+# FIXED TTS FUNCTIONS - NO VISIBLE CODE
 def clean_text_for_speech(text):
     """Improved text cleaning for speech synthesis - handles complex messages better"""
     if not text or not isinstance(text, str):
@@ -363,17 +363,17 @@ def create_global_tts_manager():
     </script>
     """
 
+# FIXED - NO VISIBLE CODE VERSION
 def create_message_speaker_button(message_content, message_id):
-    """Create a speaker button with safer text handling"""
+    """Create a speaker button with safer text handling - NO VISIBLE CODE"""
     # Clean text more aggressively for complex messages
     clean_text = clean_text_for_speech(message_content)
     
     if not clean_text or len(clean_text) < 3:
         return ""  # Don't show button for empty/very short text
     
-    # For very long or complex messages, create a data attribute instead
-    # This avoids JavaScript parsing issues with complex inline text
-    return f"""
+    # Create ONLY the button HTML - JavaScript will be added separately
+    button_html = f"""
     <span onclick="handleTTSClick('{message_id}')" 
           class="speak-button" 
           title="Click to speak this message (click again to stop)"
@@ -381,27 +381,39 @@ def create_message_speaker_button(message_content, message_id):
           data-text="{clean_text.replace('"', '&quot;').replace("'", '&#39;')}">
         🔊
     </span>
+    """
     
+    return button_html
+
+# NEW FUNCTION - Handle JavaScript separately
+def add_tts_script_once():
+    """Add the TTS JavaScript once per page - invisible"""
+    js_code = """
     <script>
-    function handleTTSClick(messageId) {{
-        const element = document.getElementById('speaker_' + messageId);
-        if (element && element.dataset.text) {{
-            const text = element.dataset.text
-                .replace(/&quot;/g, '"')
-                .replace(/&#39;/g, "'");
-            
-            if (window.SecuroTTS) {{
-                const result = window.SecuroTTS.toggle(text);
-                console.log('TTS toggle result:', result);
-            }} else {{
-                console.warn('SecuroTTS not available');
-            }}
-        }} else {{
-            console.warn('No text data found for message:', messageId);
-        }}
-    }}
+    // Only add the function if it doesn't exist
+    if (typeof handleTTSClick === 'undefined') {
+        window.handleTTSClick = function(messageId) {
+            const element = document.getElementById('speaker_' + messageId);
+            if (element && element.dataset.text) {
+                const text = element.dataset.text
+                    .replace(/&quot;/g, '"')
+                    .replace(/&#39;/g, "'");
+                
+                if (window.SecuroTTS) {
+                    const result = window.SecuroTTS.toggle(text);
+                    console.log('TTS toggle result:', result);
+                } else {
+                    console.warn('SecuroTTS not available');
+                }
+            } else {
+                console.warn('No text data found for message:', messageId);
+            }
+        };
+        console.log('TTS click handler initialized');
+    }
     </script>
     """
+    return js_code
 
 def create_auto_speak_component(text):
     """Create auto-speak component with better text preprocessing"""
