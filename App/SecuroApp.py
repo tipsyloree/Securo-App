@@ -240,10 +240,6 @@ def clean_text_for_speech(text):
     
     return result
 
-
-
-
-
 def get_current_chat():
     """Get current chat session"""
     if st.session_state.current_chat_id and st.session_state.current_chat_id in st.session_state.chat_sessions:
@@ -340,11 +336,11 @@ def create_crime_hotspot_map():
         control=True
     ).add_to(m)
     
-    # Color mapping for risk levels (Updated with police colors)
+    # Color mapping for risk levels (Updated with royal blue/red theme)
     risk_colors = {
-        'High': '#ff4444',
-        'Medium': '#1e90ff', 
-        'Low': '#0066cc'
+        'High': '#dc2626',     # Red for high risk
+        'Medium': '#1d4ed8',   # Royal blue for medium
+        'Low': '#0f172a'       # Dark blue for low
     }
     
     # Add crime hotspots to the map
@@ -396,16 +392,16 @@ def create_crime_hotspot_map():
                 )
             ).add_to(m)
     
-    # Add a legend (Updated with police colors)
+    # Add a legend (Updated with royal blue/red theme)
     legend_html = f"""
     <div style="position: fixed; 
                 top: 10px; right: 10px; width: 180px; height: 140px; 
-                background-color: rgba(0, 0, 0, 0.8); 
-                border: 2px solid rgba(30, 144, 255, 0.5);
+                background-color: rgba(0, 0, 0, 0.9); 
+                border: 2px solid #1d4ed8;
                 border-radius: 10px; z-index:9999; 
                 font-size: 12px; font-family: Arial;
                 padding: 10px; color: white;">
-    <h4 style="margin: 0 0 10px 0; color: #1e90ff;">🗺️ Crime Risk Legend</h4>
+    <h4 style="margin: 0 0 10px 0; color: #1d4ed8;">🗺️ Crime Risk Legend</h4>
     <div style="margin: 5px 0;">
         <span style="color: {risk_colors['High']};">●</span> High Risk (25+ crimes)
     </div>
@@ -438,13 +434,13 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             x=years, y=rates,
             mode='lines+markers',
             name='Homicide Rate per 100K',
-            line=dict(color='#ff4444', width=3),
-            marker=dict(size=10, color='#ff4444')
+            line=dict(color='#dc2626', width=3),
+            marker=dict(size=10, color='#dc2626')
         ))
         
         # Add global average line
         global_avg = MACROTRENDS_DATA["comparative_context"]["global_average_firearm_homicides"]
-        fig.add_hline(y=global_avg, line_dash="dash", line_color="#888888",
+        fig.add_hline(y=global_avg, line_dash="dash", line_color="#1d4ed8",
                      annotation_text=f"Global Average: {global_avg}%")
         
         fig.update_layout(
@@ -452,7 +448,9 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             xaxis_title="Year",
             yaxis_title="Homicides per 100,000 Population",
             template="plotly_dark",
-            height=500
+            height=500,
+            paper_bgcolor='black',
+            plot_bgcolor='#0f172a'
         )
         
         return fig
@@ -469,7 +467,7 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
         fig = go.Figure()
         fig.add_trace(go.Bar(
             x=years, y=crimes,
-            marker_color='#1e90ff',
+            marker_color='#1d4ed8',
             text=[f"{crime:,}" for crime in crimes],
             textposition='auto'
         ))
@@ -479,7 +477,9 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             xaxis_title="Year",
             yaxis_title="Total Crimes",
             template="plotly_dark",
-            height=500
+            height=500,
+            paper_bgcolor='black',
+            plot_bgcolor='#0f172a'
         )
         
         return fig
@@ -495,7 +495,7 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             MACROTRENDS_DATA["homicide_rates_per_100k"]["2011"]
         ]
         
-        colors = ['#1e90ff', '#0066cc', '#ff4444', '#888888', '#ff0000']
+        colors = ['#1d4ed8', '#3b82f6', '#dc2626', '#6b7280', '#b91c1c']
         
         fig = go.Figure()
         fig.add_trace(go.Bar(
@@ -510,7 +510,9 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             xaxis_title="Comparison Points",
             yaxis_title="Rate per 100,000",
             template="plotly_dark",
-            height=500
+            height=500,
+            paper_bgcolor='black',
+            plot_bgcolor='#0f172a'
         )
         
         return fig
@@ -716,7 +718,7 @@ except Exception as e:
 # Page configuration
 st.set_page_config(
     page_title="SECURO - Modern AI Crime Intelligence System",
-    page_icon="https://i.postimg.cc/QC6xqk1G/PH-PR-2.png",
+    page_icon="🛡️",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -730,10 +732,10 @@ if 'chat_sessions' not in st.session_state:
 if 'current_chat_id' not in st.session_state:
     st.session_state.current_chat_id = None
 
-# Modern React-like CSS styling
+# UPDATED CSS - Royal Blue, Red, Black Theme
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
     
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
@@ -741,17 +743,17 @@ st.markdown("""
     header {visibility: hidden;}
     .stDeployButton {display: none;}
     
-    /* Root styling - Modern React App Look */
+    /* Root styling - Royal Blue/Red/Black Theme */
     .stApp {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        background: linear-gradient(135deg, #000000 0%, #0f172a 30%, #1e293b 100%);
         color: #ffffff;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     
-    /* Sidebar styling - Police siren theme */
+    /* Sidebar styling - Law Enforcement Professional */
     .css-1d391kg {
-        background: linear-gradient(180deg, #1e293b 0%, #334155 50%, #1e293b 100%) !important;
-        border-right: 2px solid transparent !important;
+        background: linear-gradient(180deg, #000000 0%, #1e293b 50%, #000000 100%) !important;
+        border-right: 3px solid transparent !important;
         background-clip: padding-box !important;
         position: relative !important;
     }
@@ -762,10 +764,10 @@ st.markdown("""
         top: 0;
         right: 0;
         bottom: 0;
-        width: 2px;
-        background: linear-gradient(180deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
+        width: 3px;
+        background: linear-gradient(180deg, #1d4ed8, #dc2626, #1d4ed8, #dc2626);
         background-size: 100% 400%;
-        animation: sidebar-border-pulse 3s ease-in-out infinite;
+        animation: sidebar-border-pulse 2s ease-in-out infinite;
     }
     
     @keyframes sidebar-border-pulse {
@@ -775,19 +777,20 @@ st.markdown("""
     
     /* Sidebar navigation header */
     .sidebar-nav-header {
-        background: linear-gradient(45deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
-        background-size: 400% 400%;
+        background: linear-gradient(45deg, #1d4ed8, #dc2626, #1d4ed8);
+        background-size: 300% 300%;
         animation: gradient-move 3s ease infinite;
         margin: -1rem -1rem 1rem -1rem;
-        padding: 12px 16px;
-        border-radius: 0 0 8px 8px;
+        padding: 16px 20px;
+        border-radius: 0 0 12px 12px;
         text-align: center;
-        font-weight: 600;
-        font-size: 16px;
+        font-weight: 700;
+        font-size: 18px;
         color: white;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        letter-spacing: 1px;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        letter-spacing: 2px;
         text-transform: uppercase;
+        border: 2px solid rgba(255, 255, 255, 0.1);
     }
     
     @keyframes gradient-move {
@@ -801,141 +804,133 @@ st.markdown("""
         max-width: 100%;
     }
     
-    /* Header bar */
+    /* Enhanced Header bar - Professional law enforcement */
     .header-bar {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border-bottom: 1px solid #475569;
-        padding: 12px 24px;
+        background: linear-gradient(135deg, #000000 0%, #1e293b 50%, #000000 100%);
+        border-bottom: 3px solid #1d4ed8;
+        border-top: 3px solid #dc2626;
+        padding: 16px 32px;
         margin: -1rem -2rem 2rem -2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     }
     
     .logo-section {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 16px;
     }
     
     .logo-icon {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(45deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
-        background-size: 400% 400%;
-        border-radius: 8px;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #1d4ed8, #dc2626);
+        background-size: 300% 300%;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 20px;
+        font-size: 24px;
         animation: logo-pulse 2s ease-in-out infinite;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 4px 20px rgba(29, 78, 216, 0.3);
     }
     
     @keyframes logo-pulse {
         0%, 100% { 
             background-position: 0% 50%;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 30px rgba(29, 78, 216, 0.4);
+            transform: scale(1);
         }
         50% { 
             background-position: 100% 50%;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.4);
+            transform: scale(1.05);
         }
     }
     
     .logo-text h1 {
-        color: #3b82f6 !important;
-        font-size: 24px !important;
-        font-weight: 700 !important;
+        color: #ffffff !important;
+        font-size: 28px !important;
+        font-weight: 800 !important;
         margin: 0 !important;
-        letter-spacing: 1.5px;
-        animation: text-pulse 3s ease-in-out infinite;
+        letter-spacing: 3px;
+        text-shadow: 0 2px 8px rgba(29, 78, 216, 0.5);
+        animation: text-glow 3s ease-in-out infinite;
     }
     
-    @keyframes text-pulse {
-        0%, 100% { color: #3b82f6 !important; }
-        50% { color: #ef4444 !important; }
+    @keyframes text-glow {
+        0%, 100% { 
+            color: #ffffff !important;
+            text-shadow: 0 2px 8px rgba(29, 78, 216, 0.5);
+        }
+        50% { 
+            color: #ffffff !important;
+            text-shadow: 0 2px 8px rgba(220, 38, 38, 0.5);
+        }
     }
     
     .logo-text p {
-        color: #94a3b8 !important;
-        font-size: 12px !important;
+        color: #9ca3af !important;
+        font-size: 14px !important;
         margin: 0 !important;
-        font-weight: 500;
+        font-weight: 600;
+        letter-spacing: 1px;
     }
     
     .status-section {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 24px;
         font-size: 14px;
     }
     
     .status-item {
         display: flex;
         align-items: center;
-        gap: 8px;
-        color: #94a3b8;
+        gap: 10px;
+        color: #d1d5db;
+        font-weight: 500;
     }
     
     .status-dot {
-        width: 8px;
-        height: 8px;
-        background: linear-gradient(45deg, #3b82f6, #ef4444);
+        width: 10px;
+        height: 10px;
+        background: linear-gradient(45deg, #1d4ed8, #dc2626);
         border-radius: 50%;
-        animation: dot-pulse 1.5s infinite;
+        animation: dot-pulse 2s infinite;
+        box-shadow: 0 0 10px rgba(29, 78, 216, 0.5);
     }
     
     @keyframes dot-pulse {
-        0%, 100% { background: #3b82f6; }
-        50% { background: #ef4444; }
+        0%, 100% { 
+            background: linear-gradient(45deg, #1d4ed8, #dc2626);
+            box-shadow: 0 0 10px rgba(29, 78, 216, 0.5);
+        }
+        50% { 
+            background: linear-gradient(45deg, #dc2626, #1d4ed8);
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+        }
     }
     
-    /* Main view navigation */
-    .main-nav {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 24px;
-    }
-    
-    .nav-button {
-        background: transparent !important;
-        border: 1px solid #475569 !important;
-        color: #94a3b8 !important;
-        padding: 8px 16px !important;
-        border-radius: 8px !important;
-        font-size: 14px !important;
-        font-weight: 500 !important;
-        transition: all 0.2s ease !important;
-        cursor: pointer;
-    }
-    
-    .nav-button:hover {
-        background: rgba(59, 130, 246, 0.1) !important;
-        border-color: #3b82f6 !important;
-        color: #3b82f6 !important;
-    }
-    
-    .nav-button.active {
-        background: linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(239, 68, 68, 0.2)) !important;
-        border-color: #3b82f6 !important;
-        color: #ffffff !important;
-    }
-    
-    /* Chat interface styling - Modern Instagram/WhatsApp style */
+    /* Enhanced Chat interface styling - Professional Police Theme */
     .chat-container {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 1px solid #475569;
-        border-radius: 16px;
+        background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+        border: 2px solid #1d4ed8;
+        border-radius: 20px;
         overflow: hidden;
         height: auto;
         display: flex;
         flex-direction: column;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
     
     .chat-header {
-        background: linear-gradient(135deg, #334155 0%, #475569 100%);
-        padding: 16px 20px;
-        border-bottom: 1px solid #475569;
+        background: linear-gradient(135deg, #1d4ed8 0%, #dc2626 100%);
+        padding: 20px 24px;
+        border-bottom: 2px solid rgba(255, 255, 255, 0.1);
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -944,103 +939,108 @@ st.markdown("""
     .chat-header h3 {
         color: #ffffff !important;
         margin: 0 !important;
-        font-size: 18px !important;
-        font-weight: 600 !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
     
     .ai-status {
-        color: #10b981 !important;
+        color: #ffffff !important;
         font-size: 14px !important;
         display: flex;
         align-items: center;
         gap: 8px;
+        font-weight: 600;
     }
     
     .chat-messages {
         flex: 1;
         overflow-y: auto;
-        padding: 20px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        min-height: 200px;
-        max-height: 500px;
-        background: #0f172a;
+        gap: 16px;
+        min-height: 300px;
+        max-height: 600px;
+        background: linear-gradient(180deg, #000000 0%, #0f172a 100%);
     }
     
     .message {
         display: flex;
         flex-direction: column;
-        animation: messageSlide 0.3s ease-out;
-        margin-bottom: 8px;
+        animation: messageSlide 0.4s ease-out;
+        margin-bottom: 12px;
         width: auto;
-        max-width: 80%;
+        max-width: 85%;
     }
     
     @keyframes messageSlide {
-        from { opacity: 0; transform: translateY(10px); }
+        from { opacity: 0; transform: translateY(15px); }
         to { opacity: 1; transform: translateY(0); }
     }
     
-    /* User messages - right side like Instagram */
+    /* User messages - Royal Blue theme */
     .message.user {
         align-self: flex-end;
         margin-left: auto;
         width: fit-content;
         min-width: auto;
-        max-width: 70%;
+        max-width: 75%;
     }
     
     .message.user .message-bubble {
-        background: linear-gradient(135deg, #3b82f6, #ef4444);
+        background: linear-gradient(135deg, #1d4ed8, #3b82f6);
         color: white;
-        border-radius: 18px 18px 4px 18px;
-        padding: 10px 14px;
-        font-size: 14px;
-        line-height: 1.4;
+        border-radius: 20px 20px 4px 20px;
+        padding: 12px 18px;
+        font-size: 15px;
+        line-height: 1.5;
         word-wrap: break-word;
         white-space: pre-wrap;
-        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 4px 16px rgba(29, 78, 216, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         display: inline-block;
         width: auto;
-        min-width: 30px;
+        min-width: 40px;
         max-width: 100%;
+        font-weight: 500;
     }
     
-    /* Assistant messages - left side like Instagram */
+    /* Assistant messages - Dark theme with Red accents */
     .message.assistant {
         align-self: flex-start;
         margin-right: auto;
         width: fit-content;
         min-width: auto;
-        max-width: 80%;
+        max-width: 85%;
     }
     
     .message.assistant .message-bubble {
-        background: linear-gradient(135deg, #374151, #4b5563);
+        background: linear-gradient(135deg, #1e293b, #374151);
         color: #f9fafb;
-        border-radius: 18px 18px 18px 4px;
-        padding: 10px 14px;
-        font-size: 14px;
-        line-height: 1.4;
+        border-radius: 20px 20px 20px 4px;
+        padding: 12px 18px;
+        font-size: 15px;
+        line-height: 1.5;
         word-wrap: break-word;
         white-space: pre-wrap;
-        border: 1px solid #6b7280;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        border: 2px solid #dc2626;
+        box-shadow: 0 4px 16px rgba(220, 38, 38, 0.2);
         position: relative;
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         width: auto;
-        min-width: 60px;
+        min-width: 80px;
         max-width: 100%;
+        font-weight: 500;
     }
     
     .message-content {
         flex: 1;
-        margin-right: 8px;
+        margin-right: 12px;
         text-align: left;
-        line-height: 1.5;
+        line-height: 1.6;
         word-wrap: break-word;
         white-space: pre-wrap;
         text-indent: 0;
@@ -1048,15 +1048,15 @@ st.markdown("""
     }
     
     .message-time {
-        font-size: 10px;
-        color: #64748b;
-        margin-top: 4px;
-        font-weight: 400;
+        font-size: 11px;
+        color: #6b7280;
+        margin-top: 6px;
+        font-weight: 500;
     }
     
     .message.user .message-time {
         text-align: right;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.8);
     }
     
     .message.assistant .message-time {
@@ -1064,485 +1064,443 @@ st.markdown("""
         color: #9ca3af;
     }
     
-    /* Speaker button styling - positioned in right corner */
+    /* Enhanced Speaker button styling */
     .speak-button {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        padding: 4px 6px !important;
+        padding: 6px 8px !important;
         cursor: pointer !important;
         font-size: 12px !important;
-        opacity: 0.7 !important;
-        transition: all 0.2s ease !important;
-        border-radius: 4px !important;
+        opacity: 0.8 !important;
+        transition: all 0.3s ease !important;
+        border-radius: 6px !important;
         position: relative !important;
         top: -2px !important;
         flex-shrink: 0 !important;
-        margin-left: 8px !important;
+        margin-left: 12px !important;
         align-self: flex-start !important;
-        color: #f9fafb !important;
-        min-width: 24px !important;
+        color: #ffffff !important;
+        min-width: 28px !important;
         text-align: center !important;
+        box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3) !important;
     }
     
     .speak-button:hover {
         opacity: 1 !important;
-        background: rgba(59, 130, 246, 0.2) !important;
-        border-color: #3b82f6 !important;
-        transform: scale(1.05) !important;
+        background: linear-gradient(135deg, #b91c1c, #dc2626) !important;
+        border-color: #1d4ed8 !important;
+        transform: scale(1.1) !important;
+        box-shadow: 0 4px 12px rgba(29, 78, 216, 0.4) !important;
     }
     
     .speak-button:active {
-        background: rgba(59, 130, 246, 0.3) !important;
+        background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
         transform: scale(0.95) !important;
     }
     
     .chat-input-area {
-        background: linear-gradient(135deg, #334155 0%, #475569 100%);
-        border-top: 1px solid #475569;
-        padding: 16px 20px;
+        background: linear-gradient(135deg, #1e293b 0%, #374151 100%);
+        border-top: 2px solid #dc2626;
+        padding: 20px 24px;
     }
     
-    /* Auto-speak toggle button styling */
+    /* Enhanced Auto-speak toggle button */
     .auto-speak-toggle {
         background: linear-gradient(135deg, #10b981, #059669) !important;
         border: none !important;
         color: white !important;
-        padding: 6px 12px !important;
-        border-radius: 6px !important;
-        font-size: 12px !important;
-        font-weight: 500 !important;
-        transition: all 0.2s ease !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
         cursor: pointer !important;
-        margin-right: 8px !important;
+        margin-right: 12px !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
     }
     
     .auto-speak-toggle.disabled {
         background: linear-gradient(135deg, #6b7280, #4b5563) !important;
-    }
-    
-    .auto-speak-toggle:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
-    }
-    
-    .auto-speak-toggle.disabled:hover {
         box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3) !important;
     }
     
-    /* Input styling */
+    .auto-speak-toggle:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4) !important;
+    }
+    
+    .auto-speak-toggle.disabled:hover {
+        box-shadow: 0 6px 16px rgba(107, 114, 128, 0.4) !important;
+    }
+    
+    /* Enhanced Input styling */
     .stTextInput input {
-        background: rgba(0, 0, 0, 0.4) !important;
-        border: 1px solid #475569 !important;
-        border-radius: 8px !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        border: 2px solid #1d4ed8 !important;
+        border-radius: 12px !important;
         color: #ffffff !important;
-        padding: 12px 16px !important;
-        font-size: 14px !important;
+        padding: 14px 20px !important;
+        font-size: 15px !important;
+        font-weight: 500 !important;
     }
     
     .stTextInput input:focus {
-        border-color: #3b82f6 !important;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+        border-color: #dc2626 !important;
+        box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2) !important;
     }
     
-    /* Button styling */
+    /* Enhanced Button styling */
     .stButton > button {
-        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
+        background: linear-gradient(135deg, #1d4ed8, #dc2626) !important;
         border: none !important;
         color: white !important;
-        padding: 8px 16px !important;
-        border-radius: 8px !important;
-        font-size: 14px !important;
-        font-weight: 500 !important;
-        transition: all 0.2s ease !important;
+        padding: 12px 24px !important;
+        border-radius: 12px !important;
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 16px rgba(29, 78, 216, 0.3) !important;
     }
     
     .stButton > button:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4) !important;
+        background: linear-gradient(135deg, #dc2626, #1d4ed8) !important;
     }
     
-    /* Sidebar button styling - Police theme */
+    /* Enhanced Sidebar button styling */
     .sidebar-nav-button {
         width: 100% !important;
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)) !important;
-        border: 1px solid rgba(59, 130, 246, 0.3) !important;
-        color: #e2e8f0 !important;
-        padding: 12px 16px !important;
-        border-radius: 8px !important;
+        background: linear-gradient(135deg, rgba(29, 78, 216, 0.15), rgba(220, 38, 38, 0.15)) !important;
+        border: 2px solid rgba(29, 78, 216, 0.4) !important;
+        color: #e5e7eb !important;
+        padding: 14px 20px !important;
+        border-radius: 12px !important;
         text-align: left !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 10px !important;
         transition: all 0.3s ease !important;
-        font-weight: 500 !important;
-        backdrop-filter: blur(5px) !important;
+        font-weight: 600 !important;
+        backdrop-filter: blur(10px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
     }
     
     .sidebar-nav-button:hover {
-        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(239, 68, 68, 0.2)) !important;
-        border-color: #3b82f6 !important;
+        background: linear-gradient(135deg, rgba(29, 78, 216, 0.3), rgba(220, 38, 38, 0.3)) !important;
+        border-color: #dc2626 !important;
         color: #ffffff !important;
-        transform: translateX(4px) !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
+        transform: translateX(6px) !important;
+        box-shadow: 0 6px 16px rgba(220, 38, 38, 0.3) !important;
     }
     
     .sidebar-nav-button.active {
-        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
+        background: linear-gradient(135deg, #1d4ed8, #dc2626) !important;
         border-color: transparent !important;
         color: #ffffff !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        box-shadow: 0 6px 16px rgba(29, 78, 216, 0.4) !important;
     }
     
-    /* Card styling */
+    /* Enhanced Card styling */
     .info-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 1px solid #475569;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 16px;
+        background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+        border: 2px solid #1d4ed8;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 20px;
         transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
     
     .info-card:hover {
-        border-color: #3b82f6;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-        transform: translateY(-2px);
+        border-color: #dc2626;
+        box-shadow: 0 12px 32px rgba(220, 38, 38, 0.2);
+        transform: translateY(-4px);
     }
     
     .info-card h3 {
-        color: #3b82f6 !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        margin-bottom: 8px !important;
+        color: #1d4ed8 !important;
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        margin-bottom: 12px !important;
+        text-shadow: 0 2px 4px rgba(29, 78, 216, 0.3);
     }
     
     .info-card p {
-        color: #cbd5e1 !important;
+        color: #d1d5db !important;
         font-size: 14px !important;
-        line-height: 1.5 !important;
+        line-height: 1.6 !important;
         margin: 0 !important;
+        font-weight: 500;
     }
     
-    /* Emergency card styling */
+    /* Enhanced Emergency card styling */
     .emergency-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 1px solid #ef4444;
-        border-radius: 12px;
-        padding: 16px;
-        margin-bottom: 12px;
+        background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+        border: 2px solid #dc2626;
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 16px;
         transition: all 0.3s ease;
+        box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);
     }
     
     .emergency-card:hover {
-        border-color: #3b82f6;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+        border-color: #1d4ed8;
+        box-shadow: 0 12px 32px rgba(29, 78, 216, 0.3);
+        transform: translateY(-2px);
     }
     
     .emergency-number {
-        color: #ef4444 !important;
-        font-size: 18px !important;
+        color: #dc2626 !important;
+        font-size: 20px !important;
         font-weight: bold !important;
-        margin: 8px 0 !important;
+        margin: 10px 0 !important;
+        text-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
     }
     
-    /* Metrics styling - compact */
+    /* Enhanced Metrics styling */
     .metric-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 1px solid #475569;
-        border-radius: 8px;
-        padding: 16px;
+        background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+        border: 2px solid #1d4ed8;
+        border-radius: 12px;
+        padding: 20px;
         text-align: center;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        border-color: #dc2626;
+        transform: translateY(-2px);
+        box-shadow: 0 12px 32px rgba(220, 38, 38, 0.2);
     }
     
     .metric-value {
-        color: #3b82f6 !important;
-        font-size: 24px !important;
-        font-weight: 700 !important;
-        margin-bottom: 4px !important;
+        color: #1d4ed8 !important;
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        margin-bottom: 6px !important;
+        text-shadow: 0 2px 8px rgba(29, 78, 216, 0.4);
     }
     
     .metric-label {
-        color: #94a3b8 !important;
+        color: #9ca3af !important;
         font-size: 12px !important;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        font-weight: 600;
     }
     
-    /* Analytics cards */
+    /* Enhanced Analytics cards */
     .analytics-card {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border-left: 4px solid #3b82f6;
-        border-radius: 8px;
-        padding: 16px;
-        margin-bottom: 12px;
+        background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+        border-left: 4px solid #1d4ed8;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .analytics-card:hover {
+        transform: translateX(4px);
+        box-shadow: 0 12px 32px rgba(29, 78, 216, 0.2);
     }
     
     .analytics-card.high-risk {
-        border-left-color: #ef4444;
+        border-left-color: #dc2626;
+    }
+    
+    .analytics-card.high-risk:hover {
+        box-shadow: 0 12px 32px rgba(220, 38, 38, 0.2);
     }
     
     .analytics-card.medium-risk {
-        border-left-color: #3b82f6;
+        border-left-color: #1d4ed8;
     }
     
     .analytics-card.low-risk {
-        border-left-color: #2563eb;
+        border-left-color: #0f172a;
     }
     
     .analytics-title {
         color: #ffffff !important;
-        font-size: 14px !important;
-        font-weight: 600 !important;
-        margin-bottom: 8px !important;
+        font-size: 16px !important;
+        font-weight: 700 !important;
+        margin-bottom: 10px !important;
     }
     
     .analytics-value {
-        color: #94a3b8 !important;
-        font-size: 12px !important;
-        margin-bottom: 4px !important;
+        color: #9ca3af !important;
+        font-size: 13px !important;
+        margin-bottom: 6px !important;
+        font-weight: 500;
     }
     
-    /* Status bar */
+    /* Enhanced Status bar */
     .status-bar {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border-top: 1px solid #475569;
-        padding: 12px 24px;
+        background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+        border-top: 3px solid #1d4ed8;
+        padding: 16px 32px;
         margin: 2rem -2rem -1rem -2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 12px;
+        font-size: 13px;
+        box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
     }
     
     .status-indicators {
         display: flex;
-        gap: 20px;
+        gap: 24px;
     }
     
     .status-indicator {
         display: flex;
         align-items: center;
-        gap: 6px;
-        color: #94a3b8;
+        gap: 8px;
+        color: #9ca3af;
+        font-weight: 500;
     }
     
     .status-indicator.active {
-        color: #3b82f6;
+        color: #1d4ed8;
+        font-weight: 600;
     }
     
-    /* Responsive design */
+    /* Enhanced Main content sections */
+    .main-content-section {
+        background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+        border: 2px solid #1d4ed8;
+        border-radius: 20px;
+        padding: 32px;
+        margin-bottom: 32px;
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+    
+    .section-header {
+        color: #1d4ed8 !important;
+        font-size: 28px !important;
+        font-weight: 800 !important;
+        margin-bottom: 20px !important;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-shadow: 0 2px 8px rgba(29, 78, 216, 0.3);
+    }
+    
+    .section-content {
+        color: #d1d5db !important;
+        line-height: 1.7 !important;
+        font-weight: 500;
+    }
+    
+    /* Enhanced Responsive design */
     @media (max-width: 768px) {
         .header-bar {
             flex-direction: column;
-            gap: 12px;
+            gap: 16px;
+            padding: 16px;
         }
         
         .status-section {
             flex-direction: column;
-            gap: 8px;
-        }
-        
-        .main-nav {
-            flex-direction: column;
+            gap: 12px;
         }
         
         .chat-container {
-            height: 500px;
+            height: 600px;
+        }
+        
+        .logo-text h1 {
+            font-size: 24px !important;
         }
     }
     
-    /* Voice controls */
-    .voice-controls {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        padding: 8px 12px;
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        border-radius: 8px;
-        margin-bottom: 16px;
-    }
-    
-    .voice-button {
-        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
-        border: none !important;
-        color: white !important;
-        padding: 8px 12px !important;
-        border-radius: 6px !important;
-        font-size: 12px !important;
-        font-weight: 500 !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        min-width: 80px !important;
-    }
-    
-    .voice-button:hover {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-    }
-    
-    .voice-button.active {
-        background: linear-gradient(135deg, #10b981, #059669) !important;
-        animation: voice-pulse 1.5s infinite !important;
-    }
-    
-    @keyframes voice-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
-        50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
-    }
-    
-    .call-securo-button {
-        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-        border: none !important;
-        color: white !important;
-        padding: 12px 24px !important;
-        border-radius: 8px !important;
-        font-size: 16px !important;
-        font-weight: 600 !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
-        animation: call-button-pulse 2s infinite !important;
-    }
-    
-    @keyframes call-button-pulse {
-        0%, 100% { 
-            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
-        }
-        50% { 
-            background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-        }
-    }
-    
-    .call-securo-button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4) !important;
-    }
-    
-    .voice-status {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-        color: #94a3b8;
-    }
-    
-    .voice-indicator {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: #10b981;
-        animation: voice-blink 1s infinite;
-    }
-    
-    @keyframes voice-blink {
-        0%, 50% { opacity: 1; }
-        51%, 100% { opacity: 0.3; }
-    }
-    
-    .call-interface {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 2px solid #ef4444;
-        border-radius: 16px;
-        padding: 24px;
-        text-align: center;
-        margin: 20px 0;
-        animation: call-glow 2s ease-in-out infinite;
-    }
-    
-    @keyframes call-glow {
-        0%, 100% { 
-            border-color: #ef4444;
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-        }
-        50% { 
-            border-color: #3b82f6;
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-        }
-    }
-    
-    .call-avatar {
-        width: 120px;
-        height: 120px;
-        margin: 0 auto 20px;
-        border-radius: 50%;
-        background: linear-gradient(45deg, #3b82f6, #ef4444);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        animation: call-avatar-pulse 1.5s infinite;
-    }
-    
-    @keyframes call-avatar-pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-    
-    /* Main content sections styling */
-    .main-content-section {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 1px solid #475569;
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 24px;
-    }
-    
-    .section-header {
-        color: #3b82f6 !important;
-        font-size: 24px !important;
-        font-weight: 700 !important;
-        margin-bottom: 16px !important;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-    
-    .section-content {
-        color: #cbd5e1 !important;
-        line-height: 1.6 !important;
-    }
-    
-    /* Custom scrollbar */
+    /* Enhanced Custom scrollbar */
     ::-webkit-scrollbar {
-        width: 6px;
+        width: 8px;
     }
     
     ::-webkit-scrollbar-track {
-        background: #1e293b;
+        background: #000000;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: #475569;
-        border-radius: 3px;
+        background: linear-gradient(180deg, #1d4ed8, #dc2626);
+        border-radius: 4px;
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: #64748b;
+        background: linear-gradient(180deg, #dc2626, #1d4ed8);
     }
     
-    /* Text colors */
+    /* Enhanced Text colors */
     h1, h2, h3, h4, h5, h6 {
         color: #ffffff !important;
+        font-weight: 700 !important;
     }
     
     p, span, div, li {
-        color: #cbd5e1 !important;
+        color: #d1d5db !important;
+        font-weight: 500;
+    }
+    
+    /* Enhanced Welcome screen styling */
+    .welcome-container {
+        background: linear-gradient(135deg, #000000 0%, #1e293b 50%, #000000 100%);
+        border: 3px solid #1d4ed8;
+        border-radius: 24px;
+        padding: 48px 32px;
+        text-align: center;
+        margin: 32px 0;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .welcome-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, 
+            rgba(29, 78, 216, 0.1), 
+            rgba(220, 38, 38, 0.1), 
+            rgba(29, 78, 216, 0.1));
+        z-index: -1;
+        animation: gradient-shift 6s ease-in-out infinite;
+    }
+    
+    @keyframes gradient-shift {
+        0%, 100% { 
+            background: linear-gradient(45deg, 
+                rgba(29, 78, 216, 0.1), 
+                rgba(220, 38, 38, 0.1), 
+                rgba(29, 78, 216, 0.1));
+        }
+        50% { 
+            background: linear-gradient(45deg, 
+                rgba(220, 38, 38, 0.1), 
+                rgba(29, 78, 216, 0.1), 
+                rgba(220, 38, 38, 0.1));
+        }
     }
 </style>
 """, unsafe_allow_html=True)
 
-# Modern Header Bar
+# Enhanced Header Bar
 current_time = get_stkitts_time()
 current_date = get_stkitts_date()
 
 st.markdown(f"""
 <div class="header-bar">
     <div class="logo-section">
-        <div class="logo-icon">🚔</div>
+        <div class="logo-icon">🛡️</div>
         <div class="logo-text">
             <h1>SECURO</h1>
-            <p>Modern AI Crime Intelligence System</p>
+            <p>Crime Intelligence System</p>
         </div>
     </div>
     <div class="status-section">
@@ -1551,7 +1509,7 @@ st.markdown(f"""
             <span>Royal St. Christopher & Nevis Police Force</span>
         </div>
         <div class="status-item">
-            <span> {current_date} |  {current_time} AST</span>
+            <span>{current_date} | {current_time} AST</span>
         </div>
     </div>
 </div>
@@ -1559,10 +1517,10 @@ st.markdown(f"""
 
 # Sidebar Navigation
 with st.sidebar:
-    # Animated navigation header
+    # Enhanced animated navigation header
     st.markdown("""
     <div class="sidebar-nav-header">
-         Navigation
+        🚔 NAVIGATION 🚔
     </div>
     """, unsafe_allow_html=True)
     
@@ -1625,18 +1583,18 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Enhanced quick stats with police theme
+    # Enhanced quick stats with royal blue/red theme
     st.markdown(f"""
-    <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
-                border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px;">
-        <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; text-align: center;">
-            🚔 QUICK STATS
+    <div style="background: linear-gradient(135deg, rgba(29, 78, 216, 0.15), rgba(220, 38, 38, 0.15)); 
+                border: 2px solid #dc2626; border-radius: 12px; padding: 16px;">
+        <div style="color: #dc2626; font-weight: 700; margin-bottom: 12px; text-align: center; font-size: 16px;">
+            🛡️ SYSTEM STATUS
         </div>
-        <div style="color: #e2e8f0; font-size: 14px; line-height: 1.6;">
-            <div>🟢 Active Chats: <strong>{len(st.session_state.chat_sessions)}</strong></div>
-            <div>🟢 Database: <strong>Loaded</strong></div>
-            <div>🟢 API Status: <strong>Online</strong></div>
-            <div>🔊 Auto-Speak: <strong>{'ON' if st.session_state.get('auto_speak_enabled', False) else 'OFF'}</strong></div>
+        <div style="color: #e5e7eb; font-size: 14px; line-height: 1.8;">
+            <div>🟢 Active Chats: <strong style="color: #1d4ed8;">{len(st.session_state.chat_sessions)}</strong></div>
+            <div>🟢 Database: <strong style="color: #10b981;">Loaded</strong></div>
+            <div>🟢 API Status: <strong style="color: #10b981;">Online</strong></div>
+            <div>🔊 Auto-Speak: <strong style="color: #{'#10b981' if st.session_state.get('auto_speak_enabled', False) else '#dc2626'};">{'ON' if st.session_state.get('auto_speak_enabled', False) else 'OFF'}</strong></div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1648,7 +1606,7 @@ if st.session_state.main_view == 'home':
     <div class="main-content-section">
         <h2 class="section-header">🏠 System Overview</h2>
         <div class="section-content">
-            <p>Welcome to SECURO - the enhanced comprehensive crime analysis system with police siren colors, 
+            <p>Welcome to SECURO - the enhanced comprehensive crime analysis system with professional law enforcement colors, 
             statistical integration, conversation memory, and advanced AI capabilities built 
             specifically for the Royal St. Christopher and Nevis Police Force.</p>
         </div>
@@ -1662,9 +1620,415 @@ if st.session_state.main_view == 'home':
         st.markdown("""
         <div class="info-card">
             <h3>🤖 Enhanced AI</h3>
-            <p>Statistical knowledge, memory, and context-aware responses with police siren styling.</p>
+            <p>Statistical knowledge, memory, and context-aware responses with professional law enforcement styling.</p>
         </div>
         """, unsafe_allow_html=True)
+        
+        # Center the start button
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+                create_new_chat_session()
+                st.session_state.chat_active = True
+                st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
+                st.rerun()
+        
+        # Voice status indicator with browser check
+        st.markdown(f"""
+        <div style="text-align: center; margin-top: 32px;">
+            <div style="display: inline-block; padding: 16px 32px; background: rgba(16, 185, 129, 0.15); 
+                        border: 2px solid #10b981; border-radius: 12px;">
+                <div style="color: #10b981; font-size: 16px; font-weight: 700;">🔊 TTS FEATURES AVAILABLE</div>
+                <div style="color: #9ca3af; font-size: 13px; margin-top: 6px; font-weight: 500;">
+                    Text-to-Speech • Auto-Speak: {'ON' if st.session_state.get('auto_speak_enabled', False) else 'OFF'} • Individual Message Speech
+                </div>
+            </div>
+        </div>
+        
+        <script>
+        // Check TTS support and notify user
+        setTimeout(function() {{
+            if (!('speechSynthesis' in window)) {{
+                console.warn('Text-to-speech not supported in this browser');
+            }} else {{
+                console.log('Text-to-speech is supported');
+            }}
+        }}, 500);
+        </script>
+        """, unsafe_allow_html=True)
+    
+    else:
+        # Chat interface - Enhanced with new theme
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #000000 0%, #1e293b 100%); 
+                    border: 2px solid #1d4ed8; border-radius: 20px; padding: 20px; margin-bottom: 20px;
+                    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <div>
+                    <h3 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 700;">🤖 SECURO AI</h3>
+                    <div style="color: #10b981; font-size: 15px; margin-top: 6px; font-weight: 600;">
+                        <span style="color: #10b981;">●</span>
+                        Online with Statistical Knowledge & Enhanced TTS
+                    </div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Chat controls with auto-speak toggle - Enhanced layout
+        col1, col2, col3 = st.columns([1, 1, 2])
+        
+        with col1:
+            if st.button("🆕 New Chat", key="new_chat_btn", use_container_width=True):
+                create_new_chat_session()
+                st.rerun()
+        
+        with col2:
+            if st.button("← Welcome", key="back_welcome", use_container_width=True):
+                st.session_state.chat_active = False
+                st.rerun()
+        
+        with col3:
+            # Auto-speak toggle button
+            auto_speak_text = "🔊 Auto-Speak: ON" if st.session_state.get('auto_speak_enabled', False) else "🔇 Auto-Speak: OFF"
+            if st.button(auto_speak_text, key="toggle_auto_speak", use_container_width=True):
+                st.session_state.auto_speak_enabled = not st.session_state.get('auto_speak_enabled', False)
+                if st.session_state.auto_speak_enabled:
+                    st.success("🔊 Auto-speak enabled! New responses will be read aloud automatically.")
+                else:
+                    st.info("🔇 Auto-speak disabled. Use individual 🔊 buttons to hear messages.")
+                st.rerun()
+        
+        # Current chat info - Enhanced
+        current_chat = get_current_chat()
+        auto_speak_status = "🔊 ON" if st.session_state.get('auto_speak_enabled', False) else "🔇 OFF"
+        st.info(f"**Current Session:** {current_chat['name']} | **Auto-Speak:** {auto_speak_status}")
+        
+        # Display messages
+        messages = current_chat['messages']
+        
+        # Initialize with welcome message if no messages
+        if not messages:
+            welcome_msg = {
+                "role": "assistant",
+                "content": "🛡️ Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! 🔊 Click the speaker buttons to hear any message read aloud.",
+                "timestamp": get_stkitts_time()
+            }
+            messages.append(welcome_msg)
+            current_chat['messages'] = messages
+        
+        # Messages container - Enhanced styling
+        for i, message in enumerate(messages):
+            if message["role"] == "user":
+                st.markdown(f"""
+                <div class="message user">
+                    <div class="message-bubble">{message["content"]}</div>
+                    <div class="message-time">You • {message["timestamp"]} AST</div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                clean_content = str(message["content"]).strip()
+                clean_content = re.sub(r'<[^>]+>', '', clean_content)
+                clean_content = clean_content.replace('```', '')
+                # Preserve bullet points but fix spacing issues
+                clean_content = re.sub(r'  +', ' ', clean_content)
+                clean_content = re.sub(r'\n +•', '\n•', clean_content)
+                clean_content = re.sub(r'• +', '• ', clean_content)
+                
+                # Create message container with native Streamlit button
+                col1, col2 = st.columns([6, 1])
+                
+                with col1:
+                    st.markdown(f"""
+                    <div class="message assistant">
+                        <div class="message-bubble">
+                            <div class="message-content">{clean_content}</div>
+                        </div>
+                        <div class="message-time">
+                            SECURO • {message["timestamp"]} AST
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+                
+                with col2:
+                    # Use Streamlit's native button for TTS
+                    if st.button("🔊", key=f"speak_{i}_{message['timestamp']}", help="Click to speak this message"):
+                        # Simple JavaScript injection for immediate TTS
+                        clean_speech_text = clean_text_for_speech(message["content"])
+                        tts_script = f"""
+                        <script>
+                        if ('speechSynthesis' in window) {{
+                            window.speechSynthesis.cancel();
+                            setTimeout(() => {{
+                                const utterance = new SpeechSynthesisUtterance('{clean_speech_text.replace("'", "\\'")}');
+                                utterance.rate = 0.8;
+                                utterance.volume = 0.9;
+                                window.speechSynthesis.speak(utterance);
+                            }}, 100);
+                        }}
+                        </script>
+                        """
+                        st.components.v1.html(tts_script, height=0)
+        
+        # Chat input - Enhanced
+        st.markdown("---")
+        with st.form("chat_form", clear_on_submit=True):
+            user_input = st.text_input(
+                "Message Enhanced AI Assistant:",
+                placeholder="Type your question about crime statistics, trends, or analysis...",
+                label_visibility="collapsed",
+                key="chat_input"
+            )
+            
+            submitted = st.form_submit_button("📤 Send", type="primary")
+            
+            if submitted and user_input and user_input.strip():
+                current_time = get_stkitts_time()
+                
+                # Add user message to current chat
+                add_message_to_chat("user", user_input)
+                
+                # Generate response with conversation history and statistics
+                with st.spinner("🧠 Generating enhanced AI response with statistical knowledge..."):
+                    response, chart_type = generate_enhanced_smart_response(
+                        user_input, 
+                        conversation_history=current_chat['messages'],
+                        language='en'
+                    )
+                
+                # Add assistant response to current chat
+                add_message_to_chat("assistant", response)
+                
+                # Store chart type in session state to persist after rerun
+                if chart_type:
+                    st.session_state.show_chart = chart_type
+                
+                # Store the response for auto-speak (only if enabled)
+                if st.session_state.get('auto_speak_enabled', False):
+                    st.session_state.last_response = response
+                
+                st.rerun()
+        
+        # Auto-speak the last response if enabled (Enhanced approach)
+        if st.session_state.get('last_response') and st.session_state.get('auto_speak_enabled', False):
+            clean_speech_text = clean_text_for_speech(st.session_state.last_response)
+            if clean_speech_text:
+                auto_speak_script = f"""
+                <script>
+                setTimeout(function() {{
+                    if ('speechSynthesis' in window) {{
+                        window.speechSynthesis.cancel();
+                        setTimeout(() => {{
+                            const utterance = new SpeechSynthesisUtterance('{clean_speech_text.replace("'", "\\'")}');
+                            utterance.rate = 0.8;
+                            utterance.volume = 0.9;
+                            window.speechSynthesis.speak(utterance);
+                        }}, 200);
+                    }}
+                }}, 1000);
+                </script>
+                """
+                st.components.v1.html(auto_speak_script, height=0)
+            # Clear the response to avoid re-speaking
+            st.session_state.last_response = None
+        
+        # Display charts after the rerun (Enhanced styling)
+        if st.session_state.get('show_chart'):
+            st.markdown("### 📊 Requested Chart")
+            chart_type = st.session_state.show_chart
+            
+            if chart_type == "international":
+                # Show international comparison charts
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    fig = create_macrotrends_comparison_charts("homicide_trends")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                with col2:
+                    fig = create_macrotrends_comparison_charts("international_context")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                with col3:
+                    fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "trends":
+                # Show crime trends
+                st_kitts_data = []
+                periods = []
+                
+                # Extract St. Kitts data from the database
+                for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
+                    if period_key in HISTORICAL_CRIME_DATABASE:
+                        period_data = HISTORICAL_CRIME_DATABASE[period_key]
+                        periods.append(period_data["period"])
+                        st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 0)
+                        st_kitts_data.append(st_kitts_crimes)
+                
+                # Create bar chart for St. Kitts crime trends
+                fig = go.Figure()
+                fig.add_trace(go.Bar(
+                    x=periods,
+                    y=st_kitts_data,
+                    marker_color='#1d4ed8',
+                    text=[f"{crimes}" for crimes in st_kitts_data],
+                    textposition='auto',
+                    name='St. Kitts Crimes'
+                ))
+                
+                fig.update_layout(
+                    title="St. Kitts Crime Trends - Recent Years",
+                    xaxis_title="Time Period",
+                    yaxis_title="Number of Crimes",
+                    template="plotly_dark",
+                    height=500,
+                    showlegend=False,
+                    paper_bgcolor='black',
+                    plot_bgcolor='#0f172a'
+                )
+                
+                st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "homicide":
+                # Show homicide trends
+                fig = create_macrotrends_comparison_charts("homicide_trends")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+            
+            # Add button to clear the chart
+            if st.button("🗑️ Clear Chart", key="clear_chart"):
+                st.session_state.show_chart = None
+                st.rerun()
+
+elif st.session_state.main_view == 'hotspots':
+    # Crime Hotspots Map - Enhanced
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #000000 0%, #1e293b 100%); 
+                border: 2px solid #1d4ed8; border-radius: 20px; padding: 20px; margin-bottom: 20px;
+                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);">
+        <h3 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 700;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h3>
+        <p style="color: #9ca3af; font-size: 15px; margin: 10px 0 0 0; font-weight: 500;">Interactive crime analysis with real-time data overlays</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    try:
+        crime_map = create_crime_hotspot_map()
+        map_data = st_folium(
+            crime_map,
+            width="100%",
+            height=500,
+            returned_objects=["last_object_clicked_tooltip", "last_clicked"],
+            key="crime_hotspot_map"
+        )
+        
+        if map_data['last_object_clicked_tooltip']:
+            clicked_info = map_data['last_object_clicked_tooltip']
+            st.info(f"📍 **Last Clicked Location:** {clicked_info}")
+    
+    except Exception as e:
+        st.error(f"❌ Map Error: {str(e)}")
+    
+    # Hotspot summary metrics - Enhanced
+    st.markdown("### 📊 Hotspot Summary")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #000000 0%, #1e293b 100%); 
+                    border-left: 4px solid #dc2626; border-radius: 12px; padding: 20px; text-align: center;
+                    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.2);">
+            <div style="color: #dc2626; font-size: 28px; font-weight: 800; margin-bottom: 6px;">109</div>
+            <div style="color: #9ca3af; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">High Risk Crimes</div>
+            <div style="color: #9ca3af; font-size: 13px; margin-top: 6px; font-weight: 500;">3 Areas</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #000000 0%, #1e293b 100%); 
+                    border-left: 4px solid #1d4ed8; border-radius: 12px; padding: 20px; text-align: center;
+                    box-shadow: 0 8px 24px rgba(29, 78, 216, 0.2);">
+            <div style="color: #1d4ed8; font-size: 28px; font-weight: 800; margin-bottom: 6px;">133</div>
+            <div style="color: #9ca3af; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Medium Risk Crimes</div>
+            <div style="color: #9ca3af; font-size: 13px; margin-top: 6px; font-weight: 500;">6 Areas</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #000000 0%, #1e293b 100%); 
+                    border-left: 4px solid #0f172a; border-radius: 12px; padding: 20px; text-align: center;
+                    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.2);">
+            <div style="color: #0f172a; font-size: 28px; font-weight: 800; margin-bottom: 6px;">60</div>
+            <div style="color: #9ca3af; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Low Risk Crimes</div>
+            <div style="color: #9ca3af; font-size: 13px; margin-top: 6px; font-weight: 500;">4 Areas</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+else:
+    # Default view - Enhanced Navigation prompts
+    # Main navigation tabs
+    col1, col2, col3 = st.columns([1, 1, 8])
+    
+    with col1:
+        if st.button("🤖 SECURO AI", key="main_ai", use_container_width=True):
+            st.session_state.main_view = 'ai-assistant'
+            st.rerun()
+    
+    with col2:
+        if st.button("🗺️ Crime Hotspots", key="main_map", use_container_width=True):
+            st.session_state.main_view = 'hotspots'
+            st.rerun()
+    
+    # Welcome message if no specific view is selected - Enhanced
+    st.markdown("""
+    <div style="text-align: center; padding: 60px 32px; background: linear-gradient(135deg, #000000 0%, #1e293b 100%);
+                border: 2px solid #1d4ed8; border-radius: 20px; margin: 32px 0;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);">
+        <h2 style="color: #1d4ed8; font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;">🛡️ Welcome to SECURO</h2>
+        <p style="color: #9ca3af; font-size: 1.1rem; font-weight: 500;">Choose an option above to get started with the enhanced crime intelligence system</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# Enhanced Status Bar - Royal Blue/Red/Black theme
+current_time = get_stkitts_time()
+total_chats = len(st.session_state.chat_sessions)
+auto_speak_status = "ON" if st.session_state.get('auto_speak_enabled', False) else "OFF"
+
+st.markdown(f"""
+<div class="status-bar">
+    <div class="status-indicators">
+        <div class="status-indicator active">
+            <div class="status-dot"></div>
+            <span>🧠 Enhanced AI Active</span>
+        </div>
+        <div class="status-indicator active">
+            <div class="status-dot"></div>
+            <span>🛡️ Professional Theme: Active</span>
+        </div>
+        <div class="status-indicator active">
+            <div class="status-dot"></div>
+            <span>💭 Conversation Memory: Enabled</span>
+        </div>
+        <div class="status-indicator active">
+            <div class="status-dot"></div>
+            <span>🔊 TTS Available (Auto: {auto_speak_status})</span>
+        </div>
+        <div class="status-indicator">
+            <div class="status-dot"></div>
+            <span>💬 Chat Sessions: {total_chats}</span>
+        </div>
+    </div>
+    <div class="status-indicator">
+        <span>🕒 {current_time} AST</span>
+    </div>
+</div>
+""", unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
@@ -1705,7 +2069,7 @@ elif st.session_state.main_view == 'about':
     st.markdown("## ℹ️ About SECURO")
     
     st.markdown("""
-    **SECURO** is an enhanced comprehensive crime analysis system with police siren colors, 
+    **SECURO** is an enhanced comprehensive crime analysis system with professional law enforcement colors, 
     statistical integration, conversation memory, and advanced AI capabilities built 
     specifically for the Royal St. Christopher and Nevis Police Force.
     """)
@@ -1725,7 +2089,7 @@ elif st.session_state.main_view == 'about':
     
     with col2:
         st.markdown("""
-        - **🚨 Police Siren Color Theme:** Professional law enforcement aesthetics
+        - **🛡️ Professional Law Enforcement Theme:** Royal blue, red, and black aesthetics
         - **🔊 Text-to-Speech Features:** Audio accessibility and hands-free operation
         - **🗺️ Interactive Crime Maps:** Visual hotspot analysis
         - **🌍 International Comparisons:** Global context and trending
@@ -1864,7 +2228,7 @@ elif st.session_state.main_view == 'analytics':
         fig.add_trace(go.Bar(
             x=periods,
             y=st_kitts_data,
-            marker_color='#3b82f6',
+            marker_color='#1d4ed8',
             text=[f"{crimes}" for crimes in st_kitts_data],
             textposition='auto',
             name='St. Kitts Crimes'
@@ -1876,7 +2240,9 @@ elif st.session_state.main_view == 'analytics':
             yaxis_title="Number of Crimes",
             template="plotly_dark",
             height=500,
-            showlegend=False
+            showlegend=False,
+            paper_bgcolor='black',
+            plot_bgcolor='#0f172a'
         )
         
         st.plotly_chart(fig, use_container_width=True)
@@ -1913,7 +2279,9 @@ elif st.session_state.main_view == 'analytics':
             yaxis_title="Detection Rate (%)",
             template="plotly_dark",
             height=500,
-            showlegend=False
+            showlegend=False,
+            paper_bgcolor='black',
+            plot_bgcolor='#0f172a'
         )
         
         st.plotly_chart(fig, use_container_width=True)
@@ -1991,12 +2359,12 @@ elif st.session_state.main_view == 'emergency':
         for service, details in emergency_items[:mid_point]:
             st.markdown(f"""
             <div class="emergency-card">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <span style="font-size: 24px;">{details['icon']}</span>
-                    <div style="color: #ffffff; font-weight: 600; font-size: 16px;">{service}</div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <span style="font-size: 28px;">{details['icon']}</span>
+                    <div style="color: #ffffff; font-weight: 700; font-size: 18px;">{service}</div>
                 </div>
                 <div class="emergency-number">{details['number']}</div>
-                <div style="color: #94a3b8; font-size: 14px;">{details['description']}</div>
+                <div style="color: #9ca3af; font-size: 14px; line-height: 1.5;">{details['description']}</div>
             </div>
             """, unsafe_allow_html=True)
     
@@ -2004,445 +2372,45 @@ elif st.session_state.main_view == 'emergency':
         for service, details in emergency_items[mid_point:]:
             st.markdown(f"""
             <div class="emergency-card">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <span style="font-size: 24px;">{details['icon']}</span>
-                    <div style="color: #ffffff; font-weight: 600; font-size: 16px;">{service}</div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <span style="font-size: 28px;">{details['icon']}</span>
+                    <div style="color: #ffffff; font-weight: 700; font-size: 18px;">{service}</div>
                 </div>
                 <div class="emergency-number">{details['number']}</div>
-                <div style="color: #94a3b8; font-size: 14px;">{details['description']}</div>
+                <div style="color: #9ca3af; font-size: 14px; line-height: 1.5;">{details['description']}</div>
             </div>
             """, unsafe_allow_html=True)
 
 elif st.session_state.main_view == 'ai-assistant':
     # AI Assistant interface (existing code)
     if not st.session_state.get('chat_active', False):
-        # Chat welcome screen - compact and centered
+        # Chat welcome screen - Enhanced with new theme
         st.markdown("""
-        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; 
-                    min-height: 400px; text-align: center; padding: 40px 20px; 
-                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border: 1px solid #475569; border-radius: 16px; margin: 20px 0;">
-            <div style="width: 100px; height: 100px; margin-bottom: 24px; border-radius: 50%; 
-                       background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
-                       align-items: center; justify-content: center; font-size: 2.5rem; animation: logo-pulse 2s infinite;">
-                🚔
+        <div class="welcome-container">
+            <div style="width: 120px; height: 120px; margin: 0 auto 32px; border-radius: 50%; 
+                       background: linear-gradient(45deg, #1d4ed8, #dc2626); display: flex; 
+                       align-items: center; justify-content: center; font-size: 3.5rem; animation: logo-pulse 2s infinite;
+                       border: 3px solid rgba(255, 255, 255, 0.2); box-shadow: 0 0 40px rgba(29, 78, 216, 0.4);">
+                🛡️
             </div>
-            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI</h1>
-            <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI</p>
-            <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
+            <h1 style="color: #ffffff; font-size: 2.5rem; margin-bottom: 16px; font-weight: 800; text-shadow: 0 4px 12px rgba(29, 78, 216, 0.5);">SECURO AI</h1>
+            <p style="color: #1d4ed8; font-size: 1.2rem; margin-bottom: 20px; font-weight: 700;">Enhanced Crime Intelligence</p>
+            <p style="color: #d1d5db; max-width: 600px; margin: 0 auto 40px; line-height: 1.7; font-size: 16px; font-weight: 500;">
                 Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
-                international data, and conversation memory! 
+                international data, and conversation memory powered by professional law enforcement technology.
             </p>
-            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
-                            padding: 12px 20px; color: #3b82f6; font-size: 14px; font-weight: 500;">
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px;">
+                <div style="background: rgba(29, 78, 216, 0.15); border: 2px solid #1d4ed8; border-radius: 12px; 
+                            padding: 16px 24px; color: #1d4ed8; font-size: 15px; font-weight: 600;">
                     📊 Statistical Knowledge
                 </div>
-                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; 
-                            padding: 12px 20px; color: #ef4444; font-size: 14px; font-weight: 500;">
+                <div style="background: rgba(220, 38, 38, 0.15); border: 2px solid #dc2626; border-radius: 12px; 
+                            padding: 16px 24px; color: #dc2626; font-size: 15px; font-weight: 600;">
                     💭 Conversation Memory
                 </div>
-                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
-                            padding: 12px 20px; color: #10b981; font-size: 14px; font-weight: 500;">
+                <div style="background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981; border-radius: 12px; 
+                            padding: 16px 24px; color: #10b981; font-size: 15px; font-weight: 600;">
                     🔊 Text-to-Speech
                 </div>
             </div>
         </div>
-        """, unsafe_allow_html=True)
-        
-        # Center the start button
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
-                create_new_chat_session()
-                st.session_state.chat_active = True
-                st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
-                st.rerun()
-        
-        # Voice status indicator with browser check
-        st.markdown(f"""
-        <div style="text-align: center; margin-top: 20px;">
-            <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
-                        border: 1px solid #10b981; border-radius: 8px;">
-                <div style="color: #10b981; font-size: 14px; font-weight: 600;">🔊 TTS FEATURES AVAILABLE</div>
-                <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
-                    Text-to-Speech • Auto-Speak: {'ON' if st.session_state.get('auto_speak_enabled', False) else 'OFF'} • Individual Message Speech
-                </div>
-            </div>
-        </div>
-        
-        <script>
-        // Check TTS support and notify user
-        setTimeout(function() {{
-            if (!('speechSynthesis' in window)) {{
-                console.warn('Text-to-speech not supported in this browser');
-            }} else {{
-                console.log('Text-to-speech is supported');
-            }}
-        }}, 500);
-        </script>
-        """, unsafe_allow_html=True)
-    
-    else:
-        # Chat interface - compact design with improved TTS controls
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-                <div>
-                    <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🤖 SECURO AI</h3>
-                    <div style="color: #10b981; font-size: 14px; margin-top: 4px;">
-                        <span style="color: #10b981;">●</span>
-                        Online with Statistical Knowledge & Enhanced TTS
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Chat controls with auto-speak toggle - improved layout
-        col1, col2, col3 = st.columns([1, 1, 2])
-        
-        with col1:
-            if st.button("🆕 New Chat", key="new_chat_btn", use_container_width=True):
-                create_new_chat_session()
-                st.rerun()
-        
-        with col2:
-            if st.button("← Welcome", key="back_welcome", use_container_width=True):
-                st.session_state.chat_active = False
-                st.rerun()
-        
-        with col3:
-            # Auto-speak toggle button
-            auto_speak_text = "🔊 Auto-Speak: ON" if st.session_state.get('auto_speak_enabled', False) else "🔇 Auto-Speak: OFF"
-            if st.button(auto_speak_text, key="toggle_auto_speak", use_container_width=True):
-                st.session_state.auto_speak_enabled = not st.session_state.get('auto_speak_enabled', False)
-                if st.session_state.auto_speak_enabled:
-                    st.success("🔊 Auto-speak enabled! New responses will be read aloud automatically.")
-                else:
-                    st.info("🔇 Auto-speak disabled. Use individual 🔊 buttons to hear messages.")
-                st.rerun()
-        
-        # Current chat info - compact
-        current_chat = get_current_chat()
-        auto_speak_status = "🔊 ON" if st.session_state.get('auto_speak_enabled', False) else "🔇 OFF"
-        st.info(f"**Current Session:** {current_chat['name']} | **Auto-Speak:** {auto_speak_status}")
-        
-        # Display messages
-        messages = current_chat['messages']
-        
-        # Initialize with welcome message if no messages
-        if not messages:
-            welcome_msg = {
-                "role": "assistant",
-                "content": "🚔 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! 🔊 Click the speaker buttons to hear any message read aloud.",
-                "timestamp": get_stkitts_time()
-            }
-            messages.append(welcome_msg)
-            current_chat['messages'] = messages
-        
-        # Messages container - Instagram style with Streamlit TTS buttons
-        for i, message in enumerate(messages):
-            if message["role"] == "user":
-                st.markdown(f"""
-                <div class="message user">
-                    <div class="message-bubble">{message["content"]}</div>
-                    <div class="message-time">You • {message["timestamp"]} AST</div>
-                </div>
-                """, unsafe_allow_html=True)
-            else:
-                clean_content = str(message["content"]).strip()
-                clean_content = re.sub(r'<[^>]+>', '', clean_content)
-                clean_content = clean_content.replace('```', '')
-                # Preserve bullet points but fix spacing issues
-                clean_content = re.sub(r'  +', ' ', clean_content)
-                clean_content = re.sub(r'\n +•', '\n•', clean_content)
-                clean_content = re.sub(r'• +', '• ', clean_content)
-                
-                # Create message container with native Streamlit button
-                col1, col2 = st.columns([6, 1])
-                
-                with col1:
-                    st.markdown(f"""
-                    <div class="message assistant">
-                        <div class="message-bubble">
-                            <div class="message-content">{clean_content}</div>
-                        </div>
-                        <div class="message-time">
-                            SECURO • {message["timestamp"]} AST
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                with col2:
-                    # Use Streamlit's native button for TTS
-                    if st.button("🔊", key=f"speak_{i}_{message['timestamp']}", help="Click to speak this message"):
-                        # Simple JavaScript injection for immediate TTS
-                        clean_speech_text = clean_text_for_speech(message["content"])
-                        tts_script = f"""
-                        <script>
-                        if ('speechSynthesis' in window) {{
-                            window.speechSynthesis.cancel();
-                            setTimeout(() => {{
-                                const utterance = new SpeechSynthesisUtterance('{clean_speech_text.replace("'", "\\'")}');
-                                utterance.rate = 0.8;
-                                utterance.volume = 0.9;
-                                window.speechSynthesis.speak(utterance);
-                            }}, 100);
-                        }}
-                        </script>
-                        """
-                        st.components.v1.html(tts_script, height=0)
-        
-        # Chat input - simplified
-        st.markdown("---")
-        with st.form("chat_form", clear_on_submit=True):
-            user_input = st.text_input(
-                "Message Enhanced AI Assistant:",
-                placeholder="Type your question about crime statistics, trends, or analysis...",
-                label_visibility="collapsed",
-                key="chat_input"
-            )
-            
-            submitted = st.form_submit_button("📤 Send", type="primary")
-            
-            if submitted and user_input and user_input.strip():
-                current_time = get_stkitts_time()
-                
-                # Add user message to current chat
-                add_message_to_chat("user", user_input)
-                
-                # Generate response with conversation history and statistics
-                with st.spinner("🧠 Generating enhanced AI response with statistical knowledge..."):
-                    response, chart_type = generate_enhanced_smart_response(
-                        user_input, 
-                        conversation_history=current_chat['messages'],
-                        language='en'
-                    )
-                
-                # Add assistant response to current chat
-                add_message_to_chat("assistant", response)
-                
-                # Store chart type in session state to persist after rerun
-                if chart_type:
-                    st.session_state.show_chart = chart_type
-                
-                # Store the response for auto-speak (only if enabled)
-                if st.session_state.get('auto_speak_enabled', False):
-                    st.session_state.last_response = response
-                
-                st.rerun()
-        
-        # Auto-speak the last response if enabled (simplified approach)
-        if st.session_state.get('last_response') and st.session_state.get('auto_speak_enabled', False):
-            clean_speech_text = clean_text_for_speech(st.session_state.last_response)
-            if clean_speech_text:
-                auto_speak_script = f"""
-                <script>
-                setTimeout(function() {{
-                    if ('speechSynthesis' in window) {{
-                        window.speechSynthesis.cancel();
-                        setTimeout(() => {{
-                            const utterance = new SpeechSynthesisUtterance('{clean_speech_text.replace("'", "\\'")}');
-                            utterance.rate = 0.8;
-                            utterance.volume = 0.9;
-                            window.speechSynthesis.speak(utterance);
-                        }}, 200);
-                    }}
-                }}, 1000);
-                </script>
-                """
-                st.components.v1.html(auto_speak_script, height=0)
-            # Clear the response to avoid re-speaking
-            st.session_state.last_response = None
-        
-        # Display charts after the rerun (so they persist)
-        if st.session_state.get('show_chart'):
-            st.markdown("### 📊 Requested Chart")
-            chart_type = st.session_state.show_chart
-            
-            if chart_type == "international":
-                # Show international comparison charts
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    fig = create_macrotrends_comparison_charts("homicide_trends")
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-                
-                with col2:
-                    fig = create_macrotrends_comparison_charts("international_context")
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-                
-                with col3:
-                    fig = create_macrotrends_comparison_charts("recent_crime_totals")
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-            
-            elif chart_type == "trends":
-                # Show crime trends
-                st_kitts_data = []
-                periods = []
-                
-                # Extract St. Kitts data from the database
-                for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
-                    if period_key in HISTORICAL_CRIME_DATABASE:
-                        period_data = HISTORICAL_CRIME_DATABASE[period_key]
-                        periods.append(period_data["period"])
-                        st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 0)
-                        st_kitts_data.append(st_kitts_crimes)
-                
-                # Create bar chart for St. Kitts crime trends
-                fig = go.Figure()
-                fig.add_trace(go.Bar(
-                    x=periods,
-                    y=st_kitts_data,
-                    marker_color='#3b82f6',
-                    text=[f"{crimes}" for crimes in st_kitts_data],
-                    textposition='auto',
-                    name='St. Kitts Crimes'
-                ))
-                
-                fig.update_layout(
-                    title="St. Kitts Crime Trends - Recent Years",
-                    xaxis_title="Time Period",
-                    yaxis_title="Number of Crimes",
-                    template="plotly_dark",
-                    height=500,
-                    showlegend=False
-                )
-                
-                st.plotly_chart(fig, use_container_width=True)
-            
-            elif chart_type == "homicide":
-                # Show homicide trends
-                fig = create_macrotrends_comparison_charts("homicide_trends")
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-            
-            # Add button to clear the chart
-            if st.button("🗑️ Clear Chart", key="clear_chart"):
-                st.session_state.show_chart = None
-                st.rerun()
-
-elif st.session_state.main_view == 'hotspots':
-    # Crime Hotspots Map - Main Screen
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
-        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h3>
-        <p style="color: #94a3b8; font-size: 14px; margin: 8px 0 0 0;">Interactive crime analysis with real-time data overlays</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    try:
-        crime_map = create_crime_hotspot_map()
-        map_data = st_folium(
-            crime_map,
-            width="100%",
-            height=500,
-            returned_objects=["last_object_clicked_tooltip", "last_clicked"],
-            key="crime_hotspot_map"
-        )
-        
-        if map_data['last_object_clicked_tooltip']:
-            clicked_info = map_data['last_object_clicked_tooltip']
-            st.info(f"📍 **Last Clicked Location:** {clicked_info}")
-    
-    except Exception as e:
-        st.error(f"❌ Map Error: {str(e)}")
-    
-    # Hotspot summary metrics - compact
-    st.markdown("### 📊 Hotspot Summary")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #ef4444; border-radius: 8px; padding: 16px; text-align: center;">
-            <div style="color: #ef4444; font-size: 24px; font-weight: 700; margin-bottom: 4px;">109</div>
-            <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">High Risk Crimes</div>
-            <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">3 Areas</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #3b82f6; border-radius: 8px; padding: 16px; text-align: center;">
-            <div style="color: #3b82f6; font-size: 24px; font-weight: 700; margin-bottom: 4px;">133</div>
-            <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Medium Risk Crimes</div>
-            <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">6 Areas</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #2563eb; border-radius: 8px; padding: 16px; text-align: center;">
-            <div style="color: #2563eb; font-size: 24px; font-weight: 700; margin-bottom: 4px;">60</div>
-            <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Low Risk Crimes</div>
-            <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">4 Areas</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-else:
-    # Default view - Navigation prompts
-    # Main navigation tabs
-    col1, col2, col3 = st.columns([1, 1, 8])
-    
-    with col1:
-        if st.button("🤖 SECURO AI", key="main_ai", use_container_width=True):
-            st.session_state.main_view = 'ai-assistant'
-            st.rerun()
-    
-    with col2:
-        if st.button("🗺️ Crime Hotspots", key="main_map", use_container_width=True):
-            st.session_state.main_view = 'hotspots'
-            st.rerun()
-    
-    # Welcome message if no specific view is selected
-    st.markdown("""
-    <div style="text-align: center; padding: 40px 20px;">
-        <h2 style="color: #3b82f6;">🚔 Welcome to SECURO</h2>
-        <p style="color: #94a3b8;">Choose an option above to get started with the enhanced crime intelligence system</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-# Modern Status Bar - Enhanced with TTS status
-current_time = get_stkitts_time()
-total_chats = len(st.session_state.chat_sessions)
-auto_speak_status = "ON" if st.session_state.get('auto_speak_enabled', False) else "OFF"
-
-st.markdown(f"""
-<div class="status-bar">
-    <div class="status-indicators">
-        <div class="status-indicator active">
-            <div class="status-dot"></div>
-            <span>🧠 Enhanced AI Active</span>
-        </div>
-        <div class="status-indicator active">
-            <div class="status-dot"></div>
-            <span>🚨 Police Siren Colors: Active</span>
-        </div>
-        <div class="status-indicator active">
-            <div class="status-dot"></div>
-            <span>💭 Conversation Memory: Enabled</span>
-        </div>
-        <div class="status-indicator active">
-            <div class="status-dot"></div>
-            <span>🔊 TTS Available (Auto: {auto_speak_status})</span>
-        </div>
-        <div class="status-indicator">
-            <div class="status-dot"></div>
-            <span>💬 Chat Sessions: {total_chats}</span>
-        </div>
-    </div>
-    <div class="status-indicator">
-        <span>🕒 {current_time} AST</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
