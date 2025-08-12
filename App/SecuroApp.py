@@ -2414,3 +2414,4 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
             </div>
         </div>
+        """, unsafe_allow_html=True)
