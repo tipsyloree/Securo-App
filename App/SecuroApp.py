@@ -877,13 +877,13 @@ st.markdown("""
         color: #ffffff !important;
     }
     
-    /* Chat interface styling - compact */
+    /* Chat interface styling - Modern Instagram/WhatsApp style */
     .chat-container {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border: 1px solid #475569;
         border-radius: 16px;
         overflow: hidden;
-        height: auto; /* Changed from fixed height */
+        height: auto;
         display: flex;
         flex-direction: column;
     }
@@ -915,18 +915,21 @@ st.markdown("""
     .chat-messages {
         flex: 1;
         overflow-y: auto;
-        padding: 16px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        min-height: 200px; /* Reduced from 300px */
-        max-height: 500px; /* Maximum height to prevent too much growth */
+        gap: 12px;
+        min-height: 200px;
+        max-height: 500px;
+        background: #0f172a;
     }
     
     .message {
         display: flex;
-        max-width: 80%;
+        flex-direction: column;
+        max-width: 70%;
         animation: messageSlide 0.3s ease-out;
+        margin-bottom: 8px;
     }
     
     @keyframes messageSlide {
@@ -934,48 +937,77 @@ st.markdown("""
         to { opacity: 1; transform: translateY(0); }
     }
     
+    /* User messages - right side like Instagram */
     .message.user {
         align-self: flex-end;
-    }
-    
-    .message.assistant {
-        align-self: flex-start;
-    }
-    
-    .message-bubble {
-        padding: 12px 16px;
-        border-radius: 12px;
-        font-size: 14px;
-        line-height: 1.5;
-        word-wrap: break-word;
-        white-space: pre-wrap;
+        margin-left: auto;
     }
     
     .message.user .message-bubble {
         background: linear-gradient(135deg, #3b82f6, #ef4444);
         color: white;
-        border-bottom-right-radius: 4px;
+        border-radius: 18px 18px 4px 18px;
+        padding: 12px 16px;
+        font-size: 14px;
+        line-height: 1.4;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+    }
+    
+    /* Assistant messages - left side like Instagram */
+    .message.assistant {
+        align-self: flex-start;
+        margin-right: auto;
     }
     
     .message.assistant .message-bubble {
-        background: rgba(0, 0, 0, 0.6);
-        color: #f1f5f9;
-        border: 1px solid #475569;
-        border-bottom-left-radius: 4px;
+        background: linear-gradient(135deg, #374151, #4b5563);
+        color: #f9fafb;
+        border-radius: 18px 18px 18px 4px;
+        padding: 12px 16px;
+        font-size: 14px;
+        line-height: 1.4;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        border: 1px solid #6b7280;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        position: relative;
     }
     
     .message-time {
-        font-size: 11px;
+        font-size: 10px;
         color: #64748b;
         margin-top: 4px;
+        font-weight: 400;
     }
     
     .message.user .message-time {
         text-align: right;
+        color: rgba(255, 255, 255, 0.7);
     }
     
     .message.assistant .message-time {
         text-align: left;
+        color: #9ca3af;
+    }
+    
+    /* Speaker button styling - minimal */
+    .speak-button {
+        background: none !important;
+        border: none !important;
+        padding: 4px !important;
+        cursor: pointer !important;
+        font-size: 16px !important;
+        opacity: 0.7 !important;
+        transition: opacity 0.2s ease !important;
+        border-radius: 4px !important;
+        margin-left: 8px !important;
+    }
+    
+    .speak-button:hover {
+        opacity: 1 !important;
+        background: rgba(255, 255, 255, 0.1) !important;
     }
     
     .chat-input-area {
@@ -1944,15 +1976,13 @@ elif st.session_state.main_view == 'ai-assistant':
             messages.append(welcome_msg)
             current_chat['messages'] = messages
         
-        # Messages container - compact
+        # Messages container - Instagram style
         for i, message in enumerate(messages):
             if message["role"] == "user":
                 st.markdown(f"""
                 <div class="message user">
-                    <div>
-                        <div class="message-bubble">{message["content"]}</div>
-                        <div class="message-time">You • {message["timestamp"]} AST</div>
-                    </div>
+                    <div class="message-bubble">{message["content"]}</div>
+                    <div class="message-time">You • {message["timestamp"]} AST</div>
                 </div>
                 """, unsafe_allow_html=True)
             else:
@@ -1966,20 +1996,12 @@ elif st.session_state.main_view == 'ai-assistant':
                 # Create the assistant message with integrated speak button
                 st.markdown(f"""
                 <div class="message assistant">
-                    <div>
-                        <div class="message-bubble">
-                            {clean_content}
-                            <div style="margin-top: 8px; text-align: right;">
-                                <button onclick="speakText_{message_id}()" 
-                                        style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
-                                               padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">
-                                    🔊 Speak
-                                </button>
-                            </div>
-                        </div>
-                        <div class="message-time">
-                            SECURO • {message["timestamp"]} AST
-                        </div>
+                    <div class="message-bubble">
+                        {clean_content}
+                        <span onclick="speakText_{message_id}()" class="speak-button" title="Click to speak this message">🔊</span>
+                    </div>
+                    <div class="message-time">
+                        SECURO • {message["timestamp"]} AST
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
