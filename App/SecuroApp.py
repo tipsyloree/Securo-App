@@ -195,7 +195,7 @@ def text_to_speech_component(text, message_id="tts"):
     return ""  # Not needed anymore - integrated into message bubbles
 
 def auto_speak_response(text):
-    """Auto-speak functionality for new responses"""
+    """Auto-speak functionality for new responses - FIXED VERSION"""
     clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
     clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
     clean_text = clean_text.replace("•", "").replace("\n", ". ").strip()
@@ -203,30 +203,73 @@ def auto_speak_response(text):
     if len(clean_text) > 300:
         clean_text = clean_text[:300] + "..."
     
+    # Escape quotes properly for JavaScript
+    clean_text = clean_text.replace("'", "\\'").replace('"', '\\"')
+    
     auto_speak_html = f"""
+    <div style="height: 1px; overflow: hidden;">
+        <button id="autoSpeakBtn" onclick="autoSpeak()" style="opacity: 0;">Auto Speak</button>
+    </div>
     <script>
-    if (localStorage.getItem('securo_auto_speak') === 'true') {{
-        setTimeout(function() {{
-            if ('speechSynthesis' in window) {{
-                const utterance = new SpeechSynthesisUtterance(`{clean_text}`);
-                utterance.rate = 0.9;
-                utterance.pitch = 1.0;
-                utterance.volume = 0.8;
+    function autoSpeak() {{
+        if ('speechSynthesis' in window) {{
+            try {{
+                // Cancel any ongoing speech
+                window.speechSynthesis.cancel();
                 
+                const text = `{clean_text}`;
+                if (text.length === 0) return;
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.8;
+                utterance.pitch = 1.0;
+                utterance.volume = 0.9;
+                
+                // Get voices and select a good one
                 const voices = window.speechSynthesis.getVoices();
                 const preferredVoice = voices.find(voice => 
-                    voice.name.includes('Microsoft') || 
-                    voice.name.includes('Google') || 
-                    voice.name.includes('Daniel')
-                );
+                    voice.lang.includes('en') && (
+                        voice.name.includes('Google') || 
+                        voice.name.includes('Microsoft') || 
+                        voice.name.includes('Daniel') ||
+                        voice.name.includes('Alex')
+                    )
+                ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
                 
                 if (preferredVoice) {{
                     utterance.voice = preferredVoice;
                 }}
                 
+                utterance.onstart = function() {{
+                    console.log('Auto-speak started');
+                }};
+                
+                utterance.onerror = function(event) {{
+                    console.error('Auto-speak error:', event.error);
+                }};
+                
                 window.speechSynthesis.speak(utterance);
+                
+            }} catch (error) {{
+                console.error('Auto-speak error:', error);
             }}
-        }}, 1500);
+        }}
+    }}
+    
+    // Auto-trigger speech after a short delay
+    setTimeout(function() {{
+        if (typeof autoSpeak === 'function') {{
+            autoSpeak();
+        }}
+    }}, 1000);
+    
+    // Ensure voices are loaded
+    if ('speechSynthesis' in window) {{
+        window.speechSynthesis.onvoiceschanged = function() {{
+            console.log('Auto-speak voices loaded:', window.speechSynthesis.getVoices().length);
+        }};
+        // Force load voices
+        window.speechSynthesis.getVoices();
     }}
     </script>
     """
@@ -700,7 +743,7 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
 
 # Initialize AI model
 try:
-    GOOGLE_API_KEY = "AIzaSyBYRyEfONMUHdYmeFDkUGSTP1rNEy_p2L0"
+    GOOGLE_API_KEY = "AIzaSyBn1AUXxPtPMu9eRnosECSSQG_2e5bArR8"
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
@@ -1522,34 +1565,53 @@ with st.sidebar:
     # Animated navigation header
     st.markdown("""
     <div class="sidebar-nav-header">
-         Navigation
+        🚔 Navigation
     </div>
     """, unsafe_allow_html=True)
     
     # Main navigation buttons - now set main_view instead of sidebar_view
-    if st.button(" Home", key="nav_home", help="System Overview", use_container_width=True):
+    if st.button("🏠 Home", key="nav_home", help="System Overview", use_container_width=True):
         st.session_state.main_view = 'home'
         st.rerun()
     
-    if st.button(" About", key="nav_about", help="About SECURO", use_container_width=True):
+    if st.button("ℹ️ About", key="nav_about", help="About SECURO", use_container_width=True):
         st.session_state.main_view = 'about'
         st.rerun()
     
-    if st.button(" Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
+    if st.button("📊 Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
         st.session_state.main_view = 'analytics'
         st.rerun()
     
-    if st.button(" History", key="nav_history", help="Chat History", use_container_width=True):
+    if st.button("📝 History", key="nav_history", help="Chat History", use_container_width=True):
         st.session_state.main_view = 'history'
         st.rerun()
     
-    if st.button(" Crime Map", key="nav_map", help="Crime Hotspots", use_container_width=True):
+    if st.button("🗺️ Crime Map", key="nav_map", help="Crime Hotspots", use_container_width=True):
         st.session_state.main_view = 'hotspots'
         st.rerun()
     
-    if st.button(" Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.main_view = 'emergency'
         st.rerun()
+    
+    st.markdown("---")
+    
+    # TTS Instructions
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1)); 
+                border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+        <div style="color: #10b981; font-weight: 600; margin-bottom: 8px; text-align: center;">
+            🔊 TEXT-TO-SPEECH GUIDE
+        </div>
+        <div style="color: #e2e8f0; font-size: 12px; line-height: 1.4;">
+            <div>• Click "🔊 Test TTS" above to test if TTS works</div>
+            <div>• Use 🔊 buttons next to AI messages to hear them</div>
+            <div>• Auto-speak plays new AI responses automatically</div>
+            <div>• Works best in Chrome, Firefox, or Edge browsers</div>
+            <div>• Make sure your volume is turned up!</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("---")
     
@@ -1561,7 +1623,7 @@ with st.sidebar:
     
     # Quick access to Crime Map from any view
     if st.session_state.main_view != 'hotspots':
-        if st.button(" View Crime Map", key="quick_map_access", use_container_width=True):
+        if st.button("🗺️ View Crime Map", key="quick_map_access", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
@@ -1577,16 +1639,71 @@ with st.sidebar:
     </div>
     """, unsafe_allow_html=True)
     
+    # TTS Test Button
+    st.markdown("""
+    <div style="text-align: center; margin-bottom: 16px;">
+        <button onclick="testTTS()" style="background: linear-gradient(135deg, #10b981, #059669); 
+                border: none; color: white; padding: 8px 16px; border-radius: 6px; 
+                font-size: 12px; cursor: pointer;">
+            🔊 Test TTS
+        </button>
+    </div>
+    <script>
+    function testTTS() {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance("Hello! This is SECURO AI testing text-to-speech functionality.");
+            utterance.rate = 0.8;
+            utterance.pitch = 1.0;
+            utterance.volume = 0.9;
+            
+            const voices = window.speechSynthesis.getVoices();
+            const preferredVoice = voices.find(voice => 
+                voice.lang.includes('en') && (
+                    voice.name.includes('Google') || 
+                    voice.name.includes('Microsoft') || 
+                    voice.name.includes('Daniel')
+                )
+            ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
+            
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+            }
+            
+            utterance.onstart = function() {
+                console.log('TTS Test started');
+            };
+            
+            utterance.onerror = function(event) {
+                alert('TTS Error: ' + event.error);
+            };
+            
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert('Text-to-speech not supported in this browser. Try Chrome, Firefox, or Edge.');
+        }
+    }
+    
+    // Load voices
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = function() {
+            console.log('TTS Voices loaded:', window.speechSynthesis.getVoices().length);
+        };
+        window.speechSynthesis.getVoices();
+    }
+    </script>
+    """, unsafe_allow_html=True)
+    
     if st.session_state.get('ai_enabled', False):
         st.success("🟢 Enhanced AI Online")
         st.markdown("""
-        Capabilities:
-        -  Statistical knowledge integration
-        -  Conversation memory
-        -  Context-aware responses
-        -  Crime data analysis
-        -  Professional assistance
-        -  Text-to-Speech features
+        **🎯 Capabilities:**
+        - 📊 Statistical knowledge integration
+        - 🧠 Conversation memory
+        - 🎯 Context-aware responses
+        - 📈 Crime data analysis
+        - 👮‍♂️ Professional assistance
+        - 🔊 Text-to-Speech features
         """)
     else:
         st.error("🔴 AI Offline")
@@ -1599,12 +1716,13 @@ with st.sidebar:
     <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
                 border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px;">
         <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; text-align: center;">
-             QUICK STATS
+            📊 QUICK STATS
         </div>
         <div style="color: #e2e8f0; font-size: 14px; line-height: 1.6;">
-            <div>🟢 Active Chats: <strong>{}</strong></div>
-            <div>🟢 Database: <strong>Loaded</strong></div>
-            <div>🟢 API Status: <strong>Online</strong></div>
+            <div>💬 Active Chats: <strong>{}</strong></div>
+            <div>🔊 TTS Status: <strong>Ready</strong></div>
+            <div>🗄️ Database: <strong>Loaded</strong></div>
+            <div>🌐 API Status: <strong>Online</strong></div>
         </div>
     </div>
     """.format(len(st.session_state.chat_sessions)), unsafe_allow_html=True)
@@ -1654,17 +1772,17 @@ if st.session_state.main_view == 'home':
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button(" Start AI Chat", key="quick_ai", use_container_width=True):
+        if st.button("🤖 Start AI Chat", key="quick_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button(" View Crime Map", key="quick_map", use_container_width=True):
+        if st.button("🗺️ View Crime Map", key="quick_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button(" View Analytics", key="quick_analytics", use_container_width=True):
+        if st.button("📊 View Analytics", key="quick_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
 
@@ -1736,22 +1854,22 @@ elif st.session_state.main_view == 'about':
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button(" Securo AI", key="about_ai", use_container_width=True):
+        if st.button("🤖 AI Assistant", key="about_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button(" Crime Map", key="about_map", use_container_width=True):
+        if st.button("🗺️ Crime Map", key="about_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button(" Analytics", key="about_analytics", use_container_width=True):
+        if st.button("📊 Analytics", key="about_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
     
     with col4:
-        if st.button(" Emergency Info", key="about_emergency", use_container_width=True):
+        if st.button("🚨 Emergency Info", key="about_emergency", use_container_width=True):
             st.session_state.main_view = 'emergency'
             st.rerun()
 
@@ -1995,7 +2113,7 @@ elif st.session_state.main_view == 'ai-assistant':
                        align-items: center; justify-content: center; font-size: 2.5rem; animation: logo-pulse 2s infinite;">
                 🚔
             </div>
-            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI </h1>
+            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI Assistant</h1>
             <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI</p>
             <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
                 Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
@@ -2080,7 +2198,7 @@ elif st.session_state.main_view == 'ai-assistant':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
+                "content": "Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!\n\n🔊 TTS Features: Click the speaker button next to this message to test text-to-speech!",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
@@ -2104,6 +2222,9 @@ elif st.session_state.main_view == 'ai-assistant':
                 clean_content = re.sub(r'\n +•', '\n•', clean_content)  # Remove spaces before bullet points
                 clean_content = re.sub(r'• +', '• ', clean_content)  # Ensure single space after bullet points
                 
+                # Clean content for JavaScript (escape quotes and special characters)
+                js_clean_content = clean_content.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'")
+                
                 # Create unique message ID for voice
                 message_id = f"msg_{i}"
                 
@@ -2120,40 +2241,85 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add the JavaScript for this specific button
+                # Add the JavaScript for this specific button - FIXED VERSION
                 st.components.v1.html(f"""
                 <script>
-                function speakText_{message_id}() {{
-                    if ('speechSynthesis' in window) {{
-                        // Cancel any ongoing speech
-                        window.speechSynthesis.cancel();
-                        
-                        // Clean text for speech - remove bullet points but keep content
-                        let textToSpeak = `{clean_content.replace('`', "'").replace('"', "'").replace("'", "\\'")}`;
-                        textToSpeak = textToSpeak.replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
-                        
-                        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-                        utterance.rate = 0.9;
-                        utterance.pitch = 1.0;
-                        utterance.volume = 0.8;
-                        
-                        // Try to get a professional voice
-                        const voices = window.speechSynthesis.getVoices();
-                        const preferredVoice = voices.find(voice => 
-                            voice.name.includes('Microsoft') || 
-                            voice.name.includes('Google') || 
-                            voice.name.includes('Daniel') ||
-                            voice.name.includes('Alex')
-                        );
-                        
-                        if (preferredVoice) {{
-                            utterance.voice = preferredVoice;
+                // Ensure voices are loaded
+                if ('speechSynthesis' in window) {{
+                    // Force load voices
+                    window.speechSynthesis.getVoices();
+                    
+                    function speakText_{message_id}() {{
+                        try {{
+                            // Cancel any ongoing speech
+                            window.speechSynthesis.cancel();
+                            
+                            // Clean text for speech - remove bullet points but keep content
+                            let textToSpeak = `{js_clean_content}`;
+                            textToSpeak = textToSpeak.replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
+                            
+                            if (textToSpeak.length === 0) {{
+                                alert('No text to speak!');
+                                return;
+                            }}
+                            
+                            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                            utterance.rate = 0.8;
+                            utterance.pitch = 1.0;
+                            utterance.volume = 0.9;
+                            
+                            // Try to get a good voice
+                            const voices = window.speechSynthesis.getVoices();
+                            console.log('Available voices:', voices.length);
+                            
+                            // Find a good English voice
+                            const preferredVoice = voices.find(voice => 
+                                voice.lang.includes('en') && (
+                                    voice.name.includes('Google') || 
+                                    voice.name.includes('Microsoft') || 
+                                    voice.name.includes('Daniel') ||
+                                    voice.name.includes('Alex') ||
+                                    voice.name.includes('Samantha')
+                                )
+                            ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
+                            
+                            if (preferredVoice) {{
+                                utterance.voice = preferredVoice;
+                                console.log('Using voice:', preferredVoice.name);
+                            }}
+                            
+                            // Add event listeners for debugging
+                            utterance.onstart = function() {{
+                                console.log('Speech started');
+                            }};
+                            
+                            utterance.onerror = function(event) {{
+                                console.error('Speech error:', event.error);
+                                alert('Speech error: ' + event.error);
+                            }};
+                            
+                            utterance.onend = function() {{
+                                console.log('Speech ended');
+                            }};
+                            
+                            // Speak the text
+                            window.speechSynthesis.speak(utterance);
+                            
+                        }} catch (error) {{
+                            console.error('TTS Error:', error);
+                            alert('Text-to-speech error: ' + error.message);
                         }}
-                        
-                        window.speechSynthesis.speak(utterance);
-                    }} else {{
-                        alert('Text-to-speech not supported in this browser.');
                     }}
+                    
+                    // Make function globally available
+                    window['speakText_{message_id}'] = speakText_{message_id};
+                }}
+                
+                // Auto-load voices
+                if ('speechSynthesis' in window) {{
+                    window.speechSynthesis.onvoiceschanged = function() {{
+                        console.log('Voices loaded:', window.speechSynthesis.getVoices().length);
+                    }};
                 }}
                 </script>
                 """, height=0)
