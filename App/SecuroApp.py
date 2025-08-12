@@ -301,7 +301,7 @@ def create_tts_button(message_content, message_id, button_style="inline"):
                     currentUtterance_{message_id}.onend = function() {{
                         isPlaying_{message_id} = false;
                         currentUtterance_{message_id} = null;
-                        button.innerHTML = '🔊 Speak';
+                        button.innerHTML = '🔊';
                         button.title = 'Click to read this message aloud';
                     }};
                     
@@ -309,7 +309,7 @@ def create_tts_button(message_content, message_id, button_style="inline"):
                         console.error('TTS Error:', event);
                         isPlaying_{message_id} = false;
                         currentUtterance_{message_id} = null;
-                        button.innerHTML = '🔊 Speak';
+                        button.innerHTML = '🔊';
                         button.title = 'Click to read this message aloud';
                         alert('Speech synthesis error. Please try again.');
                     }};
