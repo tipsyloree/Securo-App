@@ -700,7 +700,7 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
 
 # Initialize AI model
 try:
-    GOOGLE_API_KEY = "AIzaSyBYRyEfONMUHdYmeFDkUGSTP1rNEy_p2L0"
+    GOOGLE_API_KEY = "AIzaSyBn1AUXxPtPMu9eRnosECSSQG_2e5bArR8"
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
@@ -745,10 +745,51 @@ st.markdown("""
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     
-    /* Sidebar styling - React-like sidebar */
+    /* Sidebar styling - Police siren theme */
     .css-1d391kg {
-        background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
-        border-right: 1px solid #334155;
+        background: linear-gradient(180deg, #1e293b 0%, #334155 50%, #1e293b 100%) !important;
+        border-right: 2px solid transparent !important;
+        background-clip: padding-box !important;
+        position: relative !important;
+    }
+    
+    .css-1d391kg::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
+        background-size: 100% 400%;
+        animation: sidebar-border-pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes sidebar-border-pulse {
+        0%, 100% { background-position: 0% 0%; }
+        50% { background-position: 0% 100%; }
+    }
+    
+    /* Sidebar navigation header */
+    .sidebar-nav-header {
+        background: linear-gradient(45deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
+        background-size: 400% 400%;
+        animation: gradient-move 3s ease infinite;
+        margin: -1rem -1rem 1rem -1rem;
+        padding: 12px 16px;
+        border-radius: 0 0 8px 8px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 16px;
+        color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+    
+    @keyframes gradient-move {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
     
     /* Main content area */
@@ -1080,29 +1121,34 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
     }
     
-    /* Sidebar button styling */
+    /* Sidebar button styling - Police theme */
     .sidebar-nav-button {
         width: 100% !important;
-        background: transparent !important;
-        border: 1px solid #475569 !important;
-        color: #94a3b8 !important;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)) !important;
+        border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        color: #e2e8f0 !important;
         padding: 12px 16px !important;
         border-radius: 8px !important;
         text-align: left !important;
         margin-bottom: 8px !important;
-        transition: all 0.2s ease !important;
+        transition: all 0.3s ease !important;
+        font-weight: 500 !important;
+        backdrop-filter: blur(5px) !important;
     }
     
     .sidebar-nav-button:hover {
-        background: rgba(59, 130, 246, 0.1) !important;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(239, 68, 68, 0.2)) !important;
         border-color: #3b82f6 !important;
-        color: #3b82f6 !important;
+        color: #ffffff !important;
+        transform: translateX(4px) !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
     }
     
     .sidebar-nav-button.active {
-        background: linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(239, 68, 68, 0.2)) !important;
-        border-color: #3b82f6 !important;
+        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
+        border-color: transparent !important;
         color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
     }
     
     /* Card styling */
@@ -1473,26 +1519,31 @@ st.markdown(f"""
 
 # Sidebar Navigation
 with st.sidebar:
-    st.markdown("### Navigation")
+    # Animated navigation header
+    st.markdown("""
+    <div class="sidebar-nav-header">
+        🚔 Navigation
+    </div>
+    """, unsafe_allow_html=True)
     
     # Main navigation buttons - now set main_view instead of sidebar_view
-    if st.button("Home", key="nav_home", help="System Overview", use_container_width=True):
+    if st.button("🏠 Home", key="nav_home", help="System Overview", use_container_width=True):
         st.session_state.main_view = 'home'
         st.rerun()
     
-    if st.button("About", key="nav_about", help="About SECURO", use_container_width=True):
+    if st.button("ℹ️ About", key="nav_about", help="About SECURO", use_container_width=True):
         st.session_state.main_view = 'about'
         st.rerun()
     
-    if st.button("Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
+    if st.button("📊 Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
         st.session_state.main_view = 'analytics'
         st.rerun()
     
-    if st.button("History", key="nav_history", help="Chat History", use_container_width=True):
+    if st.button("📝 History", key="nav_history", help="Chat History", use_container_width=True):
         st.session_state.main_view = 'history'
         st.rerun()
     
-    if st.button("Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.main_view = 'emergency'
         st.rerun()
     
@@ -1500,36 +1551,54 @@ with st.sidebar:
     
     # Quick return to AI Assistant
     if st.session_state.main_view not in ['ai-assistant', 'hotspots']:
-        if st.button("Back to AI Assistant", key="back_to_ai", use_container_width=True):
+        if st.button("🤖 Back to AI Assistant", key="back_to_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     st.markdown("---")
     
-    # Default sidebar content (AI status and features)
-    st.markdown("### AI System Status")
+    # Enhanced AI status section with police theme
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
+                border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
+        <div style="color: #3b82f6; font-weight: 600; margin-bottom: 8px; text-align: center;">
+            🚔 AI SYSTEM STATUS
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     if st.session_state.get('ai_enabled', False):
-        st.success("Enhanced AI Online")
+        st.success("🟢 Enhanced AI Online")
         st.markdown("""
-        **Capabilities:**
-        - Statistical knowledge integration
-        - Conversation memory
-        - Context-aware responses
-        - Crime data analysis
-        - Professional assistance
-        - Text-to-Speech features
+        **🎯 Capabilities:**
+        - 📊 Statistical knowledge integration
+        - 🧠 Conversation memory
+        - 🎯 Context-aware responses
+        - 📈 Crime data analysis
+        - 👮‍♂️ Professional assistance
+        - 🔊 Text-to-Speech features
         """)
     else:
-        st.error("AI Offline")
+        st.error("🔴 AI Offline")
         st.write("Please check your API key configuration")
     
     st.markdown("---")
     
-    st.markdown("### Quick Stats")
-    st.markdown(f"Active Chat Sessions: {len(st.session_state.chat_sessions)}")
-    st.markdown(f"TTS Status: Ready")
-    st.markdown(f"Database: Loaded")
+    # Enhanced quick stats with police theme
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
+                border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px;">
+        <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; text-align: center;">
+            📊 QUICK STATS
+        </div>
+        <div style="color: #e2e8f0; font-size: 14px; line-height: 1.6;">
+            <div>💬 Active Chats: <strong>{}</strong></div>
+            <div>🔊 TTS Status: <strong>Ready</strong></div>
+            <div>🗄️ Database: <strong>Loaded</strong></div>
+            <div>🌐 API Status: <strong>Online</strong></div>
+        </div>
+    </div>
+    """.format(len(st.session_state.chat_sessions)), unsafe_allow_html=True)
 
 # Main Content Area - Now handles all the different views
 if st.session_state.main_view == 'home':
