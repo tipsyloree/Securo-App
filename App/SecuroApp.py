@@ -210,7 +210,7 @@ def text_to_speech_component(text, message_id="tts"):
         <button onclick="speakText_{message_id}()" 
                 style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
                        padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 8px;">
-            🔊 Speak
+            Speak
         </button>
     </div>
     
@@ -1466,26 +1466,26 @@ st.markdown(f"""
 
 # Sidebar Navigation
 with st.sidebar:
-    st.markdown("### 🚔 Navigation")
+    st.markdown("### Navigation")
     
     # Main navigation buttons - now set main_view instead of sidebar_view
-    if st.button("🏠 Home", key="nav_home", help="System Overview", use_container_width=True):
+    if st.button("Home", key="nav_home", help="System Overview", use_container_width=True):
         st.session_state.main_view = 'home'
         st.rerun()
     
-    if st.button("ℹ️ About", key="nav_about", help="About SECURO", use_container_width=True):
+    if st.button("About", key="nav_about", help="About SECURO", use_container_width=True):
         st.session_state.main_view = 'about'
         st.rerun()
     
-    if st.button("📊 Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
+    if st.button("Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
         st.session_state.main_view = 'analytics'
         st.rerun()
     
-    if st.button("💾 History", key="nav_history", help="Chat History", use_container_width=True):
+    if st.button("History", key="nav_history", help="Chat History", use_container_width=True):
         st.session_state.main_view = 'history'
         st.rerun()
     
-    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button("Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.main_view = 'emergency'
         st.rerun()
     
@@ -1493,17 +1493,17 @@ with st.sidebar:
     
     # Quick return to AI Assistant
     if st.session_state.main_view not in ['ai-assistant', 'hotspots']:
-        if st.button("💬 Back to AI Assistant", key="back_to_ai", use_container_width=True):
+        if st.button("Back to AI Assistant", key="back_to_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     st.markdown("---")
     
     # Default sidebar content (AI status and features)
-    st.markdown("### 🤖 AI System Status")
+    st.markdown("### AI System Status")
     
     if st.session_state.get('ai_enabled', False):
-        st.success("🔮 Enhanced AI Online")
+        st.success("Enhanced AI Online")
         st.markdown("""
         **Capabilities:**
         - Statistical knowledge integration
@@ -1511,58 +1511,25 @@ with st.sidebar:
         - Context-aware responses
         - Crime data analysis
         - Professional assistance
-        - 🔊 **Text-to-Speech Features**
-        
-        **Statistical Coverage:**
-        - 2022-2025 complete annual data
-        - 2015-2024 homicide analysis
-        - MacroTrends international data
-        - Quarterly & half-yearly reports
-        - Detection rate analysis
+        - Text-to-Speech features
         """)
     else:
-        st.error("⚠️ AI Offline")
+        st.error("AI Offline")
         st.write("Please check your API key configuration")
     
     st.markdown("---")
     
-    # Voice Control Panel
-    st.markdown("### 🔊 Text-to-Speech")
-    
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                border: 1px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 16px;">
-        <h4 style="color: #10b981; margin-bottom: 12px; font-size: 14px;">🎙️ Available TTS Features</h4>
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <div style="color: #94a3b8; font-size: 12px;">🔊 Text-to-Speech - AI responses spoken aloud</div>
-            <div style="color: #94a3b8; font-size: 12px;">🎧 Auto-Speak - Automatic TTS for responses</div>
-            <div style="color: #94a3b8; font-size: 12px;">🎯 Individual Message Speech - Click speak on any message</div>
-            <div style="color: #94a3b8; font-size: 12px;">🎵 Professional Voice Quality</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("""
-    **🚔 TTS Features:**
-    - Toggle "Auto-Speak" for automatic response reading
-    - Use individual "🔊 Speak" buttons on messages
-    - Professional police-grade voice quality
-    - Clean text processing for natural speech
-    """)
-    
-    st.markdown("---")
-    
-    st.markdown("### 📊 Quick Stats")
-    st.markdown(f"🗨️ Active Chat Sessions: {len(st.session_state.chat_sessions)}")
-    st.markdown(f"🔊 TTS Status: Ready")
-    st.markdown(f"📊 Database: Loaded")
+    st.markdown("### Quick Stats")
+    st.markdown(f"Active Chat Sessions: {len(st.session_state.chat_sessions)}")
+    st.markdown(f"TTS Status: Ready")
+    st.markdown(f"Database: Loaded")
 
 # Main Content Area - Now handles all the different views
 if st.session_state.main_view == 'home':
     # System Overview - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">🏠 System Overview</h2>
+        <h2 class="section-header">System Overview</h2>
         <div class="section-content">
             <p>Welcome to SECURO - the enhanced comprehensive crime analysis system with police siren colors, 
             statistical integration, conversation memory, and advanced AI capabilities built 
@@ -1577,7 +1544,7 @@ if st.session_state.main_view == 'home':
     with col1:
         st.markdown("""
         <div class="info-card">
-            <h3>🧠 Enhanced AI</h3>
+            <h3>Enhanced AI</h3>
             <p>Statistical knowledge, memory, and context-aware responses with police siren styling.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -1585,7 +1552,7 @@ if st.session_state.main_view == 'home':
     with col2:
         st.markdown("""
         <div class="info-card">
-            <h3>📊 Real-Time Statistics</h3>
+            <h3>Real-Time Statistics</h3>
             <p>Integrated crime data and international comparisons from MacroTrends.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -1593,7 +1560,7 @@ if st.session_state.main_view == 'home':
     with col3:
         st.markdown("""
         <div class="info-card">
-            <h3>💾 Conversation Memory</h3>
+            <h3>Conversation Memory</h3>
             <p>Context preservation across chat sessions with full history management.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -1602,17 +1569,17 @@ if st.session_state.main_view == 'home':
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("💬 Start AI Chat", key="quick_ai", use_container_width=True):
+        if st.button("Start AI Chat", key="quick_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("🗺️ View Crime Map", key="quick_map", use_container_width=True):
+        if st.button("View Crime Map", key="quick_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button("📊 View Analytics", key="quick_analytics", use_container_width=True):
+        if st.button("View Analytics", key="quick_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
 
@@ -1620,7 +1587,7 @@ elif st.session_state.main_view == 'about':
     # About SECURO - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">ℹ️ About SECURO</h2>
+        <h2 class="section-header">About SECURO</h2>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1630,44 +1597,29 @@ elif st.session_state.main_view == 'about':
     specifically for the Royal St. Christopher and Nevis Police Force.
     """)
     
-    st.markdown("### 🔥 Key Features")
+    st.markdown("### Key Features")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        - ✅ **Conversation Memory:** Full context preservation across chat sessions
-        - ✅ **Statistical Knowledge Integration:** Real-time access to crime data  
-        - ✅ **Context-Aware Responses:** Intelligent understanding of conversation flow
-        - ✅ **Multi-Chat Management:** Organize multiple conversation sessions
-        - ✅ **Real-time Crime Data:** Up-to-date statistics and analysis
+        - **Conversation Memory:** Full context preservation across chat sessions
+        - **Statistical Knowledge Integration:** Real-time access to crime data  
+        - **Context-Aware Responses:** Intelligent understanding of conversation flow
+        - **Multi-Chat Management:** Organize multiple conversation sessions
+        - **Real-time Crime Data:** Up-to-date statistics and analysis
         """)
     
     with col2:
         st.markdown("""
-        - ✅ **Police Siren Color Theme:** Professional law enforcement aesthetics
-        - ✅ **Text-to-Speech Features:** Audio accessibility and hands-free operation
-        - ✅ **Interactive Crime Maps:** Visual hotspot analysis
-        - ✅ **International Comparisons:** Global context and trending
-        - ✅ **Advanced Analytics:** Charts, trends, and data visualization
+        - **Police Siren Color Theme:** Professional law enforcement aesthetics
+        - **Text-to-Speech Features:** Audio accessibility and hands-free operation
+        - **Interactive Crime Maps:** Visual hotspot analysis
+        - **International Comparisons:** Global context and trending
+        - **Advanced Analytics:** Charts, trends, and data visualization
         """)
     
-    st.markdown("### 🛠️ Technical Specifications")
-    
-    st.markdown("""
-    Built with modern web technologies including:
-    - **Streamlit** for the web interface
-    - **Google AI (Gemini)** for intelligent responses
-    - **Interactive mapping** with Folium
-    - **Real-time data processing** capabilities
-    - **Plotly charts** for data visualization
-    - **Text-to-Speech** integration
-    
-    Designed for professional law enforcement use with emphasis on data accuracy, 
-    user experience, and operational efficiency.
-    """)
-    
-    st.markdown("### 📊 Data Coverage")
+    st.markdown("### Data Coverage")
     
     col1, col2, col3 = st.columns(3)
     
@@ -1699,26 +1651,26 @@ elif st.session_state.main_view == 'about':
         """)
     
     # Quick access buttons
-    st.markdown("### 🚀 Quick Access")
+    st.markdown("### Quick Access")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("💬 Try AI Assistant", key="about_ai", use_container_width=True):
+        if st.button("AI Assistant", key="about_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("🗺️ View Crime Map", key="about_map", use_container_width=True):
+        if st.button("Crime Map", key="about_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button("📊 See Analytics", key="about_analytics", use_container_width=True):
+        if st.button("Analytics", key="about_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
     
     with col4:
-        if st.button("🚨 Emergency Info", key="about_emergency", use_container_width=True):
+        if st.button("Emergency Info", key="about_emergency", use_container_width=True):
             st.session_state.main_view = 'emergency'
             st.rerun()
 
@@ -1726,7 +1678,7 @@ elif st.session_state.main_view == 'analytics':
     # Crime Analytics - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">📊 Crime Analytics Dashboard</h2>
+        <h2 class="section-header">Crime Analytics Dashboard</h2>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1763,21 +1715,21 @@ elif st.session_state.main_view == 'analytics':
     # Recent trends section
     st.markdown("""
     <div class="main-content-section">
-        <h3 class="section-header">📈 Recent Trends</h3>
+        <h3 class="section-header">Recent Trends</h3>
         <div class="section-content">
             <ul>
-                <li>📉 <strong>75% decrease in murders</strong> from 2024 to 2025 H1</li>
-                <li>📈 <strong>Detection rates improving</strong> across most crime categories</li>
-                <li>🔍 <strong>Drug crimes up 463%</strong> indicating increased enforcement</li>
-                <li>🚨 <strong>Larcenies remain highest volume crime</strong> requiring focused attention</li>
-                <li>⚖️ <strong>Federation-wide trends</strong> showing mixed but generally positive results</li>
+                <li><strong>75% decrease in murders</strong> from 2024 to 2025 H1</li>
+                <li><strong>Detection rates improving</strong> across most crime categories</li>
+                <li><strong>Drug crimes up 463%</strong> indicating increased enforcement</li>
+                <li><strong>Larcenies remain highest volume crime</strong> requiring focused attention</li>
+                <li><strong>Federation-wide trends</strong> showing mixed but generally positive results</li>
             </ul>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
     # Interactive chart section
-    st.markdown("### 📊 Interactive Analytics")
+    st.markdown("### Interactive Analytics")
     
     chart_tab1, chart_tab2, chart_tab3 = st.tabs(["Crime Trends", "International Comparison", "Detection Rates"])
     
@@ -1857,7 +1809,7 @@ elif st.session_state.main_view == 'history':
     # Chat History - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">💾 Chat History Management</h2>
+        <h2 class="section-header">Chat History Management</h2>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1871,7 +1823,7 @@ elif st.session_state.main_view == 'history':
         """, unsafe_allow_html=True)
         
         # Quick start button
-        if st.button("💬 Start Your First Chat", key="first_chat", use_container_width=True):
+        if st.button("Start Your First Chat", key="first_chat", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     else:
@@ -1883,7 +1835,7 @@ elif st.session_state.main_view == 'history':
             col1, col2, col3 = st.columns([3, 2, 1])
             
             with col1:
-                if st.button(f"💬 {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
+                if st.button(f"Chat: {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
                     st.session_state.current_chat_id = chat_id
                     st.session_state.main_view = 'ai-assistant'
                     st.session_state.chat_active = True
@@ -1903,9 +1855,9 @@ elif st.session_state.main_view == 'emergency':
     # Emergency Contacts - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">🚨 Emergency Contacts Directory</h2>
+        <h2 class="section-header">Emergency Contacts Directory</h2>
         <div class="section-content">
-            <p><strong>⚠️ Emergency Guidelines:</strong></p>
+            <p><strong>Emergency Guidelines:</strong></p>
             <ul>
                 <li>For life-threatening emergencies, call <strong>911</strong> immediately</li>
                 <li>Provide exact location and nature of emergency</li>
@@ -1960,7 +1912,7 @@ elif st.session_state.main_view == 'ai-assistant':
             <div style="width: 100px; height: 100px; margin-bottom: 24px; border-radius: 50%; 
                        background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
                        align-items: center; justify-content: center; font-size: 2.5rem; animation: logo-pulse 2s infinite;">
-                👮🏾‍♂️
+                🚔
             </div>
             <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI Assistant</h1>
             <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI</p>
@@ -1971,15 +1923,15 @@ elif st.session_state.main_view == 'ai-assistant':
             <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
                 <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
                             padding: 12px 20px; color: #3b82f6; font-size: 14px; font-weight: 500;">
-                    🧠 Statistical Knowledge
+                    Statistical Knowledge
                 </div>
                 <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; 
                             padding: 12px 20px; color: #ef4444; font-size: 14px; font-weight: 500;">
-                    💾 Conversation Memory
+                    Conversation Memory
                 </div>
                 <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
                             padding: 12px 20px; color: #10b981; font-size: 14px; font-weight: 500;">
-                    🔊 Text-to-Speech
+                    Text-to-Speech
                 </div>
             </div>
         </div>
@@ -1988,10 +1940,10 @@ elif st.session_state.main_view == 'ai-assistant':
         # Center the start button
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button(" Start Conversation", key="start_chat", use_container_width=True):
+            if st.button("Start Conversation", key="start_chat", use_container_width=True):
                 create_new_chat_session()
                 st.session_state.chat_active = True
-                st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
+                st.success("New chat session created! You can now start chatting with SECURO AI!")
                 st.rerun()
         
         # Voice status indicator
@@ -1999,7 +1951,7 @@ elif st.session_state.main_view == 'ai-assistant':
         <div style="text-align: center; margin-top: 20px;">
             <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
                         border: 1px solid #10b981; border-radius: 8px;">
-                <div style="color: #10b981; font-size: 14px; font-weight: 600;">🔊 TTS FEATURES AVAILABLE</div>
+                <div style="color: #10b981; font-size: 14px; font-weight: 600;">TTS FEATURES AVAILABLE</div>
                 <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
                     Text-to-Speech • Auto-Speak • Individual Message Speech
                 </div>
@@ -2014,9 +1966,9 @@ elif st.session_state.main_view == 'ai-assistant':
                     border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                 <div>
-                    <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🤖 SECURO AI </h3>
+                    <h3 style="color: #ffffff; margin: 0; font-size: 18px;">SECURO AI</h3>
                     <div style="color: #10b981; font-size: 14px; margin-top: 4px;">
-                        <span style="color: #10b981;">🟢</span>
+                        <span style="color: #10b981;">●</span>
                         Online with Statistical Knowledge & TTS Features
                     </div>
                 </div>
@@ -2027,12 +1979,12 @@ elif st.session_state.main_view == 'ai-assistant':
         # Chat controls - compact
         col1, col2 = st.columns([1, 1])
         with col1:
-            if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
+            if st.button("New Chat", key="new_chat_btn", use_container_width=True):
                 create_new_chat_session()
                 st.rerun()
         
         with col2:
-            if st.button("⬅️ Welcome", key="back_welcome", use_container_width=True):
+            if st.button("← Welcome", key="back_welcome", use_container_width=True):
                 st.session_state.chat_active = False
                 st.rerun()
         
@@ -2047,7 +1999,7 @@ elif st.session_state.main_view == 'ai-assistant':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "👮🏾‍♂️ Enhanced SECURO AI System Online! \n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! ",
+                "content": "Enhanced SECURO AI System Online! \n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! ",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
@@ -2094,7 +2046,7 @@ elif st.session_state.main_view == 'ai-assistant':
         st.markdown("---")
         with st.form("chat_form", clear_on_submit=True):
             user_input = st.text_input(
-                "💬 Message Enhanced AI Assistant:",
+                "Message Enhanced AI Assistant:",
                 placeholder="Type your question about crime statistics, trends, or analysis...",
                 label_visibility="collapsed",
                 key="chat_input"
@@ -2109,7 +2061,7 @@ elif st.session_state.main_view == 'ai-assistant':
                 add_message_to_chat("user", user_input)
                 
                 # Generate response with conversation history and statistics
-                with st.spinner("🤖 Generating enhanced AI response with statistical knowledge..."):
+                with st.spinner("Generating enhanced AI response with statistical knowledge..."):
                     response, chart_type = generate_enhanced_smart_response(
                         user_input, 
                         conversation_history=current_chat['messages'],
@@ -2136,7 +2088,7 @@ elif st.session_state.main_view == 'ai-assistant':
         
         # Display charts after the rerun (so they persist)
         if st.session_state.get('show_chart'):
-            st.markdown("### 📊 Requested Chart")
+            st.markdown("### Requested Chart")
             chart_type = st.session_state.show_chart
             
             if chart_type == "international":
@@ -2200,7 +2152,7 @@ elif st.session_state.main_view == 'ai-assistant':
                     st.plotly_chart(fig, use_container_width=True)
             
             # Add button to clear the chart
-            if st.button("🗑️ Clear Chart", key="clear_chart"):
+            if st.button("Clear Chart", key="clear_chart"):
                 st.session_state.show_chart = None
                 st.rerun()
 
@@ -2209,7 +2161,7 @@ elif st.session_state.main_view == 'hotspots':
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                 border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
-        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h3>
+        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">Crime Hotspot Map - St. Kitts & Nevis</h3>
         <p style="color: #94a3b8; font-size: 14px; margin: 8px 0 0 0;">Interactive crime analysis with real-time data overlays</p>
     </div>
     """, unsafe_allow_html=True)
@@ -2226,13 +2178,13 @@ elif st.session_state.main_view == 'hotspots':
         
         if map_data['last_object_clicked_tooltip']:
             clicked_info = map_data['last_object_clicked_tooltip']
-            st.info(f"📍 **Last Clicked Location:** {clicked_info}")
+            st.info(f"**Last Clicked Location:** {clicked_info}")
     
     except Exception as e:
-        st.error(f"❌ Map Error: {str(e)}")
+        st.error(f"Map Error: {str(e)}")
     
     # Hotspot summary metrics - compact
-    st.markdown("### 📊 Hotspot Summary")
+    st.markdown("### Hotspot Summary")
     
     col1, col2, col3 = st.columns(3)
     
@@ -2272,12 +2224,12 @@ else:
     col1, col2, col3 = st.columns([1, 1, 8])
     
     with col1:
-        if st.button("💬 AI Assistant", key="main_ai", use_container_width=True):
+        if st.button("AI Assistant", key="main_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("🗺️ Crime Hotspots", key="main_map", use_container_width=True):
+        if st.button("Crime Hotspots", key="main_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
 
@@ -2302,7 +2254,7 @@ st.markdown(f"""
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>🔊 TTS Available</span>
+            <span>TTS Available</span>
         </div>
         <div class="status-indicator">
             <div class="status-dot"></div>
@@ -2310,7 +2262,7 @@ st.markdown(f"""
         </div>
     </div>
     <div class="status-indicator">
-        <span>🕒 {current_time} AST</span>
+        <span>{current_time} AST</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
