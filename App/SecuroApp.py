@@ -381,6 +381,7 @@ def create_message_speaker_button(message_content, message_id):
           data-text="{clean_text.replace('"', '&quot;').replace("'", '&#39;')}">
         🔊
     </span>
+    ""
 
 return button_html
 
