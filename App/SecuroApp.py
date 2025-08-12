@@ -240,123 +240,9 @@ def clean_text_for_speech(text):
     
     return result
 
-def create_tts_javascript(message_id, text):
-    """Create improved TTS JavaScript for individual messages"""
-    clean_text = clean_text_for_speech(text)
-    
-    # Escape text for JavaScript
-    js_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
-    
-    return f"""
-    <script>
-    function speakMessage_{message_id}() {{
-        try {{
-            // Cancel any ongoing speech
-            if (window.speechSynthesis) {{
-                window.speechSynthesis.cancel();
-            }}
-            
-            // Wait a moment for cancel to complete
-            setTimeout(() => {{
-                if ('speechSynthesis' in window) {{
-                    const text = "{js_text}";
-                    
-                    if (text && text.trim().length > 0) {{
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        
-                        // Configure speech parameters for better reliability
-                        utterance.rate = 0.85;
-                        utterance.pitch = 1.0;
-                        utterance.volume = 0.9;
-                        
-                        // Try to use a reliable voice
-                        const voices = window.speechSynthesis.getVoices();
-                        if (voices.length > 0) {{
-                            // Prefer English voices
-                            const englishVoice = voices.find(voice => 
-                                voice.lang.startsWith('en') && !voice.name.includes('Google')
-                            ) || voices[0];
-                            utterance.voice = englishVoice;
-                        }}
-                        
-                        // Add error handling
-                        utterance.onerror = function(event) {{
-                            console.warn('TTS Error:', event.error);
-                        }};
-                        
-                        utterance.onend = function() {{
-                            console.log('TTS completed successfully');
-                        }};
-                        
-                        // Speak the text
-                        window.speechSynthesis.speak(utterance);
-                    }}
-                }} else {{
-                    console.warn('Speech synthesis not supported');
-                }}
-            }}, 100);
-        }} catch (error) {{
-            console.error('TTS Error:', error);
-        }}
-    }}
-    
-    // Make function globally available
-    window.speakMessage_{message_id} = speakMessage_{message_id};
-    </script>
-    """
 
-def auto_speak_response(text):
-    """Auto-speak functionality for new responses - only when enabled"""
-    if not st.session_state.get('auto_speak_enabled', False):
-        return ""
-    
-    clean_text = clean_text_for_speech(text)
-    
-    if not clean_text:
-        return ""
-    
-    # Escape text for JavaScript
-    js_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
-    
-    return f"""
-    <script>
-    setTimeout(function() {{
-        try {{
-            if ('speechSynthesis' in window && window.speechSynthesis) {{
-                // Cancel any ongoing speech first
-                window.speechSynthesis.cancel();
-                
-                setTimeout(() => {{
-                    const text = "{js_text}";
-                    if (text && text.trim().length > 0) {{
-                        const utterance = new SpeechSynthesisUtterance(text);
-                        utterance.rate = 0.85;
-                        utterance.pitch = 1.0;
-                        utterance.volume = 0.9;
-                        
-                        // Try to get voices
-                        const voices = window.speechSynthesis.getVoices();
-                        if (voices.length > 0) {{
-                            const englishVoice = voices.find(voice => 
-                                voice.lang.startsWith('en') && !voice.name.includes('Google')
-                            ) || voices[0];
-                            utterance.voice = englishVoice;
-                        }}
-                        
-                        utterance.onerror = function(event) {{
-                            console.warn('Auto-TTS Error:', event.error);
-                        }};
-                        
-                        window.speechSynthesis.speak(utterance);
-                    }}
-                }}, 200);
-            }}
-        }} catch (error) {{
-            console.error('Auto-TTS Error:', error);
-        }}
-    }}, 1500);
-    </script>
-    """
+
+
 
 def get_current_chat():
     """Get current chat session"""
@@ -2173,7 +2059,7 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
                 st.rerun()
         
-        # Voice status indicator
+        # Voice status indicator with browser check
         st.markdown(f"""
         <div style="text-align: center; margin-top: 20px;">
             <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
@@ -2184,6 +2070,17 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
             </div>
         </div>
+        
+        <script>
+        // Check TTS support and notify user
+        setTimeout(function() {{
+            if (!('speechSynthesis' in window)) {{
+                console.warn('Text-to-speech not supported in this browser');
+            }} else {{
+                console.log('Text-to-speech is supported');
+            }}
+        }}, 500);
+        </script>
         """, unsafe_allow_html=True)
     
     else:
@@ -2245,7 +2142,7 @@ elif st.session_state.main_view == 'ai-assistant':
             messages.append(welcome_msg)
             current_chat['messages'] = messages
         
-        # Messages container - Instagram style with improved TTS
+        # Messages container - Instagram style with Streamlit TTS buttons
         for i, message in enumerate(messages):
             if message["role"] == "user":
                 st.markdown(f"""
@@ -2263,25 +2160,68 @@ elif st.session_state.main_view == 'ai-assistant':
                 clean_content = re.sub(r'\n +•', '\n•', clean_content)
                 clean_content = re.sub(r'• +', '• ', clean_content)
                 
-                # Create unique message ID for voice
-                message_id = f"msg_{i}_{int(time.time())}"
+                # Create message container with native Streamlit button
+                col1, col2 = st.columns([6, 1])
                 
-                # Create the assistant message with improved speaker button
-                st.markdown(f"""
-                <div class="message assistant">
-                    <div class="message-bubble">
-                        <div class="message-content">{clean_content}</div>
-                        <button onclick="speakMessage_{message_id}()" class="speak-button" title="Click to speak this message">🔊</button>
+                with col1:
+                    st.markdown(f"""
+                    <div class="message assistant">
+                        <div class="message-bubble">
+                            <div class="message-content">{clean_content}</div>
+                        </div>
+                        <div class="message-time">
+                            SECURO • {message["timestamp"]} AST
+                        </div>
                     </div>
-                    <div class="message-time">
-                        SECURO • {message["timestamp"]} AST
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
+                    """, unsafe_allow_html=True)
                 
-                # Add the improved JavaScript for this specific message
-                js_code = create_tts_javascript(message_id, message["content"])
-                st.components.v1.html(js_code, height=0)
+                with col2:
+                    # Use Streamlit's native button for TTS
+                    if st.button("🔊", key=f"speak_{i}_{message['timestamp']}", help="Click to speak this message"):
+                        # Simple JavaScript injection for immediate TTS
+                        clean_speech_text = clean_text_for_speech(message["content"])
+                        tts_script = f"""
+                        <script>
+                        if ('speechSynthesis' in window) {{
+                            window.speechSynthesis.cancel();
+                            setTimeout(() => {{
+                                const utterance = new SpeechSynthesisUtterance('{clean_speech_text.replace("'", "\\'")}');
+                                utterance.rate = 0.8;
+                                utterance.volume = 0.9;
+                                window.speechSynthesis.speak(utterance);
+                            }}, 100);
+                        }}
+                        </script>
+                        """
+                        st.components.v1.html(tts_script, height=0)
+        
+        # Add a dedicated TTS test section
+        st.markdown("---")
+        st.markdown("**🔊 TTS Test Section:**")
+        col1, col2 = st.columns([1, 3])
+        
+        with col1:
+            if st.button("🔊 Test TTS", key="test_tts_main"):
+                test_script = """
+                <script>
+                if ('speechSynthesis' in window) {
+                    window.speechSynthesis.cancel();
+                    setTimeout(() => {
+                        const utterance = new SpeechSynthesisUtterance('Hello! This is a test of the text to speech system. If you can hear this, TTS is working correctly.');
+                        utterance.rate = 0.8;
+                        utterance.volume = 0.9;
+                        window.speechSynthesis.speak(utterance);
+                    }, 100);
+                } else {
+                    alert('Text-to-speech is not supported in this browser');
+                }
+                </script>
+                """
+                st.components.v1.html(test_script, height=0)
+                st.success("🔊 TTS test triggered!")
+        
+        with col2:
+            st.write("Click the test button to verify TTS is working")
         
         # Chat input - simplified
         st.markdown("---")
@@ -2322,11 +2262,26 @@ elif st.session_state.main_view == 'ai-assistant':
                 
                 st.rerun()
         
-        # Auto-speak the last response if enabled and there is one
+        # Auto-speak the last response if enabled (simplified approach)
         if st.session_state.get('last_response') and st.session_state.get('auto_speak_enabled', False):
-            auto_speak_html = auto_speak_response(st.session_state.last_response)
-            if auto_speak_html:
-                st.components.v1.html(auto_speak_html, height=50)
+            clean_speech_text = clean_text_for_speech(st.session_state.last_response)
+            if clean_speech_text:
+                auto_speak_script = f"""
+                <script>
+                setTimeout(function() {{
+                    if ('speechSynthesis' in window) {{
+                        window.speechSynthesis.cancel();
+                        setTimeout(() => {{
+                            const utterance = new SpeechSynthesisUtterance('{clean_speech_text.replace("'", "\\'")}');
+                            utterance.rate = 0.8;
+                            utterance.volume = 0.9;
+                            window.speechSynthesis.speak(utterance);
+                        }}, 200);
+                    }}
+                }}, 1000);
+                </script>
+                """
+                st.components.v1.html(auto_speak_script, height=0)
             # Clear the response to avoid re-speaking
             st.session_state.last_response = None
         
