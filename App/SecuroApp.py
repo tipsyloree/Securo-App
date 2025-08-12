@@ -2255,13 +2255,11 @@ elif st.session_state.main_view == 'ai-assistant':
         current_chat = get_current_chat()
         st.info(f"**Current Session:** {current_chat['name']}")
         
+        messages = current_chat['messages']
         # Display messages
         if messages:  # Only show if there are messages
             auto_speak_toggle_html = create_auto_speak_toggle()
             st.components.v1.html(auto_speak_toggle_html, height=60)
-        
-        # Display messages
-        messages = current_chat['messages']
         
         # Initialize with welcome message if no messages
         if not messages:
