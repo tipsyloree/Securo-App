@@ -381,11 +381,10 @@ def create_message_speaker_button(message_content, message_id):
           data-text="{clean_text.replace('"', '&quot;').replace("'", '&#39;')}">
         🔊
     </span>
-    ""
-
-return button_html
-
-# NEW FUNCTION - Handle JavaScript separately
+    """
+    
+    return button_html
+    
 def add_tts_script_once():
     """Add the TTS JavaScript once per page - invisible"""
     js_code = """
