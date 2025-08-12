@@ -191,9 +191,9 @@ if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
 def create_tts_button(message_content, message_id, button_style="inline"):
-    """Create a reliable text-to-speech button with proper text cleaning"""
+    """Create a reliable text-to-speech button with improved functionality"""
     
-    # Clean the content for TTS
+    # Clean the content for TTS more thoroughly
     clean_content = str(message_content).strip()
     
     # Remove HTML tags
@@ -211,118 +211,297 @@ def create_tts_button(message_content, message_id, button_style="inline"):
     # Remove extra whitespace
     clean_content = re.sub(r'\s+', ' ', clean_content).strip()
     
-    # Escape content for JavaScript (more robust escaping)
+    # Limit text length to prevent issues
+    if len(clean_content) > 800:
+        clean_content = clean_content[:800] + "..."
+    
+    # More robust JavaScript escaping
     js_safe_content = clean_content.replace('\\', '\\\\')
     js_safe_content = js_safe_content.replace("'", "\\'")
     js_safe_content = js_safe_content.replace('"', '\\"')
-    js_safe_content = js_safe_content.replace('\n', '\\n')
-    js_safe_content = js_safe_content.replace('\r', '\\r')
+    js_safe_content = js_safe_content.replace('\n', ' ')
+    js_safe_content = js_safe_content.replace('\r', ' ')
     js_safe_content = js_safe_content.replace('\t', ' ')
     
-    # Limit text length to prevent cutoffs
-    if len(js_safe_content) > 500:
-        js_safe_content = js_safe_content[:500] + "..."
-    
-    # Create the JavaScript functions only (no HTML button)
+    # Create enhanced JavaScript with better error handling and voice loading
     button_html = f"""
     <script>
-        (function() {{
-            let isPlaying_{message_id} = false;
-            let currentUtterance_{message_id} = null;
+        // Global variables for this message
+        window.isPlaying_{message_id} = false;
+        window.currentUtterance_{message_id} = null;
+        window.voicesLoaded_{message_id} = false;
+        
+        // Voice loading function
+        function loadVoices_{message_id}() {{
+            return new Promise((resolve) => {{
+                let voices = speechSynthesis.getVoices();
+                if (voices.length > 0) {{
+                    window.voicesLoaded_{message_id} = true;
+                    resolve(voices);
+                }} else {{
+                    speechSynthesis.addEventListener('voiceschanged', function() {{
+                        voices = speechSynthesis.getVoices();
+                        window.voicesLoaded_{message_id} = true;
+                        resolve(voices);
+                    }}, {{ once: true }});
+                    
+                    // Fallback timeout
+                    setTimeout(() => {{
+                        voices = speechSynthesis.getVoices();
+                        window.voicesLoaded_{message_id} = true;
+                        resolve(voices);
+                    }}, 1000);
+                }}
+            }});
+        }}
+        
+        // Main TTS toggle function
+        window.toggleTTS_{message_id} = async function() {{
+            const button = document.getElementById('tts-btn-{message_id}');
             
-            window.toggleTTS_{message_id} = function() {{
-                const button = document.getElementById('tts-btn-{message_id}');
+            if (!button) {{
+                console.error('TTS button not found');
+                return;
+            }}
+            
+            // Check if speech synthesis is supported
+            if (!('speechSynthesis' in window)) {{
+                alert('Text-to-speech is not supported in this browser. Please try Chrome, Firefox, or Edge.');
+                return;
+            }}
+            
+            // If currently playing, stop
+            if (window.isPlaying_{message_id}) {{
+                speechSynthesis.cancel();
+                window.currentUtterance_{message_id} = null;
+                window.isPlaying_{message_id} = false;
+                button.innerHTML = '🔊';
+                button.title = 'Click to read this message aloud';
+                return;
+            }}
+            
+            // Show loading state
+            button.innerHTML = '⏳';
+            button.title = 'Loading...';
+            
+            try {{
+                // Cancel any existing speech
+                speechSynthesis.cancel();
                 
-                if (isPlaying_{message_id}) {{
-                    // Stop current speech
-                    if (currentUtterance_{message_id}) {{
-                        window.speechSynthesis.cancel();
-                        currentUtterance_{message_id} = null;
-                    }}
-                    isPlaying_{message_id} = false;
+                // Wait for voices to load
+                const voices = await loadVoices_{message_id}();
+                
+                // Prepare text
+                const text = '{js_safe_content}';
+                
+                if (!text || text.trim().length === 0) {{
+                    throw new Error('No text to read');
+                }}
+                
+                // Create utterance
+                window.currentUtterance_{message_id} = new SpeechSynthesisUtterance(text);
+                
+                // Configure speech settings
+                window.currentUtterance_{message_id}.rate = 0.9;
+                window.currentUtterance_{message_id}.volume = 1.0;
+                window.currentUtterance_{message_id}.pitch = 1.0;
+                
+                // Select best available voice
+                let selectedVoice = null;
+                
+                // Priority order for voice selection
+                const voicePreferences = [
+                    (v) => v.lang.startsWith('en') && v.name.toLowerCase().includes('google'),
+                    (v) => v.lang.startsWith('en') && v.name.toLowerCase().includes('microsoft'),
+                    (v) => v.lang.startsWith('en') && v.name.toLowerCase().includes('natural'),
+                    (v) => v.lang.startsWith('en') && v.localService,
+                    (v) => v.lang.startsWith('en'),
+                    (v) => v.default,
+                    (v) => true // fallback to any voice
+                ];
+                
+                for (const preference of voicePreferences) {{
+                    selectedVoice = voices.find(preference);
+                    if (selectedVoice) break;
+                }}
+                
+                if (selectedVoice) {{
+                    window.currentUtterance_{message_id}.voice = selectedVoice;
+                    console.log('Using voice:', selectedVoice.name);
+                }}
+                
+                // Event handlers
+                window.currentUtterance_{message_id}.onstart = function() {{
+                    window.isPlaying_{message_id} = true;
+                    button.innerHTML = '⏸️';
+                    button.title = 'Click to stop reading';
+                }};
+                
+                window.currentUtterance_{message_id}.onend = function() {{
+                    window.isPlaying_{message_id} = false;
+                    window.currentUtterance_{message_id} = null;
                     button.innerHTML = '🔊';
                     button.title = 'Click to read this message aloud';
-                    return;
-                }}
+                }};
                 
-                if (!('speechSynthesis' in window)) {{
-                    alert('Text-to-speech is not supported in this browser');
-                    return;
-                }}
-                
-                // Cancel any existing speech
-                window.speechSynthesis.cancel();
-                
-                // Wait a moment for cancel to complete
-                setTimeout(function() {{
-                    const text = '{js_safe_content}';
+                window.currentUtterance_{message_id}.onerror = function(event) {{
+                    console.error('TTS Error:', event);
+                    window.isPlaying_{message_id} = false;
+                    window.currentUtterance_{message_id} = null;
+                    button.innerHTML = '🔊';
+                    button.title = 'Click to read this message aloud';
                     
-                    if (text.length === 0) {{
-                        alert('No text to read');
-                        return;
+                    if (event.error === 'network') {{
+                        alert('Network error occurred. Please check your internet connection.');
+                    }} else if (event.error === 'not-allowed') {{
+                        alert('Speech synthesis not allowed. Please enable microphone/speech permissions.');
+                    }} else {{
+                        alert('Speech error: ' + event.error + '. Please try again.');
                     }}
-                    
-                    currentUtterance_{message_id} = new SpeechSynthesisUtterance(text);
-                    
-                    // Configure speech settings
-                    currentUtterance_{message_id}.rate = 0.85;
-                    currentUtterance_{message_id}.volume = 0.9;
-                    currentUtterance_{message_id}.pitch = 1.0;
-                    
-                    // Try to use a good voice
-                    const voices = window.speechSynthesis.getVoices();
-                    const englishVoice = voices.find(voice => 
-                        voice.lang.startsWith('en') && 
-                        (voice.name.includes('Google') || voice.name.includes('Microsoft'))
-                    ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
-                    
-                    if (englishVoice) {{
-                        currentUtterance_{message_id}.voice = englishVoice;
-                    }}
-                    
-                    // Event handlers
-                    currentUtterance_{message_id}.onstart = function() {{
-                        isPlaying_{message_id} = true;
-                        button.innerHTML = '⏸️';
-                        button.title = 'Click to stop reading';
-                    }};
-                    
-                    currentUtterance_{message_id}.onend = function() {{
-                        isPlaying_{message_id} = false;
-                        currentUtterance_{message_id} = null;
-                        button.innerHTML = '🔊';
-                        button.title = 'Click to read this message aloud';
-                    }};
-                    
-                    currentUtterance_{message_id}.onerror = function(event) {{
-                        console.error('TTS Error:', event);
-                        isPlaying_{message_id} = false;
-                        currentUtterance_{message_id} = null;
-                        button.innerHTML = '🔊';
-                        button.title = 'Click to read this message aloud';
-                        alert('Speech synthesis error. Please try again.');
-                    }};
-                    
-                    // Start speaking
-                    window.speechSynthesis.speak(currentUtterance_{message_id});
-                }}, 100);
-            }};
-        }})();
+                }};
+                
+                // Start speaking
+                speechSynthesis.speak(window.currentUtterance_{message_id});
+                
+            }} catch (error) {{
+                console.error('TTS Setup Error:', error);
+                window.isPlaying_{message_id} = false;
+                window.currentUtterance_{message_id} = null;
+                button.innerHTML = '🔊';
+                button.title = 'Click to read this message aloud';
+                alert('Unable to start text-to-speech: ' + error.message);
+            }}
+        }};
+        
+        // Initialize voices on page load
+        document.addEventListener('DOMContentLoaded', function() {{
+            loadVoices_{message_id}();
+        }});
+        
+        // Also try to load voices immediately
+        loadVoices_{message_id}();
+        
     </script>
     """
     
     return button_html
 
+def auto_speak_new_message(text):
+    """Enhanced auto-speak functionality with better voice handling"""
+    clean_text = str(text).strip()
+    
+    # Clean the text thoroughly
+    clean_text = re.sub(r'<[^>]+>', '', clean_text)
+    clean_text = clean_text.replace('**', '').replace('*', '')
+    clean_text = clean_text.replace('###', '').replace('##', '').replace('#', '')
+    clean_text = clean_text.replace('```', '').replace('`', '')
+    clean_text = clean_text.replace('•', '').replace('◦', '').replace('-', '')
+    clean_text = clean_text.replace('\n', ' ').replace('\r', ' ')
+    clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+    
+    # Limit length for auto-speak
+    if len(clean_text) > 400:
+        clean_text = clean_text[:400] + "..."
+    
+    # Escape for JavaScript
+    js_clean_text = clean_text.replace('\\', '\\\\')
+    js_clean_text = js_clean_text.replace("'", "\\'")
+    js_clean_text = js_clean_text.replace('"', '\\"')
+    js_clean_text = js_clean_text.replace('\n', ' ')
+    js_clean_text = js_clean_text.replace('\r', ' ')
+
+    auto_speak_html = f"""
+    <script>
+        // Auto-speak function with enhanced voice handling
+        async function autoSpeakMessage() {{
+            // Check if auto-speak is enabled and speech synthesis is available
+            if (!window.autoSpeakEnabled || !('speechSynthesis' in window)) {{
+                return;
+            }}
+            
+            const text = '{js_clean_text}';
+            if (!text || text.trim().length === 0) {{
+                return;
+            }}
+            
+            try {{
+                // Cancel any existing speech
+                speechSynthesis.cancel();
+                
+                // Wait a moment for cancel to complete
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // Load voices
+                const voices = await new Promise((resolve) => {{
+                    let voiceList = speechSynthesis.getVoices();
+                    if (voiceList.length > 0) {{
+                        resolve(voiceList);
+                    }} else {{
+                        speechSynthesis.addEventListener('voiceschanged', function() {{
+                            resolve(speechSynthesis.getVoices());
+                        }}, {{ once: true }});
+                        
+                        setTimeout(() => {{
+                            resolve(speechSynthesis.getVoices());
+                        }}, 1000);
+                    }}
+                }});
+                
+                // Create utterance
+                const utterance = new SpeechSynthesisUtterance(text);
+                
+                // Configure settings
+                utterance.rate = 0.9;
+                utterance.volume = 0.8;
+                utterance.pitch = 1.0;
+                
+                // Select best voice
+                let selectedVoice = null;
+                const voicePreferences = [
+                    (v) => v.lang.startsWith('en') && v.name.toLowerCase().includes('google'),
+                    (v) => v.lang.startsWith('en') && v.name.toLowerCase().includes('microsoft'),
+                    (v) => v.lang.startsWith('en') && v.localService,
+                    (v) => v.lang.startsWith('en'),
+                    (v) => true
+                ];
+                
+                for (const preference of voicePreferences) {{
+                    selectedVoice = voices.find(preference);
+                    if (selectedVoice) break;
+                }}
+                
+                if (selectedVoice) {{
+                    utterance.voice = selectedVoice;
+                }}
+                
+                // Error handling
+                utterance.onerror = function(event) {{
+                    console.error('Auto-speak error:', event);
+                }};
+                
+                // Speak the message
+                speechSynthesis.speak(utterance);
+                
+            }} catch (error) {{
+                console.error('Auto-speak setup error:', error);
+            }}
+        }}
+        
+        // Execute auto-speak after a delay
+        setTimeout(autoSpeakMessage, 1500);
+    </script>
+    """
+    
+    return auto_speak_html
+
 def create_auto_speak_toggle():
-    """Create a toggle for auto-speaking new messages"""
+    """Enhanced auto-speak toggle with better state management"""
     if 'auto_speak_enabled' not in st.session_state:
         st.session_state.auto_speak_enabled = False
     
-    toggle_text = "🔊 Auto-Speak" if st.session_state.auto_speak_enabled else "🔇 Auto-Speak"
-    toggle_color = "#10b981" if st.session_state.auto_speak_enabled else "#6b7280"
-    
     toggle_html = f"""
     <script>
+        // Initialize auto-speak state
         window.autoSpeakEnabled = {str(st.session_state.auto_speak_enabled).lower()};
         
         function toggleAutoSpeak() {{
@@ -332,15 +511,70 @@ def create_auto_speak_toggle():
             if (window.autoSpeakEnabled) {{
                 button.innerHTML = '🔊 Auto-Speak';
                 button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+                button.style.borderColor = '#10b981';
+                console.log('Auto-speak enabled');
             }} else {{
                 button.innerHTML = '🔇 Auto-Speak';
                 button.style.background = 'linear-gradient(135deg, #6b7280, #4b5563)';
+                button.style.borderColor = '#6b7280';
+                console.log('Auto-speak disabled');
             }}
         }}
+        
+        // Test speech synthesis on page load
+        document.addEventListener('DOMContentLoaded', function() {{
+            if ('speechSynthesis' in window) {{
+                console.log('Speech synthesis supported');
+                // Load voices
+                speechSynthesis.getVoices();
+            }} else {{
+                console.log('Speech synthesis not supported');
+            }}
+        }});
     </script>
     """
     
     return toggle_html
+
+# Additional debugging function you can add to test TTS
+def test_tts_functionality():
+    """Test TTS functionality - call this to debug"""
+    test_html = """
+    <script>
+        function testTTS() {
+            if ('speechSynthesis' in window) {
+                console.log('Speech synthesis supported');
+                console.log('Available voices:', speechSynthesis.getVoices());
+                
+                const utterance = new SpeechSynthesisUtterance('This is a test message');
+                utterance.rate = 0.9;
+                utterance.volume = 1.0;
+                utterance.pitch = 1.0;
+                
+                utterance.onstart = function() {
+                    console.log('Speech started');
+                };
+                
+                utterance.onend = function() {
+                    console.log('Speech ended');
+                };
+                
+                utterance.onerror = function(event) {
+                    console.error('Speech error:', event);
+                };
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                console.error('Speech synthesis not supported');
+                alert('Speech synthesis not supported in this browser');
+            }
+        }
+        
+        // Auto-run test after 2 seconds
+        setTimeout(testTTS, 2000);
+    </script>
+    """
+    return test_html
 def auto_speak_new_message(text):
     """Auto-speak new messages if enabled"""
     clean_text = str(text).strip()
