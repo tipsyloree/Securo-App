@@ -1513,32 +1513,32 @@ with st.sidebar:
     # Animated navigation header
     st.markdown("""
     <div class="sidebar-nav-header">
-        🚔 Navigation
+         Navigation
     </div>
     """, unsafe_allow_html=True)
     
     # Main navigation buttons - now set main_view instead of sidebar_view
-    if st.button("🏠 Home", key="nav_home", help="System Overview", use_container_width=True):
+    if st.button(" Home", key="nav_home", help="System Overview", use_container_width=True):
         st.session_state.main_view = 'home'
         st.rerun()
     
-    if st.button("ℹ️ About", key="nav_about", help="About SECURO", use_container_width=True):
+    if st.button(" About", key="nav_about", help="About SECURO", use_container_width=True):
         st.session_state.main_view = 'about'
         st.rerun()
     
-    if st.button("📊 Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
+    if st.button(" Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
         st.session_state.main_view = 'analytics'
         st.rerun()
     
-    if st.button("📝 History", key="nav_history", help="Chat History", use_container_width=True):
+    if st.button(" History", key="nav_history", help="Chat History", use_container_width=True):
         st.session_state.main_view = 'history'
         st.rerun()
     
-    if st.button("🗺️ Crime Map", key="nav_map", help="Crime Hotspots", use_container_width=True):
+    if st.button(" Crime Map", key="nav_map", help="Crime Hotspots", use_container_width=True):
         st.session_state.main_view = 'hotspots'
         st.rerun()
     
-    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button(" Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.main_view = 'emergency'
         st.rerun()
     
@@ -1552,7 +1552,7 @@ with st.sidebar:
     
     # Quick access to Crime Map from any view
     if st.session_state.main_view != 'hotspots':
-        if st.button("🗺️ View Crime Map", key="quick_map_access", use_container_width=True):
+        if st.button(" View Crime Map", key="quick_map_access", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
@@ -1571,13 +1571,13 @@ with st.sidebar:
     if st.session_state.get('ai_enabled', False):
         st.success("🟢 Enhanced AI Online")
         st.markdown("""
-        **🎯 Capabilities:**
-        - 📊 Statistical knowledge integration
-        - 🧠 Conversation memory
-        - 🎯 Context-aware responses
-        - 📈 Crime data analysis
-        - 👮‍♂️ Professional assistance
-        - 🔊 Text-to-Speech features
+        Capabilities:
+        -  Statistical knowledge integration
+        -  Conversation memory
+        -  Context-aware responses
+        -  Crime data analysis
+        -  Professional assistance
+        -  Text-to-Speech features
         """)
     else:
         st.error("🔴 AI Offline")
@@ -1590,13 +1590,12 @@ with st.sidebar:
     <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
                 border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px;">
         <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; text-align: center;">
-            📊 QUICK STATS
+             QUICK STATS
         </div>
         <div style="color: #e2e8f0; font-size: 14px; line-height: 1.6;">
-            <div>💬 Active Chats: <strong>{}</strong></div>
-            <div>🔊 TTS Status: <strong>Ready</strong></div>
-            <div>🗄️ Database: <strong>Loaded</strong></div>
-            <div>🌐 API Status: <strong>Online</strong></div>
+            <div>🟢 Active Chats: <strong>{}</strong></div>
+            <div>🟢 Database: <strong>Loaded</strong></div>
+            <div>🟢 API Status: <strong>Online</strong></div>
         </div>
     </div>
     """.format(len(st.session_state.chat_sessions)), unsafe_allow_html=True)
@@ -1651,12 +1650,12 @@ if st.session_state.main_view == 'home':
             st.rerun()
     
     with col2:
-        if st.button("🗺️ View Crime Map", key="quick_map", use_container_width=True):
+        if st.button(" View Crime Map", key="quick_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button("📊 View Analytics", key="quick_analytics", use_container_width=True):
+        if st.button(" View Analytics", key="quick_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
 
@@ -1728,22 +1727,22 @@ elif st.session_state.main_view == 'about':
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button("🤖 AI Assistant", key="about_ai", use_container_width=True):
+        if st.button(" SECURO AI", key="about_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("🗺️ Crime Map", key="about_map", use_container_width=True):
+        if st.button(" Crime Map", key="about_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button("📊 Analytics", key="about_analytics", use_container_width=True):
+        if st.button(" Analytics", key="about_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
     
     with col4:
-        if st.button("🚨 Emergency Info", key="about_emergency", use_container_width=True):
+        if st.button(" Emergency Info", key="about_emergency", use_container_width=True):
             st.session_state.main_view = 'emergency'
             st.rerun()
 
@@ -1987,7 +1986,7 @@ elif st.session_state.main_view == 'ai-assistant':
                        align-items: center; justify-content: center; font-size: 2.5rem; animation: logo-pulse 2s infinite;">
                 🚔
             </div>
-            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI Assistant</h1>
+            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI</h1>
             <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI</p>
             <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
                 Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
@@ -2300,7 +2299,7 @@ elif st.session_state.main_view == 'hotspots':
         st.error(f"❌ Map Error: {str(e)}")
     
     # Hotspot summary metrics - compact
-    st.markdown("### 📊 Hotspot Summary")
+    st.markdown("###  Hotspot Summary")
     
     col1, col2, col3 = st.columns(3)
     
@@ -2340,12 +2339,12 @@ else:
     col1, col2, col3 = st.columns([1, 1, 8])
     
     with col1:
-        if st.button("🤖 AI Assistant", key="main_ai", use_container_width=True):
+        if st.button(" SECURO AI", key="main_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button("🗺️ Crime Hotspots", key="main_map", use_container_width=True):
+        if st.button(" Crime Hotspots", key="main_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
