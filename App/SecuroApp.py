@@ -190,47 +190,173 @@ if 'main_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
-def text_to_speech_component(text, message_id="tts"):
-    """Create a working text-to-speech component (simplified)"""
-    return ""  # Not needed anymore - integrated into message bubbles
+# IMPROVED TTS FUNCTIONS
+def clean_text_for_speech(text):
+    """Standardized text cleaning for speech synthesis"""
+    if not text or not isinstance(text, str):
+        return ""
+    
+    # Remove HTML tags
+    clean_text = re.sub(r'<[^>]+>', '', text)
+    
+    # Remove markdown formatting
+    clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', clean_text)  # Bold
+    clean_text = re.sub(r'\*([^*]+)\*', r'\1', clean_text)      # Italic
+    clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)        # Code
+    clean_text = re.sub(r'```[^`]*```', '', clean_text)         # Code blocks
+    clean_text = re.sub(r'#{1,6}\s*', '', clean_text)          # Headers
+    
+    # Clean up bullet points and special characters
+    clean_text = re.sub(r'[•*#→←↑↓]', '', clean_text)
+    clean_text = re.sub(r'🚔|🚨|📊|💬|🤖|🔧|❌|✅|🟢|🟡|🔴|⚡|➕|🏢|🏥|🔥|🚢|🌡️', '', clean_text)
+    
+    # Normalize whitespace
+    clean_text = re.sub(r'\s+', ' ', clean_text)
+    clean_text = clean_text.strip()
+    
+    # Limit length to prevent very long speech
+    if len(clean_text) > 500:
+        # Find a good breaking point near 500 characters
+        break_point = clean_text.rfind('.', 0, 500)
+        if break_point > 300:  # Only break if we find a sentence end reasonably close
+            clean_text = clean_text[:break_point + 1]
+        else:
+            clean_text = clean_text[:500] + "..."
+    
+    return clean_text
 
-def auto_speak_response(text):
-    """Auto-speak functionality for new responses - SIMPLIFIED VERSION"""
-    clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
-    clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
-    clean_text = clean_text.replace("•", "").replace("\n", " ").strip()
-    
-    if len(clean_text) > 200:
-        clean_text = clean_text[:200] + "..."
-    
-    # Simple escape for JavaScript
-    clean_text = clean_text.replace("'", "\\'").replace('"', '\\"')
-    
-    auto_speak_html = f"""
+def create_global_tts_manager():
+    """Create a global TTS manager that handles all speech synthesis"""
+    return """
     <script>
-    setTimeout(function() {{
-        if ('speechSynthesis' in window) {{
-            const text = `{clean_text}`;
-            if (text.length > 0) {{
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.8;
-                utterance.volume = 0.9;
+    // Global TTS Manager - prevents conflicts and manages state
+    window.SecuroTTS = {
+        isPlaying: false,
+        currentUtterance: null,
+        
+        // Stop any current speech
+        stop: function() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+                this.isPlaying = false;
+                this.currentUtterance = null;
+            }
+        },
+        
+        // Speak text with proper error handling
+        speak: function(text, options = {}) {
+            if (!('speechSynthesis' in window)) {
+                console.warn('Text-to-speech not supported');
+                return false;
+            }
+            
+            if (!text || text.trim().length === 0) {
+                console.warn('No text to speak');
+                return false;
+            }
+            
+            // Stop any current speech
+            this.stop();
+            
+            try {
+                const utterance = new SpeechSynthesisUtterance(text.trim());
+                
+                // Set options with defaults
+                utterance.rate = options.rate || 0.85;
+                utterance.volume = options.volume || 0.9;
+                utterance.pitch = options.pitch || 1.0;
+                
+                // Event handlers
+                utterance.onstart = () => {
+                    this.isPlaying = true;
+                    this.currentUtterance = utterance;
+                    console.log('TTS started');
+                };
+                
+                utterance.onend = () => {
+                    this.isPlaying = false;
+                    this.currentUtterance = null;
+                    console.log('TTS completed');
+                };
+                
+                utterance.onerror = (event) => {
+                    console.warn('TTS error:', event.error);
+                    this.isPlaying = false;
+                    this.currentUtterance = null;
+                };
+                
+                // Start speaking
                 window.speechSynthesis.speak(utterance);
-            }}
-        }}
-    }}, 1000);
+                return true;
+                
+            } catch (error) {
+                console.error('TTS error:', error);
+                this.isPlaying = false;
+                return false;
+            }
+        },
+        
+        // Toggle speak/stop
+        toggle: function(text) {
+            if (this.isPlaying) {
+                this.stop();
+            } else {
+                this.speak(text);
+            }
+        }
+    };
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('Securo TTS Manager initialized');
+    });
     </script>
     """
-    return auto_speak_html
 
-def voice_input_component():
-    """Voice input component - REMOVED"""
-    return ""
+def create_message_speaker_button(message_content, message_id):
+    """Create a speaker button for individual messages"""
+    clean_text = clean_text_for_speech(message_content)
+    
+    # Escape text for JavaScript
+    js_safe_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
+    
+    return f"""
+    <span onclick="SecuroTTS.toggle(`{js_safe_text}`)" 
+          class="speak-button" 
+          title="Click to speak this message (click again to stop)"
+          id="speaker_{message_id}">
+        🔊
+    </span>
+    """
 
-def emergency_call_interface():
-    """Create emergency call interface with working voice"""
-    # REMOVED - Call feature not needed
-    pass
+def create_auto_speak_component(text):
+    """Create auto-speak component with improved timing and conflict prevention"""
+    clean_text = clean_text_for_speech(text)
+    
+    if not clean_text:
+        return ""
+    
+    # Escape text for JavaScript
+    js_safe_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
+    
+    return f"""
+    <script>
+    // Auto-speak with delay to avoid conflicts
+    setTimeout(function() {{
+        if (window.SecuroTTS && !window.SecuroTTS.isPlaying) {{
+            console.log('Auto-speaking new response');
+            window.SecuroTTS.speak(`{js_safe_text}`, {{
+                rate: 0.8,
+                volume: 0.85
+            }});
+        }} else {{
+            console.log('Skipping auto-speak - TTS manager not ready or already playing');
+        }}
+    }}, 1500);  // Increased delay to ensure page is fully loaded
+    </script>
+    """
+
+# REMOVED old TTS functions - voice_input_component, auto_speak_response, etc.
 
 def get_current_chat():
     """Get current chat session"""
@@ -718,7 +844,7 @@ if 'chat_sessions' not in st.session_state:
 if 'current_chat_id' not in st.session_state:
     st.session_state.current_chat_id = None
 
-# Modern React-like CSS styling
+# Modern React-like CSS styling - UPDATED WITH IMPROVED TTS BUTTON
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -1052,26 +1178,38 @@ st.markdown("""
         color: #9ca3af;
     }
     
-    /* Speaker button styling - positioned in right corner */
+    /* IMPROVED Speaker button styling - more reliable and better positioned */
     .speak-button {
         background: none !important;
         border: none !important;
-        padding: 2px !important;
+        padding: 4px !important;
         cursor: pointer !important;
-        font-size: 14px !important;
-        opacity: 0.6 !important;
-        transition: opacity 0.2s ease !important;
+        font-size: 16px !important;
+        opacity: 0.7 !important;
+        transition: all 0.2s ease !important;
         border-radius: 4px !important;
         position: relative !important;
-        top: -2px !important;
         flex-shrink: 0 !important;
         margin-left: 8px !important;
         align-self: flex-start !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
+        min-width: 24px !important;
+        height: 24px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     
     .speak-button:hover {
         opacity: 1 !important;
         background: rgba(255, 255, 255, 0.1) !important;
+        transform: scale(1.1) !important;
+    }
+    
+    .speak-button:active {
+        transform: scale(0.95) !important;
+        background: rgba(255, 255, 255, 0.2) !important;
     }
     
     .chat-input-area {
@@ -1300,16 +1438,9 @@ st.markdown("""
         }
     }
     
-    /* Voice controls */
+    /* Voice controls - REMOVED VOICE FEATURES BANNER */
     .voice-controls {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        padding: 8px 12px;
-        background: rgba(59, 130, 246, 0.1);
-        border: 1px solid rgba(59, 130, 246, 0.3);
-        border-radius: 8px;
-        margin-bottom: 16px;
+        display: none; /* Hide this completely */
     }
     
     .voice-button {
@@ -1964,9 +2095,9 @@ elif st.session_state.main_view == 'emergency':
             """, unsafe_allow_html=True)
 
 elif st.session_state.main_view == 'ai-assistant':
-    # AI Assistant interface (existing code)
+    # AI Assistant interface with IMPROVED TTS
     if not st.session_state.get('chat_active', False):
-        # Chat welcome screen - compact and centered
+        # Chat welcome screen - compact and centered (REMOVED TTS FEATURES BANNER)
         st.markdown("""
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; 
                     min-height: 400px; text-align: center; padding: 40px 20px; 
@@ -2008,19 +2139,6 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.session_state.chat_active = True
                 st.success("New chat session created! You can now start chatting with SECURO AI!")
                 st.rerun()
-        
-        # Voice status indicator
-        st.markdown("""
-        <div style="text-align: center; margin-top: 20px;">
-            <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
-                        border: 1px solid #10b981; border-radius: 8px;">
-                <div style="color: #10b981; font-size: 14px; font-weight: 600;">TTS FEATURES AVAILABLE</div>
-                <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
-                    Text-to-Speech • Auto-Speak • Individual Message Speech
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
     
     else:
         # Chat interface - compact design
@@ -2055,7 +2173,7 @@ elif st.session_state.main_view == 'ai-assistant':
         current_chat = get_current_chat()
         st.info(f"**Current Session:** {current_chat['name']}")
         
-        # Display messages
+        # Display messages with IMPROVED TTS
         messages = current_chat['messages']
         
         # Initialize with welcome message if no messages
@@ -2068,7 +2186,10 @@ elif st.session_state.main_view == 'ai-assistant':
             messages.append(welcome_msg)
             current_chat['messages'] = messages
         
-        # Messages container - Instagram style
+        # Add the global TTS manager (only once per page)
+        st.components.v1.html(create_global_tts_manager(), height=0)
+        
+        # Messages container - Instagram style with IMPROVED TTS
         for i, message in enumerate(messages):
             if message["role"] == "user":
                 st.markdown(f"""
@@ -2082,53 +2203,27 @@ elif st.session_state.main_view == 'ai-assistant':
                 clean_content = re.sub(r'<[^>]+>', '', clean_content)
                 clean_content = clean_content.replace('```', '')
                 # Preserve bullet points but fix spacing issues
-                clean_content = re.sub(r'  +', ' ', clean_content)  # Replace multiple spaces with single space (but not single spaces)
-                clean_content = re.sub(r'\n +•', '\n•', clean_content)  # Remove spaces before bullet points
-                clean_content = re.sub(r'• +', '• ', clean_content)  # Ensure single space after bullet points
+                clean_content = re.sub(r'  +', ' ', clean_content)
+                clean_content = re.sub(r'\n +•', '\n•', clean_content)
+                clean_content = re.sub(r'• +', '• ', clean_content)
                 
-                # Clean content for JavaScript (escape quotes and special characters)
-                js_clean_content = clean_content.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'")
-                
-                # Create unique message ID for voice
                 message_id = f"msg_{i}"
                 
-                # Create the assistant message with speaker button in right corner
+                # Create speaker button using the improved function
+                speaker_button = create_message_speaker_button(clean_content, message_id)
+                
+                # Create the assistant message with improved speaker button
                 st.markdown(f"""
                 <div class="message assistant">
                     <div class="message-bubble">
                         <div class="message-content">{clean_content}</div>
-                        <span onclick="speakText_{message_id}()" class="speak-button" title="Click to speak this message">🔊</span>
+                        {speaker_button}
                     </div>
                     <div class="message-time">
                         SECURO • {message["timestamp"]} AST
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-                
-                # Add the JavaScript for this specific button - SIMPLIFIED VERSION
-                st.components.v1.html(f"""
-                <script>
-                function speakText_{message_id}() {{
-                    if ('speechSynthesis' in window) {{
-                        window.speechSynthesis.cancel();
-                        
-                        let text = `{js_clean_content}`;
-                        text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
-                        
-                        if (text.length > 0) {{
-                            const utterance = new SpeechSynthesisUtterance(text);
-                            utterance.rate = 0.8;
-                            utterance.volume = 0.9;
-                            window.speechSynthesis.speak(utterance);
-                        }}
-                    }} else {{
-                        alert('Text-to-speech not supported in this browser');
-                    }}
-                }}
-                
-                window.speakText_{message_id} = speakText_{message_id};
-                </script>
-                """, height=0)
         
         # Chat input - simplified
         st.markdown("---")
@@ -2163,16 +2258,21 @@ elif st.session_state.main_view == 'ai-assistant':
                 if chart_type:
                     st.session_state.show_chart = chart_type
                 
-                # Store the response for auto-speak
-                st.session_state.last_response = response
+                # Store the response for auto-speak with a flag
+                st.session_state.auto_speak_response = response
+                st.session_state.should_auto_speak = True
                 
                 st.rerun()
         
-        # Auto-speak the last response if there is one
-        if st.session_state.get('last_response'):
-            st.components.v1.html(auto_speak_response(st.session_state.last_response), height=50)
-            # Clear the response to avoid re-speaking
-            st.session_state.last_response = None
+        # Auto-speak the last response using the improved function
+        if st.session_state.get('should_auto_speak') and st.session_state.get('auto_speak_response'):
+            st.components.v1.html(
+                create_auto_speak_component(st.session_state.auto_speak_response), 
+                height=0
+            )
+            # Clear the flags to avoid re-speaking
+            st.session_state.should_auto_speak = False
+            st.session_state.auto_speak_response = None
         
         # Display charts after the rerun (so they persist)
         if st.session_state.get('show_chart'):
