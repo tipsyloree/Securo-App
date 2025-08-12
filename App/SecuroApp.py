@@ -195,82 +195,30 @@ def text_to_speech_component(text, message_id="tts"):
     return ""  # Not needed anymore - integrated into message bubbles
 
 def auto_speak_response(text):
-    """Auto-speak functionality for new responses - FIXED VERSION"""
+    """Auto-speak functionality for new responses - SIMPLIFIED VERSION"""
     clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
     clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
-    clean_text = clean_text.replace("•", "").replace("\n", ". ").strip()
+    clean_text = clean_text.replace("•", "").replace("\n", " ").strip()
     
-    if len(clean_text) > 300:
-        clean_text = clean_text[:300] + "..."
+    if len(clean_text) > 200:
+        clean_text = clean_text[:200] + "..."
     
-    # Escape quotes properly for JavaScript
+    # Simple escape for JavaScript
     clean_text = clean_text.replace("'", "\\'").replace('"', '\\"')
     
     auto_speak_html = f"""
-    <div style="height: 1px; overflow: hidden;">
-        <button id="autoSpeakBtn" onclick="autoSpeak()" style="opacity: 0;">Auto Speak</button>
-    </div>
     <script>
-    function autoSpeak() {{
+    setTimeout(function() {{
         if ('speechSynthesis' in window) {{
-            try {{
-                // Cancel any ongoing speech
-                window.speechSynthesis.cancel();
-                
-                const text = `{clean_text}`;
-                if (text.length === 0) return;
-                
+            const text = `{clean_text}`;
+            if (text.length > 0) {{
                 const utterance = new SpeechSynthesisUtterance(text);
                 utterance.rate = 0.8;
-                utterance.pitch = 1.0;
                 utterance.volume = 0.9;
-                
-                // Get voices and select a good one
-                const voices = window.speechSynthesis.getVoices();
-                const preferredVoice = voices.find(voice => 
-                    voice.lang.includes('en') && (
-                        voice.name.includes('Google') || 
-                        voice.name.includes('Microsoft') || 
-                        voice.name.includes('Daniel') ||
-                        voice.name.includes('Alex')
-                    )
-                ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
-                
-                if (preferredVoice) {{
-                    utterance.voice = preferredVoice;
-                }}
-                
-                utterance.onstart = function() {{
-                    console.log('Auto-speak started');
-                }};
-                
-                utterance.onerror = function(event) {{
-                    console.error('Auto-speak error:', event.error);
-                }};
-                
                 window.speechSynthesis.speak(utterance);
-                
-            }} catch (error) {{
-                console.error('Auto-speak error:', error);
             }}
         }}
-    }}
-    
-    // Auto-trigger speech after a short delay
-    setTimeout(function() {{
-        if (typeof autoSpeak === 'function') {{
-            autoSpeak();
-        }}
     }}, 1000);
-    
-    // Ensure voices are loaded
-    if ('speechSynthesis' in window) {{
-        window.speechSynthesis.onvoiceschanged = function() {{
-            console.log('Auto-speak voices loaded:', window.speechSynthesis.getVoices().length);
-        }};
-        // Force load voices
-        window.speechSynthesis.getVoices();
-    }}
     </script>
     """
     return auto_speak_html
@@ -1596,25 +1544,6 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # TTS Instructions
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1)); 
-                border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-        <div style="color: #10b981; font-weight: 600; margin-bottom: 8px; text-align: center;">
-            🔊 TEXT-TO-SPEECH GUIDE
-        </div>
-        <div style="color: #e2e8f0; font-size: 12px; line-height: 1.4;">
-            <div>• Click "🔊 Test TTS" above to test if TTS works</div>
-            <div>• Use 🔊 buttons next to AI messages to hear them</div>
-            <div>• Auto-speak plays new AI responses automatically</div>
-            <div>• Works best in Chrome, Firefox, or Edge browsers</div>
-            <div>• Make sure your volume is turned up!</div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
     # Quick return to AI Assistant
     if st.session_state.main_view not in ['ai-assistant', 'hotspots']:
         if st.button("🤖 Back to AI Assistant", key="back_to_ai", use_container_width=True):
@@ -1637,61 +1566,6 @@ with st.sidebar:
             🚔 AI SYSTEM STATUS
         </div>
     </div>
-    """, unsafe_allow_html=True)
-    
-    # TTS Test Button
-    st.markdown("""
-    <div style="text-align: center; margin-bottom: 16px;">
-        <button onclick="testTTS()" style="background: linear-gradient(135deg, #10b981, #059669); 
-                border: none; color: white; padding: 8px 16px; border-radius: 6px; 
-                font-size: 12px; cursor: pointer;">
-            🔊 Test TTS
-        </button>
-    </div>
-    <script>
-    function testTTS() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance("Hello! This is SECURO AI testing text-to-speech functionality.");
-            utterance.rate = 0.8;
-            utterance.pitch = 1.0;
-            utterance.volume = 0.9;
-            
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(voice => 
-                voice.lang.includes('en') && (
-                    voice.name.includes('Google') || 
-                    voice.name.includes('Microsoft') || 
-                    voice.name.includes('Daniel')
-                )
-            ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
-            
-            if (preferredVoice) {
-                utterance.voice = preferredVoice;
-            }
-            
-            utterance.onstart = function() {
-                console.log('TTS Test started');
-            };
-            
-            utterance.onerror = function(event) {
-                alert('TTS Error: ' + event.error);
-            };
-            
-            window.speechSynthesis.speak(utterance);
-        } else {
-            alert('Text-to-speech not supported in this browser. Try Chrome, Firefox, or Edge.');
-        }
-    }
-    
-    // Load voices
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.onvoiceschanged = function() {
-            console.log('TTS Voices loaded:', window.speechSynthesis.getVoices().length);
-        };
-        window.speechSynthesis.getVoices();
-    }
-    </script>
     """, unsafe_allow_html=True)
     
     if st.session_state.get('ai_enabled', False):
@@ -2191,6 +2065,24 @@ elif st.session_state.main_view == 'ai-assistant':
         current_chat = get_current_chat()
         st.info(f"**Current Session:** {current_chat['name']}")
         
+        # Simple TTS test button
+        col1, col2, col3 = st.columns([1, 1, 1])
+        with col2:
+            if st.button("🔊 Test Speech", key="test_tts_simple", use_container_width=True):
+                st.components.v1.html("""
+                <script>
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance("Hello! This is a speech test.");
+                    utterance.rate = 0.8;
+                    utterance.volume = 0.9;
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    alert('Speech not supported in this browser');
+                }
+                </script>
+                """, height=0)
+                st.success("🔊 Speech test triggered!")
+        
         # Display messages
         messages = current_chat['messages']
         
@@ -2198,7 +2090,7 @@ elif st.session_state.main_view == 'ai-assistant':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!\n\n🔊 TTS Features: Click the speaker button next to this message to test text-to-speech!",
+                "content": "Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
@@ -2241,86 +2133,28 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add the JavaScript for this specific button - FIXED VERSION
+                # Add the JavaScript for this specific button - SIMPLIFIED VERSION
                 st.components.v1.html(f"""
                 <script>
-                // Ensure voices are loaded
-                if ('speechSynthesis' in window) {{
-                    // Force load voices
-                    window.speechSynthesis.getVoices();
-                    
-                    function speakText_{message_id}() {{
-                        try {{
-                            // Cancel any ongoing speech
-                            window.speechSynthesis.cancel();
-                            
-                            // Clean text for speech - remove bullet points but keep content
-                            let textToSpeak = `{js_clean_content}`;
-                            textToSpeak = textToSpeak.replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
-                            
-                            if (textToSpeak.length === 0) {{
-                                alert('No text to speak!');
-                                return;
-                            }}
-                            
-                            const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                function speakText_{message_id}() {{
+                    if ('speechSynthesis' in window) {{
+                        window.speechSynthesis.cancel();
+                        
+                        let text = `{js_clean_content}`;
+                        text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
+                        
+                        if (text.length > 0) {{
+                            const utterance = new SpeechSynthesisUtterance(text);
                             utterance.rate = 0.8;
-                            utterance.pitch = 1.0;
                             utterance.volume = 0.9;
-                            
-                            // Try to get a good voice
-                            const voices = window.speechSynthesis.getVoices();
-                            console.log('Available voices:', voices.length);
-                            
-                            // Find a good English voice
-                            const preferredVoice = voices.find(voice => 
-                                voice.lang.includes('en') && (
-                                    voice.name.includes('Google') || 
-                                    voice.name.includes('Microsoft') || 
-                                    voice.name.includes('Daniel') ||
-                                    voice.name.includes('Alex') ||
-                                    voice.name.includes('Samantha')
-                                )
-                            ) || voices.find(voice => voice.lang.includes('en')) || voices[0];
-                            
-                            if (preferredVoice) {{
-                                utterance.voice = preferredVoice;
-                                console.log('Using voice:', preferredVoice.name);
-                            }}
-                            
-                            // Add event listeners for debugging
-                            utterance.onstart = function() {{
-                                console.log('Speech started');
-                            }};
-                            
-                            utterance.onerror = function(event) {{
-                                console.error('Speech error:', event.error);
-                                alert('Speech error: ' + event.error);
-                            }};
-                            
-                            utterance.onend = function() {{
-                                console.log('Speech ended');
-                            }};
-                            
-                            // Speak the text
                             window.speechSynthesis.speak(utterance);
-                            
-                        }} catch (error) {{
-                            console.error('TTS Error:', error);
-                            alert('Text-to-speech error: ' + error.message);
                         }}
+                    }} else {{
+                        alert('Text-to-speech not supported in this browser');
                     }}
-                    
-                    // Make function globally available
-                    window['speakText_{message_id}'] = speakText_{message_id};
                 }}
                 
-                // Auto-load voices
-                if ('speechSynthesis' in window) {{
-                    window.speechSynthesis.onvoiceschanged = function() {{
-                        console.log('Voices loaded:', window.speechSynthesis.getVoices().length);
-                    }};
-                }}
+                window.speakText_{message_id} = speakText_{message_id};
                 </script>
                 """, height=0)
         
