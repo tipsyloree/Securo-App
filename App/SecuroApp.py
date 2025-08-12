@@ -191,68 +191,8 @@ if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
 def text_to_speech_component(text, message_id="tts"):
-    """Create a working text-to-speech component"""
-    # Clean text for speech
-    clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
-    clean_text = clean_text.replace("🟢", "").replace("✅", "").replace("❌", "").replace("📈", "").replace("📉", "")
-    clean_text = clean_text.replace("🔍", "").replace("⚠️", "").replace("💾", "").replace("🧠", "").replace("📅", "")
-    clean_text = clean_text.replace("🕒", "").replace("🗺️", "").replace("🏠", "").replace("ℹ️", "").replace("📊", "")
-    clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
-    clean_text = clean_text.replace("•", "").replace("\n", ". ").strip()
-    
-    # Limit text length for speech
-    if len(clean_text) > 500:
-        clean_text = clean_text[:500] + "..."
-    
-    # Create HTML with working speech synthesis
-    speech_html = f"""
-    <div style="display: inline;">
-        <button onclick="speakText_{message_id}()" 
-                style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
-                       padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 8px;">
-            Speak
-        </button>
-    </div>
-    
-    <script>
-    function speakText_{message_id}() {{
-        if ('speechSynthesis' in window) {{
-            // Cancel any ongoing speech
-            window.speechSynthesis.cancel();
-            
-            const utterance = new SpeechSynthesisUtterance(`{clean_text}`);
-            utterance.rate = 0.9;
-            utterance.pitch = 1.0;
-            utterance.volume = 0.8;
-            
-            // Try to get a professional voice
-            const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(voice => 
-                voice.name.includes('Microsoft') || 
-                voice.name.includes('Google') || 
-                voice.name.includes('Daniel') ||
-                voice.name.includes('Alex')
-            );
-            
-            if (preferredVoice) {{
-                utterance.voice = preferredVoice;
-            }}
-            
-            window.speechSynthesis.speak(utterance);
-        }} else {{
-            alert('Text-to-speech not supported in this browser.');
-        }}
-    }}
-    
-    // Load voices when available
-    if ('speechSynthesis' in window) {{
-        window.speechSynthesis.onvoiceschanged = function() {{
-            // Voices loaded
-        }};
-    }}
-    </script>
-    """
-    return speech_html
+    """Create a working text-to-speech component (simplified)"""
+    return ""  # Not needed anymore - integrated into message bubbles
 
 def auto_speak_response(text):
     """Auto-speak functionality for new responses"""
@@ -995,11 +935,11 @@ st.markdown("""
     }
     
     .message.user {
-        align-self: flex-end;
+        align-self: flex-start;
     }
     
     .message.assistant {
-        align-self: flex-start;
+        align-self: flex-end;
     }
     
     .message-bubble {
@@ -1014,25 +954,25 @@ st.markdown("""
     .message.user .message-bubble {
         background: linear-gradient(135deg, #3b82f6, #ef4444);
         color: white;
-        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 4px;
     }
     
     .message.assistant .message-bubble {
         background: rgba(0, 0, 0, 0.6);
         color: #f1f5f9;
         border: 1px solid #475569;
-        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
     
     .message-time {
         font-size: 11px;
         color: #64748b;
         margin-top: 4px;
-        text-align: right;
+        text-align: left;
     }
     
     .message.assistant .message-time {
-        text-align: left;
+        text-align: right;
     }
     
     .chat-input-area {
@@ -2025,16 +1965,56 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.markdown(f"""
                 <div class="message assistant">
                     <div>
-                        <div class="message-bubble">{clean_content}</div>
+                        <div class="message-bubble">
+                            {clean_content}
+                            <div style="margin-top: 8px; text-align: right;">
+                                <button onclick="speakText_{message_id}()" 
+                                        style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
+                                               padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">
+                                    🔊 Speak
+                                </button>
+                            </div>
+                        </div>
                         <div class="message-time">
                             SECURO • {message["timestamp"]} AST
                         </div>
                     </div>
                 </div>
-                """, unsafe_allow_html=True)
                 
-                # Add working speech button for each message
-                st.components.v1.html(text_to_speech_component(clean_content, message_id), height=30)
+                <script>
+                function speakText_{message_id}() {{
+                    if ('speechSynthesis' in window) {{
+                        // Cancel any ongoing speech
+                        window.speechSynthesis.cancel();
+                        
+                        // Clean text for speech
+                        let textToSpeak = `{clean_content}`.replace(/['"]/g, '').replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\n/g, ' ').trim();
+                        
+                        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+                        utterance.rate = 0.9;
+                        utterance.pitch = 1.0;
+                        utterance.volume = 0.8;
+                        
+                        // Try to get a professional voice
+                        const voices = window.speechSynthesis.getVoices();
+                        const preferredVoice = voices.find(voice => 
+                            voice.name.includes('Microsoft') || 
+                            voice.name.includes('Google') || 
+                            voice.name.includes('Daniel') ||
+                            voice.name.includes('Alex')
+                        );
+                        
+                        if (preferredVoice) {{
+                            utterance.voice = preferredVoice;
+                        }}
+                        
+                        window.speechSynthesis.speak(utterance);
+                    }} else {{
+                        alert('Text-to-speech not supported in this browser.');
+                    }}
+                }}
+                </script>
+                """, unsafe_allow_html=True)
         
         st.markdown('</div>', unsafe_allow_html=True)
         
