@@ -935,11 +935,13 @@ st.markdown("""
     }
     
     .message.user {
-        align-self: flex-start;
+        align-self: flex-end;
+        margin-left: auto;
     }
     
     .message.assistant {
-        align-self: flex-end;
+        align-self: flex-start;
+        margin-right: auto;
     }
     
     .message-bubble {
@@ -954,25 +956,25 @@ st.markdown("""
     .message.user .message-bubble {
         background: linear-gradient(135deg, #3b82f6, #ef4444);
         color: white;
-        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
     }
     
     .message.assistant .message-bubble {
         background: rgba(0, 0, 0, 0.6);
         color: #f1f5f9;
         border: 1px solid #475569;
-        border-bottom-right-radius: 4px;
+        border-bottom-left-radius: 4px;
     }
     
     .message-time {
         font-size: 11px;
         color: #64748b;
         margin-top: 4px;
-        text-align: left;
+        text-align: right;
     }
     
     .message.assistant .message-time {
-        text-align: right;
+        text-align: left;
     }
     
     .chat-input-area {
@@ -1962,11 +1964,19 @@ elif st.session_state.main_view == 'ai-assistant':
                 # Create unique message ID for voice
                 message_id = f"msg_{i}"
                 
+                # Create the assistant message with integrated speak button
                 st.markdown(f"""
                 <div class="message assistant">
                     <div>
                         <div class="message-bubble">
                             {clean_content}
+                            <div style="margin-top: 8px; text-align: right;">
+                                <button onclick="speakText_{message_id}()" 
+                                        style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
+                                               padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">
+                                    🔊 Speak
+                                </button>
+                            </div>
                         </div>
                         <div class="message-time">
                             SECURO • {message["timestamp"]} AST
@@ -1975,16 +1985,8 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add speak button using st.components.v1.html
-                speak_button_html = f"""
-                <div style="text-align: right; margin-top: -10px; margin-bottom: 10px;">
-                    <button onclick="speakText_{message_id}()" 
-                            style="background: linear-gradient(135deg, #3b82f6, #ef4444); border: none; color: white; 
-                                   padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer;">
-                        🔊 Speak
-                    </button>
-                </div>
-                
+                # Add the JavaScript for this specific button
+                st.components.v1.html(f"""
                 <script>
                 function speakText_{message_id}() {{
                     if ('speechSynthesis' in window) {{
@@ -2019,9 +2021,7 @@ elif st.session_state.main_view == 'ai-assistant':
                     }}
                 }}
                 </script>
-                """
-                
-                st.components.v1.html(speak_button_html, height=40)
+                """, height=0)
         
         st.markdown('</div>', unsafe_allow_html=True)
         
