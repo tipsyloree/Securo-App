@@ -381,9 +381,8 @@ def create_message_speaker_button(message_content, message_id):
           data-text="{clean_text.replace('"', '&quot;').replace("'", '&#39;')}">
         🔊
     </span>
-    """
-    
-    return button_html
+
+return button_html
 
 # NEW FUNCTION - Handle JavaScript separately
 def add_tts_script_once():
