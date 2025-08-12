@@ -996,9 +996,11 @@ st.markdown("""
         flex: 1;
         margin-right: 8px;
         text-align: left;
-        line-height: 1.4;
+        line-height: 1.5;
         word-wrap: break-word;
         white-space: pre-wrap;
+        text-indent: 0;
+        padding-left: 0;
     }
     
     .message-time {
@@ -2019,9 +2021,10 @@ elif st.session_state.main_view == 'ai-assistant':
                 clean_content = str(message["content"]).strip()
                 clean_content = re.sub(r'<[^>]+>', '', clean_content)
                 clean_content = clean_content.replace('```', '')
-                # Fix any formatting issues and ensure proper alignment
-                clean_content = re.sub(r'\s+', ' ', clean_content)  # Replace multiple spaces with single space
-                clean_content = clean_content.replace('\n ', '\n')  # Remove spaces after newlines
+                # Preserve bullet points but fix spacing issues
+                clean_content = re.sub(r'  +', ' ', clean_content)  # Replace multiple spaces with single space (but not single spaces)
+                clean_content = re.sub(r'\n +•', '\n•', clean_content)  # Remove spaces before bullet points
+                clean_content = re.sub(r'• +', '• ', clean_content)  # Ensure single space after bullet points
                 
                 # Create unique message ID for voice
                 message_id = f"msg_{i}"
@@ -2047,9 +2050,9 @@ elif st.session_state.main_view == 'ai-assistant':
                         // Cancel any ongoing speech
                         window.speechSynthesis.cancel();
                         
-                        // Clean text for speech
+                        // Clean text for speech - remove bullet points but keep content
                         let textToSpeak = `{clean_content.replace('`', "'").replace('"', "'").replace("'", "\\'")}`;
-                        textToSpeak = textToSpeak.replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\\n/g, ' ').trim();
+                        textToSpeak = textToSpeak.replace(/\*/g, '').replace(/#{1,6}/g, '').replace(/•/g, '').replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
                         
                         const utterance = new SpeechSynthesisUtterance(textToSpeak);
                         utterance.rate = 0.9;
