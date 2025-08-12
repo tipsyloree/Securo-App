@@ -984,10 +984,21 @@ st.markdown("""
         border: 1px solid #6b7280;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         position: relative;
-        display: inline-block;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
         width: auto;
         min-width: 60px;
         max-width: 100%;
+    }
+    
+    .message-content {
+        flex: 1;
+        margin-right: 8px;
+        text-align: left;
+        line-height: 1.4;
+        word-wrap: break-word;
+        white-space: pre-wrap;
     }
     
     .message-time {
@@ -1007,17 +1018,21 @@ st.markdown("""
         color: #9ca3af;
     }
     
-    /* Speaker button styling - minimal */
+    /* Speaker button styling - positioned in right corner */
     .speak-button {
         background: none !important;
         border: none !important;
-        padding: 4px !important;
+        padding: 2px !important;
         cursor: pointer !important;
-        font-size: 16px !important;
-        opacity: 0.7 !important;
+        font-size: 14px !important;
+        opacity: 0.6 !important;
         transition: opacity 0.2s ease !important;
         border-radius: 4px !important;
+        position: relative !important;
+        top: -2px !important;
+        flex-shrink: 0 !important;
         margin-left: 8px !important;
+        align-self: flex-start !important;
     }
     
     .speak-button:hover {
@@ -1985,7 +2000,7 @@ elif st.session_state.main_view == 'ai-assistant':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "Enhanced SECURO AI System Online! \n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! ",
+                "content": "Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
@@ -2004,15 +2019,18 @@ elif st.session_state.main_view == 'ai-assistant':
                 clean_content = str(message["content"]).strip()
                 clean_content = re.sub(r'<[^>]+>', '', clean_content)
                 clean_content = clean_content.replace('```', '')
+                # Fix any formatting issues and ensure proper alignment
+                clean_content = re.sub(r'\s+', ' ', clean_content)  # Replace multiple spaces with single space
+                clean_content = clean_content.replace('\n ', '\n')  # Remove spaces after newlines
                 
                 # Create unique message ID for voice
                 message_id = f"msg_{i}"
                 
-                # Create the assistant message with integrated speak button
+                # Create the assistant message with speaker button in right corner
                 st.markdown(f"""
                 <div class="message assistant">
                     <div class="message-bubble">
-                        {clean_content}
+                        <div class="message-content">{clean_content}</div>
                         <span onclick="speakText_{message_id}()" class="speak-button" title="Click to speak this message">🔊</span>
                     </div>
                     <div class="message-time">
