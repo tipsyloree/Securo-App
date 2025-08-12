@@ -704,7 +704,7 @@ except Exception as e:
 # Page configuration
 st.set_page_config(
     page_title="SECURO - Modern AI Crime Intelligence System",
-    page_icon="🚔",
+    page_icon="https://i.postimg.cc/QC6xqk1G/PH-PR-2.png",
     layout="wide",
     initial_sidebar_state="expanded"
 )
