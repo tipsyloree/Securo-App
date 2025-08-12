@@ -223,22 +223,18 @@ def create_tts_button(message_content, message_id, button_style="inline"):
     if len(js_safe_content) > 500:
         js_safe_content = js_safe_content[:500] + "..."
     
-    # Create the HTML button
+    # Return just the speaker icon for embedding in message bubble
     button_html = f"""
-    <div class="tts-container-{message_id}" style="text-align: right; margin-top: 8px;">
-        <button 
-            onclick="toggleTTS_{message_id}()" 
-            class="tts-button" 
-            id="tts-btn-{message_id}"
-            title="Click to read this message aloud"
-            style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; 
-                   color: #3b82f6; padding: 6px 12px; cursor: pointer; 
-                   font-size: 12px; border-radius: 4px; transition: all 0.2s ease;"
-            onmouseover="this.style.background='rgba(59, 130, 246, 0.2)'"
-            onmouseout="this.style.background='rgba(59, 130, 246, 0.1)'">
-            🔊 Speak
-        </button>
-    </div>
+    <span 
+        onclick="toggleTTS_{message_id}()" 
+        class="tts-button-inline" 
+        id="tts-btn-{message_id}"
+        title="Click to read this message aloud"
+        style="cursor: pointer; font-size: 14px; opacity: 0.7; transition: opacity 0.2s ease; margin-left: 8px;"
+        onmouseover="this.style.opacity='1'"
+        onmouseout="this.style.opacity='0.7'">
+        🔊
+    </span>
     
     <script>
         (function() {{
