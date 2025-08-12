@@ -936,12 +936,10 @@ st.markdown("""
     
     .message.user {
         align-self: flex-end;
-        margin-left: auto;
     }
     
     .message.assistant {
         align-self: flex-start;
-        margin-right: auto;
     }
     
     .message-bubble {
@@ -970,6 +968,9 @@ st.markdown("""
         font-size: 11px;
         color: #64748b;
         margin-top: 4px;
+    }
+    
+    .message.user .message-time {
         text-align: right;
     }
     
