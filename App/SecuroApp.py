@@ -1558,16 +1558,7 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Enhanced AI status section with police theme
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
-                border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 12px; margin-bottom: 16px;">
-        <div style="color: #3b82f6; font-weight: 600; margin-bottom: 8px; text-align: center;">
-            🚔 AI SYSTEM STATUS
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
+    # AI status section - REMOVED THE HEADER
     if st.session_state.get('ai_enabled', False):
         st.success("🟢 Enhanced AI Online")
         st.markdown("""
@@ -1645,7 +1636,7 @@ if st.session_state.main_view == 'home':
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button("🤖 Start AI Chat", key="quick_ai", use_container_width=True):
+        if st.button(" Start Chat", key="quick_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
@@ -2063,24 +2054,6 @@ elif st.session_state.main_view == 'ai-assistant':
         # Current chat info - compact
         current_chat = get_current_chat()
         st.info(f"**Current Session:** {current_chat['name']}")
-        
-        # Simple TTS test button
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col2:
-            if st.button("🔊 Test Speech", key="test_tts_simple", use_container_width=True):
-                st.components.v1.html("""
-                <script>
-                if ('speechSynthesis' in window) {
-                    const utterance = new SpeechSynthesisUtterance("Hello! This is a speech test.");
-                    utterance.rate = 0.8;
-                    utterance.volume = 0.9;
-                    window.speechSynthesis.speak(utterance);
-                } else {
-                    alert('Speech not supported in this browser');
-                }
-                </script>
-                """, height=0)
-                st.success("🔊 Speech test triggered!")
         
         # Display messages
         messages = current_chat['messages']
