@@ -915,11 +915,11 @@ st.markdown("""
     .chat-messages {
         flex: 1;
         overflow-y: auto;
-        padding: 20px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
         gap: 16px;
-        min-height: 300px; /* Minimum height instead of fixed */
+        min-height: 200px; /* Reduced from 300px */
         max-height: 500px; /* Maximum height to prevent too much growth */
     }
     
@@ -1944,9 +1944,7 @@ elif st.session_state.main_view == 'ai-assistant':
             messages.append(welcome_msg)
             current_chat['messages'] = messages
         
-        # Messages container
-        st.markdown('<div class="chat-messages">', unsafe_allow_html=True)
-        
+        # Messages container - compact
         for i, message in enumerate(messages):
             if message["role"] == "user":
                 st.markdown(f"""
@@ -2023,8 +2021,6 @@ elif st.session_state.main_view == 'ai-assistant':
                 }}
                 </script>
                 """, height=0)
-        
-        st.markdown('</div>', unsafe_allow_html=True)
         
         # Chat input - simplified
         st.markdown("---")
