@@ -190,9 +190,9 @@ if 'main_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
-# IMPROVED TTS FUNCTIONS
+# FINAL IMPROVED TTS FUNCTIONS - HANDLES COMPLEX TEXT BETTER
 def clean_text_for_speech(text):
-    """Standardized text cleaning for speech synthesis"""
+    """Improved text cleaning for speech synthesis - handles complex messages better"""
     if not text or not isinstance(text, str):
         return ""
     
@@ -210,48 +210,82 @@ def clean_text_for_speech(text):
     clean_text = re.sub(r'[•*#→←↑↓]', '', clean_text)
     clean_text = re.sub(r'🚔|🚨|📊|💬|🤖|🔧|❌|✅|🟢|🟡|🔴|⚡|➕|🏢|🏥|🔥|🚢|🌡️', '', clean_text)
     
-    # Normalize whitespace
+    # Replace bullet points with natural speech
+    clean_text = re.sub(r'•\s*', '. ', clean_text)
+    clean_text = re.sub(r'\n\s*', '. ', clean_text)  # Convert line breaks to periods
+    
+    # Remove multiple spaces and periods
+    clean_text = re.sub(r'\.+', '.', clean_text)
     clean_text = re.sub(r'\s+', ' ', clean_text)
     clean_text = clean_text.strip()
     
-    # Limit length to prevent very long speech
-    if len(clean_text) > 500:
-        # Find a good breaking point near 500 characters
-        break_point = clean_text.rfind('.', 0, 500)
-        if break_point > 300:  # Only break if we find a sentence end reasonably close
-            clean_text = clean_text[:break_point + 1]
-        else:
-            clean_text = clean_text[:500] + "..."
+    # Limit length more aggressively for complex messages
+    if len(clean_text) > 300:  # Reduced from 500
+        # Find a good breaking point
+        sentences = clean_text.split('.')
+        result = ""
+        for sentence in sentences:
+            if len(result + sentence + ".") > 280:  # Leave room for "..."
+                break
+            result += sentence.strip() + ". "
+        clean_text = result.strip() + "..."
     
     return clean_text
 
 def create_global_tts_manager():
-    """Create a global TTS manager that handles all speech synthesis"""
+    """Enhanced global TTS manager with better error handling"""
     return """
     <script>
-    // Global TTS Manager - prevents conflicts and manages state
+    // Enhanced Global TTS Manager
     window.SecuroTTS = {
         isPlaying: false,
         currentUtterance: null,
         
         // Stop any current speech
         stop: function() {
-            if (window.speechSynthesis) {
-                window.speechSynthesis.cancel();
+            try {
+                if (window.speechSynthesis) {
+                    window.speechSynthesis.cancel();
+                }
                 this.isPlaying = false;
                 this.currentUtterance = null;
+            } catch (error) {
+                console.warn('TTS stop error:', error);
             }
         },
         
-        // Speak text with proper error handling
+        // Clean text for speech (JavaScript version)
+        cleanText: function(text) {
+            if (!text || typeof text !== 'string') return '';
+            
+            // Remove extra whitespace and clean up
+            let cleaned = text
+                .replace(/[•*#→←↑↓]/g, '') // Remove symbols
+                .replace(/\\s+/g, ' ')      // Multiple spaces to single
+                .replace(/\\n/g, '. ')      // Newlines to periods
+                .replace(/\\.+/g, '.')      // Multiple periods to single
+                .trim();
+            
+            // Limit length
+            if (cleaned.length > 300) {
+                cleaned = cleaned.substring(0, 297) + '...';
+            }
+            
+            return cleaned;
+        },
+        
+        // Speak text with enhanced error handling
         speak: function(text, options = {}) {
             if (!('speechSynthesis' in window)) {
-                console.warn('Text-to-speech not supported');
+                console.warn('Text-to-speech not supported in this browser');
                 return false;
             }
             
-            if (!text || text.trim().length === 0) {
-                console.warn('No text to speak');
+            // Clean the text
+            const cleanedText = this.cleanText(text);
+            
+            if (!cleanedText || cleanedText.length < 3) {
+                console.warn('Text too short or empty after cleaning');
                 return false;
             }
             
@@ -259,7 +293,7 @@ def create_global_tts_manager():
             this.stop();
             
             try {
-                const utterance = new SpeechSynthesisUtterance(text.trim());
+                const utterance = new SpeechSynthesisUtterance(cleanedText);
                 
                 // Set options with defaults
                 utterance.rate = options.rate || 0.85;
@@ -270,19 +304,27 @@ def create_global_tts_manager():
                 utterance.onstart = () => {
                     this.isPlaying = true;
                     this.currentUtterance = utterance;
-                    console.log('TTS started');
+                    console.log('TTS started:', cleanedText.substring(0, 50) + '...');
                 };
                 
                 utterance.onend = () => {
                     this.isPlaying = false;
                     this.currentUtterance = null;
-                    console.log('TTS completed');
+                    console.log('TTS completed successfully');
                 };
                 
                 utterance.onerror = (event) => {
-                    console.warn('TTS error:', event.error);
+                    console.warn('TTS error:', event.error, event);
                     this.isPlaying = false;
                     this.currentUtterance = null;
+                };
+                
+                utterance.onpause = () => {
+                    console.log('TTS paused');
+                };
+                
+                utterance.onresume = () => {
+                    console.log('TTS resumed');
                 };
                 
                 // Start speaking
@@ -296,67 +338,115 @@ def create_global_tts_manager():
             }
         },
         
-        // Toggle speak/stop
+        // Toggle speak/stop with better status feedback
         toggle: function(text) {
             if (this.isPlaying) {
+                console.log('Stopping current TTS');
                 this.stop();
+                return 'stopped';
             } else {
-                this.speak(text);
+                console.log('Starting TTS');
+                const success = this.speak(text);
+                return success ? 'started' : 'failed';
             }
         }
     };
     
     // Initialize on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Securo TTS Manager initialized');
-    });
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Securo TTS Manager initialized');
+        });
+    } else {
+        console.log('Securo TTS Manager initialized (DOM already ready)');
+    }
     </script>
     """
 
 def create_message_speaker_button(message_content, message_id):
-    """Create a speaker button for individual messages"""
+    """Create a speaker button with safer text handling"""
+    # Clean text more aggressively for complex messages
     clean_text = clean_text_for_speech(message_content)
     
-    # Escape text for JavaScript
-    js_safe_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
+    if not clean_text or len(clean_text) < 3:
+        return ""  # Don't show button for empty/very short text
     
+    # For very long or complex messages, create a data attribute instead
+    # This avoids JavaScript parsing issues with complex inline text
     return f"""
-    <span onclick="SecuroTTS.toggle(`{js_safe_text}`)" 
+    <span onclick="handleTTSClick('{message_id}')" 
           class="speak-button" 
           title="Click to speak this message (click again to stop)"
-          id="speaker_{message_id}">
+          id="speaker_{message_id}"
+          data-text="{clean_text.replace('"', '&quot;').replace("'", '&#39;')}">
         🔊
     </span>
-    """
-
-def create_auto_speak_component(text):
-    """Create auto-speak component with improved timing and conflict prevention"""
-    clean_text = clean_text_for_speech(text)
     
-    if not clean_text:
-        return ""
-    
-    # Escape text for JavaScript
-    js_safe_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
-    
-    return f"""
     <script>
-    // Auto-speak with delay to avoid conflicts
-    setTimeout(function() {{
-        if (window.SecuroTTS && !window.SecuroTTS.isPlaying) {{
-            console.log('Auto-speaking new response');
-            window.SecuroTTS.speak(`{js_safe_text}`, {{
-                rate: 0.8,
-                volume: 0.85
-            }});
+    function handleTTSClick(messageId) {{
+        const element = document.getElementById('speaker_' + messageId);
+        if (element && element.dataset.text) {{
+            const text = element.dataset.text
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'");
+            
+            if (window.SecuroTTS) {{
+                const result = window.SecuroTTS.toggle(text);
+                console.log('TTS toggle result:', result);
+            }} else {{
+                console.warn('SecuroTTS not available');
+            }}
         }} else {{
-            console.log('Skipping auto-speak - TTS manager not ready or already playing');
+            console.warn('No text data found for message:', messageId);
         }}
-    }}, 1500);  // Increased delay to ensure page is fully loaded
+    }}
     </script>
     """
 
-# REMOVED old TTS functions - voice_input_component, auto_speak_response, etc.
+def create_auto_speak_component(text):
+    """Create auto-speak component with better text preprocessing"""
+    clean_text = clean_text_for_speech(text)
+    
+    if not clean_text or len(clean_text) < 5:
+        return ""
+    
+    # Use a more conservative approach for auto-speak
+    return f"""
+    <div id="auto-speak-container" style="display: none;" data-text="{clean_text.replace('"', '&quot;').replace("'", '&#39;')}"></div>
+    <script>
+    // Auto-speak with better error handling and timing
+    setTimeout(function() {{
+        const container = document.getElementById('auto-speak-container');
+        if (container && window.SecuroTTS && !window.SecuroTTS.isPlaying) {{
+            const text = container.dataset.text
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'");
+            
+            if (text && text.length > 0) {{
+                console.log('Starting auto-speak for new response');
+                const success = window.SecuroTTS.speak(text, {{
+                    rate: 0.8,
+                    volume: 0.85,
+                    pitch: 1.0
+                }});
+                
+                if (success) {{
+                    console.log('Auto-speak initiated successfully');
+                }} else {{
+                    console.log('Auto-speak failed to start');
+                }}
+            }}
+        }} else {{
+            console.log('Skipping auto-speak - conditions not met');
+        }}
+        
+        // Clean up the container
+        if (container) {{
+            container.remove();
+        }}
+    }}, 2000);  // Increased delay for better reliability
+    </script>
+    """
 
 def get_current_chat():
     """Get current chat session"""
@@ -844,7 +934,7 @@ if 'chat_sessions' not in st.session_state:
 if 'current_chat_id' not in st.session_state:
     st.session_state.current_chat_id = None
 
-# Modern React-like CSS styling - UPDATED WITH IMPROVED TTS BUTTON
+# Modern React-like CSS styling - FINAL VERSION WITH REMOVED TTS BANNER
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
@@ -1178,7 +1268,7 @@ st.markdown("""
         color: #9ca3af;
     }
     
-    /* IMPROVED Speaker button styling - more reliable and better positioned */
+    /* FINAL Speaker button styling - most reliable version */
     .speak-button {
         background: none !important;
         border: none !important;
@@ -1438,9 +1528,9 @@ st.markdown("""
         }
     }
     
-    /* Voice controls - REMOVED VOICE FEATURES BANNER */
+    /* COMPLETELY REMOVED VOICE CONTROLS BANNER */
     .voice-controls {
-        display: none; /* Hide this completely */
+        display: none !important; /* Completely hidden */
     }
     
     .voice-button {
@@ -2095,7 +2185,7 @@ elif st.session_state.main_view == 'emergency':
             """, unsafe_allow_html=True)
 
 elif st.session_state.main_view == 'ai-assistant':
-    # AI Assistant interface with IMPROVED TTS
+    # AI Assistant interface with FINAL IMPROVED TTS
     if not st.session_state.get('chat_active', False):
         # Chat welcome screen - compact and centered (REMOVED TTS FEATURES BANNER)
         st.markdown("""
@@ -2173,7 +2263,7 @@ elif st.session_state.main_view == 'ai-assistant':
         current_chat = get_current_chat()
         st.info(f"**Current Session:** {current_chat['name']}")
         
-        # Display messages with IMPROVED TTS
+        # Display messages with FINAL IMPROVED TTS
         messages = current_chat['messages']
         
         # Initialize with welcome message if no messages
@@ -2189,7 +2279,7 @@ elif st.session_state.main_view == 'ai-assistant':
         # Add the global TTS manager (only once per page)
         st.components.v1.html(create_global_tts_manager(), height=0)
         
-        # Messages container - Instagram style with IMPROVED TTS
+        # Messages container - Instagram style with FINAL IMPROVED TTS
         for i, message in enumerate(messages):
             if message["role"] == "user":
                 st.markdown(f"""
@@ -2345,7 +2435,7 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.rerun()
 
 elif st.session_state.main_view == 'hotspots':
-    # Crime Hotspots Map - Main Screen (from second code)
+    # Crime Hotspots Map - Main Screen
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                 border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
