@@ -190,47 +190,173 @@ if 'main_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
-def text_to_speech_component(text, message_id="tts"):
-    """Create a working text-to-speech component (simplified)"""
-    return ""  # Not needed anymore - integrated into message bubbles
+# Initialize auto-speak setting
+if 'auto_speak_enabled' not in st.session_state:
+    st.session_state.auto_speak_enabled = False
 
-def auto_speak_response(text):
-    """Auto-speak functionality for new responses - SIMPLIFIED VERSION"""
-    clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
-    clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
-    clean_text = clean_text.replace("•", "").replace("\n", " ").strip()
+def clean_text_for_speech(text):
+    """Clean text for better speech synthesis"""
+    if not text:
+        return ""
     
-    if len(clean_text) > 200:
-        clean_text = clean_text[:200] + "..."
+    # Remove HTML tags
+    clean_text = re.sub(r'<[^>]+>', '', str(text))
     
-    # Simple escape for JavaScript
-    clean_text = clean_text.replace("'", "\\'").replace('"', '\\"')
+    # Remove markdown formatting
+    clean_text = re.sub(r'\*\*([^*]+)\*\*', r'\1', clean_text)  # Bold
+    clean_text = re.sub(r'\*([^*]+)\*', r'\1', clean_text)      # Italic
+    clean_text = re.sub(r'#{1,6}\s*', '', clean_text)           # Headers
+    clean_text = re.sub(r'```[^`]*```', '', clean_text)         # Code blocks
+    clean_text = re.sub(r'`([^`]+)`', r'\1', clean_text)        # Inline code
     
-    auto_speak_html = f"""
+    # Clean up emojis and special characters that cause TTS issues
+    clean_text = re.sub(r'[🚔🚨📊💬🤖🔥🏥➕⚡🌡️🚢🗺️📍⚠️🔍🟢🔴•]', '', clean_text)
+    
+    # Replace bullet points and lists with spoken equivalents
+    clean_text = re.sub(r'^\s*•\s*', 'Point: ', clean_text, flags=re.MULTILINE)
+    clean_text = re.sub(r'^\s*-\s*', 'Item: ', clean_text, flags=re.MULTILINE)
+    clean_text = re.sub(r'^\s*\d+\.\s*', 'Number: ', clean_text, flags=re.MULTILINE)
+    
+    # Clean up whitespace
+    clean_text = re.sub(r'\s+', ' ', clean_text)
+    clean_text = clean_text.strip()
+    
+    # Break into sentences and limit total length to prevent cutoffs
+    sentences = re.split(r'[.!?]+', clean_text)
+    limited_text = []
+    total_chars = 0
+    
+    for sentence in sentences:
+        sentence = sentence.strip()
+        if sentence and total_chars + len(sentence) < 800:  # Increased limit but still manageable
+            limited_text.append(sentence)
+            total_chars += len(sentence)
+        elif total_chars > 0:
+            break
+    
+    result = '. '.join(limited_text)
+    if result and not result.endswith('.'):
+        result += '.'
+    
+    return result
+
+def create_tts_javascript(message_id, text):
+    """Create improved TTS JavaScript for individual messages"""
+    clean_text = clean_text_for_speech(text)
+    
+    # Escape text for JavaScript
+    js_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
+    
+    return f"""
     <script>
-    setTimeout(function() {{
-        if ('speechSynthesis' in window) {{
-            const text = `{clean_text}`;
-            if (text.length > 0) {{
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.8;
-                utterance.volume = 0.9;
-                window.speechSynthesis.speak(utterance);
+    function speakMessage_{message_id}() {{
+        try {{
+            // Cancel any ongoing speech
+            if (window.speechSynthesis) {{
+                window.speechSynthesis.cancel();
             }}
+            
+            // Wait a moment for cancel to complete
+            setTimeout(() => {{
+                if ('speechSynthesis' in window) {{
+                    const text = "{js_text}";
+                    
+                    if (text && text.trim().length > 0) {{
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        
+                        // Configure speech parameters for better reliability
+                        utterance.rate = 0.85;
+                        utterance.pitch = 1.0;
+                        utterance.volume = 0.9;
+                        
+                        // Try to use a reliable voice
+                        const voices = window.speechSynthesis.getVoices();
+                        if (voices.length > 0) {{
+                            // Prefer English voices
+                            const englishVoice = voices.find(voice => 
+                                voice.lang.startsWith('en') && !voice.name.includes('Google')
+                            ) || voices[0];
+                            utterance.voice = englishVoice;
+                        }}
+                        
+                        // Add error handling
+                        utterance.onerror = function(event) {{
+                            console.warn('TTS Error:', event.error);
+                        }};
+                        
+                        utterance.onend = function() {{
+                            console.log('TTS completed successfully');
+                        }};
+                        
+                        // Speak the text
+                        window.speechSynthesis.speak(utterance);
+                    }}
+                }} else {{
+                    console.warn('Speech synthesis not supported');
+                }}
+            }}, 100);
+        }} catch (error) {{
+            console.error('TTS Error:', error);
         }}
-    }}, 1000);
+    }}
+    
+    // Make function globally available
+    window.speakMessage_{message_id} = speakMessage_{message_id};
     </script>
     """
-    return auto_speak_html
 
-def voice_input_component():
-    """Voice input component - REMOVED"""
-    return ""
-
-def emergency_call_interface():
-    """Create emergency call interface with working voice"""
-    # REMOVED - Call feature not needed
-    pass
+def auto_speak_response(text):
+    """Auto-speak functionality for new responses - only when enabled"""
+    if not st.session_state.get('auto_speak_enabled', False):
+        return ""
+    
+    clean_text = clean_text_for_speech(text)
+    
+    if not clean_text:
+        return ""
+    
+    # Escape text for JavaScript
+    js_text = clean_text.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'").replace('\n', ' ')
+    
+    return f"""
+    <script>
+    setTimeout(function() {{
+        try {{
+            if ('speechSynthesis' in window && window.speechSynthesis) {{
+                // Cancel any ongoing speech first
+                window.speechSynthesis.cancel();
+                
+                setTimeout(() => {{
+                    const text = "{js_text}";
+                    if (text && text.trim().length > 0) {{
+                        const utterance = new SpeechSynthesisUtterance(text);
+                        utterance.rate = 0.85;
+                        utterance.pitch = 1.0;
+                        utterance.volume = 0.9;
+                        
+                        // Try to get voices
+                        const voices = window.speechSynthesis.getVoices();
+                        if (voices.length > 0) {{
+                            const englishVoice = voices.find(voice => 
+                                voice.lang.startsWith('en') && !voice.name.includes('Google')
+                            ) || voices[0];
+                            utterance.voice = englishVoice;
+                        }}
+                        
+                        utterance.onerror = function(event) {{
+                            console.warn('Auto-TTS Error:', event.error);
+                        }};
+                        
+                        window.speechSynthesis.speak(utterance);
+                    }}
+                }}, 200);
+            }}
+        }} catch (error) {{
+            console.error('Auto-TTS Error:', error);
+        }}
+    }}, 1500);
+    </script>
+    """
 
 def get_current_chat():
     """Get current chat session"""
@@ -1054,30 +1180,67 @@ st.markdown("""
     
     /* Speaker button styling - positioned in right corner */
     .speak-button {
-        background: none !important;
-        border: none !important;
-        padding: 2px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        padding: 4px 6px !important;
         cursor: pointer !important;
-        font-size: 14px !important;
-        opacity: 0.6 !important;
-        transition: opacity 0.2s ease !important;
+        font-size: 12px !important;
+        opacity: 0.7 !important;
+        transition: all 0.2s ease !important;
         border-radius: 4px !important;
         position: relative !important;
         top: -2px !important;
         flex-shrink: 0 !important;
         margin-left: 8px !important;
         align-self: flex-start !important;
+        color: #f9fafb !important;
+        min-width: 24px !important;
+        text-align: center !important;
     }
     
     .speak-button:hover {
         opacity: 1 !important;
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(59, 130, 246, 0.2) !important;
+        border-color: #3b82f6 !important;
+        transform: scale(1.05) !important;
+    }
+    
+    .speak-button:active {
+        background: rgba(59, 130, 246, 0.3) !important;
+        transform: scale(0.95) !important;
     }
     
     .chat-input-area {
         background: linear-gradient(135deg, #334155 0%, #475569 100%);
         border-top: 1px solid #475569;
         padding: 16px 20px;
+    }
+    
+    /* Auto-speak toggle button styling */
+    .auto-speak-toggle {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        border: none !important;
+        color: white !important;
+        padding: 6px 12px !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer !important;
+        margin-right: 8px !important;
+    }
+    
+    .auto-speak-toggle.disabled {
+        background: linear-gradient(135deg, #6b7280, #4b5563) !important;
+    }
+    
+    .auto-speak-toggle:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+    }
+    
+    .auto-speak-toggle.disabled:hover {
+        box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3) !important;
     }
     
     /* Input styling */
@@ -1518,27 +1681,27 @@ with st.sidebar:
     """, unsafe_allow_html=True)
     
     # Main navigation buttons - now set main_view instead of sidebar_view
-    if st.button(" Home", key="nav_home", help="System Overview", use_container_width=True):
+    if st.button("🏠 Home", key="nav_home", help="System Overview", use_container_width=True):
         st.session_state.main_view = 'home'
         st.rerun()
     
-    if st.button(" About", key="nav_about", help="About SECURO", use_container_width=True):
+    if st.button("ℹ️ About", key="nav_about", help="About SECURO", use_container_width=True):
         st.session_state.main_view = 'about'
         st.rerun()
     
-    if st.button(" Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
+    if st.button("📊 Analytics", key="nav_analytics", help="Crime Analytics", use_container_width=True):
         st.session_state.main_view = 'analytics'
         st.rerun()
     
-    if st.button(" History", key="nav_history", help="Chat History", use_container_width=True):
+    if st.button("📝 History", key="nav_history", help="Chat History", use_container_width=True):
         st.session_state.main_view = 'history'
         st.rerun()
     
-    if st.button(" Crime Map", key="nav_map", help="Crime Hotspots", use_container_width=True):
+    if st.button("🗺️ Crime Map", key="nav_map", help="Crime Hotspots", use_container_width=True):
         st.session_state.main_view = 'hotspots'
         st.rerun()
     
-    if st.button(" Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
+    if st.button("🚨 Emergency", key="nav_emergency", help="Emergency Contacts", use_container_width=True):
         st.session_state.main_view = 'emergency'
         st.rerun()
     
@@ -1552,23 +1715,23 @@ with st.sidebar:
     
     # Quick access to Crime Map from any view
     if st.session_state.main_view != 'hotspots':
-        if st.button(" View Crime Map", key="quick_map_access", use_container_width=True):
+        if st.button("🗺️ View Crime Map", key="quick_map_access", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     st.markdown("---")
     
-    # AI status section - REMOVED THE HEADER
+    # AI status section
     if st.session_state.get('ai_enabled', False):
         st.success("🟢 Enhanced AI Online")
         st.markdown("""
-        Capabilities:
-        -  Statistical knowledge integration
-        -  Conversation memory
-        -  Context-aware responses
-        -  Crime data analysis
-        -  Professional assistance
-        -  Text-to-Speech features
+        **Capabilities:**
+        - 🧠 Statistical knowledge integration
+        - 💭 Conversation memory
+        - 🎯 Context-aware responses
+        - 📈 Crime data analysis
+        - 👮 Professional assistance
+        - 🔊 Text-to-Speech features
         """)
     else:
         st.error("🔴 AI Offline")
@@ -1577,26 +1740,27 @@ with st.sidebar:
     st.markdown("---")
     
     # Enhanced quick stats with police theme
-    st.markdown("""
+    st.markdown(f"""
     <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
                 border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px;">
         <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; text-align: center;">
-             QUICK STATS
+            🚔 QUICK STATS
         </div>
         <div style="color: #e2e8f0; font-size: 14px; line-height: 1.6;">
-            <div>🟢 Active Chats: <strong>{}</strong></div>
+            <div>🟢 Active Chats: <strong>{len(st.session_state.chat_sessions)}</strong></div>
             <div>🟢 Database: <strong>Loaded</strong></div>
             <div>🟢 API Status: <strong>Online</strong></div>
+            <div>🔊 Auto-Speak: <strong>{'ON' if st.session_state.get('auto_speak_enabled', False) else 'OFF'}</strong></div>
         </div>
     </div>
-    """.format(len(st.session_state.chat_sessions)), unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
 
 # Main Content Area - Now handles all the different views
 if st.session_state.main_view == 'home':
     # System Overview - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">System Overview</h2>
+        <h2 class="section-header">🏠 System Overview</h2>
         <div class="section-content">
             <p>Welcome to SECURO - the enhanced comprehensive crime analysis system with police siren colors, 
             statistical integration, conversation memory, and advanced AI capabilities built 
@@ -1611,7 +1775,7 @@ if st.session_state.main_view == 'home':
     with col1:
         st.markdown("""
         <div class="info-card">
-            <h3>Enhanced AI</h3>
+            <h3>🤖 Enhanced AI</h3>
             <p>Statistical knowledge, memory, and context-aware responses with police siren styling.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -1619,7 +1783,7 @@ if st.session_state.main_view == 'home':
     with col2:
         st.markdown("""
         <div class="info-card">
-            <h3>Real-Time Statistics</h3>
+            <h3>📊 Real-Time Statistics</h3>
             <p>Integrated crime data and international comparisons from MacroTrends.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -1627,7 +1791,7 @@ if st.session_state.main_view == 'home':
     with col3:
         st.markdown("""
         <div class="info-card">
-            <h3>Conversation Memory</h3>
+            <h3>💭 Conversation Memory</h3>
             <p>Context preservation across chat sessions with full history management.</p>
         </div>
         """, unsafe_allow_html=True)
@@ -1636,23 +1800,23 @@ if st.session_state.main_view == 'home':
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        if st.button(" Start Chat", key="quick_ai", use_container_width=True):
+        if st.button("🤖 Start Chat", key="quick_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button(" View Crime Map", key="quick_map", use_container_width=True):
+        if st.button("🗺️ View Crime Map", key="quick_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button(" View Analytics", key="quick_analytics", use_container_width=True):
+        if st.button("📊 View Analytics", key="quick_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
 
 elif st.session_state.main_view == 'about':
     # About SECURO - Main Screen
-    st.markdown("## About SECURO")
+    st.markdown("## ℹ️ About SECURO")
     
     st.markdown("""
     **SECURO** is an enhanced comprehensive crime analysis system with police siren colors, 
@@ -1660,29 +1824,29 @@ elif st.session_state.main_view == 'about':
     specifically for the Royal St. Christopher and Nevis Police Force.
     """)
     
-    st.markdown("### Key Features")
+    st.markdown("### 🌟 Key Features")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
-        - **Conversation Memory:** Full context preservation across chat sessions
-        - **Statistical Knowledge Integration:** Real-time access to crime data  
-        - **Context-Aware Responses:** Intelligent understanding of conversation flow
-        - **Multi-Chat Management:** Organize multiple conversation sessions
-        - **Real-time Crime Data:** Up-to-date statistics and analysis
+        - **💭 Conversation Memory:** Full context preservation across chat sessions
+        - **📊 Statistical Knowledge Integration:** Real-time access to crime data  
+        - **🧠 Context-Aware Responses:** Intelligent understanding of conversation flow
+        - **💬 Multi-Chat Management:** Organize multiple conversation sessions
+        - **📈 Real-time Crime Data:** Up-to-date statistics and analysis
         """)
     
     with col2:
         st.markdown("""
-        - **Police Siren Color Theme:** Professional law enforcement aesthetics
-        - **Text-to-Speech Features:** Audio accessibility and hands-free operation
-        - **Interactive Crime Maps:** Visual hotspot analysis
-        - **International Comparisons:** Global context and trending
-        - **Advanced Analytics:** Charts, trends, and data visualization
+        - **🚨 Police Siren Color Theme:** Professional law enforcement aesthetics
+        - **🔊 Text-to-Speech Features:** Audio accessibility and hands-free operation
+        - **🗺️ Interactive Crime Maps:** Visual hotspot analysis
+        - **🌍 International Comparisons:** Global context and trending
+        - **📊 Advanced Analytics:** Charts, trends, and data visualization
         """)
     
-    st.markdown("### Data Coverage")
+    st.markdown("### 📊 Data Coverage")
     
     col1, col2, col3 = st.columns(3)
     
@@ -1714,26 +1878,26 @@ elif st.session_state.main_view == 'about':
         """)
     
     # Quick access buttons
-    st.markdown("### Quick Access")
+    st.markdown("### 🚀 Quick Access")
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        if st.button(" SECURO AI", key="about_ai", use_container_width=True):
+        if st.button("🤖 SECURO AI", key="about_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button(" Crime Map", key="about_map", use_container_width=True):
+        if st.button("🗺️ Crime Map", key="about_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     with col3:
-        if st.button(" Analytics", key="about_analytics", use_container_width=True):
+        if st.button("📊 Analytics", key="about_analytics", use_container_width=True):
             st.session_state.main_view = 'analytics'
             st.rerun()
     
     with col4:
-        if st.button(" Emergency Info", key="about_emergency", use_container_width=True):
+        if st.button("🚨 Emergency Info", key="about_emergency", use_container_width=True):
             st.session_state.main_view = 'emergency'
             st.rerun()
 
@@ -1741,7 +1905,7 @@ elif st.session_state.main_view == 'analytics':
     # Crime Analytics - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">Crime Analytics Dashboard</h2>
+        <h2 class="section-header">📊 Crime Analytics Dashboard</h2>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1751,7 +1915,7 @@ elif st.session_state.main_view == 'analytics':
     with col1:
         st.markdown("""
         <div class="analytics-card high-risk">
-            <div class="analytics-title">High Risk Areas (3)</div>
+            <div class="analytics-title">⚠️ High Risk Areas (3)</div>
             <div class="analytics-value">Basseterre Central, Molineux, Tabernacle</div>
             <div class="analytics-value"><strong>Total: 109 crimes</strong></div>
         </div>
@@ -1760,7 +1924,7 @@ elif st.session_state.main_view == 'analytics':
     with col2:
         st.markdown("""
         <div class="analytics-card medium-risk">
-            <div class="analytics-title">Medium Risk Areas (6)</div>
+            <div class="analytics-title">🔶 Medium Risk Areas (6)</div>
             <div class="analytics-value">Cayon, Newton Ground, Old Road</div>
             <div class="analytics-value"><strong>Total: 133 crimes</strong></div>
         </div>
@@ -1769,7 +1933,7 @@ elif st.session_state.main_view == 'analytics':
     with col3:
         st.markdown("""
         <div class="analytics-card low-risk">
-            <div class="analytics-title">Low Risk Areas (4)</div>
+            <div class="analytics-title">✅ Low Risk Areas (4)</div>
             <div class="analytics-value">Sandy Point, Dieppe Bay</div>
             <div class="analytics-value"><strong>Total: 60 crimes</strong></div>
         </div>
@@ -1778,7 +1942,7 @@ elif st.session_state.main_view == 'analytics':
     # Recent trends section
     st.markdown("""
     <div class="main-content-section">
-        <h3 class="section-header">Recent Trends</h3>
+        <h3 class="section-header">📈 Recent Trends</h3>
         <div class="section-content">
             <ul>
                 <li><strong>75% decrease in murders</strong> from 2024 to 2025 H1</li>
@@ -1792,9 +1956,9 @@ elif st.session_state.main_view == 'analytics':
     """, unsafe_allow_html=True)
     
     # Interactive chart section
-    st.markdown("### Interactive Analytics")
+    st.markdown("### 📊 Interactive Analytics")
     
-    chart_tab1, chart_tab2, chart_tab3 = st.tabs(["Crime Trends", "International Comparison", "Detection Rates"])
+    chart_tab1, chart_tab2, chart_tab3 = st.tabs(["📈 Crime Trends", "🌍 International Comparison", "🎯 Detection Rates"])
     
     with chart_tab1:
         # Show crime trends
@@ -1872,21 +2036,21 @@ elif st.session_state.main_view == 'history':
     # Chat History - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">Chat History Management</h2>
+        <h2 class="section-header">📝 Chat History Management</h2>
     </div>
     """, unsafe_allow_html=True)
     
     if not st.session_state.chat_sessions:
         st.markdown("""
         <div class="info-card">
-            <h3>No Chat History Found</h3>
+            <h3>💭 No Chat History Found</h3>
             <p>Start a conversation with the AI Assistant to create your first session! 
             All your conversations will be automatically saved and organized here.</p>
         </div>
         """, unsafe_allow_html=True)
         
         # Quick start button
-        if st.button("Start Your First Chat", key="first_chat", use_container_width=True):
+        if st.button("🚀 Start Your First Chat", key="first_chat", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     else:
@@ -1898,7 +2062,7 @@ elif st.session_state.main_view == 'history':
             col1, col2, col3 = st.columns([3, 2, 1])
             
             with col1:
-                if st.button(f"Chat: {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
+                if st.button(f"💬 Chat: {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
                     st.session_state.current_chat_id = chat_id
                     st.session_state.main_view = 'ai-assistant'
                     st.session_state.chat_active = True
@@ -1918,7 +2082,7 @@ elif st.session_state.main_view == 'emergency':
     # Emergency Contacts - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header">Emergency Contacts Directory</h2>
+        <h2 class="section-header">🚨 Emergency Contacts Directory</h2>
         <div class="section-content">
             <p><strong>Emergency Guidelines:</strong></p>
             <ul>
@@ -1986,15 +2150,15 @@ elif st.session_state.main_view == 'ai-assistant':
             <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
                 <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
                             padding: 12px 20px; color: #3b82f6; font-size: 14px; font-weight: 500;">
-                    Statistical Knowledge
+                    📊 Statistical Knowledge
                 </div>
                 <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; 
                             padding: 12px 20px; color: #ef4444; font-size: 14px; font-weight: 500;">
-                    Conversation Memory
+                    💭 Conversation Memory
                 </div>
                 <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
                             padding: 12px 20px; color: #10b981; font-size: 14px; font-weight: 500;">
-                    Text-to-Speech
+                    🔊 Text-to-Speech
                 </div>
             </div>
         </div>
@@ -2003,46 +2167,47 @@ elif st.session_state.main_view == 'ai-assistant':
         # Center the start button
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            if st.button("Start Conversation", key="start_chat", use_container_width=True):
+            if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
                 create_new_chat_session()
                 st.session_state.chat_active = True
-                st.success("New chat session created! You can now start chatting with SECURO AI!")
+                st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
                 st.rerun()
         
         # Voice status indicator
-        st.markdown("""
+        st.markdown(f"""
         <div style="text-align: center; margin-top: 20px;">
             <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
                         border: 1px solid #10b981; border-radius: 8px;">
-                <div style="color: #10b981; font-size: 14px; font-weight: 600;">TTS FEATURES AVAILABLE</div>
+                <div style="color: #10b981; font-size: 14px; font-weight: 600;">🔊 TTS FEATURES AVAILABLE</div>
                 <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
-                    Text-to-Speech • Auto-Speak • Individual Message Speech
+                    Text-to-Speech • Auto-Speak: {'ON' if st.session_state.get('auto_speak_enabled', False) else 'OFF'} • Individual Message Speech
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     else:
-        # Chat interface - compact design
+        # Chat interface - compact design with improved TTS controls
         st.markdown("""
         <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                     border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                 <div>
-                    <h3 style="color: #ffffff; margin: 0; font-size: 18px;">SECURO AI</h3>
+                    <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🤖 SECURO AI</h3>
                     <div style="color: #10b981; font-size: 14px; margin-top: 4px;">
                         <span style="color: #10b981;">●</span>
-                        Online with Statistical Knowledge & TTS Features
+                        Online with Statistical Knowledge & Enhanced TTS
                     </div>
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
         
-        # Chat controls - compact
-        col1, col2 = st.columns([1, 1])
+        # Chat controls with auto-speak toggle - improved layout
+        col1, col2, col3 = st.columns([1, 1, 2])
+        
         with col1:
-            if st.button("New Chat", key="new_chat_btn", use_container_width=True):
+            if st.button("🆕 New Chat", key="new_chat_btn", use_container_width=True):
                 create_new_chat_session()
                 st.rerun()
         
@@ -2051,9 +2216,21 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.session_state.chat_active = False
                 st.rerun()
         
+        with col3:
+            # Auto-speak toggle button
+            auto_speak_text = "🔊 Auto-Speak: ON" if st.session_state.get('auto_speak_enabled', False) else "🔇 Auto-Speak: OFF"
+            if st.button(auto_speak_text, key="toggle_auto_speak", use_container_width=True):
+                st.session_state.auto_speak_enabled = not st.session_state.get('auto_speak_enabled', False)
+                if st.session_state.auto_speak_enabled:
+                    st.success("🔊 Auto-speak enabled! New responses will be read aloud automatically.")
+                else:
+                    st.info("🔇 Auto-speak disabled. Use individual 🔊 buttons to hear messages.")
+                st.rerun()
+        
         # Current chat info - compact
         current_chat = get_current_chat()
-        st.info(f"**Current Session:** {current_chat['name']}")
+        auto_speak_status = "🔊 ON" if st.session_state.get('auto_speak_enabled', False) else "🔇 OFF"
+        st.info(f"**Current Session:** {current_chat['name']} | **Auto-Speak:** {auto_speak_status}")
         
         # Display messages
         messages = current_chat['messages']
@@ -2062,13 +2239,13 @@ elif st.session_state.main_view == 'ai-assistant':
         if not messages:
             welcome_msg = {
                 "role": "assistant",
-                "content": "Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
+                "content": "🚔 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• Local crime trends and detection rates\n• International comparisons and global context\n• Historical data analysis with charts\n• Specific incidents or general questions\n\nI can show interactive charts for international comparisons! 🔊 Click the speaker buttons to hear any message read aloud.",
                 "timestamp": get_stkitts_time()
             }
             messages.append(welcome_msg)
             current_chat['messages'] = messages
         
-        # Messages container - Instagram style
+        # Messages container - Instagram style with improved TTS
         for i, message in enumerate(messages):
             if message["role"] == "user":
                 st.markdown(f"""
@@ -2082,22 +2259,19 @@ elif st.session_state.main_view == 'ai-assistant':
                 clean_content = re.sub(r'<[^>]+>', '', clean_content)
                 clean_content = clean_content.replace('```', '')
                 # Preserve bullet points but fix spacing issues
-                clean_content = re.sub(r'  +', ' ', clean_content)  # Replace multiple spaces with single space (but not single spaces)
-                clean_content = re.sub(r'\n +•', '\n•', clean_content)  # Remove spaces before bullet points
-                clean_content = re.sub(r'• +', '• ', clean_content)  # Ensure single space after bullet points
-                
-                # Clean content for JavaScript (escape quotes and special characters)
-                js_clean_content = clean_content.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'")
+                clean_content = re.sub(r'  +', ' ', clean_content)
+                clean_content = re.sub(r'\n +•', '\n•', clean_content)
+                clean_content = re.sub(r'• +', '• ', clean_content)
                 
                 # Create unique message ID for voice
-                message_id = f"msg_{i}"
+                message_id = f"msg_{i}_{int(time.time())}"
                 
-                # Create the assistant message with speaker button in right corner
+                # Create the assistant message with improved speaker button
                 st.markdown(f"""
                 <div class="message assistant">
                     <div class="message-bubble">
                         <div class="message-content">{clean_content}</div>
-                        <span onclick="speakText_{message_id}()" class="speak-button" title="Click to speak this message">🔊</span>
+                        <button onclick="speakMessage_{message_id}()" class="speak-button" title="Click to speak this message">🔊</button>
                     </div>
                     <div class="message-time">
                         SECURO • {message["timestamp"]} AST
@@ -2105,30 +2279,9 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add the JavaScript for this specific button - SIMPLIFIED VERSION
-                st.components.v1.html(f"""
-                <script>
-                function speakText_{message_id}() {{
-                    if ('speechSynthesis' in window) {{
-                        window.speechSynthesis.cancel();
-                        
-                        let text = `{js_clean_content}`;
-                        text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
-                        
-                        if (text.length > 0) {{
-                            const utterance = new SpeechSynthesisUtterance(text);
-                            utterance.rate = 0.8;
-                            utterance.volume = 0.9;
-                            window.speechSynthesis.speak(utterance);
-                        }}
-                    }} else {{
-                        alert('Text-to-speech not supported in this browser');
-                    }}
-                }}
-                
-                window.speakText_{message_id} = speakText_{message_id};
-                </script>
-                """, height=0)
+                # Add the improved JavaScript for this specific message
+                js_code = create_tts_javascript(message_id, message["content"])
+                st.components.v1.html(js_code, height=0)
         
         # Chat input - simplified
         st.markdown("---")
@@ -2140,7 +2293,7 @@ elif st.session_state.main_view == 'ai-assistant':
                 key="chat_input"
             )
             
-            submitted = st.form_submit_button("Send", type="primary")
+            submitted = st.form_submit_button("📤 Send", type="primary")
             
             if submitted and user_input and user_input.strip():
                 current_time = get_stkitts_time()
@@ -2149,7 +2302,7 @@ elif st.session_state.main_view == 'ai-assistant':
                 add_message_to_chat("user", user_input)
                 
                 # Generate response with conversation history and statistics
-                with st.spinner("Generating enhanced AI response with statistical knowledge..."):
+                with st.spinner("🧠 Generating enhanced AI response with statistical knowledge..."):
                     response, chart_type = generate_enhanced_smart_response(
                         user_input, 
                         conversation_history=current_chat['messages'],
@@ -2163,20 +2316,23 @@ elif st.session_state.main_view == 'ai-assistant':
                 if chart_type:
                     st.session_state.show_chart = chart_type
                 
-                # Store the response for auto-speak
-                st.session_state.last_response = response
+                # Store the response for auto-speak (only if enabled)
+                if st.session_state.get('auto_speak_enabled', False):
+                    st.session_state.last_response = response
                 
                 st.rerun()
         
-        # Auto-speak the last response if there is one
-        if st.session_state.get('last_response'):
-            st.components.v1.html(auto_speak_response(st.session_state.last_response), height=50)
+        # Auto-speak the last response if enabled and there is one
+        if st.session_state.get('last_response') and st.session_state.get('auto_speak_enabled', False):
+            auto_speak_html = auto_speak_response(st.session_state.last_response)
+            if auto_speak_html:
+                st.components.v1.html(auto_speak_html, height=50)
             # Clear the response to avoid re-speaking
             st.session_state.last_response = None
         
         # Display charts after the rerun (so they persist)
         if st.session_state.get('show_chart'):
-            st.markdown("### Requested Chart")
+            st.markdown("### 📊 Requested Chart")
             chart_type = st.session_state.show_chart
             
             if chart_type == "international":
@@ -2240,12 +2396,12 @@ elif st.session_state.main_view == 'ai-assistant':
                     st.plotly_chart(fig, use_container_width=True)
             
             # Add button to clear the chart
-            if st.button("Clear Chart", key="clear_chart"):
+            if st.button("🗑️ Clear Chart", key="clear_chart"):
                 st.session_state.show_chart = None
                 st.rerun()
 
 elif st.session_state.main_view == 'hotspots':
-    # Crime Hotspots Map - Main Screen (from second code)
+    # Crime Hotspots Map - Main Screen
     st.markdown("""
     <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                 border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
@@ -2272,7 +2428,7 @@ elif st.session_state.main_view == 'hotspots':
         st.error(f"❌ Map Error: {str(e)}")
     
     # Hotspot summary metrics - compact
-    st.markdown("###  Hotspot Summary")
+    st.markdown("### 📊 Hotspot Summary")
     
     col1, col2, col3 = st.columns(3)
     
@@ -2307,58 +2463,59 @@ elif st.session_state.main_view == 'hotspots':
         """, unsafe_allow_html=True)
 
 else:
-    # Default view (AI Assistant and Crime Hotspots navigation)
+    # Default view - Navigation prompts
     # Main navigation tabs
     col1, col2, col3 = st.columns([1, 1, 8])
     
     with col1:
-        if st.button(" SECURO AI", key="main_ai", use_container_width=True):
+        if st.button("🤖 SECURO AI", key="main_ai", use_container_width=True):
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
     with col2:
-        if st.button(" Crime Hotspots", key="main_map", use_container_width=True):
+        if st.button("🗺️ Crime Hotspots", key="main_map", use_container_width=True):
             st.session_state.main_view = 'hotspots'
             st.rerun()
     
     # Welcome message if no specific view is selected
     st.markdown("""
     <div style="text-align: center; padding: 40px 20px;">
-        <h2 style="color: #3b82f6;">Welcome to SECURO</h2>
-        <p style="color: #94a3b8;">Choose an option above to get started</p>
+        <h2 style="color: #3b82f6;">🚔 Welcome to SECURO</h2>
+        <p style="color: #94a3b8;">Choose an option above to get started with the enhanced crime intelligence system</p>
     </div>
     """, unsafe_allow_html=True)
 
-# Modern Status Bar - simplified
+# Modern Status Bar - Enhanced with TTS status
 current_time = get_stkitts_time()
 total_chats = len(st.session_state.chat_sessions)
+auto_speak_status = "ON" if st.session_state.get('auto_speak_enabled', False) else "OFF"
 
 st.markdown(f"""
 <div class="status-bar">
     <div class="status-indicators">
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>Enhanced AI Active</span>
+            <span>🧠 Enhanced AI Active</span>
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>Police Siren Colors: Active</span>
+            <span>🚨 Police Siren Colors: Active</span>
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>Conversation Memory: Enabled</span>
+            <span>💭 Conversation Memory: Enabled</span>
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>TTS Available</span>
+            <span>🔊 TTS Available (Auto: {auto_speak_status})</span>
         </div>
         <div class="status-indicator">
             <div class="status-dot"></div>
-            <span>Chat Sessions: {total_chats}</span>
+            <span>💬 Chat Sessions: {total_chats}</span>
         </div>
     </div>
     <div class="status-indicator">
-        <span>{current_time} AST</span>
+        <span>🕒 {current_time} AST</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
