@@ -1621,31 +1621,106 @@ elif st.session_state.main_view == 'about':
     st.markdown("""
     <div class="main-content-section">
         <h2 class="section-header">ℹ️ About SECURO</h2>
-        <div class="section-content">
-            <p>SECURO is an enhanced comprehensive crime analysis system with police siren colors, 
-            statistical integration, conversation memory, and advanced AI capabilities built 
-            specifically for the Royal St. Christopher and Nevis Police Force.</p>
-            
-            <h3 style="color: #3b82f6; margin-top: 24px; margin-bottom: 16px;">Key Features</h3>
-            <ul>
-                <li>✅ <strong>Conversation Memory:</strong> Full context preservation across chat sessions</li>
-                <li>✅ <strong>Statistical Knowledge Integration:</strong> Real-time access to crime data</li>
-                <li>✅ <strong>Context-Aware Responses:</strong> Intelligent understanding of conversation flow</li>
-                <li>✅ <strong>Multi-Chat Management:</strong> Organize multiple conversation sessions</li>
-                <li>✅ <strong>Real-time Crime Data:</strong> Up-to-date statistics and analysis</li>
-                <li>✅ <strong>Police Siren Color Theme:</strong> Professional law enforcement aesthetics</li>
-                <li>✅ <strong>Text-to-Speech Features:</strong> Audio accessibility and hands-free operation</li>
-                <li>✅ <strong>Interactive Crime Maps:</strong> Visual hotspot analysis</li>
-                <li>✅ <strong>International Comparisons:</strong> Global context and trending</li>
-            </ul>
-            
-            <h3 style="color: #3b82f6; margin-top: 24px; margin-bottom: 16px;">Technical Specifications</h3>
-            <p>Built with modern web technologies including Streamlit, Google AI, interactive mapping, 
-            and real-time data processing capabilities. Designed for professional law enforcement use 
-            with emphasis on data accuracy, user experience, and operational efficiency.</p>
-        </div>
     </div>
     """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    **SECURO** is an enhanced comprehensive crime analysis system with police siren colors, 
+    statistical integration, conversation memory, and advanced AI capabilities built 
+    specifically for the Royal St. Christopher and Nevis Police Force.
+    """)
+    
+    st.markdown("### 🔥 Key Features")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        - ✅ **Conversation Memory:** Full context preservation across chat sessions
+        - ✅ **Statistical Knowledge Integration:** Real-time access to crime data  
+        - ✅ **Context-Aware Responses:** Intelligent understanding of conversation flow
+        - ✅ **Multi-Chat Management:** Organize multiple conversation sessions
+        - ✅ **Real-time Crime Data:** Up-to-date statistics and analysis
+        """)
+    
+    with col2:
+        st.markdown("""
+        - ✅ **Police Siren Color Theme:** Professional law enforcement aesthetics
+        - ✅ **Text-to-Speech Features:** Audio accessibility and hands-free operation
+        - ✅ **Interactive Crime Maps:** Visual hotspot analysis
+        - ✅ **International Comparisons:** Global context and trending
+        - ✅ **Advanced Analytics:** Charts, trends, and data visualization
+        """)
+    
+    st.markdown("### 🛠️ Technical Specifications")
+    
+    st.markdown("""
+    Built with modern web technologies including:
+    - **Streamlit** for the web interface
+    - **Google AI (Gemini)** for intelligent responses
+    - **Interactive mapping** with Folium
+    - **Real-time data processing** capabilities
+    - **Plotly charts** for data visualization
+    - **Text-to-Speech** integration
+    
+    Designed for professional law enforcement use with emphasis on data accuracy, 
+    user experience, and operational efficiency.
+    """)
+    
+    st.markdown("### 📊 Data Coverage")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        **Crime Statistics:**
+        - 2022-2025 annual data
+        - Quarterly reports
+        - Detection rates
+        - Crime type breakdowns
+        """)
+    
+    with col2:
+        st.markdown("""
+        **International Data:**
+        - MacroTrends comparisons
+        - Global homicide rates
+        - Regional analysis
+        - Historical trends
+        """)
+    
+    with col3:
+        st.markdown("""
+        **Geographic Data:**
+        - 13 hotspot locations
+        - Risk level mapping
+        - St. Kitts & Nevis coverage
+        - Interactive visualizations
+        """)
+    
+    # Quick access buttons
+    st.markdown("### 🚀 Quick Access")
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("💬 Try AI Assistant", key="about_ai", use_container_width=True):
+            st.session_state.main_view = 'ai-assistant'
+            st.rerun()
+    
+    with col2:
+        if st.button("🗺️ View Crime Map", key="about_map", use_container_width=True):
+            st.session_state.main_view = 'hotspots'
+            st.rerun()
+    
+    with col3:
+        if st.button("📊 See Analytics", key="about_analytics", use_container_width=True):
+            st.session_state.main_view = 'analytics'
+            st.rerun()
+    
+    with col4:
+        if st.button("🚨 Emergency Info", key="about_emergency", use_container_width=True):
+            st.session_state.main_view = 'emergency'
+            st.rerun()
 
 elif st.session_state.main_view == 'analytics':
     # Crime Analytics - Main Screen
