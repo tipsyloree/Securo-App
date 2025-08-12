@@ -927,9 +927,10 @@ st.markdown("""
     .message {
         display: flex;
         flex-direction: column;
-        max-width: 70%;
         animation: messageSlide 0.3s ease-out;
         margin-bottom: 8px;
+        width: auto;
+        max-width: 80%;
     }
     
     @keyframes messageSlide {
@@ -941,31 +942,41 @@ st.markdown("""
     .message.user {
         align-self: flex-end;
         margin-left: auto;
+        width: fit-content;
+        min-width: auto;
+        max-width: 70%;
     }
     
     .message.user .message-bubble {
         background: linear-gradient(135deg, #3b82f6, #ef4444);
         color: white;
         border-radius: 18px 18px 4px 18px;
-        padding: 12px 16px;
+        padding: 10px 14px;
         font-size: 14px;
         line-height: 1.4;
         word-wrap: break-word;
         white-space: pre-wrap;
         box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        display: inline-block;
+        width: auto;
+        min-width: 30px;
+        max-width: 100%;
     }
     
     /* Assistant messages - left side like Instagram */
     .message.assistant {
         align-self: flex-start;
         margin-right: auto;
+        width: fit-content;
+        min-width: auto;
+        max-width: 80%;
     }
     
     .message.assistant .message-bubble {
         background: linear-gradient(135deg, #374151, #4b5563);
         color: #f9fafb;
         border-radius: 18px 18px 18px 4px;
-        padding: 12px 16px;
+        padding: 10px 14px;
         font-size: 14px;
         line-height: 1.4;
         word-wrap: break-word;
@@ -973,6 +984,10 @@ st.markdown("""
         border: 1px solid #6b7280;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         position: relative;
+        display: inline-block;
+        width: auto;
+        min-width: 60px;
+        max-width: 100%;
     }
     
     .message-time {
