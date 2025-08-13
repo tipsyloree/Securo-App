@@ -705,7 +705,7 @@ def generate_enhanced_smart_response(user_input, conversation_history=None, lang
 
 # Initialize AI model
 try:
-    GOOGLE_API_KEY = "AIzaSyBYRyEfONMUHdYmeFDkUGSTP1rNEy_p2L0"
+    GOOGLE_API_KEY = "AIzaSyDBG8kD90sOjQRfxw3hNG_DjSBc4BOLKd8"
     genai.configure(api_key=GOOGLE_API_KEY)
     model = genai.GenerativeModel('gemini-1.5-flash')
     st.session_state.ai_enabled = True
