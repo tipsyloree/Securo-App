@@ -190,12 +190,22 @@ if 'main_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
+# FIXED AUTO-SPEECH STATE MANAGEMENT
+if 'auto_speech_enabled' not in st.session_state:
+    st.session_state.auto_speech_enabled = False
+
+if 'last_response_for_speech' not in st.session_state:
+    st.session_state.last_response_for_speech = None
+
 def text_to_speech_component(text, message_id="tts"):
     """Create a working text-to-speech component (simplified)"""
     return ""  # Not needed anymore - integrated into message bubbles
 
 def auto_speak_response(text):
-    """Auto-speak functionality for new responses - SIMPLIFIED VERSION"""
+    """Auto-speak functionality for new responses - ONLY WHEN ENABLED"""
+    if not st.session_state.get('auto_speech_enabled', False):
+        return ""  # Return empty if auto-speech is disabled
+    
     clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
     clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
     clean_text = clean_text.replace("•", "").replace("\n", " ").strip()
@@ -208,8 +218,12 @@ def auto_speak_response(text):
     
     auto_speak_html = f"""
     <script>
+    // Only speak if auto-speech is enabled and prevent overlapping
     setTimeout(function() {{
         if ('speechSynthesis' in window) {{
+            // Cancel any existing speech to prevent overlap
+            window.speechSynthesis.cancel();
+            
             const text = `{clean_text}`;
             if (text.length > 0) {{
                 const utterance = new SpeechSynthesisUtterance(text);
@@ -218,7 +232,7 @@ def auto_speak_response(text):
                 window.speechSynthesis.speak(utterance);
             }}
         }}
-    }}, 1000);
+    }}, 800);
     </script>
     """
     return auto_speak_html
@@ -1112,6 +1126,44 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
     }
     
+    /* ENHANCED AUTO-SPEECH TOGGLE BUTTON STYLING */
+    .auto-speech-toggle {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        border: none !important;
+        color: white !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+        position: relative !important;
+    }
+    
+    .auto-speech-toggle.enabled {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
+        animation: auto-speech-glow 2s ease-in-out infinite !important;
+    }
+    
+    .auto-speech-toggle.disabled {
+        background: linear-gradient(135deg, #6b7280, #4b5563) !important;
+        box-shadow: none !important;
+        animation: none !important;
+    }
+    
+    @keyframes auto-speech-glow {
+        0%, 100% { 
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4) !important;
+        }
+        50% { 
+            box-shadow: 0 0 25px rgba(16, 185, 129, 0.6) !important;
+        }
+    }
+    
+    .auto-speech-toggle:hover {
+        transform: translateY(-1px) !important;
+    }
+    
     /* Sidebar button styling - Police theme */
     .sidebar-nav-button {
         width: 100% !important;
@@ -1964,7 +2016,7 @@ elif st.session_state.main_view == 'emergency':
             """, unsafe_allow_html=True)
 
 elif st.session_state.main_view == 'ai-assistant':
-    # AI Assistant interface (existing code)
+    # AI Assistant interface with FIXED AUTO-SPEECH CONTROLS
     if not st.session_state.get('chat_active', False):
         # Chat welcome screen - compact and centered
         st.markdown("""
@@ -2016,14 +2068,14 @@ elif st.session_state.main_view == 'ai-assistant':
                         border: 1px solid #10b981; border-radius: 8px;">
                 <div style="color: #10b981; font-size: 14px; font-weight: 600;">TTS FEATURES AVAILABLE</div>
                 <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
-                    Text-to-Speech • Auto-Speak • Individual Message Speech
+                    Text-to-Speech • Manual Control • Individual Message Speech
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     else:
-        # Chat interface - compact design
+        # Chat interface - compact design with FIXED AUTO-SPEECH TOGGLE
         st.markdown("""
         <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
                     border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
@@ -2039,8 +2091,8 @@ elif st.session_state.main_view == 'ai-assistant':
         </div>
         """, unsafe_allow_html=True)
         
-        # Chat controls - compact
-        col1, col2 = st.columns([1, 1])
+        # Chat controls with AUTO-SPEECH TOGGLE - FIXED VERSION
+        col1, col2, col3 = st.columns([1, 1, 1])
         with col1:
             if st.button("New Chat", key="new_chat_btn", use_container_width=True):
                 create_new_chat_session()
@@ -2051,9 +2103,26 @@ elif st.session_state.main_view == 'ai-assistant':
                 st.session_state.chat_active = False
                 st.rerun()
         
+        with col3:
+            # AUTO-SPEECH TOGGLE BUTTON - PROPERLY IMPLEMENTED
+            auto_speech_enabled = st.session_state.get('auto_speech_enabled', False)
+            toggle_text = "🔊 Auto-Speech: ON" if auto_speech_enabled else "🔇 Auto-Speech: OFF"
+            toggle_class = "enabled" if auto_speech_enabled else "disabled"
+            
+            if st.button(toggle_text, key="auto_speech_toggle", use_container_width=True):
+                st.session_state.auto_speech_enabled = not st.session_state.auto_speech_enabled
+                if st.session_state.auto_speech_enabled:
+                    st.success("🔊 Auto-Speech Enabled - New AI responses will be spoken automatically")
+                else:
+                    st.info("🔇 Auto-Speech Disabled - Use individual message speaker buttons")
+                st.rerun()
+        
         # Current chat info - compact
         current_chat = get_current_chat()
-        st.info(f"**Current Session:** {current_chat['name']}")
+        
+        # Auto-speech status indicator
+        auto_speech_status = "🔊 ON" if st.session_state.get('auto_speech_enabled', False) else "🔇 OFF"
+        st.info(f"**Current Session:** {current_chat['name']} | **Auto-Speech:** {auto_speech_status}")
         
         # Display messages
         messages = current_chat['messages']
@@ -2105,22 +2174,26 @@ elif st.session_state.main_view == 'ai-assistant':
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Add the JavaScript for this specific button - SIMPLIFIED VERSION
+                # Add the JavaScript for this specific button - FIXED VERSION
                 st.components.v1.html(f"""
                 <script>
                 function speakText_{message_id}() {{
                     if ('speechSynthesis' in window) {{
+                        // Cancel any existing speech to prevent overlap
                         window.speechSynthesis.cancel();
                         
-                        let text = `{js_clean_content}`;
-                        text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
-                        
-                        if (text.length > 0) {{
-                            const utterance = new SpeechSynthesisUtterance(text);
-                            utterance.rate = 0.8;
-                            utterance.volume = 0.9;
-                            window.speechSynthesis.speak(utterance);
-                        }}
+                        // Wait a moment to ensure cancellation, then speak
+                        setTimeout(function() {{
+                            let text = `{js_clean_content}`;
+                            text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
+                            
+                            if (text.length > 0) {{
+                                const utterance = new SpeechSynthesisUtterance(text);
+                                utterance.rate = 0.8;
+                                utterance.volume = 0.9;
+                                window.speechSynthesis.speak(utterance);
+                            }}
+                        }}, 200);
                     }} else {{
                         alert('Text-to-speech not supported in this browser');
                     }}
@@ -2163,16 +2236,17 @@ elif st.session_state.main_view == 'ai-assistant':
                 if chart_type:
                     st.session_state.show_chart = chart_type
                 
-                # Store the response for auto-speak
-                st.session_state.last_response = response
+                # Store the response for auto-speak ONLY IF AUTO-SPEECH IS ENABLED
+                if st.session_state.get('auto_speech_enabled', False):
+                    st.session_state.last_response_for_speech = response
                 
                 st.rerun()
         
-        # Auto-speak the last response if there is one
-        if st.session_state.get('last_response'):
-            st.components.v1.html(auto_speak_response(st.session_state.last_response), height=50)
+        # FIXED AUTO-SPEAK - Only trigger if auto-speech is enabled AND there's a response
+        if st.session_state.get('auto_speech_enabled', False) and st.session_state.get('last_response_for_speech'):
+            st.components.v1.html(auto_speak_response(st.session_state.last_response_for_speech), height=50)
             # Clear the response to avoid re-speaking
-            st.session_state.last_response = None
+            st.session_state.last_response_for_speech = None
         
         # Display charts after the rerun (so they persist)
         if st.session_state.get('show_chart'):
@@ -2329,9 +2403,10 @@ else:
     </div>
     """, unsafe_allow_html=True)
 
-# Modern Status Bar - simplified
+# Modern Status Bar - simplified with AUTO-SPEECH STATUS
 current_time = get_stkitts_time()
 total_chats = len(st.session_state.chat_sessions)
+auto_speech_status = "Enabled" if st.session_state.get('auto_speech_enabled', False) else "Disabled"
 
 st.markdown(f"""
 <div class="status-bar">
@@ -2350,7 +2425,7 @@ st.markdown(f"""
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>TTS Available</span>
+            <span>Auto-Speech: {auto_speech_status}</span>
         </div>
         <div class="status-indicator">
             <div class="status-dot"></div>
@@ -2362,5 +2437,3 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-
