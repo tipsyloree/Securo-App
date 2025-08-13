@@ -9,7 +9,7 @@ requests
 folium
 streamlit_folium
 PyPDF2
-google-api-python-client g
+google-api-python-client
 google-auth-httplib2 
 google-auth-oauthlib
 
