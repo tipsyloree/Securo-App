@@ -2940,6 +2940,5 @@ st.markdown(f"""
         <span>🕐 {current_time} AST</span>
     </div>
 </div>
-st.markdown(f"""
 <div style="margin: 4px 0;">Type: {report['type']}</div>
 , unsafe_allow_html=True)
