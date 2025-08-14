@@ -2437,38 +2437,3 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Voice Player</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    audio {
-      width: 300px;
-    }
-  </style>
-</head>
-<body>
-  <h1>🎤 My Voice Recording</h1>
-  <audio controls>
-    <source src="audio.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-</body>
-</html>
-
-
-
