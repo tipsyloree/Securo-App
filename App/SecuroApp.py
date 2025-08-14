@@ -2437,14 +2437,6 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
-from __future__ import print_function
-import os.path
-import base64
-from email.mime.text import MIMEText
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from googleapiclient.discovery import build
 
 # If modifying these SCOPES, delete the token.json file.
 SCOPES = ['https://www.googleapis.com/auth/gmail.send']
