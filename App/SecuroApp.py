@@ -2941,7 +2941,5 @@ st.markdown(f"""
     </div>
 </div>
 st.markdown(f"""
-<div style="color: #d5e1; margin: 4px 0;">Type: {report['type']}</div>
+<div style="margin: 4px 0;">Type: {report['type']}</div>
 """, unsafe_allow_html=True)
-
-
