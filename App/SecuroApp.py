@@ -2942,4 +2942,4 @@ st.markdown(f"""
 </div>
 st.markdown(f"""
 <div style="margin: 4px 0;">Type: {report['type']}</div>
-""", unsafe_allow_html=True)
+, unsafe_allow_html=True)
