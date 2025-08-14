@@ -1,3 +1,4 @@
+
 import streamlit as st
 import time
 import datetime
@@ -2940,5 +2941,6 @@ st.markdown(f"""
         <span>🕐 {current_time} AST</span>
     </div>
 </div>
-<div style="margin: 4px 0;">Type: {report['type']}</div>
-, unsafe_allow_html=True)
+""", unsafe_allow_html=True)d5e1; margin: 4px 0;">Type: {report['type']}</div>
+                        <div style="color: #cb
+
