@@ -2942,9 +2942,3 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# If you need to add the report information, it should be in a separate st.markdown call:
-st.markdown(f"""
-<div style="color: #d5e1; margin: 4px 0;">Type: {report['type']}</div>
-<div style="color: #cb6ce6;">Status: {report['status']}</div>
-""", unsafe_allow_html=True)
-
