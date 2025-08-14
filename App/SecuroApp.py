@@ -2437,39 +2437,3 @@ st.markdown(f"""
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-# If modifying these SCOPES, delete the token.json file.
-SCOPES = ['https://www.googleapis.com/auth/gmail.send']
-
-def send_email(report_text):
-    """Sends the anonymous report to your Gmail."""
-    creds = None
-    # Load existing token if available
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If no valid credentials, get new ones
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-
-    service = build('gmail', 'v1', credentials=creds)
-    
-    message = MIMEText(report_text)
-    message['to'] = 'lawszahir@gmail.com'
-    message['subject'] = 'Anonymous Crime Report'
-    raw = base64.urlsafe_b64encode(message.as_bytes()).decode()
-    
-    send_message = service.users().messages().send(userId="me", body={'raw': raw}).execute()
-    print('Report sent:', send_message)
-
-# Example usage
-if __name__ == '__main__':
-    anonymous_report = input("Enter your anonymous crime report: ")
-    send_email(anonymous_report)
-
