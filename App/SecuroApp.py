@@ -316,16 +316,12 @@ if 'main_view' not in st.session_state:
 if 'chat_active' not in st.session_state:
     st.session_state.chat_active = False
 
-# NEW: Theme management
-if 'dark_mode' not in st.session_state:
-    st.session_state.dark_mode = True
-
 def text_to_speech_component(text, message_id="tts"):
-    """Create a working text-to-speech component with female voice"""
+    """Create a working text-to-speech component (simplified)"""
     return ""
 
 def auto_speak_response(text):
-    """Auto-speak functionality for new responses with enhanced female voice"""
+    """Auto-speak functionality for new responses - SIMPLIFIED VERSION"""
     clean_text = text.replace("🚔", "").replace("🚨", "").replace("📊", "").replace("💬", "").replace("🤖", "")
     clean_text = clean_text.replace("**", "").replace("###", "").replace("##", "").replace("#", "")
     clean_text = clean_text.replace("•", "").replace("\n", " ").strip()
@@ -342,30 +338,8 @@ def auto_speak_response(text):
             const text = `{clean_text}`;
             if (text.length > 0) {{
                 const utterance = new SpeechSynthesisUtterance(text);
-                
-                // Enhanced female voice settings
-                const voices = speechSynthesis.getVoices();
-                const femaleVoice = voices.find(voice => 
-                    voice.name.toLowerCase().includes('female') ||
-                    voice.name.toLowerCase().includes('woman') ||
-                    voice.name.toLowerCase().includes('zira') ||
-                    voice.name.toLowerCase().includes('helen') ||
-                    voice.name.toLowerCase().includes('samantha') ||
-                    voice.name.toLowerCase().includes('serena') ||
-                    voice.name.toLowerCase().includes('karen') ||
-                    voice.name.toLowerCase().includes('tessa') ||
-                    voice.name.toLowerCase().includes('catherine') ||
-                    voice.gender === 'female'
-                );
-                
-                if (femaleVoice) {{
-                    utterance.voice = femaleVoice;
-                }}
-                
-                utterance.rate = 0.85;
-                utterance.pitch = 1.1;
+                utterance.rate = 0.8;
                 utterance.volume = 0.9;
-                
                 window.speechSynthesis.speak(utterance);
             }}
         }}
@@ -560,13 +534,11 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
         fig.add_hline(y=global_avg, line_dash="dash", line_color="#888888",
                      annotation_text=f"Global Average: {global_avg}%")
         
-        theme = "plotly_dark" if st.session_state.dark_mode else "plotly_white"
-        
         fig.update_layout(
             title="St. Kitts & Nevis Homicide Rate Trends (MacroTrends Data)",
             xaxis_title="Year",
             yaxis_title="Homicides per 100,000 Population",
-            template=theme,
+            template="plotly_dark",
             height=500
         )
         
@@ -588,13 +560,11 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             textposition='auto'
         ))
         
-        theme = "plotly_dark" if st.session_state.dark_mode else "plotly_white"
-        
         fig.update_layout(
             title="Total Crime Trends 2022-2024 (RSCNPF Data)",
             xaxis_title="Year",
             yaxis_title="Total Crimes",
-            template=theme,
+            template="plotly_dark",
             height=500
         )
         
@@ -620,13 +590,11 @@ def create_macrotrends_comparison_charts(chart_type="homicide_trends"):
             textposition='auto'
         ))
         
-        theme = "plotly_dark" if st.session_state.dark_mode else "plotly_white"
-        
         fig.update_layout(
             title="International Context: Homicide Rates per 100K Population",
             xaxis_title="Comparison Points",
             yaxis_title="Rate per 100,000",
-            template=theme,
+            template="plotly_dark",
             height=500
         )
         
@@ -820,7 +788,7 @@ except Exception as e:
 
 # Page configuration
 st.set_page_config(
-    page_title="SECURO - Enhanced AI Crime Intelligence System",
+    page_title="SECURO - Modern AI Crime Intelligence System",
     page_icon="https://i.postimg.cc/QC6xqk1G/PH-PR-2.png",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -835,71 +803,33 @@ if 'chat_sessions' not in st.session_state:
 if 'current_chat_id' not in st.session_state:
     st.session_state.current_chat_id = None
 
-# Enhanced CSS with all requested improvements
-def get_theme_css():
-    if st.session_state.dark_mode:
-        return """
-        /* DARK MODE */
-        .stApp {
-            background: radial-gradient(circle at 20% 50%, #1a1a2e 0%, #16213e 25%, #0f172a 100%);
-            color: #ffffff;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-        
-        .main-bg {
-            background: radial-gradient(circle at 20% 50%, #1a1a2e 0%, #16213e 25%, #0f172a 100%);
-        }
-        
-        .sidebar-bg {
-            background: linear-gradient(180deg, #1e293b 0%, #334155 50%, #1e293b 100%);
-        }
-        """
-    else:
-        return """
-        /* LIGHT MODE */
-        .stApp {
-            background: radial-gradient(circle at 20% 50%, #f0f9ff 0%, #e0f2fe 25%, #f8fafc 100%);
-            color: #0f172a;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-        
-        .main-bg {
-            background: radial-gradient(circle at 20% 50%, #f0f9ff 0%, #e0f2fe 25%, #f8fafc 100%);
-        }
-        
-        .sidebar-bg {
-            background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 50%, #f1f5f9 100%);
-        }
-        """
-
-st.markdown(f"""
+# Modern React-like CSS styling (including new anonymous report styles)
+st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
     /* Hide Streamlit elements */
-    #MainMenu {{visibility: hidden;}}
-    footer {{visibility: hidden;}}
-    header {{visibility: hidden;}}
-    .stDeployButton {{display: none;}}
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    .stDeployButton {display: none;}
     
-    /* Hide "Press Enter to submit" text */
-    .stTextInput > div > div > div > div:last-child {{
-        display: none;
-    }}
+    /* Root styling - Modern React App Look */
+    .stApp {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        color: #ffffff;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
     
-    /* Root styling - Enhanced theme support */
-    {get_theme_css()}
-    
-    /* Enhanced Sidebar - Collapsible */
-    .css-1d391kg {{
-        {get_theme_css().split('.sidebar-bg')[1].split('}')[0] + '}' if '.sidebar-bg' in get_theme_css() else 'background: linear-gradient(180deg, #1e293b 0%, #334155 50%, #1e293b 100%);'}
+    /* Sidebar styling - Police siren theme */
+    .css-1d391kg {
+        background: linear-gradient(180deg, #1e293b 0%, #334155 50%, #1e293b 100%) !important;
         border-right: 2px solid transparent !important;
         background-clip: padding-box !important;
         position: relative !important;
-        transition: all 0.3s ease !important;
-    }}
+    }
     
-    .css-1d391kg::before {{
+    .css-1d391kg::before {
         content: '';
         position: absolute;
         top: 0;
@@ -909,36 +839,15 @@ st.markdown(f"""
         background: linear-gradient(180deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
         background-size: 100% 400%;
         animation: sidebar-border-pulse 3s ease-in-out infinite;
-    }}
+    }
     
-    @keyframes sidebar-border-pulse {{
-        0%, 100% {{ background-position: 0% 0%; }}
-        50% {{ background-position: 0% 100%; }}
-    }}
+    @keyframes sidebar-border-pulse {
+        0%, 100% { background-position: 0% 0%; }
+        50% { background-position: 0% 100%; }
+    }
     
-    /* Collapsible sidebar button */
-    .css-1544g2n {{
-        top: 10px !important;
-        left: 10px !important;
-        z-index: 999999 !important;
-        background: linear-gradient(45deg, #3b82f6, #ef4444) !important;
-        border-radius: 50% !important;
-        width: 40px !important;
-        height: 40px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-        transition: all 0.3s ease !important;
-    }}
-    
-    .css-1544g2n:hover {{
-        transform: scale(1.1) !important;
-        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4) !important;
-    }}
-    
-    /* Sidebar navigation header with glow effect */
-    .sidebar-nav-header {{
+    /* Sidebar navigation header */
+    .sidebar-nav-header {
         background: linear-gradient(45deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
         background-size: 400% 400%;
         animation: gradient-move 3s ease infinite;
@@ -949,57 +858,40 @@ st.markdown(f"""
         font-weight: 600;
         font-size: 16px;
         color: white;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 10px rgba(255, 255, 255, 0.3);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         letter-spacing: 1px;
         text-transform: uppercase;
-    }}
+    }
     
-    @keyframes gradient-move {{
-        0%, 100% {{ background-position: 0% 50%; }}
-        50% {{ background-position: 100% 50%; }}
-    }}
+    @keyframes gradient-move {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
     
-    /* Enhanced Glowing Text Effects */
-    .glow-text {{
-        animation: glow-pulse 2s ease-in-out infinite alternate;
-        text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
-    }}
-    
-    @keyframes glow-pulse {{
-        from {{
-            text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
-        }}
-        to {{
-            text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
-        }}
-    }}
-    
-    /* Main content area - Reduced spacing */
-    .main .block-container {{
-        padding: 0.5rem 1rem !important;
+    /* Main content area */
+    .main .block-container {
+        padding: 1rem 2rem;
         max-width: 100%;
-        margin-top: 0 !important;
-    }}
+    }
     
-    /* Header bar with enhanced glow */
-    .header-bar {{
+    /* Header bar */
+    .header-bar {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border-bottom: 1px solid #475569;
         padding: 12px 24px;
-        margin: -0.5rem -1rem 1rem -1rem;
+        margin: -1rem -2rem 2rem -2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
-    }}
+    }
     
-    .logo-section {{
+    .logo-section {
         display: flex;
         align-items: center;
         gap: 12px;
-    }}
+    }
     
-    .logo-icon {{
+    .logo-icon {
         width: 40px;
         height: 40px;
         background: linear-gradient(45deg, #3b82f6, #ef4444, #3b82f6, #ef4444);
@@ -1010,108 +902,294 @@ st.markdown(f"""
         justify-content: center;
         font-size: 20px;
         animation: logo-pulse 2s ease-in-out infinite;
-        box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-    }}
+    }
     
-    @keyframes logo-pulse {{
-        0%, 100% {{ 
+    @keyframes logo-pulse {
+        0%, 100% { 
             background-position: 0% 50%;
             box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
-            transform: scale(1);
-        }}
-        50% {{ 
+        }
+        50% { 
             background-position: 100% 50%;
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
-            transform: scale(1.05);
-        }}
-    }}
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+    }
     
-    .logo-text h1 {{
+    .logo-text h1 {
         color: #3b82f6 !important;
         font-size: 24px !important;
         font-weight: 700 !important;
         margin: 0 !important;
         letter-spacing: 1.5px;
-        animation: text-pulse-glow 3s ease-in-out infinite;
-        text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-    }}
+        animation: text-pulse 3s ease-in-out infinite;
+    }
     
-    @keyframes text-pulse-glow {{
-        0%, 100% {{ 
-            color: #3b82f6 !important; 
-            text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }}
-        50% {{ 
-            color: #ef4444 !important; 
-            text-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
-        }}
-    }}
+    @keyframes text-pulse {
+        0%, 100% { color: #3b82f6 !important; }
+        50% { color: #ef4444 !important; }
+    }
     
-    .logo-text p {{
+    .logo-text p {
         color: #94a3b8 !important;
         font-size: 12px !important;
         margin: 0 !important;
         font-weight: 500;
-    }}
+    }
     
-    .status-section {{
+    .status-section {
         display: flex;
         align-items: center;
         gap: 20px;
         font-size: 14px;
-    }}
+    }
     
-    .status-item {{
+    .status-item {
         display: flex;
         align-items: center;
         gap: 8px;
         color: #94a3b8;
-    }}
+    }
     
-    .status-dot {{
+    .status-dot {
         width: 8px;
         height: 8px;
         background: linear-gradient(45deg, #3b82f6, #ef4444);
         border-radius: 50%;
         animation: dot-pulse 1.5s infinite;
-        box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-    }}
+    }
     
-    @keyframes dot-pulse {{
-        0%, 100% {{ 
-            background: #3b82f6; 
-            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }}
-        50% {{ 
-            background: #ef4444; 
-            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-        }}
-    }}
+    @keyframes dot-pulse {
+        0%, 100% { background: #3b82f6; }
+        50% { background: #ef4444; }
+    }
     
-    /* Theme Toggle Button */
-    .theme-toggle {{
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        z-index: 999999;
-        background: linear-gradient(45deg, #3b82f6, #ef4444);
-        border: none;
-        color: white;
-        padding: 10px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 18px;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    /* Anonymous Report Styling */
+    .anonymous-report-container {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 1px solid #475569;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .anonymous-report-container::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #3b82f6, #ef4444, #3b82f6);
+        background-size: 200% 100%;
+        animation: gradient-slide 3s ease-in-out infinite;
+    }
+    
+    @keyframes gradient-slide {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    .anonymous-report-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+    
+    .anonymous-report-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(45deg, #ef4444, #3b82f6);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        animation: icon-pulse 2s infinite;
+    }
+    
+    @keyframes icon-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    .anonymous-report-title {
+        color: #ffffff !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
+    }
+    
+    .anonymous-report-subtitle {
+        color: #94a3b8 !important;
+        font-size: 14px !important;
+        margin: 4px 0 0 0 !important;
+    }
+    
+    .report-form-section {
+        background: rgba(0, 0, 0, 0.2);
+        border: 1px solid #475569;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+    }
+    
+    .form-section-title {
+        color: #3b82f6 !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        margin-bottom: 12px !important;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .priority-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .priority-low {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+        border: 1px solid #10b981;
+    }
+    
+    .priority-medium {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+        border: 1px solid #3b82f6;
+    }
+    
+    .priority-high {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid #ef4444;
+    }
+    
+    .priority-urgent {
+        background: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+        border: 1px solid #ef4444;
+        animation: urgent-pulse 1.5s infinite;
+    }
+    
+    @keyframes urgent-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    }
+    
+    .submit-report-button {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        border: none !important;
+        color: white !important;
+        padding: 12px 32px !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .submit-report-button:hover {
+        background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4) !important;
+    }
+    
+    .anonymity-notice {
+        background: rgba(16, 185, 129, 0.1);
+        border: 1px solid #10b981;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 20px 0;
+        color: #10b981;
+    }
+    
+    .anonymity-notice-title {
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .report-status-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-left: 4px solid #10b981;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
         transition: all 0.3s ease;
-    }}
+    }
     
-    .theme-toggle:hover {{
-        transform: scale(1.1);
-        box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-    }}
+    .report-status-card:hover {
+        border-left-color: #3b82f6;
+        transform: translateX(4px);
+    }
     
-    /* Chat interface styling - Reduced spacing */
-    .chat-container {{
+    .report-id {
+        color: #3b82f6 !important;
+        font-family: monospace;
+        font-weight: 600;
+    }
+    
+    .report-timestamp {
+        color: #94a3b8 !important;
+        font-size: 12px !important;
+    }
+    
+    .report-status {
+        color: #10b981 !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        font-size: 12px !important;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Main view navigation */
+    .main-nav {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+    
+    .nav-button {
+        background: transparent !important;
+        border: 1px solid #475569 !important;
+        color: #94a3b8 !important;
+        padding: 8px 16px !important;
+        border-radius: 8px !important;
+        font-size: 14px !important;
+        font-weight: 500 !important;
+        transition: all 0.2s ease !important;
+        cursor: pointer;
+    }
+    
+    .nav-button:hover {
+        background: rgba(59, 130, 246, 0.1) !important;
+        border-color: #3b82f6 !important;
+        color: #3b82f6 !important;
+    }
+    
+    .nav-button.active {
+        background: linear-gradient(45deg, rgba(59, 130, 246, 0.2), rgba(239, 68, 68, 0.2)) !important;
+        border-color: #3b82f6 !important;
+        color: #ffffff !important;
+    }
+    
+    /* Chat interface styling - Modern Instagram/WhatsApp style */
+    .chat-container {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border: 1px solid #475569;
         border-radius: 16px;
@@ -1119,106 +1197,103 @@ st.markdown(f"""
         height: auto;
         display: flex;
         flex-direction: column;
-        margin-bottom: 0.5rem;
-        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
-    }}
+    }
     
-    .chat-header {{
+    .chat-header {
         background: linear-gradient(135deg, #334155 0%, #475569 100%);
-        padding: 12px 16px;
+        padding: 16px 20px;
         border-bottom: 1px solid #475569;
         display: flex;
         justify-content: space-between;
         align-items: center;
-    }}
+    }
     
-    .chat-header h3 {{
+    .chat-header h3 {
         color: #ffffff !important;
         margin: 0 !important;
-        font-size: 16px !important;
+        font-size: 18px !important;
         font-weight: 600 !important;
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-    }}
+    }
     
-    .ai-status {{
+    .ai-status {
         color: #10b981 !important;
-        font-size: 12px !important;
+        font-size: 14px !important;
         display: flex;
         align-items: center;
-        gap: 6px;
-    }}
+        gap: 8px;
+    }
     
-    .chat-messages {{
+    .chat-messages {
         flex: 1;
         overflow-y: auto;
-        padding: 12px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 12px;
         min-height: 200px;
         max-height: 500px;
         background: #0f172a;
-    }}
+    }
     
-    .message {{
+    .message {
         display: flex;
         flex-direction: column;
         animation: messageSlide 0.3s ease-out;
-        margin-bottom: 4px;
+        margin-bottom: 8px;
         width: auto;
         max-width: 80%;
-    }}
+    }
     
-    @keyframes messageSlide {{
-        from {{ opacity: 0; transform: translateY(10px); }}
-        to {{ opacity: 1; transform: translateY(0); }}
-    }}
+    @keyframes messageSlide {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
     
-    /* User messages - right side */
-    .message.user {{
+    /* User messages - right side like Instagram */
+    .message.user {
         align-self: flex-end;
         margin-left: auto;
         width: fit-content;
         min-width: auto;
         max-width: 70%;
-    }}
+    }
     
-    .message.user .message-bubble {{
+    .message.user .message-bubble {
         background: linear-gradient(135deg, #3b82f6, #ef4444);
         color: white;
         border-radius: 18px 18px 4px 18px;
-        padding: 8px 12px;
+        padding: 10px 14px;
         font-size: 14px;
         line-height: 1.4;
         word-wrap: break-word;
         white-space: pre-wrap;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
         display: inline-block;
         width: auto;
         min-width: 30px;
         max-width: 100%;
-    }}
+    }
     
-    /* Assistant messages - left side */
-    .message.assistant {{
+    /* Assistant messages - left side like Instagram */
+    .message.assistant {
         align-self: flex-start;
         margin-right: auto;
         width: fit-content;
         min-width: auto;
         max-width: 80%;
-    }}
+    }
     
-    .message.assistant .message-bubble {{
+    .message.assistant .message-bubble {
         background: linear-gradient(135deg, #374151, #4b5563);
         color: #f9fafb;
         border-radius: 18px 18px 18px 4px;
-        padding: 8px 12px;
+        padding: 10px 14px;
         font-size: 14px;
         line-height: 1.4;
         word-wrap: break-word;
         white-space: pre-wrap;
         border: 1px solid #6b7280;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         position: relative;
         display: flex;
         justify-content: space-between;
@@ -1226,9 +1301,9 @@ st.markdown(f"""
         width: auto;
         min-width: 60px;
         max-width: 100%;
-    }}
+    }
     
-    .message-content {{
+    .message-content {
         flex: 1;
         margin-right: 8px;
         text-align: left;
@@ -1237,82 +1312,70 @@ st.markdown(f"""
         white-space: pre-wrap;
         text-indent: 0;
         padding-left: 0;
-    }}
+    }
     
-    .message-time {{
+    .message-time {
         font-size: 10px;
         color: #64748b;
-        margin-top: 2px;
+        margin-top: 4px;
         font-weight: 400;
-    }}
+    }
     
-    .message.user .message-time {{
+    .message.user .message-time {
         text-align: right;
         color: rgba(255, 255, 255, 0.7);
-    }}
+    }
     
-    .message.assistant .message-time {{
+    .message.assistant .message-time {
         text-align: left;
         color: #9ca3af;
-    }}
+    }
     
-    /* Enhanced Speaker button with female voice indication */
-    .speak-button {{
-        background: linear-gradient(45deg, #10b981, #059669) !important;
+    /* Speaker button styling - positioned in right corner */
+    .speak-button {
+        background: none !important;
         border: none !important;
-        padding: 4px 6px !important;
+        padding: 2px !important;
         cursor: pointer !important;
-        font-size: 12px !important;
-        opacity: 0.8 !important;
-        transition: all 0.2s ease !important;
+        font-size: 14px !important;
+        opacity: 0.6 !important;
+        transition: opacity 0.2s ease !important;
         border-radius: 4px !important;
         position: relative !important;
         top: -2px !important;
         flex-shrink: 0 !important;
         margin-left: 8px !important;
         align-self: flex-start !important;
-        color: white !important;
-        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3) !important;
-    }}
+    }
     
-    .speak-button:hover {{
+    .speak-button:hover {
         opacity: 1 !important;
-        background: linear-gradient(45deg, #059669, #047857) !important;
-        transform: scale(1.05) !important;
-        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4) !important;
-    }}
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
     
-    .speak-button::after {{
-        content: ' ♀️';
-        font-size: 8px;
-        opacity: 0.7;
-    }}
-    
-    .chat-input-area {{
+    .chat-input-area {
         background: linear-gradient(135deg, #334155 0%, #475569 100%);
         border-top: 1px solid #475569;
-        padding: 12px 16px;
-    }}
+        padding: 16px 20px;
+    }
     
     /* Input styling */
-    .stTextInput input {{
+    .stTextInput input {
         background: rgba(0, 0, 0, 0.4) !important;
         border: 1px solid #475569 !important;
         border-radius: 8px !important;
         color: #ffffff !important;
-        padding: 10px 14px !important;
+        padding: 12px 16px !important;
         font-size: 14px !important;
-        transition: all 0.2s ease !important;
-    }}
+    }
     
-    .stTextInput input:focus {{
+    .stTextInput input:focus {
         border-color: #3b82f6 !important;
-        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 0 10px rgba(59, 130, 246, 0.2) !important;
-        background: rgba(0, 0, 0, 0.6) !important;
-    }}
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+    }
     
     /* Button styling */
-    .stButton > button {{
+    .stButton > button {
         background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
         border: none !important;
         color: white !important;
@@ -1321,157 +1384,383 @@ st.markdown(f"""
         font-size: 14px !important;
         font-weight: 500 !important;
         transition: all 0.2s ease !important;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
-    }}
+    }
     
-    .stButton > button:hover {{
+    .stButton > button:hover {
         transform: translateY(-1px) !important;
-        box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4) !important;
-    }}
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    }
     
-    /* Chart container - Positioned above text input */
-    .chart-container {{
-        margin-bottom: 1rem !important;
-        padding: 1rem;
+    /* Sidebar button styling - Police theme */
+    .sidebar-nav-button {
+        width: 100% !important;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)) !important;
+        border: 1px solid rgba(59, 130, 246, 0.3) !important;
+        color: #e2e8f0 !important;
+        padding: 12px 16px !important;
+        border-radius: 8px !important;
+        text-align: left !important;
+        margin-bottom: 8px !important;
+        transition: all 0.3s ease !important;
+        font-weight: 500 !important;
+        backdrop-filter: blur(5px) !important;
+    }
+    
+    .sidebar-nav-button:hover {
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(239, 68, 68, 0.2)) !important;
+        border-color: #3b82f6 !important;
+        color: #ffffff !important;
+        transform: translateX(4px) !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2) !important;
+    }
+    
+    .sidebar-nav-button.active {
+        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
+        border-color: transparent !important;
+        color: #ffffff !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    /* Card styling */
+    .info-card {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 1px solid #475569;
         border-radius: 12px;
-        border: 1px solid #475569;
-        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
-    }}
+        padding: 20px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
+    }
     
-    /* Compact spacing for all elements */
-    .main-content-section {{
+    .info-card:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        transform: translateY(-2px);
+    }
+    
+    .info-card h3 {
+        color: #3b82f6 !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .info-card p {
+        color: #cbd5e1 !important;
+        font-size: 14px !important;
+        line-height: 1.5 !important;
+        margin: 0 !important;
+    }
+    
+    /* Emergency card styling */
+    .emergency-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 1px solid #ef4444;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .emergency-card:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    }
+    
+    .emergency-number {
+        color: #ef4444 !important;
+        font-size: 18px !important;
+        font-weight: bold !important;
+        margin: 8px 0 !important;
+    }
+    
+    /* Metrics styling - compact */
+    .metric-card {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border: 1px solid #475569;
-        border-radius: 16px;
+        border-radius: 8px;
         padding: 16px;
-        margin-bottom: 1rem;
-        box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);
-    }}
+        text-align: center;
+    }
     
-    .section-header {{
+    .metric-value {
         color: #3b82f6 !important;
-        font-size: 20px !important;
+        font-size: 24px !important;
         font-weight: 700 !important;
-        margin-bottom: 12px !important;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-    }}
+        margin-bottom: 4px !important;
+    }
     
-    .section-content {{
-        color: #cbd5e1 !important;
-        line-height: 1.6 !important;
-        margin: 0 !important;
-    }}
+    .metric-label {
+        color: #94a3b8 !important;
+        font-size: 12px !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
     
-    /* Reduce all margins and padding */
-    .stMarkdown {{
-        margin-bottom: 0.5rem !important;
-    }}
+    /* Analytics cards */
+    .analytics-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-left: 4px solid #3b82f6;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
     
-    .stMarkdown > div {{
-        margin-bottom: 0.25rem !important;
-    }}
+    .analytics-card.high-risk {
+        border-left-color: #ef4444;
+    }
     
-    /* Enhanced background effects */
-    .stApp::before {{
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: 
-            radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 20%, rgba(239, 68, 68, 0.1) 0%, transparent 50%);
-        z-index: -1;
-        animation: bg-float 20s ease-in-out infinite;
-    }}
+    .analytics-card.medium-risk {
+        border-left-color: #3b82f6;
+    }
     
-    @keyframes bg-float {{
-        0%, 100% {{ opacity: 0.5; }}
-        50% {{ opacity: 0.8; }}
-    }}
+    .analytics-card.low-risk {
+        border-left-color: #2563eb;
+    }
     
-    /* Status bar with reduced height */
-    .status-bar {{
+    .analytics-title {
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        margin-bottom: 8px !important;
+    }
+    
+    .analytics-value {
+        color: #94a3b8 !important;
+        font-size: 12px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    /* Status bar */
+    .status-bar {
         background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
         border-top: 1px solid #475569;
-        padding: 8px 16px;
-        margin: 1rem -1rem -0.5rem -1rem;
+        padding: 12px 24px;
+        margin: 2rem -2rem -1rem -2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 11px;
-        box-shadow: 0 -4px 20px rgba(59, 130, 246, 0.1);
-    }}
+        font-size: 12px;
+    }
     
-    .status-indicators {{
+    .status-indicators {
         display: flex;
-        gap: 15px;
-    }}
+        gap: 20px;
+    }
     
-    .status-indicator {{
+    .status-indicator {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         color: #94a3b8;
-    }}
+    }
     
-    .status-indicator.active {{
+    .status-indicator.active {
         color: #3b82f6;
-        text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
-    }}
-    
-    /* Custom scrollbar */
-    ::-webkit-scrollbar {{
-        width: 6px;
-    }}
-    
-    ::-webkit-scrollbar-track {{
-        background: #1e293b;
-    }}
-    
-    ::-webkit-scrollbar-thumb {{
-        background: linear-gradient(180deg, #3b82f6, #ef4444);
-        border-radius: 3px;
-    }}
-    
-    ::-webkit-scrollbar-thumb:hover {{
-        background: linear-gradient(180deg, #2563eb, #dc2626);
-    }}
+    }
     
     /* Responsive design */
-    @media (max-width: 768px) {{
-        .header-bar {{
+    @media (max-width: 768px) {
+        .header-bar {
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .status-section {
             flex-direction: column;
             gap: 8px;
-            padding: 8px 16px;
-        }}
+        }
         
-        .status-section {{
+        .main-nav {
             flex-direction: column;
-            gap: 4px;
-        }}
+        }
         
-        .chat-container {{
-            height: 400px;
-        }}
-        
-        .main .block-container {{
-            padding: 0.25rem 0.5rem !important;
-        }}
-    }}
+        .chat-container {
+            height: 500px;
+        }
+    }
+    
+    /* Voice controls */
+    .voice-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 12px;
+        background: rgba(59, 130, 246, 0.1);
+        border: 1px solid rgba(59, 130, 246, 0.3);
+        border-radius: 8px;
+        margin-bottom: 16px;
+    }
+    
+    .voice-button {
+        background: linear-gradient(135deg, #3b82f6, #ef4444) !important;
+        border: none !important;
+        color: white !important;
+        padding: 8px 12px !important;
+        border-radius: 6px !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        min-width: 80px !important;
+    }
+    
+    .voice-button:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+    }
+    
+    .voice-button.active {
+        background: linear-gradient(135deg, #10b981, #059669) !important;
+        animation: voice-pulse 1.5s infinite !important;
+    }
+    
+    @keyframes voice-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+        50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    }
+    
+    .call-securo-button {
+        background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+        border: none !important;
+        color: white !important;
+        padding: 12px 24px !important;
+        border-radius: 8px !important;
+        font-size: 16px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+        animation: call-button-pulse 2s infinite !important;
+    }
+    
+    @keyframes call-button-pulse {
+        0%, 100% { 
+            background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+        }
+        50% { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb) !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+        }
+    }
+    
+    .call-securo-button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4) !important;
+    }
+    
+    .voice-status {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #94a3b8;
+    }
+    
+    .voice-indicator {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #10b981;
+        animation: voice-blink 1s infinite;
+    }
+    
+    @keyframes voice-blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0.3; }
+    }
+    
+    .call-interface {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 2px solid #ef4444;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        margin: 20px 0;
+        animation: call-glow 2s ease-in-out infinite;
+    }
+    
+    @keyframes call-glow {
+        0%, 100% { 
+            border-color: #ef4444;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+        50% { 
+            border-color: #3b82f6;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+    }
+    
+    .call-avatar {
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: linear-gradient(45deg, #3b82f6, #ef4444);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        animation: call-avatar-pulse 1.5s infinite;
+    }
+    
+    @keyframes call-avatar-pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    /* Main content sections styling */
+    .main-content-section {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 1px solid #475569;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+    }
+    
+    .section-header {
+        color: #3b82f6 !important;
+        font-size: 24px !important;
+        font-weight: 700 !important;
+        margin-bottom: 16px !important;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .section-content {
+        color: #cbd5e1 !important;
+        line-height: 1.6 !important;
+    }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: #1e293b;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: #475569;
+        border-radius: 3px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+    }
+    
+    /* Text colors */
+    h1, h2, h3, h4, h5, h6 {
+        color: #ffffff !important;
+    }
+    
+    p, span, div, li {
+        color: #cbd5e1 !important;
+    }
 </style>
 """, unsafe_allow_html=True)
-
-# Theme Toggle Button
-theme_icon = "☀️" if st.session_state.dark_mode else "🌙"
-if st.button(theme_icon, key="theme_toggle", help="Toggle Dark/Light Mode"):
-    st.session_state.dark_mode = not st.session_state.dark_mode
-    st.rerun()
 
 # Modern Header Bar
 current_time = get_stkitts_time()
@@ -1482,8 +1771,8 @@ st.markdown(f"""
     <div class="logo-section">
         <div class="logo-icon">🚔</div>
         <div class="logo-text">
-            <h1 class="glow-text">SECURO</h1>
-            <p>Enhanced AI Crime Intelligence System</p>
+            <h1>SECURO</h1>
+            <p>Modern AI Crime Intelligence System</p>
         </div>
     </div>
     <div class="status-section">
@@ -1502,7 +1791,7 @@ st.markdown(f"""
 with st.sidebar:
     # Animated navigation header
     st.markdown("""
-    <div class="sidebar-nav-header glow-text">
+    <div class="sidebar-nav-header">
          Navigation
     </div>
     """, unsafe_allow_html=True)
@@ -1532,6 +1821,7 @@ with st.sidebar:
         st.session_state.main_view = 'emergency'
         st.rerun()
     
+    # NEW: Anonymous Report button
     if st.button("📝 Anonymous Report", key="nav_anonymous", help="Submit Anonymous Crime Report", use_container_width=True):
         st.session_state.main_view = 'anonymous_report'
         st.rerun()
@@ -1544,19 +1834,25 @@ with st.sidebar:
             st.session_state.main_view = 'ai-assistant'
             st.rerun()
     
+    # Quick access to Crime Map from any view
+    if st.session_state.main_view != 'hotspots':
+        if st.button("🗺️ View Crime Map", key="quick_map_access", use_container_width=True):
+            st.session_state.main_view = 'hotspots'
+            st.rerun()
+    
     st.markdown("---")
     
     # AI status section
     if st.session_state.get('ai_enabled', False):
         st.success("🟢 Enhanced AI Online")
         st.markdown("""
-        **Capabilities:**
+        Capabilities:
         - 📊 Statistical knowledge integration
-        - 💭 Conversation memory  
+        - 💭 Conversation memory
         - 🧠 Context-aware responses
         - 📈 Crime data analysis
         - 🎯 Professional assistance
-        - 🔊 Enhanced Female Voice TTS
+        - 🔊 Text-to-Speech features
         """)
     else:
         st.error("🔴 AI Offline")
@@ -1564,740 +1860,44 @@ with st.sidebar:
     
     st.markdown("---")
     
-    # Enhanced quick stats
-    st.markdown(f"""
+    # Enhanced quick stats with police theme
+    st.markdown("""
     <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(239, 68, 68, 0.1)); 
                 border: 1px solid rgba(239, 68, 68, 0.3); border-radius: 8px; padding: 12px;">
-        <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; text-align: center; text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);">
+        <div style="color: #ef4444; font-weight: 600; margin-bottom: 8px; text-align: center;">
             📊 QUICK STATS
         </div>
         <div style="color: #e2e8f0; font-size: 14px; line-height: 1.6;">
-            <div>🟢 Active Chats: <strong>{len(st.session_state.chat_sessions)}</strong></div>
+            <div>🟢 Active Chats: <strong>{}</strong></div>
             <div>🟢 Database: <strong>Loaded</strong></div>
             <div>🟢 API Status: <strong>Online</strong></div>
-            <div>🟢 Reports: <strong>{len(st.session_state.get('submitted_reports', []))}</strong></div>
-            <div>🟢 Theme: <strong>{'Dark' if st.session_state.dark_mode else 'Light'}</strong></div>
+            <div>🟢 Reports: <strong>{}</strong></div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+    """.format(
+        len(st.session_state.chat_sessions),
+        len(st.session_state.get('submitted_reports', []))
+    ), unsafe_allow_html=True)
 
-# Main Content Area with all the enhanced features
-if st.session_state.main_view == 'ai-assistant':
-    # AI Assistant interface with enhanced features
-    if not st.session_state.get('chat_active', False):
-        # Chat welcome screen - enhanced with glow effects
-        st.markdown("""
-        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; 
-                    min-height: 400px; text-align: center; padding: 40px 20px; 
-                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border: 1px solid #475569; border-radius: 16px; margin: 20px 0;
-                    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);">
-            <div style="width: 100px; height: 100px; margin-bottom: 24px; border-radius: 50%; 
-                       background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
-                       align-items: center; justify-content: center; font-size: 2.5rem; 
-                       animation: logo-pulse 2s infinite; box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);">
-                🚔
-            </div>
-            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700; 
-                       text-shadow: 0 0 20px rgba(59, 130, 246, 0.7);" class="glow-text">SECURO AI</h1>
-            <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600; 
-                      text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">Enhanced AI with Female Voice</p>
-            <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
-                Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
-                international data, conversation memory, and premium female voice synthesis! 
-            </p>
-            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
-                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
-                            padding: 12px 20px; color: #3b82f6; font-size: 14px; font-weight: 500;
-                            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);">
-                    📊 Statistical Knowledge
-                </div>
-                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; 
-                            padding: 12px 20px; color: #ef4444; font-size: 14px; font-weight: 500;
-                            box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);">
-                    💭 Conversation Memory
-                </div>
-                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
-                            padding: 12px 20px; color: #10b981; font-size: 14px; font-weight: 500;
-                            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);">
-                    🔊 Premium Female Voice
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Center the start button
-        col1, col2, col3 = st.columns([1, 2, 1])
-        with col2:
-            if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
-                create_new_chat_session()
-                st.session_state.chat_active = True
-                st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
-                st.rerun()
-    
-    else:
-        # Enhanced chat interface
-        st.markdown("""
-        <div class="chat-container">
-            <div class="chat-header">
-                <div>
-                    <h3 class="glow-text">🤖 SECURO AI</h3>
-                    <div class="ai-status">
-                        <span style="color: #10b981;">●</span>
-                        Online with Statistical Knowledge & Enhanced Female Voice TTS
-                    </div>
-                </div>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Chat controls - compact
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
-                create_new_chat_session()
-                st.rerun()
-        
-        with col2:
-            if st.button("← Welcome", key="back_welcome", use_container_width=True):
-                st.session_state.chat_active = False
-                st.rerun()
-        
-        # Current chat info - compact
-        current_chat = get_current_chat()
-        st.info(f"**📝 Current Session:** {current_chat['name']}")
-        
-        # Display charts ABOVE the chat messages if requested
-        if st.session_state.get('show_chart'):
-            st.markdown('<div class="chart-container">', unsafe_allow_html=True)
-            st.markdown("### 📊 Requested Chart")
-            chart_type = st.session_state.show_chart
-            
-            if chart_type == "international":
-                # Show international comparison charts
-                col1, col2, col3 = st.columns(3)
-                
-                with col1:
-                    fig = create_macrotrends_comparison_charts("homicide_trends")
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-                
-                with col2:
-                    fig = create_macrotrends_comparison_charts("international_context")
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-                
-                with col3:
-                    fig = create_macrotrends_comparison_charts("recent_crime_totals")
-                    if fig:
-                        st.plotly_chart(fig, use_container_width=True)
-            
-            elif chart_type == "trends":
-                # Show crime trends
-                st_kitts_data = []
-                periods = []
-                
-                # Extract St. Kitts data from the database
-                for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
-                    if period_key in HISTORICAL_CRIME_DATABASE:
-                        period_data = HISTORICAL_CRIME_DATABASE[period_key]
-                        periods.append(period_data["period"])
-                        st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 0)
-                        st_kitts_data.append(st_kitts_crimes)
-                
-                # Create bar chart for St. Kitts crime trends
-                fig = go.Figure()
-                fig.add_trace(go.Bar(
-                    x=periods,
-                    y=st_kitts_data,
-                    marker_color='#3b82f6',
-                    text=[f"{crimes}" for crimes in st_kitts_data],
-                    textposition='auto',
-                    name='St. Kitts Crimes'
-                ))
-                
-                theme = "plotly_dark" if st.session_state.dark_mode else "plotly_white"
-                
-                fig.update_layout(
-                    title="St. Kitts Crime Trends - Recent Years",
-                    xaxis_title="Time Period",
-                    yaxis_title="Number of Crimes",
-                    template=theme,
-                    height=500,
-                    showlegend=False
-                )
-                
-                st.plotly_chart(fig, use_container_width=True)
-            
-            elif chart_type == "homicide":
-                # Show homicide trends
-                fig = create_macrotrends_comparison_charts("homicide_trends")
-                if fig:
-                    st.plotly_chart(fig, use_container_width=True)
-            
-            # Add button to clear the chart
-            if st.button("❌ Clear Chart", key="clear_chart"):
-                st.session_state.show_chart = None
-                st.rerun()
-            
-            st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Display messages
-        messages = current_chat['messages']
-        
-        # Initialize with welcome message if no messages
-        if not messages:
-            welcome_msg = {
-                "role": "assistant",
-                "content": "🚔 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, conversation context, and premium female voice synthesis. Ask me about:\n\n• 📊 Local crime trends and detection rates\n• 🌍 International comparisons and global context\n• 📈 Historical data analysis with charts\n• 🔍 Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
-                "timestamp": get_stkitts_time()
-            }
-            messages.append(welcome_msg)
-            current_chat['messages'] = messages
-        
-        # Messages container
-        for i, message in enumerate(messages):
-            if message["role"] == "user":
-                st.markdown(f"""
-                <div class="message user">
-                    <div class="message-bubble">{message["content"]}</div>
-                    <div class="message-time">You • {message["timestamp"]} AST</div>
-                </div>
-                """, unsafe_allow_html=True)
-            else:
-                clean_content = str(message["content"]).strip()
-                clean_content = re.sub(r'<[^>]+>', '', clean_content)
-                clean_content = clean_content.replace('```', '')
-                clean_content = re.sub(r'  +', ' ', clean_content)
-                clean_content = re.sub(r'\n +•', '\n•', clean_content)
-                clean_content = re.sub(r'• +', '• ', clean_content)
-                
-                # Clean content for JavaScript (enhanced for female voice)
-                js_clean_content = clean_content.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'")
-                
-                # Create unique message ID for voice
-                message_id = f"msg_{i}"
-                
-                # Create the assistant message with enhanced speaker button
-                st.markdown(f"""
-                <div class="message assistant">
-                    <div class="message-bubble">
-                        <div class="message-content">{clean_content}</div>
-                        <span onclick="speakText_{message_id}()" class="speak-button" title="Click to hear with premium female voice">🔊</span>
-                    </div>
-                    <div class="message-time">
-                        SECURO • {message["timestamp"]} AST
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Add the enhanced JavaScript for female voice
-                st.components.v1.html(f"""
-                <script>
-                function speakText_{message_id}() {{
-                    if ('speechSynthesis' in window) {{
-                        window.speechSynthesis.cancel();
-                        
-                        let text = `{js_clean_content}`;
-                        text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
-                        
-                        if (text.length > 0) {{
-                            const utterance = new SpeechSynthesisUtterance(text);
-                            
-                            // Enhanced female voice selection
-                            const voices = speechSynthesis.getVoices();
-                            const femaleVoice = voices.find(voice => 
-                                voice.name.toLowerCase().includes('female') ||
-                                voice.name.toLowerCase().includes('woman') ||
-                                voice.name.toLowerCase().includes('zira') ||
-                                voice.name.toLowerCase().includes('helen') ||
-                                voice.name.toLowerCase().includes('samantha') ||
-                                voice.name.toLowerCase().includes('serena') ||
-                                voice.name.toLowerCase().includes('karen') ||
-                                voice.name.toLowerCase().includes('tessa') ||
-                                voice.name.toLowerCase().includes('catherine') ||
-                                voice.name.toLowerCase().includes('susan') ||
-                                voice.name.toLowerCase().includes('alex') ||
-                                voice.gender === 'female' ||
-                                voice.name.includes('Google UK English Female') ||
-                                voice.name.includes('Microsoft Zira') ||
-                                voice.name.includes('Microsoft Helen') ||
-                                voice.name.includes('Google US English')
-                            );
-                            
-                            if (femaleVoice) {{
-                                utterance.voice = femaleVoice;
-                            }}
-                            
-                            // Enhanced voice settings for more natural female speech
-                            utterance.rate = 0.85;
-                            utterance.pitch = 1.15;
-                            utterance.volume = 0.9;
-                            
-                            window.speechSynthesis.speak(utterance);
-                        }}
-                    }} else {{
-                        alert('Text-to-speech not supported in this browser');
-                    }}
-                }}
-                
-                window.speakText_{message_id} = speakText_{message_id};
-                </script>
-                """, height=0)
-        
-        # Chat input - below messages
-        st.markdown("---")
-        with st.form("chat_form", clear_on_submit=True):
-            user_input = st.text_input(
-                "Message Enhanced AI Assistant:",
-                placeholder="Type your question about crime statistics, trends, or analysis...",
-                label_visibility="collapsed",
-                key="chat_input"
-            )
-            
-            submitted = st.form_submit_button("📨 Send", type="primary")
-            
-            if submitted and user_input and user_input.strip():
-                current_time = get_stkitts_time()
-                
-                # Add user message to current chat
-                add_message_to_chat("user", user_input)
-                
-                # Generate response with conversation history and statistics
-                with st.spinner("🔄 Generating enhanced AI response with statistical knowledge..."):
-                    response, chart_type = generate_enhanced_smart_response(
-                        user_input, 
-                        conversation_history=current_chat['messages'],
-                        language='en'
-                    )
-                
-                # Add assistant response to current chat
-                add_message_to_chat("assistant", response)
-                
-                # Store chart type in session state to persist after rerun
-                if chart_type:
-                    st.session_state.show_chart = chart_type
-                
-                # Store the response for auto-speak
-                st.session_state.last_response = response
-                
-                st.rerun()
-        
-        # Auto-speak the last response if there is one
-        if st.session_state.get('last_response'):
-            st.components.v1.html(auto_speak_response(st.session_state.last_response), height=50)
-            # Clear the response to avoid re-speaking
-            st.session_state.last_response = None
-
-# [Rest of the views remain the same as in the original code - home, about, analytics, history, emergency, anonymous_report, hotspots]
-
-elif st.session_state.main_view == 'home':
-    # System Overview - Main Screen
+# Main Content Area - Now handles all the different views including Anonymous Report
+if st.session_state.main_view == 'anonymous_report':
+    # Anonymous Report System - Main Screen
     st.markdown("""
-    <div class="main-content-section">
-        <h2 class="section-header glow-text">🏠 System Overview</h2>
-        <div class="section-content">
-            <p>Welcome to SECURO - the enhanced comprehensive crime analysis system with dynamic themes, 
-            premium female voice synthesis, statistical integration, conversation memory, advanced AI capabilities, 
-            and anonymous reporting built specifically for the Royal St. Christopher and Nevis Police Force.</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Feature cards in main area
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        st.markdown("""
-        <div class="info-card">
-            <h3 class="glow-text">🤖 Enhanced AI</h3>
-            <p>Statistical knowledge, memory, context-aware responses with premium female voice synthesis.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="info-card">
-            <h3 class="glow-text">📊 Real-Time Statistics</h3>
-            <p>Integrated crime data and international comparisons from MacroTrends with dynamic charts.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div class="info-card">
-            <h3 class="glow-text">🎨 Dynamic Themes</h3>
-            <p>Beautiful dark/light mode switching with enhanced visual effects and glow animations.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col4:
-        st.markdown("""
-        <div class="info-card">
-            <h3 class="glow-text">🔊 Premium Voice</h3>
-            <p>Enhanced female text-to-speech with natural voice synthesis and audio controls.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Quick access buttons
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("🤖 Start Chat", key="quick_ai", use_container_width=True):
-            st.session_state.main_view = 'ai-assistant'
-            st.rerun()
-    
-    with col2:
-        if st.button("🗺️ View Crime Map", key="quick_map", use_container_width=True):
-            st.session_state.main_view = 'hotspots'
-            st.rerun()
-    
-    with col3:
-        if st.button("📊 View Analytics", key="quick_analytics", use_container_width=True):
-            st.session_state.main_view = 'analytics'
-            st.rerun()
-    
-    with col4:
-        if st.button("📝 Anonymous Report", key="quick_report", use_container_width=True):
-            st.session_state.main_view = 'anonymous_report'
-            st.rerun()
-
-elif st.session_state.main_view == 'about':
-    # About SECURO - Main Screen
-    st.markdown("""
-    <div class="main-content-section">
-        <h2 class="section-header glow-text">ℹ️ About SECURO</h2>
-        <div class="section-content">
-            <p><strong>SECURO</strong> is an enhanced comprehensive crime analysis system with dynamic themes, 
-            premium female voice synthesis, statistical integration, conversation memory, advanced AI capabilities, 
-            and secure anonymous reporting built specifically for the Royal St. Christopher and Nevis Police Force.</p>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("### 🌟 Key Features")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        st.markdown("""
-        - **🤖 Conversation Memory:** Full context preservation across chat sessions
-        - **📊 Statistical Knowledge Integration:** Real-time access to crime data  
-        - **🧠 Context-Aware Responses:** Intelligent understanding of conversation flow
-        - **💬 Multi-Chat Management:** Organize multiple conversation sessions
-        - **📈 Real-time Crime Data:** Up-to-date statistics and analysis
-        - **📝 Anonymous Reporting:** Secure crime reporting system
-        """)
-    
-    with col2:
-        st.markdown("""
-        - **🎨 Dynamic Theme System:** Beautiful dark/light mode with glow effects
-        - **🔊 Premium Female Voice:** Enhanced text-to-speech with natural synthesis
-        - **🗺️ Interactive Crime Maps:** Visual hotspot analysis with satellite view
-        - **🌍 International Comparisons:** Global context and trending analysis
-        - **📊 Advanced Analytics:** Dynamic charts with theme-aware visualization
-        - **🔒 Privacy Protection:** Anonymous reporting with full confidentiality
-        """)
-    
-    # Quick access buttons
-    st.markdown("### 🚀 Quick Access")
-    col1, col2, col3, col4 = st.columns(4)
-    
-    with col1:
-        if st.button("🤖 SECURO AI", key="about_ai", use_container_width=True):
-            st.session_state.main_view = 'ai-assistant'
-            st.rerun()
-    
-    with col2:
-        if st.button("🗺️ Crime Map", key="about_map", use_container_width=True):
-            st.session_state.main_view = 'hotspots'
-            st.rerun()
-    
-    with col3:
-        if st.button("📊 Analytics", key="about_analytics", use_container_width=True):
-            st.session_state.main_view = 'analytics'
-            st.rerun()
-    
-    with col4:
-        if st.button("📝 Report Crime", key="about_report", use_container_width=True):
-            st.session_state.main_view = 'anonymous_report'
-            st.rerun()
-
-elif st.session_state.main_view == 'analytics':
-    # Crime Analytics - Main Screen
-    st.markdown("""
-    <div class="main-content-section">
-        <h2 class="section-header glow-text">📊 Crime Analytics Dashboard</h2>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Analytics cards in main area
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #ef4444; border-radius: 8px; padding: 16px; text-align: center;
-                    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.2);">
-            <div style="color: #ef4444; font-size: 24px; font-weight: 700; margin-bottom: 4px; 
-                       text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);" class="glow-text">109</div>
-            <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">High Risk Crimes</div>
-            <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">Basseterre Central, Molineux, Tabernacle</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #3b82f6; border-radius: 8px; padding: 16px; text-align: center;
-                    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);">
-            <div style="color: #3b82f6; font-size: 24px; font-weight: 700; margin-bottom: 4px; 
-                       text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);" class="glow-text">133</div>
-            <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Medium Risk Crimes</div>
-            <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">6 Areas Including Cayon, Newton Ground</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #10b981; border-radius: 8px; padding: 16px; text-align: center;
-                    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);">
-            <div style="color: #10b981; font-size: 24px; font-weight: 700; margin-bottom: 4px; 
-                       text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);" class="glow-text">60</div>
-            <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Low Risk Crimes</div>
-            <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">4 Areas Including Sandy Point, Dieppe Bay</div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # Recent trends section
-    st.markdown("""
-    <div class="main-content-section">
-        <h3 class="section-header glow-text">📈 Recent Trends</h3>
-        <div class="section-content">
-            <ul>
-                <li><strong>75% decrease in murders</strong> from 2024 to 2025 H1</li>
-                <li><strong>Detection rates improving</strong> across most crime categories</li>
-                <li><strong>Drug crimes up 463%</strong> indicating increased enforcement</li>
-                <li><strong>Larcenies remain highest volume crime</strong> requiring focused attention</li>
-                <li><strong>Federation-wide trends</strong> showing mixed but generally positive results</li>
-            </ul>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Interactive chart section
-    st.markdown("### 📊 Interactive Analytics")
-    
-    chart_tab1, chart_tab2, chart_tab3 = st.tabs(["📈 Crime Trends", "🌍 International Comparison", "🎯 Detection Rates"])
-    
-    with chart_tab1:
-        # Show crime trends
-        st_kitts_data = []
-        periods = []
-        
-        # Extract St. Kitts data from the database
-        for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
-            if period_key in HISTORICAL_CRIME_DATABASE:
-                period_data = HISTORICAL_CRIME_DATABASE[period_key]
-                periods.append(period_data["period"])
-                st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 0)
-                st_kitts_data.append(st_kitts_crimes)
-        
-        # Create bar chart for St. Kitts crime trends
-        fig = go.Figure()
-        fig.add_trace(go.Bar(
-            x=periods,
-            y=st_kitts_data,
-            marker_color='#3b82f6',
-            text=[f"{crimes}" for crimes in st_kitts_data],
-            textposition='auto',
-            name='St. Kitts Crimes'
-        ))
-        
-        theme = "plotly_dark" if st.session_state.dark_mode else "plotly_white"
-        
-        fig.update_layout(
-            title="St. Kitts Crime Trends - Recent Years",
-            xaxis_title="Time Period",
-            yaxis_title="Number of Crimes",
-            template=theme,
-            height=500,
-            showlegend=False
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
-    
-    with chart_tab2:
-        fig = create_macrotrends_comparison_charts("international_context")
-        if fig:
-            st.plotly_chart(fig, use_container_width=True)
-    
-    with chart_tab3:
-        # Detection rates chart
-        periods = []
-        detection_rates = []
-        
-        for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
-            if period_key in HISTORICAL_CRIME_DATABASE:
-                period_data = HISTORICAL_CRIME_DATABASE[period_key]
-                periods.append(period_data["period"])
-                detection_rates.append(period_data["detection_rate"])
-        
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=periods,
-            y=detection_rates,
-            mode='lines+markers',
-            name='Detection Rate %',
-            line=dict(color='#10b981', width=3),
-            marker=dict(size=10, color='#10b981')
-        ))
-        
-        theme = "plotly_dark" if st.session_state.dark_mode else "plotly_white"
-        
-        fig.update_layout(
-            title="Crime Detection Rate Trends",
-            xaxis_title="Time Period",
-            yaxis_title="Detection Rate (%)",
-            template=theme,
-            height=500,
-            showlegend=False
-        )
-        
-        st.plotly_chart(fig, use_container_width=True)
-
-elif st.session_state.main_view == 'history':
-    # Chat History - Main Screen
-    st.markdown("""
-    <div class="main-content-section">
-        <h2 class="section-header glow-text">💬 Chat History Management</h2>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    if not st.session_state.chat_sessions:
-        st.markdown("""
-        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border: 1px solid #475569; border-radius: 12px; padding: 20px; margin-bottom: 16px;
-                    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.1);">
-            <h3 style="color: #3b82f6; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);" class="glow-text">📭 No Chat History Found</h3>
-            <p style="color: #cbd5e1;">Start a conversation with the AI Assistant to create your first session! 
-            All your conversations will be automatically saved and organized here.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Quick start button
-        if st.button("🚀 Start Your First Chat", key="first_chat", use_container_width=True):
-            st.session_state.main_view = 'ai-assistant'
-            st.rerun()
-    else:
-        st.markdown(f"**📊 Total Chat Sessions:** {len(st.session_state.chat_sessions)}")
-        st.markdown("---")
-        
-        # Display chat sessions in a nice grid
-        for i, (chat_id, chat_data) in enumerate(st.session_state.chat_sessions.items()):
-            col1, col2, col3 = st.columns([3, 2, 1])
-            
-            with col1:
-                if st.button(f"💬 Chat: {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
-                    st.session_state.current_chat_id = chat_id
-                    st.session_state.main_view = 'ai-assistant'
-                    st.session_state.chat_active = True
-                    st.rerun()
-            
-            with col2:
-                st.text(f"📝 Messages: {len(chat_data['messages'])}")
-                st.text(f"🕐 Created: {chat_data['created_at']} AST")
-            
-            with col3:
-                st.text(f"⏰ Last Activity:")
-                st.text(f"{chat_data['last_activity']} AST")
-            
-            st.markdown("---")
-
-elif st.session_state.main_view == 'emergency':
-    # Emergency Contacts - Main Screen
-    st.markdown("""
-    <div class="main-content-section">
-        <h2 class="section-header glow-text">🚨 Emergency Contacts Directory</h2>
-        <div class="section-content">
-            <p><strong>🚨 Emergency Guidelines:</strong></p>
-            <ul>
-                <li>For life-threatening emergencies, call <strong>911</strong> immediately</li>
-                <li>Provide exact location and nature of emergency</li>
-                <li>Stay on the line until instructed to hang up</li>
-                <li>Keep this directory accessible for quick reference</li>
-            </ul>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Emergency contacts in a grid layout
-    col1, col2 = st.columns(2)
-    
-    emergency_items = list(EMERGENCY_CONTACTS.items())
-    mid_point = len(emergency_items) // 2
-    
-    with col1:
-        for service, details in emergency_items[:mid_point]:
-            st.markdown(f"""
-            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                        border: 1px solid #ef4444; border-radius: 12px; padding: 16px; margin-bottom: 12px; 
-                        transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(239, 68, 68, 0.1);">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <span style="font-size: 24px;">{details['icon']}</span>
-                    <div style="color: #ffffff; font-weight: 600; font-size: 16px; text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);">{service}</div>
-                </div>
-                <div style="color: #ef4444; font-size: 18px; font-weight: bold; margin: 8px 0; 
-                           text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);" class="glow-text">{details['number']}</div>
-                <div style="color: #94a3b8; font-size: 14px;">{details['description']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-    
-    with col2:
-        for service, details in emergency_items[mid_point:]:
-            st.markdown(f"""
-            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                        border: 1px solid #ef4444; border-radius: 12px; padding: 16px; margin-bottom: 12px; 
-                        transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(239, 68, 68, 0.1);">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <span style="font-size: 24px;">{details['icon']}</span>
-                    <div style="color: #ffffff; font-weight: 600; font-size: 16px; text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);">{service}</div>
-                </div>
-                <div style="color: #ef4444; font-size: 18px; font-weight: bold; margin: 8px 0; 
-                           text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);" class="glow-text">{details['number']}</div>
-                <div style="color: #94a3b8; font-size: 14px;">{details['description']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-
-elif st.session_state.main_view == 'anonymous_report':
-    # Anonymous Report System - Enhanced with better styling
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                border: 1px solid #475569; border-radius: 16px; padding: 24px; margin-bottom: 24px; 
-                position: relative; overflow: hidden; box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);">
-        <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; 
-                    background: linear-gradient(90deg, #3b82f6, #ef4444, #3b82f6); 
-                    background-size: 200% 100%; animation: gradient-slide 3s ease-in-out infinite;"></div>
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
-            <div style="width: 50px; height: 50px; background: linear-gradient(45deg, #ef4444, #3b82f6); 
-                       border-radius: 12px; display: flex; align-items: center; justify-content: center; 
-                       font-size: 24px; animation: icon-pulse 2s infinite; box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);">📝</div>
+    <div class="anonymous-report-container">
+        <div class="anonymous-report-header">
+            <div class="anonymous-report-icon">📝</div>
             <div>
-                <div style="color: #ffffff; font-size: 24px; font-weight: 700; margin: 0; 
-                           text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);" class="glow-text">Anonymous Crime Report</div>
-                <div style="color: #94a3b8; font-size: 14px; margin: 4px 0 0 0;">Secure & Confidential Reporting System</div>
+                <div class="anonymous-report-title">Anonymous Crime Report</div>
+                <div class="anonymous-report-subtitle">Secure & Confidential Reporting System</div>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # Enhanced Anonymity Notice
+    # Anonymity Notice
     st.markdown("""
-    <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
-                padding: 16px; margin: 20px 0; color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.2);">
-        <div style="font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; 
-                   text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);" class="glow-text">
+    <div class="anonymity-notice">
+        <div class="anonymity-notice-title">
             🔒 Complete Anonymity Guaranteed
         </div>
         <div>
@@ -2309,12 +1909,11 @@ elif st.session_state.main_view == 'anonymous_report':
     </div>
     """, unsafe_allow_html=True)
     
-    # Enhanced Report Form
+    # Report Form
     with st.form("anonymous_report_form", clear_on_submit=True):
         # Crime Type Section
         st.markdown("""
-        <div style="color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 12px; 
-                    display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">
+        <div class="form-section-title">
             🔍 Incident Type
         </div>
         """, unsafe_allow_html=True)
@@ -2347,8 +1946,7 @@ elif st.session_state.main_view == 'anonymous_report':
         
         # Location Section
         st.markdown("""
-        <div style="color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 12px; 
-                    display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">
+        <div class="form-section-title">
             📍 Location Information
         </div>
         """, unsafe_allow_html=True)
@@ -2361,8 +1959,7 @@ elif st.session_state.main_view == 'anonymous_report':
         
         # Time Section
         st.markdown("""
-        <div style="color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 12px; 
-                    display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">
+        <div class="form-section-title">
             🕐 Time Information
         </div>
         """, unsafe_allow_html=True)
@@ -2382,8 +1979,7 @@ elif st.session_state.main_view == 'anonymous_report':
         
         # Description Section
         st.markdown("""
-        <div style="color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 12px; 
-                    display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">
+        <div class="form-section-title">
             📝 Incident Description
         </div>
         """, unsafe_allow_html=True)
@@ -2397,8 +1993,7 @@ elif st.session_state.main_view == 'anonymous_report':
         
         # Additional Information
         st.markdown("""
-        <div style="color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 12px; 
-                    display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">
+        <div class="form-section-title">
             ℹ️ Additional Information
         </div>
         """, unsafe_allow_html=True)
@@ -2429,8 +2024,7 @@ elif st.session_state.main_view == 'anonymous_report':
         
         # Priority Level
         st.markdown("""
-        <div style="color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 12px; 
-                    display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">
+        <div class="form-section-title">
             ⚡ Priority Level
         </div>
         """, unsafe_allow_html=True)
@@ -2450,8 +2044,7 @@ elif st.session_state.main_view == 'anonymous_report':
         
         # Contact Preference
         st.markdown("""
-        <div style="color: #3b82f6; font-size: 16px; font-weight: 600; margin-bottom: 12px; 
-                    display: flex; align-items: center; gap: 8px; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">
+        <div class="form-section-title">
             📞 Contact Preference (Optional)
         </div>
         """, unsafe_allow_html=True)
@@ -2477,7 +2070,7 @@ elif st.session_state.main_view == 'anonymous_report':
                 key="contact_details"
             )
         
-        # Enhanced Submit Button
+        # Submit Button
         st.markdown("<br>", unsafe_allow_html=True)
         
         submitted = st.form_submit_button(
@@ -2529,43 +2122,704 @@ elif st.session_state.main_view == 'anonymous_report':
                 else:
                     st.error(f"❌ {message}")
     
-    # Show Previous Reports (if any) with enhanced styling
+    # Show Previous Reports (if any)
     if st.session_state.get('submitted_reports'):
         st.markdown("""
         <div class="main-content-section">
-            <h3 class="section-header glow-text">📋 Your Submitted Reports</h3>
+            <h3 class="section-header">📋 Your Submitted Reports</h3>
         </div>
         """, unsafe_allow_html=True)
         
         for report in reversed(st.session_state.submitted_reports):
             st.markdown(f"""
-            <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                        border-left: 4px solid #10b981; border-radius: 8px; padding: 16px; margin-bottom: 12px; 
-                        transition: all 0.3s ease; box-shadow: 0 8px 32px rgba(16, 185, 129, 0.1);">
+            <div class="report-status-card">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <div style="color: #3b82f6; font-family: monospace; font-weight: 600; 
-                                   text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">Report ID: {report['id']}</div>
+                        <div class="report-id">Report ID: {report['id']}</div>
                         <div style="color: #cbd5e1;">Location: {report['location']}</div>
                     </div>
                     <div style="text-align: right;">
-                        <div style="color: #10b981; font-weight: 600; text-transform: uppercase; 
-                                   font-size: 12px; letter-spacing: 0.5px; text-shadow: 0 0 5px rgba(16, 185, 129, 0.5);" 
-                             class="glow-text">{report['status']}</div>
-                        <div style="color: #94a3b8; font-size: 12px;">{report['timestamp']}</div>
+                        <div class="report-status">{report['status']}</div>
+                        <div class="report-timestamp">{report['timestamp']}</div>
                     </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-elif st.session_state.main_view == 'hotspots':
-    # Crime Hotspots Map - Enhanced with better styling
+elif st.session_state.main_view == 'home':
+    # System Overview - Main Screen
     st.markdown("""
     <div class="main-content-section">
-        <h2 class="section-header glow-text">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h2>
+        <h2 class="section-header">🏠 System Overview</h2>
         <div class="section-content">
-            <p>Interactive crime analysis with real-time data overlays and satellite view capabilities</p>
+            <p>Welcome to SECURO - the enhanced comprehensive crime analysis system with police siren colors, 
+            statistical integration, conversation memory, advanced AI capabilities, and anonymous reporting 
+            built specifically for the Royal St. Christopher and Nevis Police Force.</p>
         </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Feature cards in main area
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        <div class="info-card">
+            <h3>🤖 Enhanced AI</h3>
+            <p>Statistical knowledge, memory, and context-aware responses with police siren styling.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="info-card">
+            <h3>📊 Real-Time Statistics</h3>
+            <p>Integrated crime data and international comparisons from MacroTrends.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="info-card">
+            <h3>💭 Conversation Memory</h3>
+            <p>Context preservation across chat sessions with full history management.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="info-card">
+            <h3>📝 Anonymous Reports</h3>
+            <p>Secure, confidential crime reporting system for public safety.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Quick access buttons
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("🤖 Start Chat", key="quick_ai", use_container_width=True):
+            st.session_state.main_view = 'ai-assistant'
+            st.rerun()
+    
+    with col2:
+        if st.button("🗺️ View Crime Map", key="quick_map", use_container_width=True):
+            st.session_state.main_view = 'hotspots'
+            st.rerun()
+    
+    with col3:
+        if st.button("📊 View Analytics", key="quick_analytics", use_container_width=True):
+            st.session_state.main_view = 'analytics'
+            st.rerun()
+    
+    with col4:
+        if st.button("📝 Anonymous Report", key="quick_report", use_container_width=True):
+            st.session_state.main_view = 'anonymous_report'
+            st.rerun()
+
+elif st.session_state.main_view == 'about':
+    # About SECURO - Main Screen
+    st.markdown("## ℹ️ About SECURO")
+    
+    st.markdown("""
+    **SECURO** is an enhanced comprehensive crime analysis system with police siren colors, 
+    statistical integration, conversation memory, advanced AI capabilities, and secure anonymous 
+    reporting built specifically for the Royal St. Christopher and Nevis Police Force.
+    """)
+    
+    st.markdown("### 🌟 Key Features")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        - **🤖 Conversation Memory:** Full context preservation across chat sessions
+        - **📊 Statistical Knowledge Integration:** Real-time access to crime data  
+        - **🧠 Context-Aware Responses:** Intelligent understanding of conversation flow
+        - **💬 Multi-Chat Management:** Organize multiple conversation sessions
+        - **📈 Real-time Crime Data:** Up-to-date statistics and analysis
+        - **📝 Anonymous Reporting:** Secure crime reporting system
+        """)
+    
+    with col2:
+        st.markdown("""
+        - **🚔 Police Siren Color Theme:** Professional law enforcement aesthetics
+        - **🔊 Text-to-Speech Features:** Audio accessibility and hands-free operation
+        - **🗺️ Interactive Crime Maps:** Visual hotspot analysis
+        - **🌍 International Comparisons:** Global context and trending
+        - **📊 Advanced Analytics:** Charts, trends, and data visualization
+        - **🔒 Privacy Protection:** Anonymous reporting with full confidentiality
+        """)
+    
+    st.markdown("### 📋 Data Coverage")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        **📊 Crime Statistics:**
+        - 2022-2025 annual data
+        - Quarterly reports
+        - Detection rates
+        - Crime type breakdowns
+        """)
+    
+    with col2:
+        st.markdown("""
+        **🌍 International Data:**
+        - MacroTrends comparisons
+        - Global homicide rates
+        - Regional analysis
+        - Historical trends
+        """)
+    
+    with col3:
+        st.markdown("""
+        **🗺️ Geographic Data:**
+        - 13 hotspot locations
+        - Risk level mapping
+        - St. Kitts & Nevis coverage
+        - Interactive visualizations
+        """)
+    
+    # Quick access buttons
+    st.markdown("### 🚀 Quick Access")
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        if st.button("🤖 SECURO AI", key="about_ai", use_container_width=True):
+            st.session_state.main_view = 'ai-assistant'
+            st.rerun()
+    
+    with col2:
+        if st.button("🗺️ Crime Map", key="about_map", use_container_width=True):
+            st.session_state.main_view = 'hotspots'
+            st.rerun()
+    
+    with col3:
+        if st.button("📊 Analytics", key="about_analytics", use_container_width=True):
+            st.session_state.main_view = 'analytics'
+            st.rerun()
+    
+    with col4:
+        if st.button("📝 Report Crime", key="about_report", use_container_width=True):
+            st.session_state.main_view = 'anonymous_report'
+            st.rerun()
+
+elif st.session_state.main_view == 'analytics':
+    # Crime Analytics - Main Screen
+    st.markdown("""
+    <div class="main-content-section">
+        <h2 class="section-header">📊 Crime Analytics Dashboard</h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Analytics cards in main area
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="analytics-card high-risk">
+            <div class="analytics-title">🔴 High Risk Areas (3)</div>
+            <div class="analytics-value">Basseterre Central, Molineux, Tabernacle</div>
+            <div class="analytics-value"><strong>Total: 109 crimes</strong></div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="analytics-card medium-risk">
+            <div class="analytics-title">🟡 Medium Risk Areas (6)</div>
+            <div class="analytics-value">Cayon, Newton Ground, Old Road</div>
+            <div class="analytics-value"><strong>Total: 133 crimes</strong></div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="analytics-card low-risk">
+            <div class="analytics-title">🟢 Low Risk Areas (4)</div>
+            <div class="analytics-value">Sandy Point, Dieppe Bay</div>
+            <div class="analytics-value"><strong>Total: 60 crimes</strong></div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    # Recent trends section
+    st.markdown("""
+    <div class="main-content-section">
+        <h3 class="section-header">📈 Recent Trends</h3>
+        <div class="section-content">
+            <ul>
+                <li><strong>75% decrease in murders</strong> from 2024 to 2025 H1</li>
+                <li><strong>Detection rates improving</strong> across most crime categories</li>
+                <li><strong>Drug crimes up 463%</strong> indicating increased enforcement</li>
+                <li><strong>Larcenies remain highest volume crime</strong> requiring focused attention</li>
+                <li><strong>Federation-wide trends</strong> showing mixed but generally positive results</li>
+            </ul>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Interactive chart section
+    st.markdown("### 📊 Interactive Analytics")
+    
+    chart_tab1, chart_tab2, chart_tab3 = st.tabs(["📈 Crime Trends", "🌍 International Comparison", "🎯 Detection Rates"])
+    
+    with chart_tab1:
+        # Show crime trends
+        st_kitts_data = []
+        periods = []
+        
+        # Extract St. Kitts data from the database
+        for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
+            if period_key in HISTORICAL_CRIME_DATABASE:
+                period_data = HISTORICAL_CRIME_DATABASE[period_key]
+                periods.append(period_data["period"])
+                st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 0)
+                st_kitts_data.append(st_kitts_crimes)
+        
+        # Create bar chart for St. Kitts crime trends
+        fig = go.Figure()
+        fig.add_trace(go.Bar(
+            x=periods,
+            y=st_kitts_data,
+            marker_color='#3b82f6',
+            text=[f"{crimes}" for crimes in st_kitts_data],
+            textposition='auto',
+            name='St. Kitts Crimes'
+        ))
+        
+        fig.update_layout(
+            title="St. Kitts Crime Trends - Recent Years",
+            xaxis_title="Time Period",
+            yaxis_title="Number of Crimes",
+            template="plotly_dark",
+            height=500,
+            showlegend=False
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with chart_tab2:
+        fig = create_macrotrends_comparison_charts("international_context")
+        if fig:
+            st.plotly_chart(fig, use_container_width=True)
+    
+    with chart_tab3:
+        # Detection rates chart
+        periods = []
+        detection_rates = []
+        
+        for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
+            if period_key in HISTORICAL_CRIME_DATABASE:
+                period_data = HISTORICAL_CRIME_DATABASE[period_key]
+                periods.append(period_data["period"])
+                detection_rates.append(period_data["detection_rate"])
+        
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=periods,
+            y=detection_rates,
+            mode='lines+markers',
+            name='Detection Rate %',
+            line=dict(color='#10b981', width=3),
+            marker=dict(size=10, color='#10b981')
+        ))
+        
+        fig.update_layout(
+            title="Crime Detection Rate Trends",
+            xaxis_title="Time Period",
+            yaxis_title="Detection Rate (%)",
+            template="plotly_dark",
+            height=500,
+            showlegend=False
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
+
+elif st.session_state.main_view == 'history':
+    # Chat History - Main Screen
+    st.markdown("""
+    <div class="main-content-section">
+        <h2 class="section-header">💬 Chat History Management</h2>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    if not st.session_state.chat_sessions:
+        st.markdown("""
+        <div class="info-card">
+            <h3>📭 No Chat History Found</h3>
+            <p>Start a conversation with the AI Assistant to create your first session! 
+            All your conversations will be automatically saved and organized here.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Quick start button
+        if st.button("🚀 Start Your First Chat", key="first_chat", use_container_width=True):
+            st.session_state.main_view = 'ai-assistant'
+            st.rerun()
+    else:
+        st.markdown(f"**📊 Total Chat Sessions:** {len(st.session_state.chat_sessions)}")
+        st.markdown("---")
+        
+        # Display chat sessions in a nice grid
+        for i, (chat_id, chat_data) in enumerate(st.session_state.chat_sessions.items()):
+            col1, col2, col3 = st.columns([3, 2, 1])
+            
+            with col1:
+                if st.button(f"💬 Chat: {chat_data['name']}", key=f"hist_{chat_id}", use_container_width=True):
+                    st.session_state.current_chat_id = chat_id
+                    st.session_state.main_view = 'ai-assistant'
+                    st.session_state.chat_active = True
+                    st.rerun()
+            
+            with col2:
+                st.text(f"📝 Messages: {len(chat_data['messages'])}")
+                st.text(f"🕐 Created: {chat_data['created_at']} AST")
+            
+            with col3:
+                st.text(f"⏰ Last Activity:")
+                st.text(f"{chat_data['last_activity']} AST")
+            
+            st.markdown("---")
+
+elif st.session_state.main_view == 'emergency':
+    # Emergency Contacts - Main Screen
+    st.markdown("""
+    <div class="main-content-section">
+        <h2 class="section-header">🚨 Emergency Contacts Directory</h2>
+        <div class="section-content">
+            <p><strong>🚨 Emergency Guidelines:</strong></p>
+            <ul>
+                <li>For life-threatening emergencies, call <strong>911</strong> immediately</li>
+                <li>Provide exact location and nature of emergency</li>
+                <li>Stay on the line until instructed to hang up</li>
+                <li>Keep this directory accessible for quick reference</li>
+            </ul>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Emergency contacts in a grid layout
+    col1, col2 = st.columns(2)
+    
+    emergency_items = list(EMERGENCY_CONTACTS.items())
+    mid_point = len(emergency_items) // 2
+    
+    with col1:
+        for service, details in emergency_items[:mid_point]:
+            st.markdown(f"""
+            <div class="emergency-card">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 24px;">{details['icon']}</span>
+                    <div style="color: #ffffff; font-weight: 600; font-size: 16px;">{service}</div>
+                </div>
+                <div class="emergency-number">{details['number']}</div>
+                <div style="color: #94a3b8; font-size: 14px;">{details['description']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+    
+    with col2:
+        for service, details in emergency_items[mid_point:]:
+            st.markdown(f"""
+            <div class="emergency-card">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="font-size: 24px;">{details['icon']}</span>
+                    <div style="color: #ffffff; font-weight: 600; font-size: 16px;">{service}</div>
+                </div>
+                <div class="emergency-number">{details['number']}</div>
+                <div style="color: #94a3b8; font-size: 14px;">{details['description']}</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+elif st.session_state.main_view == 'ai-assistant':
+    # AI Assistant interface (existing code)
+    if not st.session_state.get('chat_active', False):
+        # Chat welcome screen - compact and centered
+        st.markdown("""
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; 
+                    min-height: 400px; text-align: center; padding: 40px 20px; 
+                    background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                    border: 1px solid #475569; border-radius: 16px; margin: 20px 0;">
+            <div style="width: 100px; height: 100px; margin-bottom: 24px; border-radius: 50%; 
+                       background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
+                       align-items: center; justify-content: center; font-size: 2.5rem; animation: logo-pulse 2s infinite;">
+                🚔
+            </div>
+            <h1 style="color: #ffffff; font-size: 2.2rem; margin-bottom: 12px; font-weight: 700;">SECURO AI</h1>
+            <p style="color: #3b82f6; font-size: 1.1rem; margin-bottom: 16px; font-weight: 600;">Enhanced AI</p>
+            <p style="color: #94a3b8; max-width: 550px; margin-bottom: 32px; line-height: 1.6; font-size: 15px;">
+                Welcome! I'm your enhanced AI Crime Intelligence system with comprehensive St. Kitts & Nevis statistics, 
+                international data, and conversation memory! 
+            </p>
+            <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px; 
+                            padding: 12px 20px; color: #3b82f6; font-size: 14px; font-weight: 500;">
+                    📊 Statistical Knowledge
+                </div>
+                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px; 
+                            padding: 12px 20px; color: #ef4444; font-size: 14px; font-weight: 500;">
+                    💭 Conversation Memory
+                </div>
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px; 
+                            padding: 12px 20px; color: #10b981; font-size: 14px; font-weight: 500;">
+                    🔊 Text-to-Speech
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Center the start button
+        col1, col2, col3 = st.columns([1, 2, 1])
+        with col2:
+            if st.button("🚀 Start Conversation", key="start_chat", use_container_width=True):
+                create_new_chat_session()
+                st.session_state.chat_active = True
+                st.success("✅ New chat session created! You can now start chatting with SECURO AI!")
+                st.rerun()
+        
+        # Voice status indicator
+        st.markdown("""
+        <div style="text-align: center; margin-top: 20px;">
+            <div style="display: inline-block; padding: 12px 24px; background: rgba(16, 185, 129, 0.1); 
+                        border: 1px solid #10b981; border-radius: 8px;">
+                <div style="color: #10b981; font-size: 14px; font-weight: 600;">🔊 TTS FEATURES AVAILABLE</div>
+                <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">
+                    Text-to-Speech • Auto-Speak • Individual Message Speech
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    else:
+        # Chat interface - compact design
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                    border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <div>
+                    <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🤖 SECURO AI</h3>
+                    <div style="color: #10b981; font-size: 14px; margin-top: 4px;">
+                        <span style="color: #10b981;">●</span>
+                        Online with Statistical Knowledge & TTS Features
+                    </div>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Chat controls - compact
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button("➕ New Chat", key="new_chat_btn", use_container_width=True):
+                create_new_chat_session()
+                st.rerun()
+        
+        with col2:
+            if st.button("← Welcome", key="back_welcome", use_container_width=True):
+                st.session_state.chat_active = False
+                st.rerun()
+        
+        # Current chat info - compact
+        current_chat = get_current_chat()
+        st.info(f"**📝 Current Session:** {current_chat['name']}")
+        
+        # Display messages
+        messages = current_chat['messages']
+        
+        # Initialize with welcome message if no messages
+        if not messages:
+            welcome_msg = {
+                "role": "assistant",
+                "content": "🚔 Enhanced SECURO AI System Online!\n\nI now have access to comprehensive St. Kitts & Nevis crime statistics, international comparison data from MacroTrends, and can maintain conversation context. Ask me about:\n\n• 📊 Local crime trends and detection rates\n• 🌍 International comparisons and global context\n• 📈 Historical data analysis with charts\n• 🔍 Specific incidents or general questions\n\nI can show interactive charts for international comparisons!",
+                "timestamp": get_stkitts_time()
+            }
+            messages.append(welcome_msg)
+            current_chat['messages'] = messages
+        
+        # Messages container - Instagram style
+        for i, message in enumerate(messages):
+            if message["role"] == "user":
+                st.markdown(f"""
+                <div class="message user">
+                    <div class="message-bubble">{message["content"]}</div>
+                    <div class="message-time">You • {message["timestamp"]} AST</div>
+                </div>
+                """, unsafe_allow_html=True)
+            else:
+                clean_content = str(message["content"]).strip()
+                clean_content = re.sub(r'<[^>]+>', '', clean_content)
+                clean_content = clean_content.replace('```', '')
+                # Preserve bullet points but fix spacing issues
+                clean_content = re.sub(r'  +', ' ', clean_content)  # Replace multiple spaces with single space (but not single spaces)
+                clean_content = re.sub(r'\n +•', '\n•', clean_content)  # Remove spaces before bullet points
+                clean_content = re.sub(r'• +', '• ', clean_content)  # Ensure single space after bullet points
+                
+                # Clean content for JavaScript (escape quotes and special characters)
+                js_clean_content = clean_content.replace('\\', '\\\\').replace('`', '\\`').replace('"', '\\"').replace("'", "\\'")
+                
+                # Create unique message ID for voice
+                message_id = f"msg_{i}"
+                
+                # Create the assistant message with speaker button in right corner
+                st.markdown(f"""
+                <div class="message assistant">
+                    <div class="message-bubble">
+                        <div class="message-content">{clean_content}</div>
+                        <span onclick="speakText_{message_id}()" class="speak-button" title="Click to speak this message">🔊</span>
+                    </div>
+                    <div class="message-time">
+                        SECURO • {message["timestamp"]} AST
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+                
+                # Add the JavaScript for this specific button - SIMPLIFIED VERSION
+                st.components.v1.html(f"""
+                <script>
+                function speakText_{message_id}() {{
+                    if ('speechSynthesis' in window) {{
+                        window.speechSynthesis.cancel();
+                        
+                        let text = `{js_clean_content}`;
+                        text = text.replace(/[•*#]/g, '').replace(/\\s+/g, ' ').trim();
+                        
+                        if (text.length > 0) {{
+                            const utterance = new SpeechSynthesisUtterance(text);
+                            utterance.rate = 0.8;
+                            utterance.volume = 0.9;
+                            window.speechSynthesis.speak(utterance);
+                        }}
+                    }} else {{
+                        alert('Text-to-speech not supported in this browser');
+                    }}
+                }}
+                
+                window.speakText_{message_id} = speakText_{message_id};
+                </script>
+                """, height=0)
+        
+        # Chat input - simplified
+        st.markdown("---")
+        with st.form("chat_form", clear_on_submit=True):
+            user_input = st.text_input(
+                "Message Enhanced AI Assistant:",
+                placeholder="Type your question about crime statistics, trends, or analysis...",
+                label_visibility="collapsed",
+                key="chat_input"
+            )
+            
+            submitted = st.form_submit_button("📨 Send", type="primary")
+            
+            if submitted and user_input and user_input.strip():
+                current_time = get_stkitts_time()
+                
+                # Add user message to current chat
+                add_message_to_chat("user", user_input)
+                
+                # Generate response with conversation history and statistics
+                with st.spinner("🔄 Generating enhanced AI response with statistical knowledge..."):
+                    response, chart_type = generate_enhanced_smart_response(
+                        user_input, 
+                        conversation_history=current_chat['messages'],
+                        language='en'
+                    )
+                
+                # Add assistant response to current chat
+                add_message_to_chat("assistant", response)
+                
+                # Store chart type in session state to persist after rerun
+                if chart_type:
+                    st.session_state.show_chart = chart_type
+                
+                # Store the response for auto-speak
+                st.session_state.last_response = response
+                
+                st.rerun()
+        
+        # Auto-speak the last response if there is one
+        if st.session_state.get('last_response'):
+            st.components.v1.html(auto_speak_response(st.session_state.last_response), height=50)
+            # Clear the response to avoid re-speaking
+            st.session_state.last_response = None
+        
+        # Display charts after the rerun (so they persist)
+        if st.session_state.get('show_chart'):
+            st.markdown("### 📊 Requested Chart")
+            chart_type = st.session_state.show_chart
+            
+            if chart_type == "international":
+                # Show international comparison charts
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    fig = create_macrotrends_comparison_charts("homicide_trends")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                with col2:
+                    fig = create_macrotrends_comparison_charts("international_context")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                with col3:
+                    fig = create_macrotrends_comparison_charts("recent_crime_totals")
+                    if fig:
+                        st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "trends":
+                # Show crime trends
+                st_kitts_data = []
+                periods = []
+                
+                # Extract St. Kitts data from the database
+                for period_key in ['2023_ANNUAL', '2024_ANNUAL', '2025_Q2']:
+                    if period_key in HISTORICAL_CRIME_DATABASE:
+                        period_data = HISTORICAL_CRIME_DATABASE[period_key]
+                        periods.append(period_data["period"])
+                        st_kitts_crimes = period_data.get('st_kitts', {}).get('crimes', 0)
+                        st_kitts_data.append(st_kitts_crimes)
+                
+                # Create bar chart for St. Kitts crime trends
+                fig = go.Figure()
+                fig.add_trace(go.Bar(
+                    x=periods,
+                    y=st_kitts_data,
+                    marker_color='#3b82f6',
+                    text=[f"{crimes}" for crimes in st_kitts_data],
+                    textposition='auto',
+                    name='St. Kitts Crimes'
+                ))
+                
+                fig.update_layout(
+                    title="St. Kitts Crime Trends - Recent Years",
+                    xaxis_title="Time Period",
+                    yaxis_title="Number of Crimes",
+                    template="plotly_dark",
+                    height=500,
+                    showlegend=False
+                )
+                
+                st.plotly_chart(fig, use_container_width=True)
+            
+            elif chart_type == "homicide":
+                # Show homicide trends
+                fig = create_macrotrends_comparison_charts("homicide_trends")
+                if fig:
+                    st.plotly_chart(fig, use_container_width=True)
+            
+            # Add button to clear the chart
+            if st.button("❌ Clear Chart", key="clear_chart"):
+                st.session_state.show_chart = None
+                st.rerun()
+
+elif st.session_state.main_view == 'hotspots':
+    # Crime Hotspots Map - Main Screen
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
+                border: 1px solid #475569; border-radius: 16px; padding: 16px; margin-bottom: 16px;">
+        <h3 style="color: #ffffff; margin: 0; font-size: 18px;">🗺️ Crime Hotspot Map - St. Kitts & Nevis</h3>
+        <p style="color: #94a3b8; font-size: 14px; margin: 8px 0 0 0;">Interactive crime analysis with real-time data overlays</p>
     </div>
     """, unsafe_allow_html=True)
     
@@ -2586,7 +2840,7 @@ elif st.session_state.main_view == 'hotspots':
     except Exception as e:
         st.error(f"❌ Map Error: {str(e)}")
     
-    # Enhanced Hotspot summary metrics
+    # Hotspot summary metrics - compact
     st.markdown("### 📊 Hotspot Summary")
     
     col1, col2, col3 = st.columns(3)
@@ -2594,10 +2848,8 @@ elif st.session_state.main_view == 'hotspots':
     with col1:
         st.markdown("""
         <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #ef4444; border-radius: 8px; padding: 16px; text-align: center;
-                    box-shadow: 0 8px 32px rgba(239, 68, 68, 0.2);">
-            <div style="color: #ef4444; font-size: 24px; font-weight: 700; margin-bottom: 4px; 
-                       text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);" class="glow-text">109</div>
+                    border-left: 4px solid #ef4444; border-radius: 8px; padding: 16px; text-align: center;">
+            <div style="color: #ef4444; font-size: 24px; font-weight: 700; margin-bottom: 4px;">109</div>
             <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">High Risk Crimes</div>
             <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">3 Areas</div>
         </div>
@@ -2606,10 +2858,8 @@ elif st.session_state.main_view == 'hotspots':
     with col2:
         st.markdown("""
         <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #3b82f6; border-radius: 8px; padding: 16px; text-align: center;
-                    box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);">
-            <div style="color: #3b82f6; font-size: 24px; font-weight: 700; margin-bottom: 4px; 
-                       text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);" class="glow-text">133</div>
+                    border-left: 4px solid #3b82f6; border-radius: 8px; padding: 16px; text-align: center;">
+            <div style="color: #3b82f6; font-size: 24px; font-weight: 700; margin-bottom: 4px;">133</div>
             <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Medium Risk Crimes</div>
             <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">6 Areas</div>
         </div>
@@ -2618,36 +2868,17 @@ elif st.session_state.main_view == 'hotspots':
     with col3:
         st.markdown("""
         <div style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                    border-left: 4px solid #2563eb; border-radius: 8px; padding: 16px; text-align: center;
-                    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.2);">
-            <div style="color: #2563eb; font-size: 24px; font-weight: 700; margin-bottom: 4px; 
-                       text-shadow: 0 0 10px rgba(37, 99, 235, 0.5);" class="glow-text">60</div>
+                    border-left: 4px solid #2563eb; border-radius: 8px; padding: 16px; text-align: center;">
+            <div style="color: #2563eb; font-size: 24px; font-weight: 700; margin-bottom: 4px;">60</div>
             <div style="color: #94a3b8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;">Low Risk Crimes</div>
             <div style="color: #94a3b8; font-size: 12px; margin-top: 4px;">4 Areas</div>
         </div>
         """, unsafe_allow_html=True)
 
 else:
-    # Default view (Enhanced welcome screen)
-    st.markdown("""
-    <div style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #1e293b 0%, #334155 100%); 
-                border-radius: 16px; margin: 20px 0; box-shadow: 0 8px 32px rgba(59, 130, 246, 0.2);">
-        <div style="width: 120px; height: 120px; margin: 0 auto 24px; border-radius: 50%; 
-                   background: linear-gradient(45deg, #3b82f6, #ef4444); display: flex; 
-                   align-items: center; justify-content: center; font-size: 3rem; 
-                   animation: logo-pulse 2s infinite; box-shadow: 0 0 40px rgba(59, 130, 246, 0.5);">🚔</div>
-        <h2 style="color: #3b82f6; font-size: 2.5rem; margin-bottom: 16px; 
-                   text-shadow: 0 0 20px rgba(59, 130, 246, 0.7);" class="glow-text">Welcome to SECURO</h2>
-        <p style="color: #94a3b8; font-size: 1.2rem; margin-bottom: 32px;">Enhanced AI Crime Intelligence System</p>
-        <p style="color: #cbd5e1; max-width: 600px; margin: 0 auto 40px; line-height: 1.6;">
-            Experience the future of law enforcement technology with dynamic themes, premium female voice synthesis, 
-            real-time crime analytics, and secure anonymous reporting capabilities.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    # Enhanced navigation grid
-    col1, col2, col3, col4 = st.columns(4)
+    # Default view (AI Assistant and Crime Hotspots navigation)
+    # Main navigation tabs
+    col1, col2, col3, col4 = st.columns([1, 1, 1, 6])
     
     with col1:
         if st.button("🤖 SECURO AI", key="main_ai", use_container_width=True):
@@ -2660,16 +2891,19 @@ else:
             st.rerun()
     
     with col3:
-        if st.button("📊 Analytics", key="main_analytics", use_container_width=True):
-            st.session_state.main_view = 'analytics'
-            st.rerun()
-    
-    with col4:
         if st.button("📝 Anonymous Report", key="main_report", use_container_width=True):
             st.session_state.main_view = 'anonymous_report'
             st.rerun()
+    
+    # Welcome message if no specific view is selected
+    st.markdown("""
+    <div style="text-align: center; padding: 40px 20px;">
+        <h2 style="color: #3b82f6;">🚔 Welcome to SECURO</h2>
+        <p style="color: #94a3b8;">Choose an option above to get started</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-# Enhanced Status Bar with glowing effects
+# Modern Status Bar - simplified
 current_time = get_stkitts_time()
 total_chats = len(st.session_state.chat_sessions)
 total_reports = len(st.session_state.get('submitted_reports', []))
@@ -2683,11 +2917,7 @@ st.markdown(f"""
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
-            <span>🎨 Theme: {'Dark' if st.session_state.dark_mode else 'Light'} Mode</span>
-        </div>
-        <div class="status-indicator active">
-            <div class="status-dot"></div>
-            <span>🔊 Premium Female Voice: Ready</span>
+            <span>🚔 Police Siren Colors: Active</span>
         </div>
         <div class="status-indicator active">
             <div class="status-dot"></div>
@@ -2697,13 +2927,17 @@ st.markdown(f"""
             <div class="status-dot"></div>
             <span>📝 Anonymous Reports: Available</span>
         </div>
+        <div class="status-indicator active">
+            <div class="status-dot"></div>
+            <span>🔊 TTS Available</span>
+        </div>
         <div class="status-indicator">
             <div class="status-dot"></div>
-            <span>💬 Chats: {total_chats} | 📝 Reports: {total_reports}</span>
+            <span>💬 Chat Sessions: {total_chats} | 📝 Reports: {total_reports}</span>
         </div>
     </div>
     <div class="status-indicator">
-        <span style="text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);" class="glow-text">🕐 {current_time} AST</span>
+        <span>🕐 {current_time} AST</span>
     </div>
 </div>
 """, unsafe_allow_html=True)
